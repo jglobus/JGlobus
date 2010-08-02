@@ -1,0 +1,4 @@
+#TestCA1.signing_policy
+access_id_CA      X509        '/C=US/ST=Illinois/O=Globus/CN=Crux Certificate Authority'
+pos_rights        globus        CA:sign
+cond_subjects     globus    '"/*"'
