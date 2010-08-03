@@ -20,17 +20,13 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-
-import org.globus.gsi.DirSetupUtil;
-
 import org.globus.gsi.stores.ResourceCertStoreParameters;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
 import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
-
+import org.globus.gsi.testutils.DirSetupUtil;
 import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.provider.SigningPolicyStore;
 import org.globus.gsi.provider.SigningPolicyStoreParameters;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.security.Security;

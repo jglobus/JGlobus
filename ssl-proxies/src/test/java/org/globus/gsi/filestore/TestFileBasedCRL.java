@@ -16,14 +16,10 @@ package org.globus.gsi.filestore;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.globus.gsi.FileSetupUtil;
-
 import org.globus.gsi.stores.ResourceCRL;
-
+import org.globus.gsi.testutils.FileSetupUtil;
 import java.io.File;
 import java.security.cert.X509CRL;
-
 import org.springframework.core.io.FileSystemResource;
 import org.junit.After;
 import org.junit.Before;

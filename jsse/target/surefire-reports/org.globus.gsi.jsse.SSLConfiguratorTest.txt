@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.globus.gsi.jsse.SSLConfiguratorTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.597 sec

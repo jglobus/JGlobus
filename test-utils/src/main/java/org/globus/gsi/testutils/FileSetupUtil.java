@@ -12,11 +12,7 @@
  *
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.globus.gsi;
-
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.commons.logging.Log;
+package org.globus.gsi.testutils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,10 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * FILL ME
- * 
+ *
  * @author ranantha@mcs.anl.gov
  */
 public class FileSetupUtil {
@@ -82,15 +80,14 @@ public class FileSetupUtil {
         try {
             url = this.tempFile.toURI().toURL();
         } catch (MalformedURLException e) {
-            logger.info("This should not have happened", e); // This really shouldn't happen, so let's print
-            // in the random chance it does
+            logger.info("This should not have happened", e);  //This really shouldn't happen, so let's print in the random chance it does
         }
         return url;
     }
 
     public void deleteFile() {
         if (this.tempFile != null && !this.tempFile.delete()) {
-            logger.info("File " + this.tempFile.getAbsolutePath() + " was not deleted.");
+            logger.info("File was not deleted: " + this.tempFile.getAbsolutePath());
         }
     }
 
