@@ -468,51 +468,6 @@ public class ProxyPathValidatorTest extends TestCase {
         //validateError(chain, trustedCerts, ProxyPathValidatorException.FAILURE);
     }
 
-    public void testValidateChain() throws Exception {
-        X509Certificate[] chain = null;
-        X509Certificate[] trustedCAs = new X509Certificate[] { goodCertsArr[0] };
-
-        // everything ok chain. this also tests signing policy for the
-        // credentials used to run the test, since actual proxy path
-        // validator is used and not test.
-        chain = X509Credential.getDefaultCredential().getCertificateChain();
-
-        TrustedCertificates trusted = TrustedCertificates.getDefault();
-        X509Certificate[] trustedCerts = trusted.getCertificates();
-        SigningPolicy[] policies = trusted.getSigningPolicies();
-
-        ProxyPathValidator v = new ProxyPathValidator();
-        v.validate(chain, trustedCerts, null, policies);
-        assertEquals(false, v.isLimited());
-        assertEquals(chain[1], v.getIdentityCertificate());
-
-        // unknown ca
-        v.reset();
-        try {
-            v.validate(chain, (X509Certificate[]) null, null);
-        } catch (ProxyPathValidatorException e) {
-            assertEquals(ProxyPathValidatorException.UNKNOWN_CA, e.getErrorCode());
-        }
-
-        // issuer vs subject do not match
-        chain = new X509Certificate[] { goodCertsArr[10], goodCertsArr[1], goodCertsArr[0] };
-        v.reset();
-        try {
-            v.validate(chain, trustedCAs, null, policies);
-        } catch (ProxyPathValidatorException e) {
-            assertEquals(ProxyPathValidatorException.FAILURE, e.getErrorCode());
-        }
-
-        // proxy cert expired
-        chain = new X509Certificate[] { goodCertsArr[3], goodCertsArr[1], goodCertsArr[0] };
-        v.reset();
-        try {
-            v.validate(chain, trustedCAs, null, policies);
-        } catch (ProxyPathValidatorException e) {
-            assertEquals(ProxyPathValidatorException.FAILURE, e.getErrorCode());
-        }
-    }
-
     public void testKeyUsage() throws Exception {
         X509Certificate[] certsArr = new X509Certificate[testCerts.length];
 
@@ -562,21 +517,20 @@ public class ProxyPathValidatorTest extends TestCase {
 
         TestProxyPathValidator tvalidator = new TestProxyPathValidator();
 
-        X509Certificate[] chain = null;
         // chain of good certs
-        chain = X509Credential.getDefaultCredential().getCertificateChain();
+        X509Certificate[] chain = new X509Certificate[]{goodCertsArr[22], goodCertsArr[21]};
+        X509Certificate[] tCerts = new X509Certificate[]{goodCertsArr[1],
+            goodCertsArr[16], goodCertsArr[25], goodCertsArr[21]};
         ClassLoader loader = ProxyPathValidatorTest.class.getClassLoader();
-        String location1 = loader.getResource(BASE + "testca3.rpem").getPath();
-        String location2 = loader.getResource(BASE).getPath();
+        String location1 = loader.getResource(BASE).getPath();
+        CertificateRevocationLists certRevLists = CertificateRevocationLists.getCertificateRevocationLists(location1);
+        assertNotNull(certRevLists);
+        assertEquals(2,certRevLists.getCrls().length);
 
-        CertificateRevocationLists certRevLists = CertificateRevocationLists.getCertificateRevocationLists(location1
-            + ", " + location2);
-        assertTrue(certRevLists != null);
-        assertTrue(certRevLists.getCrls().length > 0);
-
-        TrustedCertificates trustedCerts = TrustedCertificates.getDefault();
+        TrustedCertificates trustedCerts = new TrustedCertificates(tCerts);
         X509CRL[] crls = certRevLists.getCrls();
-        assertTrue(crls != null);
+        assertNotNull(crls);
+        assertEquals(2, crls.length);
         try {
             tvalidator.validate(chain, trustedCerts.getCertificates(), certRevLists, trustedCerts.getSigningPolicies());
         } catch (ProxyPathValidatorException e) {
@@ -590,9 +544,9 @@ public class ProxyPathValidatorTest extends TestCase {
 
         // ca1 ca1user1 good chain
         chain = new X509Certificate[] { goodCertsArr[22], goodCertsArr[21] };
-        certRevLists = CertificateRevocationLists.getCertificateRevocationLists(location1 + ", " + location2);
-        assertTrue(certRevLists != null);
-        assertTrue(certRevLists.getCrls().length > 0);
+        certRevLists = CertificateRevocationLists.getCertificateRevocationLists(location1);
+        assertNotNull(certRevLists.getCrls());
+        assertEquals(2,certRevLists.getCrls().length);
 
         try {
             tvalidator.validate(chain, new X509Certificate[] { goodCertsArr[21] }, certRevLists, trustedCerts

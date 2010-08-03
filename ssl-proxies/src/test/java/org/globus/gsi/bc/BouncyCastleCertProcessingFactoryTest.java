@@ -35,6 +35,8 @@ import junit.framework.Test;
 
 public class BouncyCastleCertProcessingFactoryTest extends TestCase {
 
+    private String proxyFile = "validatorTest/gsi2fullproxy.pem";
+    
     public static BouncyCastleCertProcessingFactory factory = 
     BouncyCastleCertProcessingFactory.getDefault();
 
@@ -52,7 +54,8 @@ public class BouncyCastleCertProcessingFactoryTest extends TestCase {
     
     public void testResctrictedNoProxyCertInfoExt() throws Exception {
     
-    GlobusCredential cred = GlobusCredential.getDefaultCredential();
+    ClassLoader loader = BouncyCastleCertProcessingFactoryTest.class.getClassLoader();
+    GlobusCredential cred = new GlobusCredential(loader.getResource(proxyFile).getPath());
     
     try {
         factory.createCredential(cred.getCertificateChain(),
@@ -70,7 +73,8 @@ public class BouncyCastleCertProcessingFactoryTest extends TestCase {
 
     public void testResctrictedWithOtherExt() throws Exception {
 
-    GlobusCredential cred = GlobusCredential.getDefaultCredential();
+    ClassLoader loader = BouncyCastleCertProcessingFactoryTest.class.getClassLoader();
+    GlobusCredential cred = new GlobusCredential(loader.getResource(proxyFile).getPath());
 
     X509Extension ext = null;
     
@@ -124,14 +128,15 @@ public class BouncyCastleCertProcessingFactoryTest extends TestCase {
 
     public void testExtensions() throws Exception {
     
-    GlobusCredential cred = GlobusCredential.getDefaultCredential();
+    ClassLoader loader = BouncyCastleCertProcessingFactoryTest.class.getClassLoader();
+    GlobusCredential cred = new GlobusCredential(loader.getResource(proxyFile).getPath());
     X509Extension ext = null;
     
     String oid1 = "1.2.3.4";
     String expectedValue1 = "foo";
     boolean critical1 = false;
     
-    // used to be 5.6.7.8. Didn't work with newer bouncy castle version
+    // COMMENT Used to be 5.6.7.8. Didn't work with newer bouncy castle version
     String oid2 = "1.2.3.5";
     String expectedValue2 = "bar";
     boolean critical2 = true;
