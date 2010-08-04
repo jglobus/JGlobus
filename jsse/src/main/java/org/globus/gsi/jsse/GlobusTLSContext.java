@@ -1,9 +1,7 @@
-package org.globus.gsi;
+package org.globus.gsi.jsse;
 
 import org.apache.commons.logging.Log;
-
 import org.apache.commons.logging.LogFactory;
-
 import java.io.ByteArrayInputStream;
 import java.security.Principal;
 import java.security.cert.Certificate;
@@ -11,13 +9,9 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-
-
-
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.security.auth.Subject;
-
 import org.apache.commons.codec.binary.Hex;
 
 public class GlobusTLSContext {

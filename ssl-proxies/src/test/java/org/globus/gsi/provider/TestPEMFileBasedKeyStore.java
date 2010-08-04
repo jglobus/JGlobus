@@ -21,9 +21,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.globus.gsi.DirSetupUtil;
-import org.globus.gsi.FileSetupUtil;
-
+import org.globus.gsi.testutils.DirSetupUtil;
+import org.globus.gsi.testutils.FileSetupUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
 
 import org.globus.gsi.stores.PEMKeyStore;

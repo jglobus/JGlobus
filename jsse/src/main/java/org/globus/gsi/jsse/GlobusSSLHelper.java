@@ -12,13 +12,12 @@
  *
  * See the License for the specific language governing permissions and limitations under the License.
  */
-
 package org.globus.gsi.jsse;
 
 import org.apache.commons.logging.Log;
-
 import org.apache.commons.logging.LogFactory;
-
+import org.globus.gsi.provider.GlobusProvider;
+import org.globus.gsi.stores.ResourceCertStoreParameters;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,8 +32,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
 import java.security.cert.CertificateException;
-import org.globus.gsi.provider.GlobusProvider;
-import org.globus.gsi.stores.ResourceCertStoreParameters;
 
 /**
  * This is a utility class designed to simplify common tasks required for

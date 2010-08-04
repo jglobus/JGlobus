@@ -16,13 +16,9 @@ package org.globus.gsi.filestore;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.globus.gsi.FileSetupUtil;
-
 import org.globus.gsi.stores.ResourceSigningPolicy;
-
+import org.globus.gsi.testutils.FileSetupUtil;
 import java.util.Collection;
-
 import org.globus.gsi.SigningPolicy;
 import org.springframework.core.io.FileSystemResource;
 import org.junit.After;

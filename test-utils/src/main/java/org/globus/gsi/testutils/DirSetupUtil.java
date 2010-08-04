@@ -12,17 +12,18 @@
  *
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.globus.gsi;
+package org.globus.gsi.testutils;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.io.FileUtils;
 
 /**
  * FILL ME
- * 
+ *
  * @author ranantha@mcs.anl.gov
  */
 public class DirSetupUtil {
@@ -38,14 +39,19 @@ public class DirSetupUtil {
 
     public void createTempDirectory() throws IOException {
 
-        this.tempDir = File.createTempFile("temp", Long.toString(System.nanoTime()));
+        this.tempDir =
+                File.createTempFile("temp", Long.toString(System.nanoTime()));
 
         if (!(tempDir.delete())) {
-            throw new IOException("Could not delete temp file: " + this.tempDir.getAbsolutePath());
+            throw new IOException(
+                    "Could not delete temp file: " +
+                            this.tempDir.getAbsolutePath());
         }
 
         if (!(tempDir.mkdir())) {
-            throw new IOException("Could not create temp directory: " + this.tempDir.getAbsolutePath());
+            throw new IOException(
+                    "Could not create temp directory: " +
+                            this.tempDir.getAbsolutePath());
         }
 
     }

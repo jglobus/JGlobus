@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import javax.security.auth.x500.X500Principal;
 
 import org.globus.gsi.SigningPolicy;
+import org.globus.gsi.testutils.FileSetupUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
