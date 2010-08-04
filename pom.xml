@@ -12,7 +12,6 @@
         <module>jsse</module>
         <module>ssl-proxies</module>
         <module>ssl-proxies-tomcat</module>
-        <module>ssl-proxies-jetty</module>
         <module>test-utils</module>
         <module>container-test-utils</module>
     </modules>
