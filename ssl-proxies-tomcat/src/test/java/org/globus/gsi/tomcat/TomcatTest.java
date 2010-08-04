@@ -36,7 +36,7 @@ import org.globus.gsi.testutils.container.ClientTest;
 import org.globus.gsi.tomcat.GlobusSSLImplementation;
 import org.globus.gsi.tomcat.GlobusSSLInputStream;
 import org.globus.gsi.tomcat.GlobusSSLSocketFactory;
-import org.globus.gsi.GlobusTLSContext;
+import org.globus.gsi.jsse.GlobusTLSContext;
 import org.globus.gsi.provider.GlobusProvider;
 import org.junit.After;
 import org.junit.Before;

@@ -17,12 +17,12 @@ package org.globus.gsi.tomcat;
 
 import org.apache.tomcat.util.net.jsse.JSSESocketFactory;
 import org.globus.gsi.X509ProxyCertPathParameters;
+import org.globus.gsi.jsse.GlobusSSLHelper;
 import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.trustmanager.PKITrustManager;
 import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
 import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
-import org.globus.gsi.jsse.GlobusSSLHelper;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.TrustManager;
 import java.io.IOException;

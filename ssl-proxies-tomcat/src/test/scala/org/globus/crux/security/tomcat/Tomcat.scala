@@ -17,8 +17,8 @@ import org.globus.gsi.tomcat.GlobusSSLImplementation;
 import org.globus.gsi.tomcat.GlobusSSLInputStream;
 import org.globus.gsi.tomcat.GlobusSSLSocketFactory;
 import org.globus.gsi.testutils.FileSetupUtil;
-import org.globus.gsi.GlobusTLSContext;
 import org.globus.gsi.provider.GlobusProvider;
+import org.globus.gsi.jss.GlobusTLSContext;
 import org.globus.gsi.tomcat._
 
 class Tomcat extends Dsl with EN with Client{
