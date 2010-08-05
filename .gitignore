@@ -1,0 +1,11 @@
+target
+test-output
+*.iml
+*.rej
+*.patch
+*.diff
+*.orig
+.idea
+.project
+.classpath
+.settings
