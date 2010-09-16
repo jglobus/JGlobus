@@ -2,7 +2,7 @@
  * Copyright 1999-2010 University of Chicago
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
+ * compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -50,8 +50,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-
-
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -79,7 +77,8 @@ public class PEMKeyStore extends KeyStoreSpi {
 	// X.509 PRoxy Cerificate file name
 	public static final String PROXY_FILENAME = "proxyFilename";
 
-	private static Log logger = LogFactory.getLog(PEMKeyStore.class.getCanonicalName());
+	private static Log logger = LogFactory.getLog(PEMKeyStore.class
+			.getCanonicalName());
 
 	// Map from alias to the object (either key or certificate)
 	private Map<String, SecurityObjectWrapper<?>> aliasObjectMap = new Hashtable<String, SecurityObjectWrapper<?>>();
@@ -348,14 +347,28 @@ public class PEMKeyStore extends KeyStoreSpi {
 			}
 		}
 	}
-
+	
+	/**
+	 * Initialize resources from filename, proxyfile name 
+	 * 
+	 * @param defaultDirectoryString
+	 *            Name of the default directory name as:
+	 *            "file: directory name"
+	 * @param directoryListString
+	 * @param proxyFilename
+	 * @param certFilename
+	 * @param keyFilename
+	 * 
+	 * @throws IOException
+	 * @throws CertificateException
+	 */
 	private void initialize(String defaultDirectoryString,
 			String directoryListString, String proxyFilename,
 			String certFilename, String keyFilename) throws IOException,
 			CertificateException {
+		
 		if (defaultDirectoryString != null) {
-			defaultDirectory = new File(defaultDirectoryString);// .substring(0,
-			// defaultDirectoryString.lastIndexOf(File.pathSeparator))
+			defaultDirectory = new PathMatchingResourcePatternResolver().getResource(defaultDirectoryString).getFile();
 			if (!defaultDirectory.exists()) {
 				boolean directoryMade = defaultDirectory.mkdirs();
 				if (!directoryMade) {
@@ -366,7 +379,6 @@ public class PEMKeyStore extends KeyStoreSpi {
 			loadDirectories(defaultDirectoryString);
 		}
 		if (directoryListString != null) {
-			// String[] directoryList = directoryListString.split(",");
 			loadDirectories(directoryListString);
 		}
 		try {
@@ -383,9 +395,6 @@ public class PEMKeyStore extends KeyStoreSpi {
 			e.printStackTrace();
 			throw new CertificateException(e);
 		}
-		// for(String alias: this.aliasObjectMap.keySet()){
-		// System.out.println("alias = " + alias);
-		// }
 	}
 
 	private void loadProxyCertificate(String proxyFilename)
@@ -440,7 +449,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 				this.aliasObjectMap.put(alias, trustAnchor);
 			}
 		} catch (ResourceStoreException e) {
-			throw new CertificateException(e);
+			throw new CertificateException("",e);
 		}
 	}
 

@@ -16,8 +16,7 @@ package org.globus.gsi.util;
 
 import static org.junit.Assert.assertTrue;
 
-import org.globus.gsi.FileSetupUtil;
-
+import org.globus.gsi.testutils.FileSetupUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
 
 import java.io.BufferedReader;

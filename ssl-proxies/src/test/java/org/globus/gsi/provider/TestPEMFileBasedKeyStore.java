@@ -1,17 +1,17 @@
 /*
- * Copyright 1999-2010 University of Chicago
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied.
- *
- * See the License for the specific language governing permissions and limitations under the License.
- */
+* Copyright 1999-2010 University of Chicago
+*
+* Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+* compliance with the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software distributed under the License is
+* distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+* express or implied.
+*
+* See the License for the specific language governing permissions and limitations under the License.
+*/
 package org.globus.gsi.provider;
 
 import static org.junit.Assert.assertEquals;
@@ -21,13 +21,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.globus.gsi.DirSetupUtil;
-import org.globus.gsi.FileSetupUtil;
-
+import org.apache.commons.io.FileUtils;
+import org.globus.gsi.testutils.DirSetupUtil;
+import org.globus.gsi.testutils.FileSetupUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
 
 import org.globus.gsi.stores.PEMKeyStore;
-import org.globus.gsi.stores.PEMKeyStoreParameters;
+//import org.globus.gsi.stores.PEMKeyStoreParameters;
 
 import org.globus.gsi.X509Credential;
 
@@ -61,10 +61,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * FILL ME
- *
- * @author ranantha@mcs.anl.gov
- */
+* FILL ME
+*
+* @author ranantha@mcs.anl.gov
+*/
 public class TestPEMFileBasedKeyStore {
 
     DirSetupUtil trustedDirectory;
@@ -126,7 +126,7 @@ public class TestPEMFileBasedKeyStore {
         }
 
 
-//        String proxyFilename1 = "validatorTest/gsi2fullproxy.pem";
+// String proxyFilename1 = "validatorTest/gsi2fullproxy.pem";
         String proxyFilename1 = "validatorTest/gsi3independentFromLimitedProxy.pem";
         this.proxyFile1 = new FileSetupUtil(proxyFilename1);
         this.proxyFile1.copyFileToTemp();
@@ -161,9 +161,9 @@ public class TestPEMFileBasedKeyStore {
         // Parameters in properties file
         Properties properties = new Properties();
         properties.setProperty(PEMKeyStore.DEFAULT_DIRECTORY_KEY,
-                "file:" + this.defaultTrustedDirectory.getTempDirectoryName() + "/*.0");
+        		"file:"+ this.defaultTrustedDirectory.getTempDirectoryName());
         properties.setProperty(PEMKeyStore.DIRECTORY_LIST_KEY,
-                "file:" + this.trustedDirectory.getTempDirectoryName() + "/*.0");
+               "file:" + this.trustedDirectory.getTempDirectoryName() + "/*.0");
 
         InputStream ins = null;
         try {
@@ -191,9 +191,9 @@ public class TestPEMFileBasedKeyStore {
         // Parameters in properties file
         Properties properties = new Properties();
         properties.setProperty(PEMKeyStore.DEFAULT_DIRECTORY_KEY,
-                "file:" + this.defaultTrustedDirectory.getTempDirectoryName() + "/*.0");
+        		"file:" + this.defaultTrustedDirectory.getTempDirectoryName());
         properties.setProperty(PEMKeyStore.DIRECTORY_LIST_KEY,
-                "file:" + this.trustedDirectory.getTempDirectoryName() + "/*.0");
+        		 "file:" + this.trustedDirectory.getTempDirectoryName() + "/*.0");
 
         InputStream ins = null;
         try {
@@ -218,32 +218,12 @@ public class TestPEMFileBasedKeyStore {
 
     private PEMKeyStore loadFromParameters() throws Exception {
         LoadStoreParameter params = KeyStoreParametersFactory.createTrustStoreParameters(
-                "file:" + this.trustedDirectory.getTempDirectoryName() + "/*.0",
-                "file:" + this.defaultTrustedDirectory.getTempDirectoryName() + "/*.0"
+        		"file:" + this.trustedDirectory.getTempDirectoryName(),
+                "file:" + this.defaultTrustedDirectory.getTempDirectoryName() 
         );
         PEMKeyStore keystore = new PEMKeyStore();
         keystore.engineLoad(params);
         return keystore;
-    }
-
-//    @Test
-
-    public void testOutputStore() throws Exception {
-        PEMKeyStore existingKeyStore = loadFromParameters();
-        //Create new KeyStore to test
-        PEMKeyStoreParameters params = new PEMKeyStoreParameters(
-                "file:" + System.getProperty("java.io.tmpdir") + File.separator + "pemOutputStore");
-        PEMKeyStore newKeyStore = new PEMKeyStore();
-        newKeyStore.engineLoad(params);
-        Enumeration<String> enumeration = existingKeyStore.engineAliases();
-        Certificate cert = null;
-        if (enumeration.hasMoreElements()) {
-            cert = existingKeyStore.engineGetCertificate(enumeration.nextElement());
-        }
-        String alias = "file:" + System.getProperty("java.io.tmpdir") + File.separator + "pemOutputStore"
-                + File.separator + "blah.0";
-        newKeyStore.engineSetCertificateEntry(alias, cert);
-        newKeyStore.engineStore(null, null);
     }
 
     private void testLoadedStore(PEMKeyStore store) throws KeyStoreException {
@@ -284,7 +264,8 @@ public class TestPEMFileBasedKeyStore {
         // Parameters in properties file
         Properties properties = new Properties();
         properties.setProperty(PEMKeyStore.PROXY_FILENAME,
-                "file:" + this.proxyFile1.getAbsoluteFilename());
+                "file:"+ this.proxyFile1.getAbsoluteFilename());
+        
         InputStream ins = null;
         try {
             ins = getProperties(properties);
@@ -297,19 +278,19 @@ public class TestPEMFileBasedKeyStore {
 
         Enumeration aliases = store.engineAliases();
         assert (aliases.hasMoreElements());
-
         // proxy file 1
-        String proxyId1 = new FileSystemResource(this.proxyFile1.getTempFile()).getURL().toExternalForm();
-        assertTrue(store.engineIsKeyEntry(proxyId1));
-        Key key = store.engineGetKey(proxyId1, null);
+        String proxyId1 = new FileSystemResource(this.proxyFile1.getTempFile()).getFile().toString();//getURL().toExternalForm();
+        Key key = store.engineGetKey("file:"+ this.proxyFile1.getAbsoluteFilename(), null);
+       
+        assertTrue(store.engineIsKeyEntry("file:"+ this.proxyFile1.getAbsoluteFilename()));
         assertNotNull(key != null);
         assertTrue(key instanceof PrivateKey);
-
         Certificate[] certificates = store.engineGetCertificateChain(this.proxyFile1.getURL().toExternalForm());
         assertNotNull(certificates != null);
         assertTrue(certificates instanceof X509Certificate[]);
         key = null;
-        //     assert (this.proxyCertificates.get(this.proxyFile1.getAbsoluteFilename()).equals(certificates[0]));
+        
+        // assert (this.proxyCertificates.get(this.proxyFile1.getAbsoluteFilename()).equals(certificates[0]));
 
         properties.setProperty(PEMKeyStore.PROXY_FILENAME,
                 "file:" + this.proxyFile2.getAbsoluteFilename());
@@ -324,8 +305,8 @@ public class TestPEMFileBasedKeyStore {
         }
         // proxy file 2
         String proxyId2 = new FileSystemResource(this.proxyFile2.getTempFile()).getURL().toExternalForm();
-        key = store.engineGetKey(proxyId2, null);
-        assertTrue(store.engineIsKeyEntry(proxyId2));
+        key = store.engineGetKey("file:" + this.proxyFile2.getAbsoluteFilename(), null);
+        assertTrue(store.engineIsKeyEntry("file:" + this.proxyFile2.getAbsoluteFilename()));
         assertNotNull(key);
         assertTrue(key instanceof PrivateKey);
 
@@ -333,7 +314,7 @@ public class TestPEMFileBasedKeyStore {
         assertNotNull(certificates != null);
         assertTrue(certificates instanceof X509Certificate[]);
 
-//        assert (this.proxyCertificates.get(this.proxyFile2.getTempFilename()).equals(certificates[0]));
+// assert (this.proxyCertificates.get(this.proxyFile2.getTempFilename()).equals(certificates[0]));
 
 
         // test delete
@@ -341,7 +322,7 @@ public class TestPEMFileBasedKeyStore {
 
         certificates = store.engineGetCertificateChain(proxyId1);
         assertEquals(0, certificates.length);
-        assertFalse(this.proxyFile1.getTempFile().exists());
+        assertFalse((new File("file:"+ this.proxyFile1.getAbsoluteFilename())).exists());
         assertFalse(store.engineIsKeyEntry(proxyId1));
 
     }
@@ -436,10 +417,22 @@ public class TestPEMFileBasedKeyStore {
         }
         return ins;
     }
-
+    public static boolean deleteDir(File dir) { 
+		if (dir.isDirectory()) { 
+			String[] dirContent = dir.list(); 
+			for (int i=0; i<dirContent.length; i++){ 
+				boolean success = deleteDir(new File(dir, dirContent[i])); 
+				if (!success) { 
+					return false; 
+				} 
+			} 
+		} // The directory is now empty so delete it 
+		return dir.delete(); 
+	} 
     @After
     public void tearDown() throws Exception {
-        this.trustedDirectory.delete();
+        
+        deleteDir(new File(trustedDirectory.getTempDirectoryName()));
         this.proxyFile1.deleteFile();
         this.proxyFile2.deleteFile();
         this.certFile.deleteFile();

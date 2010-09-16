@@ -16,9 +16,6 @@ package org.globus.gsi.util;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.globus.gsi.FileSetupUtil;
-
 import org.globus.gsi.SigningPolicyException;
 
 import java.io.StringReader;
@@ -31,6 +28,7 @@ import javax.security.auth.x500.X500Principal;
 
 import org.globus.gsi.SigningPolicy;
 import org.globus.gsi.SigningPolicyParser;
+import org.globus.gsi.testutils.FileSetupUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

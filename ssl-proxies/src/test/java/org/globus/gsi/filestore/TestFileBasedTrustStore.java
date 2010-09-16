@@ -20,17 +20,13 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-
-import org.globus.gsi.DirSetupUtil;
-
 import org.globus.gsi.stores.ResourceCertStoreParameters;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
 import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
-
+import org.globus.gsi.testutils.DirSetupUtil;
 import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.provider.SigningPolicyStore;
 import org.globus.gsi.provider.SigningPolicyStoreParameters;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.security.Security;
@@ -219,9 +215,21 @@ public class TestFileBasedTrustStore {
 
 		// FIXME: figure out whether reload functions as expected
 	}
-
+	public static boolean deleteDir(File dir) { 
+		if (dir.isDirectory()) { 
+			String[] dirContent = dir.list(); 
+			for (int i=0; i<dirContent.length; i++){ 
+				boolean success = deleteDir(new File(dir, dirContent[i])); 
+				if (!success) { 
+					return false; 
+				} 
+			} 
+		} // The directory is now empty so delete it 
+		return dir.delete(); 
+	}
 	@AfterClass
 	public static void tearDown() throws Exception {
-		dir.delete();
+		//dir.delete();
+		deleteDir(dir.getTempDirectory());
 	}
 }

@@ -16,14 +16,10 @@ package org.globus.gsi.filestore;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.globus.gsi.FileSetupUtil;
-
 import org.globus.gsi.stores.ResourceCRL;
-
+import org.globus.gsi.testutils.FileSetupUtil;
 import java.io.File;
 import java.security.cert.X509CRL;
-
 import org.springframework.core.io.FileSystemResource;
 import org.junit.After;
 import org.junit.Before;
@@ -107,10 +103,22 @@ public class TestFileBasedCRL {
 //        assertTrue(filter.accept(null, "foo.r0"));
 //
 //    }
-
+    public static boolean deleteDir(File dir) { 
+		if (dir.isDirectory()) { 
+			String[] dirContent = dir.list(); 
+			for (int i=0; i<dirContent.length; i++){ 
+				boolean success = deleteDir(new File(dir, dirContent[i])); 
+				if (!success) { 
+					return false; 
+				} 
+			} 
+		} // The directory is now empty so delete it 
+		return dir.delete(); 
+	}
     @After
     public void tearDown() throws Exception {
-        this.testCrl1.deleteFile();
+        //this.testCrl1.deleteFile();
+        deleteDir(this.testCrl1.getTempFile());
     }
 
 }
