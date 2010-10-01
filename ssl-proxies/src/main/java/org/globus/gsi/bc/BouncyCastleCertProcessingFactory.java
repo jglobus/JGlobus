@@ -21,6 +21,7 @@ import org.globus.gsi.X509Credential;
 
 import org.globus.gsi.VersionUtil;
 import java.math.BigInteger;
+import java.security.cert.CertificateException;
 import java.util.Random;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -224,14 +225,7 @@ public class BouncyCastleCertProcessingFactory {
     public GlobusCredential createCredential(X509Certificate[] certs, PrivateKey privateKey, int bits, int lifetime,
         int delegationMode, X509ExtensionSet extSet, String cnValue) throws GeneralSecurityException {
 
-        X509Certificate[] bcCerts = new X509Certificate[certs.length];
-        for (int i = 0; i < certs.length; i++) {
-            if (!(certs[i] instanceof X509CertificateObject)) {
-                bcCerts[i] = CertificateLoadUtil.loadCertificate(new ByteArrayInputStream(certs[i].getEncoded()));
-            } else {
-                bcCerts[i] = certs[i];
-            }
-        }
+        X509Certificate[] bcCerts = getX509CertificateObjectChain(certs);
 
         KeyPairGenerator keyGen = null;
         keyGen = KeyPairGenerator.getInstance("RSA", "BC");
@@ -648,14 +642,7 @@ public class BouncyCastleCertProcessingFactory {
     public X509Credential createCredential(X509Certificate[] certs, PrivateKey privateKey, int bits, int lifetime,
         GSIConstants.CertificateType certType, X509ExtensionSet extSet, String cnValue) throws GeneralSecurityException {
 
-        X509Certificate[] bcCerts = new X509Certificate[certs.length];
-        for (int i = 0; i < certs.length; i++) {
-            if (!(certs[i] instanceof X509CertificateObject)) {
-                bcCerts[i] = CertificateLoadUtil.loadCertificate(new ByteArrayInputStream(certs[i].getEncoded()));
-            } else {
-                bcCerts[i] = certs[i];
-            }
-        }
+        X509Certificate[] bcCerts = getX509CertificateObjectChain(certs);
 
         KeyPairGenerator keyGen = null;
         keyGen = KeyPairGenerator.getInstance("RSA", "BC");
@@ -670,6 +657,43 @@ public class BouncyCastleCertProcessingFactory {
         System.arraycopy(certs, 0, newCerts, 1, certs.length);
 
         return new X509Credential(keyPair.getPrivate(), newCerts);
+    }
+
+    /**
+     * Creates a new proxy credential from the specified certificate chain and a private key,
+     * using the given delegation mode.
+     *
+     * @see #createCredential(X509Certificate[], PrivateKey, int, int, GSIConstants.CertificateType, X509ExtensionSet, String)
+     *      createCredential
+     */
+    public X509Credential createCredential(X509Certificate[] certs, PrivateKey privateKey, int bits, int lifetime,
+        GSIConstants.DelegationType delegType) throws GeneralSecurityException {
+        return createCredential(certs, privateKey, bits, lifetime, delegType, (X509ExtensionSet) null, null);
+    }
+
+    /**
+     * Creates a new proxy credential from the specified certificate chain and a private key,
+     * using the given delegation mode.
+     *
+     * @see #createCredential(X509Certificate[], PrivateKey, int, int, GSIConstants.CertificateType, X509ExtensionSet, String)
+     *      createCredential
+     */
+    public X509Credential createCredential(X509Certificate[] certs, PrivateKey privateKey, int bits, int lifetime,
+        GSIConstants.DelegationType delegType, X509ExtensionSet extSet) throws GeneralSecurityException {
+        return createCredential(certs, privateKey, bits, lifetime, delegType, extSet, null);
+    }
+
+    /**
+     * Creates a new proxy credential from the specified certificate chain and a private key,
+     * using the given delegation mode.
+     * @see #createCredential(X509Certificate[], PrivateKey, int, int, GSIConstants.CertificateType, X509ExtensionSet, String)
+     */
+    public X509Credential createCredential(X509Certificate[] certs, PrivateKey privateKey, int bits, int lifetime,
+       GSIConstants.DelegationType delegType, X509ExtensionSet extSet, String cnValue) throws GeneralSecurityException {
+
+        X509Certificate[] bcCerts = getX509CertificateObjectChain(certs);
+
+        return createCredential(bcCerts, privateKey, bits, lifetime, decideProxyType(bcCerts[0], delegType), extSet, cnValue);
     }
 
     /**
@@ -975,4 +999,78 @@ public class BouncyCastleCertProcessingFactory {
         return certReq.getEncoded();
     }
 
+    /**
+     * Given a delegation mode and an issuing certificate, decides an
+     * appropriate certificate type to use for proxies
+     * @param issuerCert the issuing certificate of a prospective proxy
+     * @param delegType the desired delegation mode
+     * @return the appropriate certificate type for proxies or
+     * GSIConstants#CertificateType#UNDEFINED when
+     * GSIConstants#DelegationType#NONE was specified
+     * @throws CertificateException when failing to get the certificate type
+     * of the issuing certificate
+     */
+    protected GSIConstants.CertificateType decideProxyType(
+            X509Certificate issuerCert, GSIConstants.DelegationType delegType)
+            throws CertificateException {
+        GSIConstants.CertificateType proxyType = GSIConstants.CertificateType.UNDEFINED;
+        if (delegType == GSIConstants.DelegationType.LIMITED) {
+            GSIConstants.CertificateType type = BouncyCastleUtil.getCertificateType(issuerCert);
+            if (ProxyCertificateUtil.isGsi4Proxy(type)) {
+                proxyType = GSIConstants.CertificateType.GSI_4_LIMITED_PROXY;
+            } else if (ProxyCertificateUtil.isGsi3Proxy(type)) {
+                proxyType = GSIConstants.CertificateType.GSI_3_LIMITED_PROXY;
+            } else if (ProxyCertificateUtil.isGsi2Proxy(type)) {
+                proxyType = GSIConstants.CertificateType.GSI_2_LIMITED_PROXY;
+            } else {
+                // default to RFC compliant proxy
+                if (VersionUtil.isGsi2Enabled()) {
+                    proxyType = GSIConstants.CertificateType.GSI_2_LIMITED_PROXY;
+                } else {
+                    proxyType = VersionUtil.isGsi3Enabled() ?
+                          GSIConstants.CertificateType.GSI_3_LIMITED_PROXY
+                        : GSIConstants.CertificateType.GSI_4_LIMITED_PROXY;
+                }
+            }
+        } else if (delegType == GSIConstants.DelegationType.FULL) {
+            GSIConstants.CertificateType type = BouncyCastleUtil.getCertificateType(issuerCert);
+            if (ProxyCertificateUtil.isGsi4Proxy(type)) {
+                proxyType = GSIConstants.CertificateType.GSI_4_IMPERSONATION_PROXY;
+            } else if (ProxyCertificateUtil.isGsi3Proxy(type)) {
+                proxyType = GSIConstants.CertificateType.GSI_3_IMPERSONATION_PROXY;
+            } else if (ProxyCertificateUtil.isGsi2Proxy(type)) {
+                proxyType = GSIConstants.CertificateType.GSI_2_PROXY;
+            } else {
+                // Default to RFC complaint proxy
+                if (VersionUtil.isGsi2Enabled()) {
+                    proxyType = GSIConstants.CertificateType.GSI_2_PROXY;
+                } else {
+                    proxyType = (VersionUtil.isGsi3Enabled()) ?
+                          GSIConstants.CertificateType.GSI_3_IMPERSONATION_PROXY
+                        : GSIConstants.CertificateType.GSI_4_IMPERSONATION_PROXY;
+                }
+            }
+        }
+        return proxyType;
+    }
+
+    /**
+     * Returns a chain of X509Certificate's that are instances of X509CertificateObject
+     * This is related to http://bugzilla.globus.org/globus/show_bug.cgi?id=4933
+     * @param certs input certificate chain
+     * @return a new chain where all X509Certificate's are instances of X509CertificateObject
+     * @throws GeneralSecurityException when failing to get load certificate from encoding
+     */
+    protected X509Certificate[] getX509CertificateObjectChain(X509Certificate[] certs)
+            throws GeneralSecurityException {
+        X509Certificate[] bcCerts = new X509Certificate[certs.length];
+        for (int i = 0; i < certs.length; i++) {
+            if (!(certs[i] instanceof X509CertificateObject)) {
+                bcCerts[i] = CertificateLoadUtil.loadCertificate(new ByteArrayInputStream(certs[i].getEncoded()));
+            } else {
+                bcCerts[i] = certs[i];
+            }
+        }
+        return bcCerts;
+    }
 }
