@@ -39,8 +39,7 @@ import java.security.Principal;
 import org.globus.gsi.bc.X509NameHelper;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -542,6 +541,15 @@ public final class CertificateUtil {
         return buf.toString();
     }
 
+    /**
+     * Converts Globus DN format "/O=C/OU=B/CN=A" into an X500Principal
+     * representation, which accepts RFC 2253 or 1779 formatted DN's and also
+     * attribute types as defined in RFC 2459 (e.g. "CN=A,OU=B,O=C"). This
+     * method should allow the forward slash, "/", to occur in attribute values
+     * (see GFD.125 section 3.2.2 -- RFC 2252 allows "/" in PrintableStrings).
+     * @param globusID DN in Globus format
+     * @return the X500Principal representation of the given DN
+     */
     public static X500Principal toPrincipal(String globusID) {
 
         if (globusID == null) {
@@ -551,17 +559,29 @@ public final class CertificateUtil {
         StringTokenizer tokens = new StringTokenizer(id, "/");
         StringBuffer buf = new StringBuffer();
         String token;
-
-        if (tokens.hasMoreTokens()) {
-            token = tokens.nextToken().trim();
-            buf.insert(0, token);
-        }
+        LinkedList<String> rdnList = new LinkedList<String>();
 
         while (tokens.hasMoreTokens()) {
             token = tokens.nextToken().trim();
 
-            buf.insert(0, ",");
-            buf.insert(0, token);
+            if (token.contains("=")) {
+                // prepend an RDN type and at least part of its value
+                rdnList.addFirst(token);
+            } else {
+                // insert part of an RDN value that was mistakenly removed
+                // as a result of tokenizing on forward slash
+                rdnList.set(0, rdnList.get(0) + "/" + token);
+            }
+        }
+
+        for (String rdn : rdnList) {
+            buf.append(",");
+            buf.append(rdn);
+        }
+
+        if (buf.length() > 0) {
+            // delete extra comma
+            buf.deleteCharAt(0);
         }
 
         String dn = buf.toString();
