@@ -17,8 +17,9 @@ package org.globus.gsi.gssapi.test;
 import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 
 import org.globus.gsi.gssapi.GSSConstants;
-import org.globus.gsi.GlobusCredential;
+import org.globus.gsi.X509Credential;
 import org.globus.gsi.GSIConstants;
+import org.globus.gsi.GSIConstants.CertificateType;
 
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSManager;
@@ -129,6 +130,9 @@ public class GlobusGSSContextTest extends TestCase {
 	ExtendedGSSContext sc = (ExtendedGSSContext)serverContext;
 	sc.setOption(GSSConstants.REQUIRE_CLIENT_AUTH,
 		     Boolean.FALSE);
+	sc.setOption(GSSConstants.ACCEPT_NO_CLIENT_CERTS,
+		     Boolean.TRUE);
+
 
 	clientContext.requestCredDeleg(false);
 	clientContext.requestConf(false);
@@ -168,14 +172,14 @@ public class GlobusGSSContextTest extends TestCase {
 	cred = (ExtendedGSSCredential)serverContext.getDelegCred();
 	assertTrue(cred != null);
 
-	GlobusCredential proxy = null;
-	proxy = ((GlobusGSSCredentialImpl)cred).getGlobusCredential();
+	X509Credential proxy = null;
+	proxy = ((GlobusGSSCredentialImpl)cred).getX509Credential();
 	assertTrue(proxy != null);
-	assertTrue( (proxy.getProxyType() == GSIConstants.GSI_2_PROXY) ||
+	assertTrue( (proxy.getProxyType() == CertificateType.GSI_2_PROXY) ||
 		    (proxy.getProxyType() == 
-                     GSIConstants.GSI_3_IMPERSONATION_PROXY) ||
+                     CertificateType.GSI_3_IMPERSONATION_PROXY) ||
                     (proxy.getProxyType() == 
-                     GSIConstants.GSI_4_IMPERSONATION_PROXY));
+                     CertificateType.GSI_4_IMPERSONATION_PROXY));
 
 	logger.debug(proxy);
 	
@@ -199,13 +203,13 @@ public class GlobusGSSContextTest extends TestCase {
 	cred = (ExtendedGSSCredential)serverContext.getDelegCred();
 	assertTrue(cred != null);
 	
-	proxy = ((GlobusGSSCredentialImpl)cred).getGlobusCredential();
+	proxy = ((GlobusGSSCredentialImpl)cred).getX509Credential();
 	assertTrue(proxy != null);
-	assertTrue( (proxy.getProxyType() == GSIConstants.GSI_2_LIMITED_PROXY)
+	assertTrue( (proxy.getProxyType() == CertificateType.GSI_2_LIMITED_PROXY)
                     || (proxy.getProxyType() == 
-                        GSIConstants.GSI_3_LIMITED_PROXY) || 
+                        CertificateType.GSI_3_LIMITED_PROXY) || 
                     (proxy.getProxyType() == 
-                     GSIConstants.GSI_4_LIMITED_PROXY));
+                     CertificateType.GSI_4_LIMITED_PROXY));
 	logger.debug(proxy);
     }
 
@@ -264,8 +268,8 @@ public class GlobusGSSContextTest extends TestCase {
 	cred = (ExtendedGSSCredential)sr.getDelegatedCredential();
 	assertTrue(cred != null);
 
-	GlobusCredential globusCred = 
-	    ((GlobusGSSCredentialImpl)cred).getGlobusCredential();
+	X509Credential globusCred = 
+	    ((GlobusGSSCredentialImpl)cred).getX509Credential();
 	Date notAfter = globusCred.getCertificateChain()[0].getNotAfter();
 	Date notBefore = globusCred.getCertificateChain()[0].getNotBefore();
 	logger.debug(globusCred);
@@ -353,14 +357,14 @@ public class GlobusGSSContextTest extends TestCase {
 	cred = (ExtendedGSSCredential)serverContext.getDelegCred();
 	assertTrue(cred != null);
 
-	GlobusCredential proxy = null;
-	proxy = ((GlobusGSSCredentialImpl)cred).getGlobusCredential();
+	X509Credential proxy = null;
+	proxy = ((GlobusGSSCredentialImpl)cred).getX509Credential();
 	assertTrue(proxy != null);
-	assertTrue( (proxy.getProxyType() == GSIConstants.GSI_2_LIMITED_PROXY)
+	assertTrue( (proxy.getProxyType() == CertificateType.GSI_2_LIMITED_PROXY)
                     || (proxy.getProxyType() == 
-                        GSIConstants.GSI_3_LIMITED_PROXY) || 
+                        CertificateType.GSI_3_LIMITED_PROXY) || 
                     (proxy.getProxyType() == 
-                     GSIConstants.GSI_4_LIMITED_PROXY));
+                     CertificateType.GSI_4_LIMITED_PROXY));
 
 	GSSManager manager = getGSSManager();
 
@@ -867,7 +871,7 @@ public class GlobusGSSContextTest extends TestCase {
 	    fail("unwrap did not fail as excepted");
 	} catch (GSSException e) {
 	    // I'm little bit unsure about this condition
-	    if (e.getMajor() != GSSException.BAD_MIC) {
+	    if (e.getMajor() != GSSException.FAILURE) {
 		e.printStackTrace();
 		fail("Unexpected GSSException");
 	    }

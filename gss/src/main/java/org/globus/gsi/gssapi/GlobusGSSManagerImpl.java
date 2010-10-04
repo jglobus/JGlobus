@@ -35,8 +35,8 @@ import org.ietf.jgss.Oid;
 import org.gridforum.jgss.ExtendedGSSManager;
 import org.gridforum.jgss.ExtendedGSSCredential;
 
-import org.globus.gsi.GlobusCredential;
-import org.globus.gsi.GlobusCredentialException;
+import org.globus.gsi.X509Credential;
+import org.globus.gsi.CredentialException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -82,7 +82,7 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
      * @param lifetime Only lifetime set to 
      *        {@link GSSCredential#DEFAULT_LIFETIME
      *        GSSCredential.DEFAULT_LIFETIME} is allowed.
-     * @see org.globus.gsi.GlobusCredential#getDefaultCredential()
+     * @see org.globus.gsi.X509Credential#getDefaultCredential()
      */
     public GSSCredential createCredential (GSSName name,
 					   int lifetime, 
@@ -99,7 +99,7 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
 	    }
 	}
 
-	GlobusCredential cred = null;
+	X509Credential cred = null;
 
 	Subject subject = JaasSubject.getCurrentSubject();
 	if (subject != null) {
@@ -111,7 +111,7 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
 		if (iter.hasNext()) {
 		    GlobusGSSCredentialImpl credImpl = 
 			(GlobusGSSCredentialImpl)iter.next();
-		    cred = credImpl.getGlobusCredential();
+		    cred = credImpl.getX509Credential();
 		}
 	    }
 	}
@@ -127,14 +127,10 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
 	if (cred == null) {
 	    logger.debug("Getting default credential");
 	    try {
-		cred = GlobusCredential.getDefaultCredential();
-	    } catch(GlobusCredentialException e) {
-		if (e.getErrorCode() == GlobusCredentialException.EXPIRED) {
-		    throw new GSSException(GSSException.CREDENTIALS_EXPIRED);
-		} else {
-		    throw new GlobusGSSException(
-			       GSSException.DEFECTIVE_CREDENTIAL, e);
-		}
+		cred = X509Credential.getDefaultCredential();
+	    } catch(CredentialException e) {
+		throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL,
+					     e);
 	    } catch(Exception e) {
 		throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL,
 					     e);
@@ -147,12 +143,12 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
     }
 
     private synchronized GSSCredential getDefaultCredential(
-                                                 GlobusCredential cred,
+                                                 X509Credential cred,
                                                  int usage) 
         throws GSSException {
         if (this.defaultCred != null &&
             this.defaultCred.getUsage() == usage &&
-            this.defaultCred.getGlobusCredential() == cred) {
+            this.defaultCred.getX509Credential() == cred) {
             return this.defaultCred;
         } else {
             this.defaultCred = new GlobusGSSCredentialImpl(cred, usage);
@@ -238,15 +234,11 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
 					 new Object[] {new Integer(option)});
 	}
 
-	GlobusCredential cred = null;
+	X509Credential cred = null;
 	try {
-	    cred = new GlobusCredential(input);
-	} catch(GlobusCredentialException e) {
-	    if (e.getErrorCode() == GlobusCredentialException.EXPIRED) {
-		throw new GSSException(GSSException.CREDENTIALS_EXPIRED);
-	    } else {
-		throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
-	    }
+	    cred = new X509Credential(input);
+	} catch(CredentialException e) {
+	    throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
 	} catch (Exception e) {
 	    throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
 	}
