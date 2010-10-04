@@ -147,12 +147,12 @@ public class X509Credential {
         return returnArray;
     }
 
-    public Key getPrivateKey() throws CredentialException {
+    public PrivateKey getPrivateKey() throws CredentialException {
 
         return getPrivateKey(null);
     }
 
-    public Key getPrivateKey(String password) throws CredentialException {
+    public PrivateKey getPrivateKey(String password) throws CredentialException {
 
         if (this.opensslKey.isEncrypted()) {
             if (password == null) {

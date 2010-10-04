@@ -45,7 +45,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     
     private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
     private Map<URI, ResourceSigningPolicy> signingPolicyFileMap = new HashMap<URI, ResourceSigningPolicy>();
-    private Map<X500Principal, SigningPolicy> policyMap = new HashMap<X500Principal, SigningPolicy>();
+    private Map<String, SigningPolicy> policyMap = new HashMap<String, SigningPolicy>();
     private ResourceSigningPolicyStoreParameters parameters;
     private Log logger = LogFactory.getLog(ResourceSigningPolicyStore.class.getCanonicalName());
 
@@ -68,7 +68,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
             return null;
         }
         loadPolicies();
-        return this.policyMap.get(caPrincipal);
+        return this.policyMap.get(caPrincipal.getName());
     }
 
     private void loadPolicies() throws SigningPolicyStoreException {
@@ -81,8 +81,8 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
         } catch (IOException e) {
             throw new SigningPolicyStoreException(e);
         }
-        Map<X500Principal, SigningPolicy> newPolicyMap =
-                new HashMap<X500Principal, SigningPolicy>();
+        Map<String, SigningPolicy> newPolicyMap =
+                new HashMap<String, SigningPolicy>();
         Map<URI, ResourceSigningPolicy> newPolicyFileMap =
                 new HashMap<URI, ResourceSigningPolicy>();
 
@@ -92,7 +92,12 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
                 logger.debug("Cannot read: " + resource.getFilename());
                 continue;
             }
-            loadSigningPolicy(resource, newPolicyMap, newPolicyFileMap);
+
+            try {
+                loadSigningPolicy(resource, newPolicyMap, newPolicyFileMap);
+            } catch (Exception e) {
+                logger.warn("Failed to load signing policy: " + resource.getFilename(), e);
+            }
         }
 
         this.policyMap = newPolicyMap;
@@ -100,7 +105,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     }
 
     private void loadSigningPolicy(
-            Resource policyResource, Map<X500Principal, SigningPolicy> policyMapToLoad,
+            Resource policyResource, Map<String, SigningPolicy> policyMapToLoad,
             Map<URI, ResourceSigningPolicy> currentPolicyFileMap) throws SigningPolicyStoreException {
 
         URI uri;
@@ -126,7 +131,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
         currentPolicyFileMap.put(uri, filePolicy);
         if (policies != null) {
             for (SigningPolicy policy : policies) {
-                policyMapToLoad.put(policy.getCASubjectDN(), policy);
+                policyMapToLoad.put(policy.getCASubjectDN().getName(), policy);
             }
         }
     }
