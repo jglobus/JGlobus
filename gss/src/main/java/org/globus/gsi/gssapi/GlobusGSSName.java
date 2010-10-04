@@ -16,14 +16,13 @@ package org.globus.gsi.gssapi;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Vector;
 
+import org.globus.gsi.util.CertificateUtil;
 import org.ietf.jgss.GSSName;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.Oid;
 
-
-import COM.claymoresystems.cert.X509Name;
+import javax.security.auth.x500.X500Principal;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -36,17 +35,21 @@ import java.io.ObjectOutputStream;
 public class GlobusGSSName implements GSSName, Serializable {
 
     protected Oid nameType;
-    protected X509Name name;
+    protected X500Principal name;
 
     // set toString called
     protected String globusID;
+
+    // set when constructing with GSSName.NT_HOSTBASED_SERVICE as name type
+    // or in the getter
+    protected String hostBasedServiceCN;
 
     public GlobusGSSName() {
 	this.nameType = GSSName.NT_ANONYMOUS;
 	this.name = null;
     }
 
-    public GlobusGSSName(X509Name name) {
+    public GlobusGSSName(X500Principal name) {
 	if (name == null) {
 	    this.nameType = GSSName.NT_ANONYMOUS;
 	}
@@ -58,7 +61,7 @@ public class GlobusGSSName implements GSSName, Serializable {
 	    this.nameType = GSSName.NT_ANONYMOUS;
 	    this.name = null;
 	} else {
-	    this.name = new X509Name(name);
+	    this.name = new X500Principal(name);
 	}
     }
     
@@ -75,7 +78,7 @@ public class GlobusGSSName implements GSSName, Serializable {
 	    this.name = null;
 	} else {
 	    try {
-		this.name = PureTLSUtil.getX509Name(name);
+		this.name = CertificateUtil.toPrincipal(name);
 	    } catch (Exception e) {
 		throw new GlobusGSSException(GSSException.BAD_NAME, e);
 	    }
@@ -118,19 +121,14 @@ public class GlobusGSSName implements GSSName, Serializable {
 			throw new GlobusGSSException(GSSException.FAILURE, e);
 		    }
 
-		    String [] ava = {"CN", name.substring(0, atPos) + "/" + host};
-		    Vector rdn = new Vector(1);
-		    rdn.addElement(ava);
-		    Vector dn = new Vector(1);
-		    dn.addElement(rdn);
-		    
-		    this.name = new X509Name(dn);
+            hostBasedServiceCN = name.substring(0, atPos) + "/" + host;
+		    this.name = new X500Principal("CN=" + hostBasedServiceCN);
 		} else {
 		    throw new GSSException(GSSException.BAD_NAMETYPE);
 		}
 	    } else {
 		try {
-		    this.name = PureTLSUtil.getX509Name(name);
+		    this.name = CertificateUtil.toPrincipal(name);
 		} catch (Exception e) {
 		    throw new GlobusGSSException(GSSException.BAD_NAME, e);
 		}
@@ -176,8 +174,8 @@ public class GlobusGSSName implements GSSName, Serializable {
 	    (other.nameType != null && other.nameType.equals(GSSName.NT_HOSTBASED_SERVICE))) {
 	    // perform host based comparison
 	
-	    String hp1 = this.getHostPart(true);
-	    String hp2 = other.getHostPart(true);
+	    String hp1 = this.getHostBasedServiceCN(true);
+	    String hp2 = other.getHostBasedServiceCN(true);
 
 	    if (hp1 == null || hp2 == null) {
 		// something is really wrong
@@ -241,33 +239,53 @@ public class GlobusGSSName implements GSSName, Serializable {
 	    return "<anonymous>";
 	} else {
 	    if (this.globusID == null) {
-		this.globusID = PureTLSUtil.toGlobusID(this.name);
+		this.globusID = CertificateUtil.toGlobusID(name);
 	    }
 	    return this.globusID;
 	}
     }
 
-    protected String getHostPart(boolean first) {
-	Vector dn = this.name.getName();
-	int len = dn.size();
-	if (first) {
-	    for (int i=0;i<len;i++) {
-		Vector rdn = (Vector)dn.elementAt(i);
-		String [] ava = (String[])rdn.elementAt(0);
-		if (ava[0].equalsIgnoreCase("CN")) {
-		    return ava[1];
-		}
-	    }
-	} else {
-	    for (int i=len-1;i>=0;i--) {
-		Vector rdn = (Vector)dn.elementAt(i);
-		String [] ava = (String[])rdn.elementAt(0);
-		if (ava[0].equalsIgnoreCase("CN")) {
-		    return ava[1];
-		}
-	    }
-	}
-	return null;
+    /**
+     * Returns the CN corresponding to the host part of the DN
+     * @param last true if the CN is assumed to be the last CN attribute
+     * in the RFC 2253 formatted DN, else false to assume it is the first DN
+     * attribute
+     * @return the CN of the host based service
+     */
+    protected String getHostBasedServiceCN(boolean last) {
+        if (hostBasedServiceCN == null) {
+            String dn = name.getName();
+
+            int cnStart;
+
+            if (last) {
+                // use the last instance of CN in the DN
+                cnStart = dn.lastIndexOf("CN=") + 3;
+            } else {
+                // use the first instance of CN in the DN
+                cnStart = dn.indexOf("CN=") + 3;
+            }
+
+            if (cnStart == -1) {
+                return null;
+            }
+
+            int cnEnd = dn.indexOf(",", cnStart);
+
+            if (cnEnd == -1) {
+                int nextAtt = dn.indexOf("=", cnStart);
+                if (nextAtt == -1) {
+                    // CN is the last attribute in the DN
+                    cnEnd = dn.length();
+                } else {
+                    // unexpected DN format (attributes not comma delimited)
+                    return null;
+                }
+            }
+
+            hostBasedServiceCN = name.getName().substring(cnStart, cnEnd);
+        }
+        return hostBasedServiceCN;
     }
 
     private static String getService(String name) {
@@ -332,14 +350,13 @@ public class GlobusGSSName implements GSSName, Serializable {
     private void writeObject(ObjectOutputStream oos) throws IOException {
 
         oos.writeObject(this.nameType);
-        Vector oids = this.name.getName();
-        oos.writeObject(oids);
+        oos.writeObject(name.getName());
     }
 
     private void readObject(ObjectInputStream ois) 
         throws IOException, ClassNotFoundException {
 
         this.nameType = (Oid)ois.readObject();
-        this.name = new X509Name((Vector)ois.readObject());
+        this.name = new X500Principal((String)ois.readObject());
     }
 }
