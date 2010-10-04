@@ -14,6 +14,8 @@
  */
 package org.globus.gsi;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.gsi.util.CertificateUtil;
 
 import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
@@ -46,6 +48,7 @@ import org.globus.gsi.bc.BouncyCastleUtil;
  */
 public class GlobusCredential implements Serializable {
 
+	private Log logger = LogFactory.getLog(getClass());
     private X509Credential cred;
     private static GlobusCredential defaultCred;
     private static transient long credentialLastModified = -1;
@@ -165,6 +168,7 @@ public class GlobusCredential implements Serializable {
             X509ProxyCertPathValidator validator = new X509ProxyCertPathValidator();
             validator.engineValidate(CertificateUtil.getCertPath(this.cred.getCertificateChain()), parameters);
         } catch (Exception e) {
+        	e.printStackTrace();
             throw new GlobusCredentialException(GlobusCredentialException.FAILURE, e.getMessage(), e);
         }
     }
