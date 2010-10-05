@@ -76,6 +76,7 @@ public class BouncyCastleUtil {
     public static byte[] toByteArray(DERObject obj) 
 	throws IOException {
 	ByteArrayOutputStream bout = new ByteArrayOutputStream();
+	System.out.println("CASTLE UTILS ");
 	DEROutputStream der = new DEROutputStream(bout);
 	der.writeObject(obj);
 	return bout.toByteArray();

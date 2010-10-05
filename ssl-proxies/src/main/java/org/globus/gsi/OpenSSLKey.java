@@ -110,6 +110,7 @@ public abstract class OpenSSLKey {
      */
     public OpenSSLKey(String file) throws IOException, GeneralSecurityException {
         FileReader f = new FileReader(file);
+        System.out.println("Read File:"+ file);
         try {
             readPEM(f);
         } finally {
@@ -168,6 +169,7 @@ public abstract class OpenSSLKey {
             this.keyData = null;
         } else {
             this.keyData = Base64.decode(encodedKey);
+            System.out.println("Key Algorithm : "+keyAlg );
             this.intKey = getKey(keyAlg, keyData);
         }
     }
