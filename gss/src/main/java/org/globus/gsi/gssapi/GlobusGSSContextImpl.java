@@ -37,6 +37,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.LinkedList;
 import java.util.Date;
@@ -71,13 +72,10 @@ import java.security.KeyStore;
 
 import org.globus.gsi.GSIConstants;
 import org.globus.gsi.X509Credential;
-import org.globus.gsi.TrustedCertificates;
-import org.globus.gsi.CertificateRevocationLists;
-import org.globus.gsi.CertUtil;
+import org.globus.gsi.VersionUtil;
+import org.globus.gsi.util.CertificateLoadUtil;
 import org.globus.gsi.bc.BouncyCastleUtil;
 import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
-import org.globus.gsi.proxy.ProxyPathValidator;
-import org.globus.gsi.proxy.ProxyPathValidatorException;
 import org.globus.gsi.proxy.ProxyPolicyHandler;
 import org.globus.util.I18n;
 import org.globus.common.CoGProperties;
@@ -155,11 +153,13 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     private static final int GSI_SEQUENCE_SIZE = 8;
     
     private static final int GSI_MESSAGE_DIGEST_PADDING = 12;
-    
+
 /*DEL
     private static final short [] NO_ENCRYPTION = {SSLPolicyInt.TLS_RSA_WITH_NULL_MD5};
 */
     private static final String [] NO_ENCRYPTION = {"SSL_RSA_WITH_NULL_MD5"};
+
+    private static final String [] ENABLED_PROTOCOLS = {"TLSv1", "SSLv3"};
     
     private static final byte[] DELEGATION_TOKEN = new byte[] {GSIConstants.DELEGATION_CHAR};
     
@@ -253,7 +253,9 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     protected KeyPair keyPair;
 
     /* Needed to verifing certs */
+/*DEL
     protected TrustedCertificates tc;
+*/
     
     protected Map proxyPolicyHandlers;
 
@@ -1195,22 +1197,41 @@ done:      do {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
 
-        String [] cs;
+        this.sslEngine.setEnabledProtocols(ENABLED_PROTOCOLS);
+	logger.debug("SUPPORTED PROTOCOLS: " +
+                    Arrays.toString(this.sslEngine.getSupportedProtocols()) +
+                    "; ENABLED PROTOCOLS: " +
+                    Arrays.toString(this.sslEngine.getEnabledProtocols()));
+
+        ArrayList<String> cs = new ArrayList();
         if (this.encryption) {
-            // always make sure to add NULL cipher at the end
+            for (String cipherSuite : this.sslEngine.getSupportedCipherSuites()) {
+                if (!cipherSuite.contains("WITH_NULL"))
+                    cs.add(cipherSuite);
+            }
+/*DEL
             String [] ciphers = this.sslEngine.getEnabledCipherSuites();
             String [] newCiphers = new String[ciphers.length + 1];
             System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
             newCiphers[ciphers.length] = NO_ENCRYPTION[0];
             cs = newCiphers;
+*/
+            // cs.add(NO_ENCRYPTION[0]);
         } else {
-            // encryption not requested - accept only one cipher
-	    // TODO: Verify the following and implement!
-            // XXX: in the future might want to iterate through 
-            // all cipher and enable only the null encryption ones
+            // enable only the null encryption ones
+            for (String cipherSuite : this.sslEngine.getSupportedCipherSuites()) {
+                if (cipherSuite.contains("WITH_NULL"))
+                    cs.add(cipherSuite);
+            }
+            cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
+/*DEL
             cs = NO_ENCRYPTION;
+*/
         }
-        this.sslEngine.setEnabledCipherSuites(cs);
+        String[] testSuite = new String[0];
+        this.sslEngine.setEnabledCipherSuites(cs.toArray(testSuite));
+        logger.debug("CIPHER SUITE IS: " + Arrays.toString(
+                      this.sslEngine.getEnabledCipherSuites()));
 
 	// TODO: Document the following behavior
 	// NOTE: requireClientAuth Vs. acceptNoClientCerts
@@ -1318,7 +1339,6 @@ done:      do {
 	    // TODO: Restore below once there's support in PEMKeyStore.engineLoad
 	    //       Use JKS in the interim.
             // KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-	    // TODO: Ramifications of using JKS instead of Globus PEM?
             KeyStore keyStore = KeyStore.getInstance("JKS");
 	    keyStore.load(null, null);
 	    X509Credential cred = this.ctxCred.getX509Credential();
@@ -1381,6 +1401,8 @@ done:      do {
         }
         
         if (doGSIWrap) {
+            throw new GSSException(GSSException.UNAVAILABLE);
+/*DEL
             
             byte [] mic = getMIC(inBuf, off, len, null);
 
@@ -1394,6 +1416,7 @@ done:      do {
             System.arraycopy(inBuf, off, wtoken, 5+mic.length, len);
 
             token = wtoken;
+*/
         } else {
             token = wrap(inBuf, off, len);
 
@@ -1464,6 +1487,8 @@ done:      do {
         if (inBuf[off] == GSI_WRAP &&
             inBuf[off+1] == 3 && 
             inBuf[off+2] == 0) {
+            throw new GSSException(GSSException.UNAVAILABLE);
+/*DEL
             
             int micLen = SSLUtil.toShort(inBuf[off+3], inBuf[off+4]);
             int msgLen = len - 5 - micLen;
@@ -1484,6 +1509,7 @@ done:      do {
             // extract the data
             token = new byte[msgLen];
             System.arraycopy(inBuf, off+5+micLen, token, 0, msgLen);
+*/
             
         } else {
             token = unwrap(inBuf, off, len);
@@ -1935,6 +1961,7 @@ done:      do {
 /*DEL
         GSIConstants.CertificateType certType = BouncyCastleUtil.getCertificateType(issuer, this.tc);
 */
+	// TODO: Is this alright without this.tc being passed?
         GSIConstants.CertificateType certType = BouncyCastleUtil.getCertificateType(issuer);
         int dType = this.delegationType.intValue();
 
@@ -1944,22 +1971,22 @@ done:      do {
 
         if (certType == GSIConstants.CertificateType.EEC) {
             if (dType == GSIConstants.DELEGATION_LIMITED) {
-                if (CertUtil.isGsi2Enabled()) {
+                if (VersionUtil.isGsi2Enabled()) {
                     return GSIConstants.GSI_2_LIMITED_PROXY;
-                } else if (CertUtil.isGsi3Enabled()) {
+                } else if (VersionUtil.isGsi3Enabled()) {
                     return GSIConstants.GSI_3_LIMITED_PROXY;
                 } else {
                     return GSIConstants.GSI_4_LIMITED_PROXY;
                 }
             } else if (dType == GSIConstants.DELEGATION_FULL) {
-                if (CertUtil.isGsi2Enabled()) {
+                if (VersionUtil.isGsi2Enabled()) {
                     return GSIConstants.GSI_2_PROXY;
-                } else if (CertUtil.isGsi3Enabled()) {
+                } else if (VersionUtil.isGsi3Enabled()) {
                     return GSIConstants.GSI_3_IMPERSONATION_PROXY;
                 } else {
                     return GSIConstants.GSI_4_IMPERSONATION_PROXY;
                 }
-            } else if (CertUtil.isProxy(dType)) {
+            } else if (ProxyCertificateUtil.isProxy(GSIConstants.CertificateType.get(dType))) {
                 return dType;
             }
         } else if (ProxyCertificateUtil.isGsi2Proxy(certType)) {
@@ -1967,7 +1994,7 @@ done:      do {
                 return GSIConstants.GSI_2_LIMITED_PROXY;
             } else if (dType == GSIConstants.DELEGATION_FULL) {
                 return GSIConstants.GSI_2_PROXY;
-            } else if (CertUtil.isGsi2Proxy(dType)) {
+            } else if (ProxyCertificateUtil.isGsi2Proxy(GSIConstants.CertificateType.get(dType))) {
                 return dType;
             }
         } else if (ProxyCertificateUtil.isGsi3Proxy(certType)) {
@@ -1975,7 +2002,7 @@ done:      do {
                 return GSIConstants.GSI_3_LIMITED_PROXY;
             } else if (dType == GSIConstants.DELEGATION_FULL) {
                 return GSIConstants.GSI_3_IMPERSONATION_PROXY;
-            } else if (CertUtil.isGsi3Proxy(dType)) {
+            } else if (ProxyCertificateUtil.isGsi3Proxy(GSIConstants.CertificateType.get(dType))) {
                 return dType;
             }
         } else if (ProxyCertificateUtil.isGsi4Proxy(certType)) {
@@ -1983,7 +2010,7 @@ done:      do {
                 return GSIConstants.GSI_4_LIMITED_PROXY;
             } else if (dType == GSIConstants.DELEGATION_FULL) {
                 return GSIConstants.GSI_4_IMPERSONATION_PROXY;
-            } else if (CertUtil.isGsi4Proxy(dType)) {
+            } else if (ProxyCertificateUtil.isGsi4Proxy(GSIConstants.CertificateType.get(dType))) {
                 return dType;
             }
         }
@@ -2114,6 +2141,7 @@ done:      do {
         this.proxyPolicyHandlers = (Map)value;
     }
 
+/*DEL
     protected void setTrustedCertificates(Object value) 
         throws GSSException {
         if (!(value instanceof TrustedCertificates)) {
@@ -2124,11 +2152,9 @@ done:      do {
                                                        TrustedCertificates.class});
         }
 	//TODO: set this in SSLConfigurator before creating SSLContext and engine?
-/*TODO
         this.tc = (TrustedCertificates)value;
-*/
-        throw new GSSException(GSSException.UNAVAILABLE);
     }
+*/
     
     public void setOption(Oid option, Object value)
         throws GSSException {
@@ -2421,7 +2447,7 @@ done:      do {
             X509Certificate cert = null;
             try {
                 while(in.available() > 0) {
-                    cert = CertUtil.loadCertificate(in);
+                    cert = CertificateLoadUtil.loadCertificate(in);
                     certList.add(cert);
                 }
 
