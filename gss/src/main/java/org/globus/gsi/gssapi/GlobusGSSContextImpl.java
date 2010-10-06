@@ -1191,6 +1191,9 @@ done:      do {
 */
 	try {
 		this.sslConfigurator.setRejectLimitProxy(rejectLimitedProxy);
+                if (proxyPolicyHandlers != null)
+                    sslConfigurator.setHandlers(proxyPolicyHandlers);
+
         	this.sslContext = this.sslConfigurator.getSSLContext();
         	this.sslEngine = this.sslContext.createSSLEngine();
 	} catch (Exception e) {
@@ -2180,14 +2183,12 @@ done:      do {
         } else if (option.equals(GSSConstants.REQUIRE_CLIENT_AUTH)) {
             setRequireClientAuth(value);
         } else if (option.equals(GSSConstants.GRIM_POLICY_HANDLER)) {
-            // setGrimPolicyHandler(value);
-            throw new GSSException(GSSException.UNAVAILABLE);
+            setGrimPolicyHandler(value);
         } else if (option.equals(GSSConstants.TRUSTED_CERTIFICATES)) {
             // setTrustedCertificates(value);
             throw new GSSException(GSSException.UNAVAILABLE);
         } else if (option.equals(GSSConstants.PROXY_POLICY_HANDLERS)) {
-            // setProxyPolicyHandlers(value);
-            throw new GSSException(GSSException.UNAVAILABLE);
+            setProxyPolicyHandlers(value);
         } else if (option.equals(GSSConstants.ACCEPT_NO_CLIENT_CERTS)) {
             setAcceptNoClientCerts(value);
         } else if (option.equals(GSSConstants
