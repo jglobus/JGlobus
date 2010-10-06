@@ -222,13 +222,13 @@ public interface GSIConstants {
             return code;
         }
         
-        public static CertificateType get(int code) {
-            for (CertificateType tmp : CertificateType.values()) {
+        public static DelegationType get(int code) {
+            for (DelegationType tmp : DelegationType.values()) {
                 if (tmp.getCode() == code) {
                     return tmp;
                 }
             }
-            throw new IllegalArgumentException("invalid delegation  type code");
+            throw new IllegalArgumentException("invalid delegation type code");
         }
     }
 
