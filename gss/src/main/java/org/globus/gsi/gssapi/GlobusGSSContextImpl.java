@@ -197,7 +197,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     // gss context state variables
     protected boolean credentialDelegation = false;
     protected boolean anonymity = false;
-    protected boolean encryption = true;
+    protected boolean encryption = false;
     protected boolean established = false;
 
     /** The name of the context initiator */
@@ -1221,7 +1221,7 @@ done:      do {
 */
             // cs.add(NO_ENCRYPTION[0]);
         } else {
-            // enable only the null encryption ones
+            // enable the null encryption ones and place them at the front
             for (String cipherSuite : this.sslEngine.getSupportedCipherSuites()) {
                 if (cipherSuite.contains("WITH_NULL"))
                     cs.add(cipherSuite);
