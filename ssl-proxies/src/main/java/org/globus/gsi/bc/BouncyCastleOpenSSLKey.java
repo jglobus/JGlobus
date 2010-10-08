@@ -126,9 +126,7 @@ public class BouncyCastleOpenSSLKey extends OpenSSLKey {
 				AlgorithmIdentifier rsa = new AlgorithmIdentifier(rsaOid);
 				PrivateKeyInfo pkeyinfo = new PrivateKeyInfo(rsa, keyInfo);
 				DERObject derkey = pkeyinfo.getDERObject();
-				System.out.println("DER KEY READ");
 				byte[] keyData = BouncyCastleUtil.toByteArray(derkey);
-				System.out.println("DER KEY READ 2");
 				// The DER object needs to be mangled to
 				// create a proper ProvateKeyInfo object
 				PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyData);

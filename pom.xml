@@ -10,7 +10,9 @@
 		<module>gss</module>
 		<module>jsse</module>
 		<module>ssl-proxies</module>
+		<module>ssl-proxies-tomcat</module>
 		<module>test-utils</module>
+		<module>container-test-utils</module>
 	</modules>
 	<name>JGlobus 2.0</name>
 	<packaging>pom</packaging>
