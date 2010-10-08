@@ -1010,7 +1010,7 @@ public class BouncyCastleCertProcessingFactory {
      * @throws CertificateException when failing to get the certificate type
      * of the issuing certificate
      */
-    protected GSIConstants.CertificateType decideProxyType(
+    public static GSIConstants.CertificateType decideProxyType(
             X509Certificate issuerCert, GSIConstants.DelegationType delegType)
             throws CertificateException {
         GSIConstants.CertificateType proxyType = GSIConstants.CertificateType.UNDEFINED;
