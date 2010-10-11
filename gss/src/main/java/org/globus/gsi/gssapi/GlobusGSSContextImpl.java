@@ -2133,6 +2133,7 @@ System.out.println("INTEGER VALUE IS: " + delegationType.getCode());
         this.acceptNoClientCerts = (Boolean)value;
     }
 
+/*DEL
     protected void setGrimPolicyHandler(Object value) 
         throws GSSException {
         if (!(value instanceof ProxyPolicyHandler)) {
@@ -2147,6 +2148,7 @@ System.out.println("INTEGER VALUE IS: " + delegationType.getCode());
         }
         this.proxyPolicyHandlers.put("1.3.6.1.4.1.3536.1.1.1.7", value);
     }
+*/
 
     protected void setProxyPolicyHandlers(Object value) 
         throws GSSException {
@@ -2198,8 +2200,10 @@ System.out.println("INTEGER VALUE IS: " + delegationType.getCode());
             setRejectLimitedProxy(value);
         } else if (option.equals(GSSConstants.REQUIRE_CLIENT_AUTH)) {
             setRequireClientAuth(value);
+/*DEL
         } else if (option.equals(GSSConstants.GRIM_POLICY_HANDLER)) {
             setGrimPolicyHandler(value);
+*/
         } else if (option.equals(GSSConstants.TRUSTED_CERTIFICATES)) {
             // setTrustedCertificates(value);
             throw new GSSException(GSSException.UNAVAILABLE);
