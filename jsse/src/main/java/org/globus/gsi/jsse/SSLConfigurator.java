@@ -162,8 +162,8 @@ public class SSLConfigurator {
 		} else {
 			inputTrustStore = this.trustAnchorStore;
 		}
-		CertStore inputCertStore = GlobusSSLHelper
-				.findCRLStore(this.crlLocationPattern);
+		CertStore inputCertStore = this.crlStore != null? this.crlStore:
+                          GlobusSSLHelper.findCRLStore(this.crlLocationPattern);
 		if (handlers == null) {
 			parameters = new GlobusTrustManagerFactoryParameters(
 					inputTrustStore, inputCertStore, this.policyStore,
