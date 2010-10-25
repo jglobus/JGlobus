@@ -213,7 +213,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     protected ExtendedGSSCredential delegCred;
 
     // these can be set via setOption
+/*DEL
     protected Integer delegationType = GSIConstants.DELEGATION_TYPE_LIMITED;
+*/
+    protected GSIConstants.DelegationType delegationType =
+                                      GSIConstants.DelegationType.LIMITED;
     protected Integer gssMode = GSIConstants.MODE_GSI;
     protected Boolean checkContextExpiration = Boolean.FALSE;
     protected Boolean rejectLimitedProxy = Boolean.FALSE;
@@ -1098,7 +1102,10 @@ done:      do {
                                                        chain[0],
                                                        this.ctxCred.getPrivateKey(),
                                                        -1,
+/*DEL
                                                        getDelegationType(chain[0]));
+*/
+                                                       BouncyCastleCertProcessingFactory.decideProxyType(chain[0], this.delegationType));
 
                 byte [] enc = cert.getEncoded();
 /*DEL
@@ -1958,12 +1965,11 @@ done:      do {
         }
     }
 
+/*DEL
     protected int getDelegationType(X509Certificate issuer) 
         throws GeneralSecurityException, GSSException {
 
-/*DEL
-        GSIConstants.CertificateType certType = BouncyCastleUtil.getCertificateType(issuer, this.tc);
-*/
+        // GSIConstants.CertificateType certType = BouncyCastleUtil.getCertificateType(issuer, this.tc);
 	// TODO: Is this alright without this.tc being passed?
         GSIConstants.CertificateType certType = BouncyCastleUtil.getCertificateType(issuer);
         int dType = this.delegationType.intValue();
@@ -2019,6 +2025,7 @@ done:      do {
         }
         throw new GSSException(GSSException.FAILURE);
     }
+*/
 
 
     // -----------------------------------
@@ -2044,15 +2051,24 @@ done:      do {
 
     protected void setDelegationType(Object value) 
         throws GSSException {
-        if (!(value instanceof Integer)) {
+        GSIConstants.DelegationType v;
+        if (value instanceof GSIConstants.DelegationType)
+            v = (GSIConstants.DelegationType) value;
+        else if (value instanceof Integer) {
+            v = GSIConstants.DelegationType.get(((Integer) value).intValue());
+System.out.println("INTEGER VALUE IS: " + delegationType.getCode());
+}
+        else {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION_TYPE,
                                          "badType",
-                                         new Object[] {"delegation type",  Integer.class});
+                                         new Object[] {"delegation type",  GSIConstants.DelegationType.class});
         }
+/*DEL
         Integer v = (Integer)value;
-        if (v == GSIConstants.DELEGATION_TYPE_FULL ||
-            v == GSIConstants.DELEGATION_TYPE_LIMITED) {
+*/
+        if (v == GSIConstants.DelegationType.FULL ||
+            v == GSIConstants.DelegationType.LIMITED) {
             this.delegationType = v;
         } else {
             throw new GlobusGSSException(GSSException.FAILURE,
@@ -2325,7 +2341,10 @@ done:      do {
                                                        // TODO: Is this cast appropriate?
                                                        (PrivateKey)cred.getPrivateKey(),
                                                        time,
+/*DEL
                                                        getDelegationType(chain[0]));
+*/
+                                                       BouncyCastleCertProcessingFactory.decideProxyType(chain[0], this.delegationType));
                 
                 ByteArrayOutputStream out 
                     = new ByteArrayOutputStream();
