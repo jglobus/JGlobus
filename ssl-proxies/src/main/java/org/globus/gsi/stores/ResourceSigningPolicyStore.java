@@ -92,7 +92,12 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
                 logger.debug("Cannot read: " + resource.getFilename());
                 continue;
             }
-            loadSigningPolicy(resource, newPolicyMap, newPolicyFileMap);
+
+            try {
+                loadSigningPolicy(resource, newPolicyMap, newPolicyFileMap);
+            } catch (Exception e) {
+                logger.warn("Failed to load signing policy: " + resource.getFilename(), e);
+            }
         }
 
         this.policyMap = newPolicyMap;
