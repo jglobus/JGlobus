@@ -323,6 +323,7 @@ public class GlobusGSSContextTest extends TestCase {
 	    }
 	}
 
+/* getMIC()/verifyMIC() not supported
 	try {
 	    clientContext.getMIC(MSG, 0, MSG.length, null);
 	    fail("getMIC() did not throw exeption as expected");
@@ -343,6 +344,7 @@ public class GlobusGSSContextTest extends TestCase {
 		fail("Unexpected GSSException");
 	    }
 	}
+*/
 	
     }
 
@@ -585,10 +587,28 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestConf(true);
 	serverContext.requestConf(false);
 	establishContext();
-	assertTrue(!clientContext.getConfState());
+	assertTrue(clientContext.getConfState());
     }
 
     public void testRequestConf2() throws Exception {
+	// client requests No confidentiality but server doesn't support it
+	clientContext.requestCredDeleg(false);
+	clientContext.requestConf(false);
+	serverContext.requestConf(true);
+	establishContext();
+	assertTrue(clientContext.getConfState());
+    }
+
+    public void testRequestConf3() throws Exception {
+	// Neither client nor server request confidentiality
+	clientContext.requestCredDeleg(false);
+	clientContext.requestConf(false);
+	serverContext.requestConf(false);
+	establishContext();
+	assertTrue(!clientContext.getConfState());
+    }
+
+    public void testRequestConf4() throws Exception {
 	// client & server request confidentiality
 	clientContext.requestCredDeleg(false);
 	clientContext.requestConf(true);
@@ -597,6 +617,7 @@ public class GlobusGSSContextTest extends TestCase {
 	assertTrue(clientContext.getConfState());
     }
 
+/*getMIC()/verifyMIC() not supported
     // getMIC()/verifyMIC tests
 
     public void testMic1() throws Exception {
@@ -726,28 +747,53 @@ public class GlobusGSSContextTest extends TestCase {
 	    }
 	}
     }
+*/
     
     // basic wrap/unwrap tests
 
      public void testWrap1() throws Exception {
 	clientContext.requestCredDeleg(false);
 	clientContext.requestConf(false);
+	serverContext.requestConf(true);
 	establishContext();
 	
-	runWrapTests(false, false, 0);
-	runWrapTests(false, true, 0);
+	runWrapTests(true, false, 0);
+	runWrapTests(true, true, 0);
 	
+/* GSI_BIG NOT SUPPORTED ANY LONGER
 	// tests GSI_BIG mode
 	runWrapTests(false, false, GSSConstants.GSI_BIG);
+*/
      }
 
     public void testWrap2() throws Exception {
 	clientContext.requestCredDeleg(false);
 	clientContext.requestConf(true);
+	serverContext.requestConf(true);
 	establishContext();
 	
 	runWrapTests(true, false, 0);
 	runWrapTests(true, true, 0);
+    }
+
+    public void testWrap3() throws Exception {
+	clientContext.requestCredDeleg(false);
+	clientContext.requestConf(true);
+	serverContext.requestConf(false);
+	establishContext();
+	
+	runWrapTests(true, false, 0);
+	runWrapTests(true, true, 0);
+    }
+
+    public void testWrap4() throws Exception {
+	clientContext.requestCredDeleg(false);
+	clientContext.requestConf(false);
+	serverContext.requestConf(false);
+	establishContext();
+	
+	runWrapTests(false, false, 0);
+	runWrapTests(false, true, 0);
     }
 
     private void runWrapTests(boolean privacy, boolean reqConf, int qop) throws Exception {
@@ -888,6 +934,7 @@ public class GlobusGSSContextTest extends TestCase {
 	
 	clientContext.requestCredDeleg(true);
 	clientContext.requestConf(false);
+	serverContext.requestConf(true);
 
 	ServerSocket serverSocket = new ServerSocket(0);
 
@@ -919,7 +966,7 @@ public class GlobusGSSContextTest extends TestCase {
 	assertTrue("server ctx not established.", serverContext.isEstablished());
 
 	// just run some wrap/unwrap tests
-	runWrapTests(false, false, 0);
+	runWrapTests(true, false, 0);
     }
 
     class Server extends Thread {
