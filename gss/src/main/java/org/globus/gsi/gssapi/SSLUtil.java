@@ -82,10 +82,14 @@ public class SSLUtil {
         throws IOException {
         byte [] header = new byte[5];
         readFully(in, header, 0, header.length);
-        if (!isSSLPacket(header)) {
+	int length;
+        if (isSSLv3Packet(header))
+        	length = toShort(header[3], header[4]);
+	else if (isSSLv2HelloPacket(header))
+        	length = (((header[0] & 0x7f) << 8) | (header[1] & 0xff)) - 3;
+	else {
             throw new IOException("Invalid SSL header");
         }
-        int length = toShort(header[3], header[4]);
         byte [] inToken = new byte[header.length + length];
         System.arraycopy(header, 0, inToken, 0, header.length);
         readFully(in, inToken, header.length, length);

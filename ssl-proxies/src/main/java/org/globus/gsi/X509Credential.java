@@ -89,6 +89,10 @@ public class X509Credential {
     private static boolean credentialSet = false;
     private static File credentialFile = null;
 
+    static {
+        new ProviderLoader();
+    }
+
     public X509Credential(PrivateKey initKey, X509Certificate[] initCertChain) {
 
         if (initKey == null) {

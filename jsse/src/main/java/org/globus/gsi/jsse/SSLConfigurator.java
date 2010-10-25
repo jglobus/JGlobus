@@ -202,6 +202,9 @@ public class SSLConfigurator {
 		try {
 			KeyStore inputKeyStore;
 			if (this.credentialStore == null) {
+				if (this.credentialStoreLocation == null)
+ 					return null;
+
 				inputKeyStore = GlobusSSLHelper.findCredentialStore(
 						this.provider, this.credentialStoreType,
 						this.credentialStoreLocation,

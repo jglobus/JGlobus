@@ -30,7 +30,9 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import org.globus.gsi.GlobusCredential;
+import org.globus.gsi.X509Credential;
+import java.security.cert.CertificateEncodingException;
+import org.globus.gsi.CredentialException;
 
 /**
  * An implementation of <code>GlobusGSSCredential</code>.
@@ -39,7 +41,7 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
                                                 Serializable {   
 
     private int usage = 0;
-    private GlobusCredential cred;
+    private X509Credential cred;
     private GSSName name;
 
     /**
@@ -52,12 +54,12 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 
     /**
      * Creates regular credential from specified
-     * GlobusCredential object.
+     * X509Credential object.
      *
      * @param cred the credential
      * @param usage credential usage
      */
-    public GlobusGSSCredentialImpl(GlobusCredential cred,
+    public GlobusGSSCredentialImpl(X509Credential cred,
 				   int usage) 
 	throws GSSException {
 	if (cred == null) {
@@ -175,6 +177,8 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 		this.cred.save(bout);
 	    } catch (IOException e) {
 		throw new GlobusGSSException(GSSException.FAILURE, e);
+	    } catch (CertificateEncodingException e) {
+		throw new GlobusGSSException(GSSException.FAILURE, e);
 	    }
 	    return bout.toByteArray();
 	case IMPEXP_MECH_SPECIFIC:
@@ -186,6 +190,8 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 		fout = new FileOutputStream(file);
 		this.cred.save(fout);
 	    } catch(IOException e) {
+		throw new GlobusGSSException(GSSException.FAILURE, e);
+	    } catch (CertificateEncodingException e) {
 		throw new GlobusGSSException(GSSException.FAILURE, e);
 	    } finally {
 		if (fout != null) {
@@ -235,13 +241,13 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
     }
     
     /**
-     * Returns actual GlobusCredential object represented
+     * Returns actual X509Credential object represented
      * by this credential (if any).
      *
      * @return The credential object. Might be null if
      *         this is an anonymous credential.
      */
-    public GlobusCredential getGlobusCredential() {
+    public X509Credential getX509Credential() {
 	return this.cred;
     }
 
@@ -251,8 +257,13 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
      * @return The private key. Might be null if this
      *         is an anonymous credential.
      */
-    public PrivateKey getPrivateKey() {
-	return (this.cred == null) ? null : this.cred.getPrivateKey();
+    public PrivateKey getPrivateKey()
+	throws GSSException {
+        try {
+	    return (this.cred == null) ? null : (PrivateKey)this.cred.getPrivateKey();
+	} catch (CredentialException e) {
+            throw new GlobusGSSException(GSSException.FAILURE, e);
+        }
     }
 
     /**

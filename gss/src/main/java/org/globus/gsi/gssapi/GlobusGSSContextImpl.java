@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Vector;
 import java.util.LinkedList;
@@ -45,15 +46,31 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.GeneralSecurityException;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPublicKey;
 import java.security.interfaces.RSAPrivateKey;
+import org.globus.common.CoGProperties;
+
+import org.globus.gsi.ProviderLoader;
+import org.globus.gsi.provider.GlobusProvider;
+import org.globus.gsi.provider.KeyStoreParametersFactory;
+
+import org.globus.gsi.stores.ResourceCertStoreParameters;
+import org.globus.gsi.stores.ResourceSigningPolicyStore;
+import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
+
+import java.security.cert.CertStore;
+import java.security.cert.CertificateFactory;
+import javax.security.auth.x500.X500Principal;
+import java.security.KeyStore;
 
 import org.globus.gsi.GSIConstants;
-import org.globus.gsi.GlobusCredential;
+import org.globus.gsi.X509Credential;
 import org.globus.gsi.TrustedCertificates;
 import org.globus.gsi.CertificateRevocationLists;
 import org.globus.gsi.CertUtil;
@@ -65,6 +82,18 @@ import org.globus.gsi.proxy.ProxyPolicyHandler;
 import org.globus.util.I18n;
 import org.globus.common.CoGProperties;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLEngineResult;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import org.globus.gsi.jsse.SSLConfigurator;
+import org.globus.gsi.jsse.GlobusSSLConfigurationException;
+
+import org.bouncycastle.jce.provider.X509CertificateObject;
+import org.globus.gsi.util.CertificateLoadUtil;
+
+/*
 import COM.claymoresystems.ptls.SSLConn;
 import COM.claymoresystems.ptls.SSLRecord;
 import COM.claymoresystems.ptls.SSLDebug;
@@ -75,14 +104,16 @@ import COM.claymoresystems.sslg.SSLPolicyInt;
 import COM.claymoresystems.sslg.CertVerifyPolicyInt;
 import COM.claymoresystems.cert.X509Cert;
 import COM.claymoresystems.util.Util;
+*/
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.Enumeration;
+
 /**
  * Implementation of SSL/GSI mechanism for Java GSS-API. The implementation
- * is based on the <a href="http://www.rtfm.com/puretls/">PureTLS library</a>
- * (for SSL API) and the 
+ * is based on JSSE (for SSL API) and the 
  * <a href="http://www.bouncycastle.org/">BouncyCastle library</a> 
  * (for certificate processing API).
  * <BR>
@@ -97,9 +128,14 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             I18n.getI18n("org.globus.gsi.gssapi.errors",
                          GlobusGSSContextImpl.class.getClassLoader());
 
+    static {
+        new ProviderLoader();
+    }
 
+/*DEL
     private static Log sslLog = 
         LogFactory.getLog(SSLDebug.class.getName());
+*/
 
 
     /**
@@ -120,7 +156,10 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     
     private static final int GSI_MESSAGE_DIGEST_PADDING = 12;
     
+/*DEL
     private static final short [] NO_ENCRYPTION = {SSLPolicyInt.TLS_RSA_WITH_NULL_MD5};
+*/
+    private static final String [] NO_ENCRYPTION = {"SSL_RSA_WITH_NULL_MD5"};
     
     private static final byte[] DELEGATION_TOKEN = new byte[] {GSIConstants.DELEGATION_CHAR};
     
@@ -192,12 +231,22 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
     /** Context expiration date. */
     protected Date goodUntil = null;
+
+    protected SSLConfigurator sslConfigurator = null;
+    protected SSLContext sslContext = null;
+    protected SSLEngine sslEngine = null;
     
+/*DEL
     protected SSLConn conn;
+*/
+    protected boolean conn = false;
+/*DEL
     protected PureTLSContext context;
     protected SSLPolicyInt policy;
     protected TokenInputStream in;
     protected ByteArrayOutputStream out;
+*/
+    private ByteBuffer outByteBuff = null;
     protected BouncyCastleCertProcessingFactory certFactory;
 
     /** Used during delegation */
@@ -226,8 +275,33 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         this.expectedTargetName = target;
         this.ctxCred = cred;
         
+/*DEL
         this.context = new PureTLSContext();
+*/
+	try {
 
+            this.sslConfigurator = new SSLConfigurator();
+
+	    // set trust parameters in SSLConfigurator
+
+	    String caCertsLocation = "file:" + CoGProperties.getDefault().getCaCertLocations();
+            String crlPattern = caCertsLocation + "/*.r*";
+            String sigPolPattern = caCertsLocation + "/*.signing_policy";
+            KeyStore trustStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
+            trustStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsLocation + "/*.0"));
+	    sslConfigurator.setTrustAnchorStore(trustStore);
+
+            CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
+	    sslConfigurator.setCrlStore(crlStore);
+
+            ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
+	    sslConfigurator.setPolicyStore(sigPolStore);
+
+	} catch  (Exception e) {
+                throw new GlobusGSSException(GSSException.FAILURE, e);
+	}
+
+/*DEL
         CertVerifyPolicyInt certPolicy = PureTLSUtil.getDefaultCertVerifyPolicy();
         
         this.policy = new SSLPolicyInt();
@@ -236,9 +310,12 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         this.policy.setCertVerifyPolicy(certPolicy);
         this.context.setPolicy(policy);
 
+	// TODO
         setSSLDebugging();
+*/
     }
 
+/*DEL
     private void setSSLDebugging() {
         if (sslLog.isTraceEnabled()) {
             SSLDebug.setDebug( 0xffff );
@@ -246,6 +323,41 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             SSLDebug.setDebug( SSLDebug.DEBUG_CERT );
         }
     }
+*/
+
+    /*
+     * If the result indicates that we have outstanding tasks to do,
+     * go ahead and run them in this thread.
+     */
+    private void runDelegatedTasks(SSLEngine engine) throws Exception {
+
+            Runnable runnable;
+            while ((runnable = engine.getDelegatedTask()) != null) {
+                logger.debug("\trunning delegated task...");
+                runnable.run();
+            }
+            SSLEngineResult.HandshakeStatus hsStatus =
+                    engine.getHandshakeStatus();
+            if (hsStatus == SSLEngineResult.HandshakeStatus.NEED_TASK) {
+                throw new Exception(
+                        "handshake shouldn't need additional tasks");
+            }
+            logger.debug("\tnew HandshakeStatus: " + hsStatus);
+    }
+
+    private X509Certificate bcConvert(X509Certificate cert)
+            throws GSSException {
+        if (!(cert instanceof X509CertificateObject)) {
+            try {
+                return CertificateLoadUtil.loadCertificate(new ByteArrayInputStream(cert.getEncoded()));
+            } catch (Exception e) {
+                throw new GlobusGSSException(GSSException.FAILURE, e);
+            }
+        } else {
+                return cert;
+        }
+    }
+
 
     /**
      * This function drives the accepting side of the context establishment
@@ -275,9 +387,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         throws GSSException {
         logger.debug("enter acceptSecContext");
 
-        if (this.conn == null) {
+        if (!this.conn) {
             this.role = ACCEPT;
             
+	    logger.debug("enter initializing in acceptSecContext");
+
             if (this.ctxCred.getName().isAnonymous()) {
                 throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL,
                                              GlobusGSSException.UNKNOWN,
@@ -292,39 +406,100 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             }
 
             setCredential();
-            init(SSLConn.SSL_SERVER);
+
+	    try {
+                init(this.role);
+	    } catch (SSLException e) {
+                throw new GlobusGSSException(GSSException.FAILURE, e);
+            }
+
+	    this.conn = true;
+	    logger.debug("done initializing in initSecContext");
         }
 
+/*DEL
         this.out.reset();
         this.in.putToken(inBuff, off, len);
+*/
+	this.outByteBuff.clear();
+	ByteBuffer inByteBuff = ByteBuffer.wrap(inBuff, off, len);
 
         switch (state) {
             
         case HANDSHAKE:
             
             try {
-                this.conn.getHandshake().processHandshake();
+		logger.debug("STATUS BEFORE: " +
+			this.sslEngine.getHandshakeStatus().toString());
+                SSLEngineResult.HandshakeStatus handshake_status =
+                        sslEngine.getHandshakeStatus();
+
+                if (handshake_status ==
+                        SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+                        return null;
+                } else {
+                        outByteBuff = this.sslProcessHandshake(inByteBuff, outByteBuff);
+                        if (inByteBuff.hasRemaining()) {
+                                throw new GlobusGSSException(GSSException.FAILURE,
+		 		new Exception("Not all data processed; Original: " + len
+                        + " Remaining: " + inByteBuff.remaining() +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
+                        }
+                }
+
+		logger.debug("STATUS AFTER: " + this.sslEngine.getHandshakeStatus().toString());
+
+            outByteBuff.flip();
+
+/*DEL
                 if (this.conn.getHandshake().finishedP()) {
+*/
+		if (this.sslEngine.getHandshakeStatus() ==
+                        SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+                        // the wrap/unwrap above has resulted in handshaking
+                        // being complete on our end.
+
                     logger.debug("acceptSecContext handshake finished");
                     handshakeFinished();
                     
                     // acceptor
-                    X509Certificate cert = this.ctxCred.getCertificateChain()[0];
-                    setGoodUntil(cert.getNotAfter());
+                    for (X509Certificate cert : this.ctxCred.getCertificateChain()) {
+                        setGoodUntil(cert.getNotAfter());
+                    }
                     this.targetName = this.ctxCred.getName();
 
                     // initiator - peer
+/*DEL
                     Vector chain = this.conn.getCertificateChain();
-                    if (chain == null || chain.size() == 0) {
+*/
+		    Certificate[] chain;
+		    try {
+			chain = this.sslEngine.getSession().getPeerCertificates();
+		    } catch (SSLPeerUnverifiedException e) {
+                        chain = null;
+                    }
+                    if (chain == null || chain.length == 0) {
                         this.sourceName = new GlobusGSSName();
                         this.anonymity = true;
                     } else {
+/*DEL
                         X509Cert crt = (X509Cert)chain.elementAt(chain.size()-1);
                         setGoodUntil(crt.getValidityNotAfter());
                         
                         String identity = verifyChain(chain);
+*/
+                        for (X509Certificate cert : (X509Certificate[])chain) {
+                            setGoodUntil(cert.getNotAfter());
+                        }
 
-                        this.sourceName = new GlobusGSSName(identity);
+                        String identity = BouncyCastleUtil.getIdentity(bcConvert(BouncyCastleUtil.getIdentityCertificate((X509Certificate [])chain)));
+                        this.sourceName = new GlobusGSSName(CertificateUtil.toGlobusID(identity, false));
+			this.peerLimited = Boolean.valueOf(ProxyCertificateUtil.isLimitedProxy(BouncyCastleUtil.getCertificateType((X509Certificate)chain[0])));
+
+			logger.debug("Peer Identity is: " + identity
+				 + " Target name is: " + this.targetName +
+				" Limited Proxy: " + this.peerLimited.toString());
+
                         this.anonymity = false;
                     }
 
@@ -336,6 +511,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 }
             } catch (IOException e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
+            } catch (Exception e) {
+                throw new GlobusGSSException(GSSException.FAILURE, e);
             }
 
             break;
@@ -343,30 +520,54 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         case SERVER_START_DEL:
             
             try {
-                if (this.in.available() <= 0) {
+                if (inByteBuff.remaining() <= 0) {
                     return null;
                 }
 
+/*DEL
                 int delChar = this.conn.getInStream().read();
+*/
+		outByteBuff = sslDataUnwrap(inByteBuff, outByteBuff);
+                outByteBuff.flip();
+		byte [] delChar = new byte[outByteBuff.remaining()];
+		outByteBuff.get(delChar, 0, delChar.length);
+/*DEL
                 if (delChar != GSIConstants.DELEGATION_CHAR) {
+*/
+		if (!Arrays.equals(delChar, DELEGATION_TOKEN)) {
                     setDone();
                     break;
                 }
                 
+/*DEL
                 Vector chain = this.conn.getCertificateChain();
-                if (chain == null || chain.size() == 0) {
+*/
+		Certificate[] chain;
+		try {
+		    chain = this.sslEngine.getSession().getPeerCertificates();
+		} catch (SSLPeerUnverifiedException e) {
+                    chain = null;
+                }
+                if (chain == null || chain.length == 0) {
                     throw new GlobusGSSException(GSSException.FAILURE, 
                                                  GlobusGSSException.DELEGATION_ERROR,
                                                  "noClientCert");
                 }
 
-                X509Certificate tmpCert = 
+                X509Certificate tmpCert = (X509Certificate) chain[0];
+/*DEL
                     PureTLSUtil.convertCert((X509Cert)chain.lastElement());
+*/
                 byte [] req = generateCertRequest(tmpCert);
+/*DEL
                 this.conn.getOutStream().write(req, 0, req.length);
+*/
+		inByteBuff = ByteBuffer.wrap(req, 0, req.length);
+                outByteBuff.clear();
+                outByteBuff = sslDataWrap(inByteBuff, outByteBuff);
+                outByteBuff.flip();
+
             } catch (GeneralSecurityException e) {
-                throw new GlobusGSSException(GSSException.FAILURE, e);
-            } catch (IOException e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
             }
             
@@ -376,11 +577,21 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         case SERVER_END_DEL:
 
             try {
-                if (this.in.available() <= 0) {
+                if (inByteBuff.remaining() <= 0) {
                     return null;
                 }
 
+/*DEL
                 X509Certificate certificate = CertUtil.loadCertificate(this.conn.getInStream());
+*/
+		outByteBuff = sslDataUnwrap(inByteBuff, outByteBuff);
+                outByteBuff.flip();
+                byte [] buf = new byte[outByteBuff.remaining()];
+                outByteBuff.get(buf, 0, buf.length);
+		ByteArrayInputStream inStream = new ByteArrayInputStream(buf, 0, buf.length);
+		CertificateFactory cf = CertificateFactory.getInstance("X.509");
+		X509Certificate certificate = (X509Certificate)cf.generateCertificate(inStream);
+		inStream.close();
 
                 if (logger.isTraceEnabled()) {
                     logger.trace("Received delegated cert: " + 
@@ -389,16 +600,22 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
                 verifyDelegatedCert(certificate);
                 
+/*DEL
                 Vector chain = this.conn.getCertificateChain();
-                int chainLen = chain.size();
+*/
+		Certificate[] chain = this.sslEngine.getSession().getPeerCertificates();
+                int chainLen = chain.length;
                 X509Certificate [] newChain = new X509Certificate[chainLen + 1];
-                newChain[0] = certificate;
+                newChain[0] = bcConvert((X509Certificate)certificate);
                 for (int i=0;i<chainLen;i++) {
+/*DEL
                     newChain[i+1] = PureTLSUtil.convertCert((X509Cert)chain.elementAt(chainLen - 1 - i));
+*/
+		    newChain[i+1] = bcConvert((X509Certificate)chain[i]);
                 }
 
-                GlobusCredential proxy = 
-                    new GlobusCredential(this.keyPair.getPrivate(), newChain);
+                X509Credential proxy = 
+                    new X509Credential(this.keyPair.getPrivate(), newChain);
 
                 this.delegCred = 
                     new GlobusGSSCredentialImpl(proxy,
@@ -420,7 +637,199 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         // we processed all data.
 
         logger.debug("exit acceptSeContext");
+/*DEL
         return (this.out.size() > 0) ? this.out.toByteArray() : null;
+*/
+	if (this.outByteBuff.hasRemaining() || this.state == CLIENT_START_DEL) {
+                // TODO can we avoid this copy if the ByteBuffer is array based
+                // and we return that array?
+                byte [] out = new byte[this.outByteBuff.remaining()];
+                this.outByteBuff.get(out, 0, out.length);
+                return out;
+	} else
+                return null;
+    }
+
+    // TODO: How to handle SSL renegotiation? Should we employ the input token
+    // stream to hold onto non-processed app data? Test renegotiation!!!
+
+    // Meant for non-handshake processing
+    private ByteBuffer sslDataWrap(ByteBuffer inBBuff, ByteBuffer outBBuff)
+                      throws GSSException {
+	try {
+
+              if (sslEngine.getHandshakeStatus() !=
+			SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+                  throw new Exception("SSLEngine handshaking needed!");
+              }
+		// TODO why are we checking for handshake status while processing
+		// app data?
+		int iter = 0;
+	      do {
+		logger.debug("PROCESSING DATA (WRAP) " + ++iter +
+					 ": " + inBBuff.remaining());
+		SSLEngineResult result = sslEngine.wrap(inBBuff, outBBuff);
+		if (result.getHandshakeStatus() ==
+			SSLEngineResult.HandshakeStatus.NEED_TASK) {
+			runDelegatedTasks(sslEngine);
+			continue;
+		}
+		if (result.getStatus() ==
+			SSLEngineResult.Status.BUFFER_OVERFLOW) {
+			// Could attempt to drain the dst buffer of any already obtained
+		        // data, but we'll just increase it to the size needed.
+		        int pktSize = sslEngine.getSession().getPacketBufferSize();
+		        ByteBuffer b = ByteBuffer.allocate(pktSize + outBBuff.position());
+		        outBBuff.flip();
+		        b.put(outBBuff);
+		        outBBuff = b;
+			continue;
+		}
+		if (result.getStatus() !=
+			SSLEngineResult.Status.OK) {
+                	throw new GlobusGSSException(GSSException.FAILURE,
+                                             GlobusGSSException.TOKEN_FAIL,
+                                         result.getStatus().toString());
+		}
+		// TODO: check for BUFFER_UNDERFLOW and others?
+              } while (inBBuff.hasRemaining());
+
+		return outBBuff;
+	} catch (Exception e) {
+                throw new GlobusGSSException(GSSException.FAILURE, e);
+	}
+	}
+
+    private ByteBuffer sslDataUnwrap(ByteBuffer inBBuff, ByteBuffer outBBuff)
+                      throws GSSException {
+	try {
+		int iter = 0;
+              if (sslEngine.getHandshakeStatus() !=
+			SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+                  throw new Exception("SSLEngine handshaking needed!" + sslEngine.getHandshakeStatus().toString());
+              }
+	      do {
+		logger.debug("PROCESSING DATA (UNWRAP) " + ++iter +
+			 ": " + inBBuff.remaining());
+		SSLEngineResult result = sslEngine.unwrap(
+			inBBuff, outBBuff);
+		if (result.getHandshakeStatus() ==
+			SSLEngineResult.HandshakeStatus.NEED_TASK) {
+			runDelegatedTasks(sslEngine);
+			continue;
+		}
+		if (result.getStatus() ==
+			SSLEngineResult.Status.BUFFER_OVERFLOW) {
+			// Could attempt to drain the dst buffer of any already obtained
+		        // data, but we'll just increase it to the size needed.
+		        int appSize = sslEngine.getSession().getApplicationBufferSize();
+		        ByteBuffer b = ByteBuffer.allocate(appSize + outBBuff.position());
+		        outBBuff.flip();
+		        b.put(outBBuff);
+		        outBBuff = b;
+			continue;
+		}
+		else if (result.getStatus() ==
+				SSLEngineResult.Status.BUFFER_UNDERFLOW) {
+			// More data needed from peer
+			break;
+		}
+		if (result.getStatus() !=
+			SSLEngineResult.Status.OK) {
+                	throw new GlobusGSSException(GSSException.FAILURE,
+                                             GlobusGSSException.TOKEN_FAIL,
+                                         result.getStatus().toString());
+		}
+		// TODO: check BUFFER_UNDERFLOW and others
+              } while (inBBuff.hasRemaining());
+		return outBBuff;
+	} catch (IllegalArgumentException e) {
+            throw new GlobusGSSException(GSSException.DEFECTIVE_TOKEN, e);
+        } catch (SSLException e) {
+            if (e.toString().endsWith("bad record MAC"))
+                throw new GlobusGSSException(GSSException.BAD_MIC, e);
+            else
+                throw new GlobusGSSException(GSSException.FAILURE, e);
+	} catch (Exception e) {
+            throw new GlobusGSSException(GSSException.FAILURE, e);
+	}
+    }
+
+    private ByteBuffer sslProcessHandshake(ByteBuffer inBBuff, ByteBuffer outBBuff)
+                      throws GSSException {
+	// Loopon until we need more from peer or we are done with handshaking.
+	try {
+done:      do {
+              while (sslEngine.getHandshakeStatus() ==
+			SSLEngineResult.HandshakeStatus.NEED_WRAP) {
+		SSLEngineResult result = sslEngine.wrap(inBBuff, outBBuff);
+		if (result.getHandshakeStatus() ==
+			SSLEngineResult.HandshakeStatus.NEED_TASK) {
+			runDelegatedTasks(sslEngine);
+			continue;
+		}
+		if (result.getStatus() ==
+			SSLEngineResult.Status.BUFFER_OVERFLOW) {
+			// Could attempt to drain the dst buffer of any already obtained
+		        // data, but we'll just increase it to the size needed.
+		        int pktSize = sslEngine.getSession().getPacketBufferSize();
+		        ByteBuffer b = ByteBuffer.allocate(pktSize + outBBuff.position());
+		        outBBuff.flip();
+		        b.put(outBBuff);
+		        outBBuff = b;
+			continue;
+		}
+		if (result.getStatus() !=
+			SSLEngineResult.Status.OK) {
+                	throw new GlobusGSSException(GSSException.FAILURE,
+                                             GlobusGSSException.TOKEN_FAIL,
+                                         result.getStatus().toString());
+		}
+		// TODO: check for BUFFER_UNDERFLOW and others?
+              }
+
+		int iter = 0;
+              while (sslEngine.getHandshakeStatus() ==
+			SSLEngineResult.HandshakeStatus.NEED_UNWRAP) {
+		logger.debug("PROCESSING " + ++iter + ": " +
+					inBBuff.remaining());
+		SSLEngineResult result = sslEngine.unwrap(
+			inBBuff, outBBuff);
+		if (result.getHandshakeStatus() ==
+			SSLEngineResult.HandshakeStatus.NEED_TASK) {
+			runDelegatedTasks(sslEngine);
+			continue;
+		}
+		if (result.getStatus() ==
+			SSLEngineResult.Status.BUFFER_OVERFLOW) {
+			// Could attempt to drain the dst buffer of any already obtained
+		        // data, but we'll just increase it to the size needed.
+		        int appSize = sslEngine.getSession().getApplicationBufferSize();
+		        ByteBuffer b = ByteBuffer.allocate(appSize + outBBuff.position());
+		        outBBuff.flip();
+		        b.put(outBBuff);
+		        outBBuff = b;
+			continue;
+		}
+		else if (result.getStatus() ==
+				SSLEngineResult.Status.BUFFER_UNDERFLOW) {
+			// More data needed from peer
+			break done;
+		}
+		if (result.getStatus() !=
+			SSLEngineResult.Status.OK) {
+                	throw new GlobusGSSException(GSSException.FAILURE,
+                                             GlobusGSSException.TOKEN_FAIL,
+                                         result.getStatus().toString());
+		}
+              }
+           } while (sslEngine.getHandshakeStatus() !=
+			SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING);
+
+	   return outBBuff;
+	} catch (Exception e) {
+                throw new GlobusGSSException(GSSException.FAILURE, e);
+	}
     }
 
     /**
@@ -450,11 +859,12 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
      */
     public byte[] initSecContext(byte[] inBuff, int off, int len) 
         throws GSSException {
-        logger.debug("enter iniSecContext");
+        logger.debug("enter initSecContext");
 
-        if (this.conn == null) {
+        if (!this.conn) {
             this.role = INITIATE;
 
+		logger.debug("enter initializing in initSecContext");
             if (this.credentialDelegation) {
                 if (this.gssMode == GSIConstants.MODE_SSL) {
                     throw new GlobusGSSException(GSSException.FAILURE,
@@ -472,6 +882,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 this.anonymity = true;
             } else {
                 this.anonymity = false;
+
                 setCredential();
                 
                 if (this.ctxCred.getUsage() != GSSCredential.INITIATE_ONLY &&
@@ -482,7 +893,14 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 }
             }
             
-            init(SSLConn.SSL_CLIENT);
+	    try {
+            	init(this.role);
+            } catch (SSLException e) {
+                throw new GlobusGSSException(GSSException.FAILURE, e);
+            }
+
+	    this.conn = true;
+	    logger.debug("done initializing in initSecContext");
         }
 
         // Unless explicitly disabled, check if delegation is
@@ -499,34 +917,90 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             }
         }
 
+/*DEL
         this.out.reset();
         this.in.putToken(inBuff, off, len);
+*/
+
+        this.outByteBuff.clear();
+	ByteBuffer inByteBuff = ByteBuffer.wrap(inBuff, off, len);
 
         switch (state) {
             
         case HANDSHAKE:
-            
             try {
+
+		logger.debug("STATUS BEFORE: " +
+			this.sslEngine.getHandshakeStatus().toString());
+		SSLEngineResult.HandshakeStatus handshake_status =
+			sslEngine.getHandshakeStatus();
+
+        	if (handshake_status ==
+			SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+			return null;
+		} else {
+			outByteBuff = this.sslProcessHandshake(inByteBuff, outByteBuff);
+			if (inByteBuff.hasRemaining()) {
+                		throw new GlobusGSSException(GSSException.FAILURE,
+		 		new Exception("Not all data processed; Original: " + len
+                        + " Remaining: " + inByteBuff.remaining() +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
+			}
+		}
+
+		logger.debug("STATUS AFTER: " +
+			this.sslEngine.getHandshakeStatus().toString());
+
+	    outByteBuff.flip();
+/*DEL
                 this.conn.getHandshake().processHandshake();
                 if (this.conn.getHandshake().finishedP()) {
-                    logger.debug("iniSecContext handshake finished");
+*/
+                if (this.sslEngine.getHandshakeStatus() ==
+			SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+			// the wrap/unwrap above has resulted in handshaking
+			// being complete on our end.
+                    logger.debug("initSecContext handshake finished");
                     handshakeFinished();
 
+/*DEL
                     Vector chain = this.conn.getCertificateChain();
                     X509Cert crt = (X509Cert)chain.elementAt(chain.size()-1);
                     setGoodUntil(crt.getValidityNotAfter());
+*/
+                    Certificate[] chain = this.sslEngine.getSession().getPeerCertificates();
+		    if (!(chain instanceof X509Certificate[])) {
+			throw new Exception("Certificate chain not of type X509Certificate");
+		    }
+
+                    for (X509Certificate cert : (X509Certificate[])chain) {
+                        setGoodUntil(cert.getNotAfter());
+                    }
+
                     // acceptor - peer
 
+/*DEL
                     String identity = verifyChain(chain);
+*/
+			// TODO chain verification would have already been done by
+			// JSSE correct?
 
-                    this.targetName = new GlobusGSSName(identity);
+                    String identity = BouncyCastleUtil.getIdentity(bcConvert(BouncyCastleUtil.getIdentityCertificate((X509Certificate [])chain)));
+                    this.targetName = new GlobusGSSName(CertificateUtil.toGlobusID(identity, false));
+
+                    this.peerLimited = Boolean.valueOf(ProxyCertificateUtil.isLimitedProxy(BouncyCastleUtil.getCertificateType((X509Certificate)chain[0])));
+
+		    logger.debug("Peer Identity is: " + identity +
+			 " Target name is: " + this.targetName +
+			 " Limited Proxy: " + this.peerLimited.toString());
 
                     // initiator 
                     if (this.anonymity) {
                         this.sourceName = new GlobusGSSName();
                     } else {
-                        X509Certificate cert = this.ctxCred.getCertificateChain()[0];
-                        setGoodUntil(cert.getNotAfter());
+                        for (X509Certificate cert : this.ctxCred.getCertificateChain()) {
+                            setGoodUntil(cert.getNotAfter());
+                        }
                         this.sourceName = this.ctxCred.getName();
                     }
                     
@@ -544,7 +1018,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                         this.state = CLIENT_START_DEL;
                         // if there is data to return then
                         // break. otherwise we fall through!!!
-                        if (this.out.size() > 0) {
+                        if (this.outByteBuff.remaining() > 0) {
                             break;
                         } 
                     } else {
@@ -555,27 +1029,44 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 } else {
                     break;
                 }
-
             } catch (IOException e) {
+                throw new GlobusGSSException(GSSException.FAILURE, e);
+            } catch (Exception e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
             }
 
         case CLIENT_START_DEL:
             
             // sanity check - might be invalid state
-            if (this.state != CLIENT_START_DEL || this.out.size() > 0) {
+            if (this.state != CLIENT_START_DEL || this.outByteBuff.remaining() > 0) {
                 throw new GSSException(GSSException.FAILURE);
             }
+	    if (inByteBuff.hasRemaining()) {
+               		throw new GlobusGSSException(GSSException.FAILURE,
+		 		new Exception("Not all data processed; Original: " + len
+                        + " Remaining: " + inByteBuff.remaining() +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
+	    }
+            this.outByteBuff.clear();
 
             try {
+		String deleg;
+
                 if (getCredDelegState()) {
-                    this.conn.getOutStream().write(GSIConstants.DELEGATION_CHAR);
+                    deleg = Character.toString(GSIConstants.DELEGATION_CHAR);
                     this.state = CLIENT_END_DEL;
                 } else {
-                    this.conn.getOutStream().write('0');
+		    deleg = Character.toString('0');
                     setDone();
-                }
-            } catch (IOException e) {
+		}
+
+		// TODO: Force ASCII encoding?
+		byte[] a = deleg.getBytes();
+		inByteBuff = ByteBuffer.wrap(a, 0, a.length);
+                outByteBuff = sslDataWrap(inByteBuff, outByteBuff);
+		outByteBuff.flip();
+
+            } catch (Exception e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
             }
 
@@ -583,22 +1074,39 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
         case CLIENT_END_DEL:
 
+	    if (!inByteBuff.hasRemaining()) {
+                throw new GSSException(GSSException.DEFECTIVE_TOKEN);
+	    }
+
             try {
+/*DEL
                 if (this.in.available() <= 0) {
                     return null;
                 }
-                
+*/
+                outByteBuff = sslDataUnwrap(inByteBuff, outByteBuff);
+		outByteBuff.flip();
+		byte [] certReq = new byte[outByteBuff.remaining()];
+		outByteBuff.get(certReq, 0, certReq.length);
+
                 X509Certificate [] chain = this.ctxCred.getCertificateChain();
 
                 X509Certificate cert = 
-                    this.certFactory.createCertificate(this.conn.getInStream(),
+                    this.certFactory.createCertificate(new ByteArrayInputStream(certReq),
                                                        chain[0],
                                                        this.ctxCred.getPrivateKey(),
                                                        -1,
                                                        getDelegationType(chain[0]));
 
                 byte [] enc = cert.getEncoded();
+/*DEL
                 this.conn.getOutStream().write(enc, 0, enc.length);
+*/
+		inByteBuff = ByteBuffer.wrap(enc, 0, enc.length);
+		outByteBuff.clear();
+                outByteBuff = sslDataWrap(inByteBuff, outByteBuff);
+		outByteBuff.flip();
+
                 setDone();
             } catch (GeneralSecurityException e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
@@ -616,11 +1124,19 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         // we processed all data.
 
         logger.debug("exit initSecContext");
-        return (this.out.size() > 0 || this.state == CLIENT_START_DEL) ? 
-            this.out.toByteArray() : null;
+	//TODO: Why is here a check for CLIENT_START_DEL?
+        if (this.outByteBuff.hasRemaining() || this.state == CLIENT_START_DEL) {
+		// TODO can we avoid this copy if the ByteBuffer is array based
+		// and we return that array?
+		byte [] out = new byte[this.outByteBuff.remaining()];
+		this.outByteBuff.get(out, 0, out.length);
+		return out;
+	} else
+		return null;
     }
 
     private void setDone() {
+	logger.debug("DONE with Handshaking and any initial cred delegation");
         this.established = true;
     }
 
@@ -633,8 +1149,9 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     }
 
     private void init(int how) 
-        throws GSSException {
+        throws GSSException, SSLException {
 
+/*DEL
         short [] cs;
         if (this.encryption) {
             // always make sure to add NULL cipher at the end
@@ -669,22 +1186,64 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         }       
 
         this.conn.init();
+*/
+	try {
+		this.sslConfigurator.setRejectLimitProxy(rejectLimitedProxy);
+        	this.sslContext = this.sslConfigurator.getSSLContext();
+        	this.sslEngine = this.sslContext.createSSLEngine();
+	} catch (Exception e) {
+            throw new GlobusGSSException(GSSException.FAILURE, e);
+        }
+
+        String [] cs;
+        if (this.encryption) {
+            // always make sure to add NULL cipher at the end
+            String [] ciphers = this.sslEngine.getEnabledCipherSuites();
+            String [] newCiphers = new String[ciphers.length + 1];
+            System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
+            newCiphers[ciphers.length] = NO_ENCRYPTION[0];
+            cs = newCiphers;
+        } else {
+            // encryption not requested - accept only one cipher
+	    // TODO: Verify the following and implement!
+            // XXX: in the future might want to iterate through 
+            // all cipher and enable only the null encryption ones
+            cs = NO_ENCRYPTION;
+        }
+        this.sslEngine.setEnabledCipherSuites(cs);
+
+	// TODO: Document the following behavior
+	// NOTE: requireClientAuth Vs. acceptNoClientCerts
+	// which one takes precedence? for now err on the side of security
+	if (this.requireClientAuth.booleanValue() == Boolean.TRUE) {
+            this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
+	} else
+            this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
+
+        this.sslEngine.setUseClientMode(how == INITIATE);
+
         this.certFactory = BouncyCastleCertProcessingFactory.getDefault();
         this.state = HANDSHAKE;
+	int appSize = sslEngine.getSession().getApplicationBufferSize();
+	this.outByteBuff = ByteBuffer.allocate(appSize);
+	this.sslEngine.beginHandshake();
     }
 
     /* this is called when handshake is done */
     private void handshakeFinished()
         throws IOException {
+/*DEL
         // this call just forces some internal library
         // variables to be initailized
         this.conn.finishHandshake();
-        SSLCipherSuite cs = 
-            SSLCipherSuite.findCipherSuite(this.conn.getCipherSuite());
-        this.encryption = !cs.getCipherAlg().equals("NULL");
-        logger.debug("encryption alg: " + cs.getCipherAlg()); 
+*/
+        String cs =
+            this.sslEngine.getSession().getCipherSuite();
+        this.encryption = !cs.contains("WITH_NULL");
+        logger.debug("encryption alg: " + cs); 
     }
     
+/*DEL
     // allows bypass of PureTLS checks - since they were
     // already performed during SSL hashshake
     static class GSSProxyPathValidator extends ProxyPathValidator {
@@ -748,16 +1307,36 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         
         return validator.getIdentity();
     }
+*/
     
     private void setCredential() 
         throws GSSException {
         try {
-            this.context.setCredential(this.ctxCred.getGlobusCredential());
+/*DEL
+            this.context.setCredential(this.ctxCred.getX509Credential());
+*/
+	    // TODO: Restore below once there's support in PEMKeyStore.engineLoad
+	    //       Use JKS in the interim.
+            // KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
+	    // TODO: Ramifications of using JKS instead of Globus PEM?
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+	    keyStore.load(null, null);
+	    X509Credential cred = this.ctxCred.getX509Credential();
+
+	    // TODO: Replace "test" with a random password!!!
+	    keyStore.setKeyEntry("default", cred.getPrivateKey(),
+			"test".toCharArray(), cred.getCertificateChain());
+	    this.sslConfigurator.setCredentialStore(keyStore);
+	    this.sslConfigurator.setCredentialStorePassword("test");
+
         } catch (GeneralSecurityException e) {
             throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
+        } catch (Exception e) {
+            throw new GlobusGSSException(GSSException.FAILURE, e);
         }
     }
 
+/*DEL
     private void setTrustedCertificates()
         throws GSSException {
         if (this.tc == null) {
@@ -775,6 +1354,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
     }
+*/
 
     /**
      * Wraps a message for integrity and protection.
@@ -829,13 +1409,35 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     
     private byte[] wrap(byte[] inBuf, int off, int len) 
         throws GSSException {
-        this.out.reset();
         try {
+/*DEL
             this.conn.getOutStream().write(inBuf, off, len);
-        } catch (IOException e) {
+*/
+	    ByteBuffer inByteBuff = ByteBuffer.wrap(inBuf, off, len);
+	    this.outByteBuff.clear();
+	    outByteBuff = this.sslDataWrap(inByteBuff, outByteBuff);
+	    outByteBuff.flip();
+
+	    if (inByteBuff.hasRemaining()) {
+		throw new Exception("Not all data processed; Original: " + len
+                        + " Remaining: " + inByteBuff.remaining() +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus());
+	    }
+        } catch (Exception e) {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
+
+        if (this.outByteBuff.hasRemaining()) {
+		// TODO can we avoid this copy if the ByteBuffer is array based
+		// and we return that array?
+		byte [] out = new byte[this.outByteBuff.remaining()];
+		this.outByteBuff.get(out, 0, out.length);
+		return out;
+	} else
+		return null;
+/*DEL
         return this.out.toByteArray();
+*/
     }
     
     /**
@@ -899,6 +1501,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     private byte[] unwrap(byte[] inBuf, int off, int len) 
         throws GSSException {
 
+/*DEL
         ByteArrayInputStream in =
             new ByteArrayInputStream(inBuf, off, len);
         ByteArrayOutputStream out =
@@ -929,6 +1532,28 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         }
         
         return out.toByteArray();
+*/
+	ByteBuffer inByteBuff = ByteBuffer.wrap(inBuf, off, len);
+	this.outByteBuff.clear();
+	outByteBuff = this.sslDataUnwrap(inByteBuff, outByteBuff);
+	outByteBuff.flip();
+
+	if (inByteBuff.hasRemaining()) {
+		throw new GlobusGSSException(GSSException.FAILURE,
+		 		new Exception("Not all data processed; Original: " + len
+                        + " Remaining: " + inByteBuff.remaining() +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
+	}
+
+        if (this.outByteBuff.hasRemaining()) {
+		// TODO can we avoid this copy if the ByteBuffer is array based
+		// and we return that array?
+		byte [] out = new byte[this.outByteBuff.remaining()];
+		this.outByteBuff.get(out, 0, out.length);
+		return out;
+	} else
+		return null;
+
     }
 
     public void dispose() 
@@ -1011,6 +1636,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                          int len,
                          MessageProp prop) 
         throws GSSException {
+        throw new GSSException(GSSException.UNAVAILABLE);
+/*TODO
 
         checkContext();
 
@@ -1058,6 +1685,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         
         logger.debug("exit getMic");
         return mic;
+*/
     }
     
     /**
@@ -1068,6 +1696,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                           byte[] inMsg, int msgOff, int msgLen, // real msg
                           MessageProp prop) 
         throws GSSException {
+        throw new GSSException(GSSException.UNAVAILABLE);
+/*TODO
 
         checkContext();
 
@@ -1147,6 +1777,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         }
         
         logger.debug("exit verifyMic");
+*/
     }
 
 
@@ -1161,7 +1792,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         throws GSSException {
         byte [] inToken = null;
         try {
-            if (this.conn == null) {
+            if (!this.conn) {
                 inToken = new byte[0];
             } else {
                 inToken = SSLUtil.readSslMessage(in);
@@ -1289,7 +1920,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
     protected void checkContext() 
         throws GSSException {
-        if (this.conn == null || !isEstablished()) {
+        if (!this.conn || !isEstablished()) {
             throw new GSSException(GSSException.NO_CONTEXT);
         }
         
@@ -1301,7 +1932,10 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     protected int getDelegationType(X509Certificate issuer) 
         throws GeneralSecurityException, GSSException {
 
+/*DEL
         GSIConstants.CertificateType certType = BouncyCastleUtil.getCertificateType(issuer, this.tc);
+*/
+        GSIConstants.CertificateType certType = BouncyCastleUtil.getCertificateType(issuer);
         int dType = this.delegationType.intValue();
 
         if (logger.isDebugEnabled()) {
@@ -1489,7 +2123,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                                          new Object[] {"Trusted certificates", 
                                                        TrustedCertificates.class});
         }
+	//TODO: set this in SSLConfigurator before creating SSLContext and engine?
+/*TODO
         this.tc = (TrustedCertificates)value;
+*/
+        throw new GSSException(GSSException.UNAVAILABLE);
     }
     
     public void setOption(Oid option, Object value)
@@ -1516,11 +2154,14 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         } else if (option.equals(GSSConstants.REQUIRE_CLIENT_AUTH)) {
             setRequireClientAuth(value);
         } else if (option.equals(GSSConstants.GRIM_POLICY_HANDLER)) {
-            setGrimPolicyHandler(value);
+            // setGrimPolicyHandler(value);
+            throw new GSSException(GSSException.UNAVAILABLE);
         } else if (option.equals(GSSConstants.TRUSTED_CERTIFICATES)) {
-            setTrustedCertificates(value);
+            // setTrustedCertificates(value);
+            throw new GSSException(GSSException.UNAVAILABLE);
         } else if (option.equals(GSSConstants.PROXY_POLICY_HANDLERS)) {
-            setProxyPolicyHandlers(value);
+            // setProxyPolicyHandlers(value);
+            throw new GSSException(GSSException.UNAVAILABLE);
         } else if (option.equals(GSSConstants.ACCEPT_NO_CLIENT_CERTS)) {
             setAcceptNoClientCerts(value);
         } else if (option.equals(GSSConstants
@@ -1553,9 +2194,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         } else if (option.equals(GSSConstants.REQUIRE_CLIENT_AUTH)) {
             return this.requireClientAuth;
         } else if (option.equals(GSSConstants.TRUSTED_CERTIFICATES)) {
-            return this.tc;
+            // return this.tc;
+            throw new GSSException(GSSException.UNAVAILABLE);
         } else if (option.equals(GSSConstants.PROXY_POLICY_HANDLERS)) {
-            return this.proxyPolicyHandlers;
+            // return this.proxyPolicyHandlers;
+            throw new GSSException(GSSException.UNAVAILABLE);
         } else if (option.equals(GSSConstants.ACCEPT_NO_CLIENT_CERTS)) {
             return this.acceptNoClientCerts;
         }
@@ -1641,8 +2284,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 throw new GSSException(GSSException.DEFECTIVE_CREDENTIAL);
             }
 
-            GlobusCredential cred = 
-                ((GlobusGSSCredentialImpl)credential).getGlobusCredential();
+            X509Credential cred = 
+                ((GlobusGSSCredentialImpl)credential).getX509Credential();
 
             X509Certificate [] chain = cred.getCertificateChain();
             
@@ -1652,7 +2295,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 X509Certificate cert = 
                     this.certFactory.createCertificate(inData,
                                                        chain[0],
-                                                       cred.getPrivateKey(),
+                                                       // TODO: Is this cast appropriate?
+                                                       (PrivateKey)cred.getPrivateKey(),
                                                        time,
                                                        getDelegationType(chain[0]));
                 
@@ -1738,20 +2382,29 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             }
             
             try {
+/*DEL
                 Vector certChain = this.conn.getCertificateChain();
-                if (certChain == null || certChain.size() == 0) {
+*/
+		Certificate[] certChain;
+		try {
+		    certChain = this.sslEngine.getSession().getPeerCertificates();
+		} catch (SSLPeerUnverifiedException e) {
+                    certChain = null;
+                }
+                if (certChain == null || certChain.length == 0) {
                     throw new GlobusGSSException(GSSException.FAILURE, 
                                                  GlobusGSSException.DELEGATION_ERROR,
                                                  "noClientCert");
                 }
             
                 X509Certificate tmpCert = 
+/*DEL
                     PureTLSUtil.convertCert((X509Cert)certChain.lastElement());
+*/
+                    (X509Certificate) certChain[0];
 
                 token = generateCertRequest(tmpCert);
             } catch (GeneralSecurityException e) {
-                throw new GlobusGSSException(GSSException.FAILURE, e);
-            } catch (IOException e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
             }
 
@@ -1781,8 +2434,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
             }
 
-            GlobusCredential proxy = 
-                new GlobusCredential(this.keyPair.getPrivate(), chain);
+            X509Credential proxy = 
+                new X509Credential(this.keyPair.getPrivate(), chain);
 
             this.delegatedCred = 
                 new GlobusGSSCredentialImpl(proxy, 
@@ -1796,7 +2449,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             throw new GSSException(GSSException.FAILURE);
         }
 
-        logger.debug("Exit initDelegation");
+        logger.debug("Exit acceptDelegation");
 
         if (this.gssMode != GSIConstants.MODE_SSL && token != null) {
             return wrap(token, 0, token.length);
@@ -1840,9 +2493,20 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 // converting certs is slower but keeping coverted certs
                 // takes lots of memory.
                 try {
+/*DEL
                     Vector peerCerts = this.conn.getCertificateChain();
-                    if (peerCerts != null && peerCerts.size() > 0) {
+*/
+                    Certificate[] peerCerts;
+		    try {
+			peerCerts = this.sslEngine.getSession().getPeerCertificates();
+		    } catch (SSLPeerUnverifiedException e) {
+			peerCerts = null;
+		    }
+                    if (peerCerts != null && peerCerts.length > 0) {
+/*DEL
                         return PureTLSUtil.certificateChainToArray(peerCerts);
+*/
+                        return (X509Certificate[])peerCerts;
                     } else {
                         return null;
                     }
