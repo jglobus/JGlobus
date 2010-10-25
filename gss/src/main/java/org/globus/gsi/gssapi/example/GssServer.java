@@ -132,7 +132,7 @@ class Client extends Thread {
 		(GlobusGSSCredentialImpl)context.getDelegCred();
 	    System.out.println("Delegated credential :");
 	    if (cred != null) {
-		System.out.println(cred.getGlobusCredential());
+		System.out.println(cred.getX509Credential());
 	    } else {
 		System.out.println("None");
 	    }
