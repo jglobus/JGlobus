@@ -2054,10 +2054,8 @@ done:      do {
         GSIConstants.DelegationType v;
         if (value instanceof GSIConstants.DelegationType)
             v = (GSIConstants.DelegationType) value;
-        else if (value instanceof Integer) {
+        else if (value instanceof Integer)
             v = GSIConstants.DelegationType.get(((Integer) value).intValue());
-System.out.println("INTEGER VALUE IS: " + delegationType.getCode());
-}
         else {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION_TYPE,

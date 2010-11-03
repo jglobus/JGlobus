@@ -37,34 +37,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.claymoresystems</groupId>
-      <artifactId>puretls</artifactId>
-      <version>1.0-unreleased</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.cryptix</groupId>
-      <artifactId>cryptix</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.cryptix</groupId>
-      <artifactId>cryptix-asn1</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.cryptix</groupId>
-      <artifactId>cryptix32</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15</artifactId>
       <version>1.45</version>
