@@ -1346,18 +1346,14 @@ done:      do {
 /*DEL
             this.context.setCredential(this.ctxCred.getX509Credential());
 */
-	    // TODO: Restore below once there's support in PEMKeyStore.engineLoad
-	    //       Use JKS in the interim.
-            // KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
             KeyStore keyStore = KeyStore.getInstance("JKS");
 	    keyStore.load(null, null);
 	    X509Credential cred = this.ctxCred.getX509Credential();
 
-	    // TODO: Replace "test" with a random password!!!
 	    keyStore.setKeyEntry("default", cred.getPrivateKey(),
-			"test".toCharArray(), cred.getCertificateChain());
+			"".toCharArray(), cred.getCertificateChain());
 	    this.sslConfigurator.setCredentialStore(keyStore);
-	    this.sslConfigurator.setCredentialStorePassword("test");
+	    this.sslConfigurator.setCredentialStorePassword("");
 
         } catch (GeneralSecurityException e) {
             throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
