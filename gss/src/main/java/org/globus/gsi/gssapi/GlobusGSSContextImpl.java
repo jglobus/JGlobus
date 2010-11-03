@@ -871,18 +871,6 @@ done:      do {
             this.role = INITIATE;
 
 		logger.debug("enter initializing in initSecContext");
-            if (this.credentialDelegation) {
-                if (this.gssMode == GSIConstants.MODE_SSL) {
-                    throw new GlobusGSSException(GSSException.FAILURE,
-                                                 GlobusGSSException.BAD_ARGUMENT,
-                                                 "initCtx00");
-                }
-                if (this.anonymity) {
-                    throw new GlobusGSSException(GSSException.FAILURE,
-                                                 GlobusGSSException.BAD_ARGUMENT,
-                                                 "initCtx01");
-                }
-            }
 
             if (this.anonymity || this.ctxCred.getName().isAnonymous()) {
                 this.anonymity = true;
@@ -899,6 +887,19 @@ done:      do {
                 }
             }
             
+            if (getCredDelegState()) {
+                if (this.gssMode == GSIConstants.MODE_SSL) {
+                    throw new GlobusGSSException(GSSException.FAILURE,
+                                                 GlobusGSSException.BAD_ARGUMENT,
+                                                 "initCtx00");
+                }
+                if (this.anonymity) {
+                    throw new GlobusGSSException(GSSException.FAILURE,
+                                                 GlobusGSSException.BAD_ARGUMENT,
+                                                 "initCtx01");
+                }
+            }
+
 	    try {
             	init(this.role);
             } catch (SSLException e) {
@@ -911,12 +912,12 @@ done:      do {
 
         // Unless explicitly disabled, check if delegation is
         // requested and expected target is null
-        logger.debug("Require authz with delegation" 
+        logger.debug("Require authz with delegation: " 
                      + this.requireAuthzWithDelegation);
         if (!Boolean.FALSE.equals(this.requireAuthzWithDelegation)) {
 
             if (this.expectedTargetName == null && 
-                this.credentialDelegation) {
+                getCredDelegState()) {
                 throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.BAD_ARGUMENT,
                                          "initCtx02");
