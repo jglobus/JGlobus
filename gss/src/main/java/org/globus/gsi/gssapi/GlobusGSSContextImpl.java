@@ -38,24 +38,17 @@ import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.LinkedList;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.GeneralSecurityException;
-import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPublicKey;
 import java.security.interfaces.RSAPrivateKey;
-import org.globus.common.CoGProperties;
 
 import org.globus.gsi.ProviderLoader;
 import org.globus.gsi.provider.GlobusProvider;
@@ -67,12 +60,10 @@ import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
 
 import java.security.cert.CertStore;
 import java.security.cert.CertificateFactory;
-import javax.security.auth.x500.X500Principal;
 import java.security.KeyStore;
 
 import org.globus.gsi.GSIConstants;
 import org.globus.gsi.X509Credential;
-import org.globus.gsi.VersionUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
 import org.globus.gsi.bc.BouncyCastleUtil;
 import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
@@ -86,10 +77,8 @@ import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import org.globus.gsi.jsse.SSLConfigurator;
-import org.globus.gsi.jsse.GlobusSSLConfigurationException;
 
 import org.bouncycastle.jce.provider.X509CertificateObject;
-import org.globus.gsi.util.CertificateLoadUtil;
 
 /*
 import COM.claymoresystems.ptls.SSLConn;
@@ -106,8 +95,6 @@ import COM.claymoresystems.util.Util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Enumeration;
 
 /**
  * Implementation of SSL/GSI mechanism for Java GSS-API. The implementation
@@ -646,7 +633,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 /*DEL
         return (this.out.size() > 0) ? this.out.toByteArray() : null;
 */
-	if (this.outByteBuff.hasRemaining() || this.state == CLIENT_START_DEL) {
+	if (this.outByteBuff.hasRemaining()) {
                 // TODO can we avoid this copy if the ByteBuffer is array based
                 // and we return that array?
                 byte [] out = new byte[this.outByteBuff.remaining()];
@@ -746,7 +733,6 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                                              GlobusGSSException.TOKEN_FAIL,
                                          result.getStatus().toString());
 		}
-		// TODO: check BUFFER_UNDERFLOW and others
               } while (inBBuff.hasRemaining());
 		return outBBuff;
 	} catch (IllegalArgumentException e) {
