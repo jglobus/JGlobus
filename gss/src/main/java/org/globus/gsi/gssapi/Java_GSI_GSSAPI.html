@@ -34,6 +34,7 @@ The implementation is based on <a href="http://download.oracle.com/javase/6/docs
       </li>
     </ul>
   </ul>
+  <li>Starting with JGlobus 2.0, SHA-2 (specifically SHA-256, SHA-384 and SHA-512) certificates are also supported.</li>
   <li>Supports GSI and SSL compatibility mode (set via context option interface - GSS_MODE)</li>
   <li>Supports limited and full delegation both using initSecContext/acceptSecContext
 and initDelegation/acceptDelegation methods (set via context option interface
@@ -54,6 +55,7 @@ and initDelegation/acceptDelegation methods (set via context option interface
 </ul>
 <b>Changes in JGlobus 2.0 GSSAPI:</b>
 <ul>
+<li>With the replacement of PureTLS with JSSE, SHA-2 (specifically SHA-256, SHA-384 and SHA-512) certificates are now supported.</li>
 <li>getMIC() and verifyMIC() are no longer available because of the underlying JSSE constraints.</li>
 <li>GSI_BIG QOP no longer available. wrap/unwrap can no longer switch between encrypted and unencrypted communication.</li>
 
