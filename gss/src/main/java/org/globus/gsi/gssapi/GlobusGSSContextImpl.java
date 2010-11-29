@@ -38,24 +38,17 @@ import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.LinkedList;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.GeneralSecurityException;
-import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPublicKey;
 import java.security.interfaces.RSAPrivateKey;
-import org.globus.common.CoGProperties;
 
 import org.globus.gsi.ProviderLoader;
 import org.globus.gsi.provider.GlobusProvider;
@@ -67,12 +60,10 @@ import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
 
 import java.security.cert.CertStore;
 import java.security.cert.CertificateFactory;
-import javax.security.auth.x500.X500Principal;
 import java.security.KeyStore;
 
 import org.globus.gsi.GSIConstants;
 import org.globus.gsi.X509Credential;
-import org.globus.gsi.VersionUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
 import org.globus.gsi.bc.BouncyCastleUtil;
 import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
@@ -86,10 +77,8 @@ import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import org.globus.gsi.jsse.SSLConfigurator;
-import org.globus.gsi.jsse.GlobusSSLConfigurationException;
 
 import org.bouncycastle.jce.provider.X509CertificateObject;
-import org.globus.gsi.util.CertificateLoadUtil;
 
 /*
 import COM.claymoresystems.ptls.SSLConn;
@@ -106,8 +95,6 @@ import COM.claymoresystems.util.Util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Enumeration;
 
 /**
  * Implementation of SSL/GSI mechanism for Java GSS-API. The implementation
@@ -646,7 +633,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 /*DEL
         return (this.out.size() > 0) ? this.out.toByteArray() : null;
 */
-	if (this.outByteBuff.hasRemaining() || this.state == CLIENT_START_DEL) {
+	if (this.outByteBuff.hasRemaining()) {
                 // TODO can we avoid this copy if the ByteBuffer is array based
                 // and we return that array?
                 byte [] out = new byte[this.outByteBuff.remaining()];
@@ -746,7 +733,6 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                                              GlobusGSSException.TOKEN_FAIL,
                                          result.getStatus().toString());
 		}
-		// TODO: check BUFFER_UNDERFLOW and others
               } while (inBBuff.hasRemaining());
 		return outBBuff;
 	} catch (IllegalArgumentException e) {
@@ -871,18 +857,6 @@ done:      do {
             this.role = INITIATE;
 
 		logger.debug("enter initializing in initSecContext");
-            if (this.credentialDelegation) {
-                if (this.gssMode == GSIConstants.MODE_SSL) {
-                    throw new GlobusGSSException(GSSException.FAILURE,
-                                                 GlobusGSSException.BAD_ARGUMENT,
-                                                 "initCtx00");
-                }
-                if (this.anonymity) {
-                    throw new GlobusGSSException(GSSException.FAILURE,
-                                                 GlobusGSSException.BAD_ARGUMENT,
-                                                 "initCtx01");
-                }
-            }
 
             if (this.anonymity || this.ctxCred.getName().isAnonymous()) {
                 this.anonymity = true;
@@ -899,6 +873,19 @@ done:      do {
                 }
             }
             
+            if (getCredDelegState()) {
+                if (this.gssMode == GSIConstants.MODE_SSL) {
+                    throw new GlobusGSSException(GSSException.FAILURE,
+                                                 GlobusGSSException.BAD_ARGUMENT,
+                                                 "initCtx00");
+                }
+                if (this.anonymity) {
+                    throw new GlobusGSSException(GSSException.FAILURE,
+                                                 GlobusGSSException.BAD_ARGUMENT,
+                                                 "initCtx01");
+                }
+            }
+
 	    try {
             	init(this.role);
             } catch (SSLException e) {
@@ -911,12 +898,12 @@ done:      do {
 
         // Unless explicitly disabled, check if delegation is
         // requested and expected target is null
-        logger.debug("Require authz with delegation" 
+        logger.debug("Require authz with delegation: " 
                      + this.requireAuthzWithDelegation);
         if (!Boolean.FALSE.equals(this.requireAuthzWithDelegation)) {
 
             if (this.expectedTargetName == null && 
-                this.credentialDelegation) {
+                getCredDelegState()) {
                 throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.BAD_ARGUMENT,
                                          "initCtx02");
@@ -1346,18 +1333,14 @@ done:      do {
 /*DEL
             this.context.setCredential(this.ctxCred.getX509Credential());
 */
-	    // TODO: Restore below once there's support in PEMKeyStore.engineLoad
-	    //       Use JKS in the interim.
-            // KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
             KeyStore keyStore = KeyStore.getInstance("JKS");
 	    keyStore.load(null, null);
 	    X509Credential cred = this.ctxCred.getX509Credential();
 
-	    // TODO: Replace "test" with a random password!!!
 	    keyStore.setKeyEntry("default", cred.getPrivateKey(),
-			"test".toCharArray(), cred.getCertificateChain());
+			"".toCharArray(), cred.getCertificateChain());
 	    this.sslConfigurator.setCredentialStore(keyStore);
-	    this.sslConfigurator.setCredentialStorePassword("test");
+	    this.sslConfigurator.setCredentialStorePassword("");
 
         } catch (GeneralSecurityException e) {
             throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
@@ -1388,10 +1371,7 @@ done:      do {
 
     /**
      * Wraps a message for integrity and protection.
-     * Returns a GSI-wrapped token when privacy is not requested and
-     * QOP requested is set to 
-     * {@link GSSConstants#GSI_BIG GSSConstants.GSI_BIG}. Otherwise 
-     * a regular SSL-wrapped token is returned.
+     * A regular SSL-wrapped token is returned.
      */
     public byte[] wrap(byte []inBuf, int off, int len, MessageProp prop) 
         throws GSSException {
@@ -1475,11 +1455,6 @@ done:      do {
     
     /**
      * Unwraps a token generated by <code>wrap</code> method on the other side of the context.
-     * The input token can either be a regular SSL-wrapped token or GSI-wrapped token.
-     * Upon return from the method the <code>MessageProp</code> object will contain
-     * the applied QOP and privacy state of the message. In case of GSI-wrapped token 
-     * the applied QOP will be set to 
-     * {@link GSSConstants#GSI_BIG GSSConstants.GSI_BIG}
      */
     public byte[] unwrap(byte []inBuf, int off, int len, MessageProp prop) 
         throws GSSException {
@@ -1820,7 +1795,7 @@ done:      do {
     /**
      * It works just like {@link #initSecContext(byte[], int, int) initSecContext} method.
      * It reads one SSL token from input stream, calls 
-     * {@link #initSecContext(byte[], int, int) acceptSecContext} method and
+     * {@link #initSecContext(byte[], int, int) initSecContext} method and
      * writes the output token to the output stream (if any)
      * SSL token is not read on the initial call.
      */
@@ -2054,10 +2029,8 @@ done:      do {
         GSIConstants.DelegationType v;
         if (value instanceof GSIConstants.DelegationType)
             v = (GSIConstants.DelegationType) value;
-        else if (value instanceof Integer) {
+        else if (value instanceof Integer)
             v = GSIConstants.DelegationType.get(((Integer) value).intValue());
-System.out.println("INTEGER VALUE IS: " + delegationType.getCode());
-}
         else {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION_TYPE,

@@ -62,6 +62,16 @@ public class GlobusGSSContextTest extends TestCase {
 
 	System.setProperty("org.globus.gsi.gssapi.provider",
 			   "org.globus.gsi.gssapi.GlobusGSSManagerImpl");
+        if (clientContext != null) {
+            clientContext.dispose();
+            clientContext = null;
+        }
+
+        if (serverContext != null) {
+            serverContext.dispose();
+            serverContext = null;
+        }
+
 
 	GSSManager manager = getGSSManager();
 
@@ -82,10 +92,12 @@ public class GlobusGSSContextTest extends TestCase {
     protected void tearDown() throws Exception {
 	if (clientContext != null) {
 	    clientContext.dispose();
+	    clientContext = null;
 	}
 
 	if (serverContext != null) {
 	    serverContext.dispose();
+	    serverContext = null;
 	}
     }
 
