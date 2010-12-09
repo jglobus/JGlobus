@@ -144,9 +144,14 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 /*DEL
     private static final short [] NO_ENCRYPTION = {SSLPolicyInt.TLS_RSA_WITH_NULL_MD5};
 */
-    private static final String [] NO_ENCRYPTION = {"SSL_RSA_WITH_NULL_MD5"};
+    private static final String [] NO_ENCRYPTION = {"SSL_RSA_WITH_NULL_SHA"};
 
-    private static final String [] ENABLED_PROTOCOLS = {"TLSv1", "SSLv3"};
+    // TODO: Add "TLS_RSA_WITH_AES_128_CBC_SHA" once it's working for gram
+    private static final String [] ENCRYPTION_CIPHER_SUITES =
+		{"SSL_RSA_WITH_3DES_EDE_CBC_SHA"};
+
+    // TODO: Add "TLSv1" once it's working for gram
+    private static final String [] ENABLED_PROTOCOLS = {"SSLv3"};
     
     private static final byte[] DELEGATION_TOKEN = new byte[] {GSIConstants.DELEGATION_CHAR};
     
@@ -1202,6 +1207,8 @@ done:      do {
 
         ArrayList<String> cs = new ArrayList();
         if (this.encryption) {
+            for (String cipherSuite : ENCRYPTION_CIPHER_SUITES)
+                cs.add(cipherSuite);
             for (String cipherSuite : this.sslEngine.getSupportedCipherSuites()) {
                 if (!cipherSuite.contains("WITH_NULL"))
                     cs.add(cipherSuite);
@@ -1215,6 +1222,8 @@ done:      do {
 */
             // cs.add(NO_ENCRYPTION[0]);
         } else {
+            for (String cipherSuite : NO_ENCRYPTION)
+                cs.add(cipherSuite);
             // enable the null encryption ones and place them at the front
             for (String cipherSuite : this.sslEngine.getSupportedCipherSuites()) {
                 if (cipherSuite.contains("WITH_NULL"))
