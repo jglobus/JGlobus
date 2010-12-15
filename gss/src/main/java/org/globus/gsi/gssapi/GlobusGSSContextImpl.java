@@ -141,17 +141,23 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     
     private static final int GSI_MESSAGE_DIGEST_PADDING = 12;
 
+    private static final String [] ENABLED_PROTOCOLS = {"TLSv1", "SSLv3"};
+    // TODO: Delete this once GRAM server is fixed and we no longer
+    //       would be talking to old GRAM servers.
+    private static final String [] GRAM_PROTOCOLS = {"SSLv3"};
+
 /*DEL
     private static final short [] NO_ENCRYPTION = {SSLPolicyInt.TLS_RSA_WITH_NULL_MD5};
 */
-    private static final String [] NO_ENCRYPTION = {"SSL_RSA_WITH_NULL_SHA"};
+    private static final String [] NO_ENCRYPTION =
+                    {"SSL_RSA_WITH_NULL_SHA", "SSL_RSA_WITH_NULL_MD5"};
 
-    // TODO: Add "TLS_RSA_WITH_AES_128_CBC_SHA" once it's working for gram
-    private static final String [] ENCRYPTION_CIPHER_SUITES =
+    // TODO: Delete these once GRAM server is fixed and we no longer
+    //       would be talking to old GRAM servers.
+    private static final String [] GRAM_ENCRYPTION_CIPHER_SUITES =
 		{"SSL_RSA_WITH_3DES_EDE_CBC_SHA"};
-
-    // TODO: Add "TLSv1" once it's working for gram
-    private static final String [] ENABLED_PROTOCOLS = {"SSLv3"};
+    private static final String [] GRAM_NO_ENCRYPTION_CIPHER_SUITES =
+		{"SSL_RSA_WITH_NULL_SHA"};
     
     private static final byte[] DELEGATION_TOKEN = new byte[] {GSIConstants.DELEGATION_CHAR};
     
@@ -216,6 +222,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     protected Boolean requireClientAuth = Boolean.TRUE;
     protected Boolean acceptNoClientCerts = Boolean.FALSE;
     protected Boolean requireAuthzWithDelegation = Boolean.TRUE;
+    protected Boolean forceSSLv3AndConstrainCipherSuitesForGram =
+                                      Boolean.FALSE;
 
     // *** implementation-specific variables ***
     
@@ -1199,7 +1207,10 @@ done:      do {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
 
-        this.sslEngine.setEnabledProtocols(ENABLED_PROTOCOLS);
+	if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
+           this.sslEngine.setEnabledProtocols(GRAM_PROTOCOLS);
+        else
+           this.sslEngine.setEnabledProtocols(ENABLED_PROTOCOLS);
 	logger.debug("SUPPORTED PROTOCOLS: " +
                     Arrays.toString(this.sslEngine.getSupportedProtocols()) +
                     "; ENABLED PROTOCOLS: " +
@@ -1207,32 +1218,20 @@ done:      do {
 
         ArrayList<String> cs = new ArrayList();
         if (this.encryption) {
-            for (String cipherSuite : ENCRYPTION_CIPHER_SUITES)
-                cs.add(cipherSuite);
-            for (String cipherSuite : this.sslEngine.getSupportedCipherSuites()) {
-                if (!cipherSuite.contains("WITH_NULL"))
+            if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
+                for (String cipherSuite : GRAM_ENCRYPTION_CIPHER_SUITES)
                     cs.add(cipherSuite);
-            }
-/*DEL
-            String [] ciphers = this.sslEngine.getEnabledCipherSuites();
-            String [] newCiphers = new String[ciphers.length + 1];
-            System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
-            newCiphers[ciphers.length] = NO_ENCRYPTION[0];
-            cs = newCiphers;
-*/
-            // cs.add(NO_ENCRYPTION[0]);
+            else // Simply retain the default-enabled Cipher Suites
+               cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
         } else {
-            for (String cipherSuite : NO_ENCRYPTION)
-                cs.add(cipherSuite);
-            // enable the null encryption ones and place them at the front
-            for (String cipherSuite : this.sslEngine.getSupportedCipherSuites()) {
-                if (cipherSuite.contains("WITH_NULL"))
+            if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
+                for (String cipherSuite : GRAM_NO_ENCRYPTION_CIPHER_SUITES)
                     cs.add(cipherSuite);
+            else {
+               for (String cipherSuite : NO_ENCRYPTION)
+                   cs.add(cipherSuite);
+               cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
             }
-            cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
-/*DEL
-            cs = NO_ENCRYPTION;
-*/
         }
         String[] testSuite = new String[0];
         this.sslEngine.setEnabledCipherSuites(cs.toArray(testSuite));
@@ -2115,6 +2114,18 @@ done:      do {
         this.acceptNoClientCerts = (Boolean)value;
     }
 
+    protected void setForceSslV3AndConstrainCipherSuitesForGram(
+                             Object value)
+        throws GSSException {
+        if (!(value instanceof Boolean)) {
+            throw new GlobusGSSException(GSSException.FAILURE,
+                                         GlobusGSSException.BAD_OPTION_TYPE,
+                                         "badType",
+                                         new Object[] {"adjust cipher suites for GRAM", Boolean.class});
+        }
+        this.forceSSLv3AndConstrainCipherSuitesForGram = (Boolean)value;
+    }
+
 /*DEL
     protected void setGrimPolicyHandler(Object value) 
         throws GSSException {
@@ -2196,6 +2207,9 @@ done:      do {
         } else if (option.equals(GSSConstants
                                  .AUTHZ_REQUIRED_WITH_DELEGATION)) {
             setRequireAuthzWithDelegation(value);
+        } else if (option.equals(GSSConstants
+                     .FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM)) {
+            setForceSslV3AndConstrainCipherSuitesForGram(value);
         } else {
             throw new GlobusGSSException(GSSException.FAILURE, 
                                          GlobusGSSException.UNKNOWN_OPTION,
