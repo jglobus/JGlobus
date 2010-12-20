@@ -303,6 +303,13 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
 	    sslConfigurator.setPolicyStore(sigPolStore);
 
+            // Need to set this so we are able to communicate properly with
+            // GT4.0.8 servers that use only SSLv3 (no TLSv1). Thanks to
+            // Jon Siwek for pointing this and the following link out:
+            // http://java.sun.com/j2se/1.4.2/relnotes.html#security
+            if (System.getProperty("com.sun.net.ssl.rsaPreMasterSecretFix") == null)
+               System.setProperty("com.sun.net.ssl.rsaPreMasterSecretFix", "true");
+
 	} catch  (Exception e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
 	}
