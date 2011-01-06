@@ -88,7 +88,7 @@ public class SSLConfiguratorTest {
 			GlobusSSLConfigurationException {
 		SSLSocketFactory sslsocketfactory = config.createFactory();
 
-		return (SSLSocket) sslsocketfactory.createSocket("localhost", 9999);
+		return (SSLSocket) sslsocketfactory.createSocket("localhost", 9991);
 	}
 
 	@AfterClass
@@ -104,7 +104,7 @@ public class SSLConfiguratorTest {
 		SSLServerSocketFactory sslserversocketfactory = config
 				.createServerFactory();
 		final SSLServerSocket sslserversocket = (SSLServerSocket) sslserversocketfactory
-				.createServerSocket(9999);
+				.createServerSocket(9991);
 
 		ExecutorService executor = Executors.newFixedThreadPool(1);
 		executor.execute(new Runnable() {
