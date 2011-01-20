@@ -76,7 +76,6 @@ public class Gram  {
 	
         GSSAuthorization auth = null;
         String authDN = rmc.getDN();
-        System.out.println("AUTH DN GOT = "+ authDN);
         if (authDN != null) {
             auth = new IdentityAuthorization(authDN);
         } else {
@@ -87,15 +86,6 @@ public class Gram  {
 	
 	try {
         
-		try {
-			System.out.println("Credential = "+cred.getName() );//+"      hostname = "+ rmc.getHostName());
-		}
-		catch(NullPointerException ne)
-		{
-	        System.out.println("CREDENTIAL EXCEPTION ");
-
-			//ne.printStackTrace();
-		}
 		
 		GSSName name = auth.getExpectedName(cred, rmc.getHostName());
  
@@ -106,20 +96,14 @@ public class Gram  {
 							  GSSContext.DEFAULT_LIFETIME);
 	    
 	    context.requestCredDeleg(doDel);
-	    
-	    context.requestConf(true);
 	
 	    context.setOption(GSSConstants.DELEGATION_TYPE,
 			      (limitedDelegation) ? 
 			      GSIConstants.DELEGATION_TYPE_LIMITED :
 			      GSIConstants.DELEGATION_TYPE_FULL);
 	
-	    context.setOption(GSSConstants.
-		FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM, Boolean.TRUE);
-
 	    GssSocketFactory factory = GssSocketFactory.getDefault();
 	    
-	    System.out.println("PORT NUMBER ==== " +rmc.getPortNumber());
 	    GssSocket socket = 
 		(GssSocket)factory.createSocket(rmc.getHostName(), 
 						rmc.getPortNumber(),
@@ -209,7 +193,6 @@ public class Gram  {
      */
     public static void ping(String resourceManagerContact) 
 	throws GramException, GSSException {
-    	System.out.println("Credential GOT = "+ resourceManagerContact);
     	ping(null, resourceManagerContact);
     }
   
@@ -228,7 +211,6 @@ public class Gram  {
 	 
 	ResourceManagerContact rmc = 
 	    new ResourceManagerContact(resourceManagerContact);
-	if(cred == null) System.out.println("CRED IS NULL");
 	Socket socket = gatekeeperConnect(cred, rmc, false, false);
 	
 	HttpResponse hd = null;
@@ -337,9 +319,6 @@ public class Gram  {
 	    OutputStream out = socket.getOutputStream();
 	    InputStream in   = socket.getInputStream();
 
-            if (!((GssSocket)socket).getContext().getConfState())
-		throw new Exception("Confidentiality requested but not available");
-
 	    String msg = GRAMProtocol.REQUEST(rmc.getServiceName(),
 					      rmc.getHostName(),
 					      GRAMConstants.STATUS_ALL,
@@ -355,7 +334,7 @@ public class Gram  {
 	    // receive reply
 	    hd = new GatekeeperReply(in);
 
-	} catch(Exception e) {
+	} catch(IOException e) {
 	    throw new GramException(GramException.ERROR_PROTOCOL_FAILED, e);
 	} finally {
 	    try { socket.close(); } catch (Exception e) {}
