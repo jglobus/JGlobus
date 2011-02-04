@@ -14,99 +14,64 @@
  */
 package org.globus.gsi.gssapi;
 
-import org.globus.gsi.util.CertificateUtil;
-import org.globus.gsi.util.ProxyCertificateUtil;
-
-import org.ietf.jgss.GSSCredential;
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.GSSContext;
-import org.ietf.jgss.GSSManager;
-import org.ietf.jgss.GSSName;
-import org.ietf.jgss.Oid;
-import org.ietf.jgss.MessageProp;
-import org.ietf.jgss.ChannelBinding;
-
-import org.gridforum.jgss.ExtendedGSSContext;
-import org.gridforum.jgss.ExtendedGSSCredential;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Vector;
-import java.util.LinkedList;
-import java.util.Date;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.security.KeyPair;
-import java.security.PrivateKey;
 import java.security.GeneralSecurityException;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import org.globus.common.CoGProperties;
-
-import org.globus.gsi.ProviderLoader;
-import org.globus.gsi.provider.GlobusProvider;
-import org.globus.gsi.provider.KeyStoreParametersFactory;
-
-import org.globus.gsi.stores.ResourceCertStoreParameters;
-import org.globus.gsi.stores.ResourceSigningPolicyStore;
-import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
-
-import java.security.cert.CertStore;
-import java.security.cert.CertificateFactory;
-import javax.security.auth.x500.X500Principal;
+import java.security.KeyPair;
 import java.security.KeyStore;
-
-import org.globus.gsi.GSIConstants;
-import org.globus.gsi.X509Credential;
-import org.globus.gsi.VersionUtil;
-import org.globus.gsi.util.CertificateLoadUtil;
-import org.globus.gsi.bc.BouncyCastleUtil;
-import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
-import org.globus.gsi.proxy.ProxyPolicyHandler;
-import org.globus.util.I18n;
-import org.globus.common.CoGProperties;
+import java.security.PrivateKey;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLPeerUnverifiedException;
-import org.globus.gsi.jsse.SSLConfigurator;
-import org.globus.gsi.jsse.GlobusSSLConfigurationException;
-
-import org.bouncycastle.jce.provider.X509CertificateObject;
-import org.globus.gsi.util.CertificateLoadUtil;
-
-/*
- import COM.claymoresystems.ptls.SSLConn;
- import COM.claymoresystems.ptls.SSLRecord;
- import COM.claymoresystems.ptls.SSLDebug;
- import COM.claymoresystems.ptls.SSLCipherSuite;
- import COM.claymoresystems.ptls.SSLCipherState;
- import COM.claymoresystems.ptls.SSLHandshake;
- import COM.claymoresystems.sslg.SSLPolicyInt;
- import COM.claymoresystems.sslg.CertVerifyPolicyInt;
- import COM.claymoresystems.cert.X509Cert;
- import COM.claymoresystems.util.Util;
- */
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Enumeration;
+import org.bouncycastle.jce.provider.X509CertificateObject;
+import org.globus.common.CoGProperties;
+import org.globus.gsi.GSIConstants;
+import org.globus.gsi.ProviderLoader;
+import org.globus.gsi.X509Credential;
+import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
+import org.globus.gsi.bc.BouncyCastleUtil;
+import org.globus.gsi.jsse.SSLConfigurator;
+import org.globus.gsi.provider.GlobusProvider;
+import org.globus.gsi.provider.KeyStoreParametersFactory;
+import org.globus.gsi.stores.ResourceCertStoreParameters;
+import org.globus.gsi.stores.ResourceSigningPolicyStore;
+import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
+import org.globus.gsi.util.CertificateLoadUtil;
+import org.globus.gsi.util.CertificateUtil;
+import org.globus.gsi.util.ProxyCertificateUtil;
+import org.globus.util.I18n;
+import org.gridforum.jgss.ExtendedGSSContext;
+import org.gridforum.jgss.ExtendedGSSCredential;
+import org.ietf.jgss.ChannelBinding;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.GSSName;
+import org.ietf.jgss.MessageProp;
+import org.ietf.jgss.Oid;
 
 /**
  * Implementation of SSL/GSI mechanism for Java GSS-API. The implementation is
