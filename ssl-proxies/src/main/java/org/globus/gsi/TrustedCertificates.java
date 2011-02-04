@@ -30,6 +30,7 @@ import java.security.KeyStore;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -207,6 +208,7 @@ public class TrustedCertificates implements Serializable {
 
     public synchronized void reload(String locations) {
         if (locations == null) {
+        	logger.error("No locations to load");
             return;
         }
 
@@ -228,8 +230,10 @@ public class TrustedCertificates implements Serializable {
 
             String caCertLocation = "file:" + caDir.getAbsolutePath();
             String sigPolPattern = caCertLocation + "/*.signing_policy";
+            logger.error("Signing Policy Pattern: " + sigPolPattern);
             if (!caDir.isDirectory()) {
                 sigPolPattern = getPolicyFileName(caCertLocation);
+                logger.error("Signing Policy Pattern: " + sigPolPattern);
             }
 
             KeyStore keyStore = null;
@@ -257,18 +261,23 @@ public class TrustedCertificates implements Serializable {
                     if (policy != null) {
                         newSigningDNMap.put(CertificateUtil.toGlobusID(policy.getCASubjectDN()), policy);
                     } else {
-                        logger.warn("no signing policy for ca cert " + cert.getSubjectDN());
+                        logger.error("no signing policy for ca cert " + cert.getSubjectDN());
                     }
                 }
             } catch (Exception e) {
-                logger.warn("Failed to create signing policy store",e);
+                logger.error("Failed to create signing policy store",e);
             }
         }
         
         this.changed = true;
         this.certSubjectDNMap = newCertSubjectDNMap;
         this.policyDNMap = newSigningDNMap;
-
+        logger.error("We have " + policyDNMap.size() + " policies");
+        Set set = policyDNMap.keySet();
+        for (Object object : set) {
+			logger.error("Policy: " + (String) object);
+		}
+        
     if (this.changed) {
         this.certList = null;
     }

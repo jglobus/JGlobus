@@ -14,6 +14,7 @@
  */
 package org.globus.gsi.stores;
 
+import org.globus.gsi.bc.X509NameHelper;
 import org.globus.gsi.provider.SigningPolicyStore;
 import org.globus.gsi.provider.SigningPolicyStoreException;
 import org.globus.gsi.provider.SigningPolicyStoreParameters;

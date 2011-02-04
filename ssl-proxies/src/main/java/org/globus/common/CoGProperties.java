@@ -42,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
  * <LI> the socket timeout when connecting to a myproxy host </LI>
  * </UL>
  */
+
 public class CoGProperties extends Properties {
 
     private static Log logger =

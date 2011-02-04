@@ -13,43 +13,47 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.globus.gsi.bc;
-import org.globus.gsi.util.ProxyCertificateUtil;
-
-import org.globus.gsi.TrustedCertificatesUtil;
-import java.util.Collection;
-import java.security.cert.X509CertSelector;
-import java.security.cert.CertStore;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.globus.util.I18n;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.cert.X509Certificate;
+import java.security.Security;
+import java.security.cert.CertStore;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-import java.security.Security;
-import org.globus.gsi.GSIConstants;
-import org.globus.gsi.TrustedCertificates;
-import org.globus.gsi.proxy.ext.ProxyPolicy;
-import org.globus.gsi.proxy.ext.ProxyCertInfo;
-import org.bouncycastle.asn1.ASN1Sequence;
+import java.security.cert.X509CertSelector;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+
+import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DERString;
-import org.bouncycastle.asn1.DERBoolean;
-import org.bouncycastle.asn1.DERInteger;
-import org.bouncycastle.asn1.DEREncodable;
-import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERBoolean;
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERInteger;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.DERString;
+import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertificateObject;
+import org.globus.gsi.GSIConstants;
+import org.globus.gsi.TrustedCertificates;
+import org.globus.gsi.TrustedCertificatesUtil;
+import org.globus.gsi.proxy.ext.ProxyCertInfo;
+import org.globus.gsi.proxy.ext.ProxyPolicy;
+import org.globus.gsi.util.ProxyCertificateUtil;
+import org.globus.util.I18n;
+
+import sun.security.x509.X509CertImpl;
 
 // COMMENT: BCB: removed methods createCertificateType(...) that took a TBSCertificateStructure as parameter
 /**
@@ -221,6 +225,23 @@ public class BouncyCastleUtil {
     }
     }
 
+	public static GSIConstants.CertificateType getCertificateType(TBSCertificateStructure crt, TrustedCertificates trustedCerts)
+			throws CertificateException, IOException {
+		GSIConstants.CertificateType type = getCertificateType(crt);
+
+		// check subject of the cert in trusted cert list
+		// to make sure the cert is not a ca cert
+		if (type == GSIConstants.CertificateType.EEC) {
+			if (trustedCerts == null) {
+				trustedCerts = TrustedCertificates.getDefaultTrustedCertificates();
+			}
+			if (trustedCerts != null && trustedCerts.getCertificate(crt.getSubject().toString()) != null) {
+				type = GSIConstants.CertificateType.CA;
+			}
+		}
+
+		return type;
+	}
     
     /**
      * Returns certificate type of the given TBS certificate. <BR>
@@ -439,6 +460,10 @@ public class BouncyCastleUtil {
 	}
 	if (cert instanceof X509CertificateObject) {
 	    return X509NameHelper.toString((X509Name)cert.getSubjectDN());
+	} else if (cert instanceof X509CertImpl) {
+		String subjectDN = cert.getSubjectX500Principal().getName(X500Principal.RFC2253);
+		X509Name name = new X509Name(true, subjectDN);
+		return X509NameHelper.toString(name);
 	} else {
             String err = i18n.getMessage("certTypeErr", cert.getClass());
 	    throw new IllegalArgumentException(err);
