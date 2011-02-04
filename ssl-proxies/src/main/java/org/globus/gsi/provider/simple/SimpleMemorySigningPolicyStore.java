@@ -32,18 +32,18 @@ public class SimpleMemorySigningPolicyStore implements SigningPolicyStore {
                 if (policy != null) {
                 	X509Name name = new X509Name(false, policy.getCASubjectDN().getName(X500Principal.RFC2253));
                     store.put(X509NameHelper.toString(name), policy);
-                    logger.error("Adding to policy store: " + X509NameHelper.toString(name));
+                    logger.debug("Adding to policy store: " + X509NameHelper.toString(name));
                 }
             }
         }
-        logger.error("Loaded " +  store.size() + " policies of " + numPolicies);
+        logger.debug("Loaded " +  store.size() + " policies of " + numPolicies);
     }
 
     public SigningPolicy getSigningPolicy(X500Principal caPrincipal) throws SigningPolicyStoreException {
     	SigningPolicy policy = store.get(caPrincipal.getName(X500Principal.RFC2253));
     	if (policy == null) {
     		X509Name name = new X509Name(false, caPrincipal.getName(X500Principal.RFC2253));
-    		logger.error("Getting from policy store: " + X509NameHelper.toString(name));
+    		logger.debug("Getting from policy store: " + X509NameHelper.toString(name));
             policy = store.get(X509NameHelper.toString(name));
     	}
     	return policy;
