@@ -302,9 +302,7 @@ public class ProxyPathValidator {
 
         if (trustedCerts == null) {
             trustedCerts = TrustedCertificates.getDefault();
-            logger.error("Using Default Trusted Certs");
         }
-        logger.error(trustedCerts.toString());
 
         try {
            SimpleMemoryKeyStoreLoadStoreParameter ksParams = new SimpleMemoryKeyStoreLoadStoreParameter();
