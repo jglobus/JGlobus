@@ -107,13 +107,6 @@ public abstract class GSSConstants {
      */
     public static final Oid AUTHZ_REQUIRED_WITH_DELEGATION;
 
-    /** Context option. It is set to a Boolean value and if true,
-     * the GSI/GSSAPI layer will force the underlying SSL/TLS to
-     * use SSLv3 and a narrow set of cipher suites so communication
-     * with GRAM servers can succeed.
-     */
-    public static final Oid FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM;
-
     /** Quality-of-Protection (QOP) value, indicates large block size support.
      * Can be passed to <code>wrap</code> or set by <code>unwrap</code>
      * methods  */
@@ -139,8 +132,6 @@ public abstract class GSSConstants {
 	    RECEIVED_LIMITED_PROXY = new Oid("1.3.6.1.4.1.3536.1.1.21");
 	    AUTHZ_REQUIRED_WITH_DELEGATION = 
                 new Oid("1.3.6.1.4.1.3536.1.1.22");
-	    FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM = 
-                new Oid("1.3.6.1.4.1.3536.1.1.23");
 	} catch (Exception e) {
 	    throw new RuntimeException(e.getMessage());
 	}
