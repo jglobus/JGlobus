@@ -1,20 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><title>Java GSI GSS-API Features and Limitations</title><meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"></head><body><big><big>Java GSI GSS-API &nbsp;Implementation Features and Limitations</big></big><br>
 <br>
-The Java GSI implementation is an implementation of the Java GSS-API. It supports the <a href="http://www.ggf.org/security/gsi/draft-ggf-gss-extensions-07.pdf">GSS-API extensions</a> and the <a href="http://www.ggf.org/security/gsi/draft-ggf-gsi-proxy-04.pdf">new proxy certificate format</a> specifications as defined by the <a href="http://www.ggf.org/">Global Grid Forum</a>. <br>
-The implementation is based on the <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html">JSSE</a> (for SSL API) and the <a href="http://www.bouncycastle.org/">BouncyCastle library</a> (for certificate processing API).<br>
+The Java GSI implementation is an implementation of the Java GSS-API. It supports the <a href="http://www.ggf.org/security/gsi/draft-ggf-gss-extensions-07.pdf">GSS-API extensions</a> and the <a href="http://www.ggf.org/security/gsi/draft-ggf-gsi-proxy-04.pdf">new proxy certificate format</a> specifications as defined by the <a href="http://www.ggf.org/">Global Grid Forum</a>. 
+The implementation is based on <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html">JSSE</a> (for SSL API) and the <a href="http://www.bouncycastle.org/">BouncyCastle library</a> (for certificate processing API).<br>
 <br>
 <b>Features</b>:<br>
 <ul>
   <li>Implements Java GSS-API</li>
   <ul>
-    <li>wrap/unwrap support SSL and GSI wrapped tokens (GSI_BIG QoP)</li>
+    <li>wrap/unwrap support SSL wrapped tokens</li>
   </ul>
   <li>Implements most of the GSS-Extensions including:</li>
   <ul>
     <li>Context options</li>
     <ul>
       <li>Supports PROTECTION_FAIL_ON_CONTEXT_EXPIRATION (in Java GSI GSS-API called CHECK_CONTEXT_EXPIRATION)</li>
-      <li>Supports DISALLOW_ENCRYPTION (but through other means than context option)</li>
+      <li>Supports DISALLOW_ENCRYPTION (but only on a per-session basis)</li>
       <li>Defined additional options:&nbsp;</li>
       <ul>
         <li>GSS_MODE</li>
@@ -34,6 +34,7 @@ The implementation is based on the <a href="http://download.oracle.com/javase/6/
       </li>
     </ul>
   </ul>
+  <li>Starting with JGlobus 2.0, SHA-2 (specifically SHA-256, SHA-384 and SHA-512) certificates are also supported.</li>
   <li>Supports GSI and SSL compatibility mode (set via context option interface - GSS_MODE)</li>
   <li>Supports limited and full delegation both using initSecContext/acceptSecContext
 and initDelegation/acceptDelegation methods (set via context option interface
@@ -52,8 +53,9 @@ and initDelegation/acceptDelegation methods (set via context option interface
     </li>
   </ul>
 </ul>
-<b>CHANGES IN JGlobus 2.0 GSSAPI:</b>
+<b>Changes in JGlobus 2.0 GSSAPI:</b>
 <ul>
+<li>With the replacement of PureTLS with JSSE, SHA-2 (specifically SHA-256, SHA-384 and SHA-512) certificates are now supported.</li>
 <li>getMIC() and verifyMIC() are no longer available because of the underlying JSSE constraints.</li>
 <li>GSI_BIG QOP no longer available. wrap/unwrap can no longer switch between encrypted and unencrypted communication.</li>
 
@@ -65,56 +67,68 @@ and initDelegation/acceptDelegation methods (set via context option interface
 
 <li>The "value" Object parameter to setOption(GSSConstants.DELEGATION_TYPE, value) should be of type GSIConstants.DelegationType, while Integer is supported as well for backward compatibility.</li>
 
-<li>Confidentiality service fixes</li>
+<li><b>Confidentiality service changes/fixes</b></li>
 <ul>
 <li>RFC definition</li>
 <ul>
-<li>Only initiator can invoke requestConf. No default specified by Java-bindings RFC; per C-bindings (and also implied by the name requestConf) default is taken to be "false".</li>
-<li>Acceptor can only check if the established context provides confidentiality by checking the result of getConfState().</li>
-<li>Ability to selectively apply confidentiality via MessageProp.setPrivacy() object passed to wrap().</li>
+<li>Per the <a href="http://www.ietf.org/rfc/rfc2853.txt">GSSAPI Java bindings RFC</a>, only Initiator is allowed to invoke requestConf(). No default specified by the RFC; however per <a href="http://www.ietf.org/rfc/rfc2744.txt">C-bindings</a> (and also implied by the name requestConf), default is taken to be "false".</li>
+<li>Acceptor and Initiator can check if the established context provides confidentiality by checking the result of getConfState().</li>
+<li>Ability to selectively apply confidentiality via MessageProp object passed to wrap().</li>
 </ul>
 
+<li><a href="http://www.ggf.org/documents/GFD.24.pdf">GSS-API extensions</a></li>
+<ul>
+<li>This document defines an id-gss-ext-context-opts-disallow-encryption option to a new gss_set_sec_context_option call that is available to Acceptor as well as Initiator. When set, this MUST cause the underlying GSS library to disallow any encryption of application data.</li>
+</ul>
 <li>GSI C GSSAPI behavior</li>
 <ul>
-<li>Only Initiator can request confidentiality since only init_sec_context() has the request_flags parameter. Confidentiality off by default causing the null cipher suites to be added at the front of the platform's default SSL cipher suites. If confidentiality is requested, the platform's default SSL cipher suite is used, which in most cases excludes the null ciphers.</li>
-<li>Acceptor and Initiator can check if the established context provides confidentiality by checking the return_flags parameter to accept_sec_context().</li>
+<li>Confidentiality is off by default causing the null-encryption cipher suites to be added at the front of the list of cipher suites("eNULL:ALL:!ADH:RC4+RSA:+SSLv2").</li>
+<li>Initiator or Acceptor can request confidentiality. If confidentiality is requested, the platform's default SSL cipher suite is used, which by default excludes the null-encryption ciphers.</li>
+<li>Acceptor and Initiator can check if the established context provides confidentiality by checking the return_flags parameter to accept_sec_context() or init_sec_context() respectively. GSI_C_CONF_FLAG in return_flags is only set if the cipher suite uses encryption which is at least 56-bit.</li>
 <li>Ability to selectively apply confidentiality, but only by requesting confidentiality at context establishment time and later selectively negating confidentiality by use of GSI_BIG QOP.</li>
+<li>No enforcement of the id-gss-ext-context-opts-disallow-encryption option defined by the <a href="http://www.ggf.org/documents/GFD.24.pdf">GSS-API extensions</a> document</li>
 </ul>
 <li>OLD JGlobus behavior</li>
 <ul>
-<li>Initiator as well as Acceptor able to request confidentiality using requestConf() but this isn't guaranteed for the initiator since the null cipher suite TLS_RSA_WITH_NULL_MD5 is always added at the end. Confidentiality is on by default but even when confidentiality is on, TLS_RSA_WITH_NULL_MD5 is added at the end resulting in confidentiality not being guaranteed. If confidentiality is turned off, then only the null cipher suite TLS_RSA_WITH_NULL_MD5 is enabled.</li>
-<li>Acceptor and Initiator can check if the established context provides confidentiality by checking getConfState().</li>
+<li><b>Confidentiality is ON by default</b> but even when confidentiality is on, TLS_RSA_WITH_NULL_MD5 is added at the end resulting in confidentiality not being guaranteed.</li>
+<li>Initiator or Acceptor able to explicitly request confidentiality using requestConf() but again this isn't guaranteed since the null cipher suite TLS_RSA_WITH_NULL_MD5 is always added at the end of the list of negotiable cipher suites. If confidentiality is turned off, then only the null cipher suite TLS_RSA_WITH_NULL_MD5 is enabled.</li>
+<li>Initiator and Acceptor can check if the established context provides confidentiality by checking getConfState().</li>
 <li>Ability to selectively apply confidentiality, but only by requesting confidentiality at context establishment time and later selectively negating confidentiality by use of GSI_BIG QOP.</li>
+<li>No support for any equivalent of the id-gss-ext-context-opts-disallow-encryption option defined by the <a href="http://www.ggf.org/documents/GFD.24.pdf">GSS-API extensions</a> document</li>
 </ul>
 
 <li>NEW JGlobus behavior</li>
 <ul>
-<li>Initiator as well as Acceptor able to request confidentiality using requestConf() in which case only the non-null cipher suites supported by JSSE are enabled. Confidentiality is off by default causing all the null cipher suites to be enabled and placed in front of any cipher suites enabled by default by JSSE which are usually non-null cipher suites. In other words:</li>
+<li><b>Confidentiality is OFF by default</b> causing the null-encryption cipher suites to be added at the front of the list of cipher suites enabled by default by JSSE which are usually non-null cipher suites. This has been done to bring the implementation closer to the GSI C version.</li>
+<li>Initiator or Acceptor able to request confidentiality using requestConf() in which case only the cipher suites enabled by default by JSSE which are non-null by default are used.</li>
+<li>In other words:</li>
 
 <ul>
 <li>Setting requestConf(true) will cause:</li>
 <ul>
-<li>all non-NULL cipher suites to be enabled</li>
-<li>all NULL cipher suites to be disabled</li>
-<li>SSLPolicyInt.TLS_RSA_WITH_NULL_MD5 to no longer be added at the end of enabled cipher suites.</li>
+<li>cipher suites enabled by default by JSSE to be left enabled</li>
+<li>TLS_RSA_WITH_NULL_MD5 to no longer be added at the end of enabled cipher suites.</li>
+<li>NOTE: Requesting confidentiality by invoking requestConf(true) before context establishment does NOT guarantee that confidentiality has been negotiated. Where confidentiality is required, the caller MUST verify after context establishment that confidentiality is available by checking the return value of getConfState().</li>
 </ul>
 
 <li>Setting requestConf(false) will cause:</li>
 <ul>
-<li>all NULL cipher suites to be enabled including SSLPolicyInt.TLS_RSA_WITH_NULL_MD5</li>
-<li>all the default enabled cipher suites (including non-NULL) to then be added.</li>
+<li>the NULL cipher suites SSL_RSA_WITH_NULL_SHA, SSL_RSA_WITH_NULL_MD5 to be enabled</li>
+<li>all the default JSSE-enabled cipher suites (non-NULL by default) to then be added.</li>
 </ul>
 </ul>
 
-<li>Acceptor and Initiator can check if the established context provides confidentiality by checking getConfState().</li>
+<li>Acceptor and Initiator can check if the established context in fact provides confidentiality by checking getConfState().</li>
 
 <li>Ability to selectively apply confidentiality no longer available as GSI_BIG QOP is no longer supported.</li>
 
-<li>WARNING: Applications that require confidentiality are supposed to check GSSContext.getConfState() after context establishment to make sure the confidentiality service is in fact available but none of them in jGlobus appear to do so!</li>
+<li>GRAM Contraints: Communication with GRAM servers will currently only succeed with SSLv3 and a narrow set of cipher suites. So, applications attempting communication with GRAM must first invoke GSSContext.setOption(FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM, Boolean.TRUE) to force the GSSAPI layer to constrain JSSE to SSLv3 and SSL_RSA_WITH_3DES_EDE_CBC_SHA when confidentiality is requested via requestConf() and SSL_RSA_WITH_NULL_SHA otherwise.
+<li><b>WARNING: Applications that require confidentiality are supposed to check GSSContext.getConfState() after context establishment to make sure the confidentiality service is in fact available but none of them in jGlobus appear to do so!</b></li>
+<li>No support for any equivalent of the id-gss-ext-context-opts-disallow-encryption option defined by the <a href="http://www.ggf.org/documents/GFD.24.pdf">GSS-API extensions</a> document</li>
 </ul>
 </ul>
 </ul>
-<b>CLARIFICATION:</b>
+<b>Clarification:</b>
 <ul>
 
 <li>setOption(GSSConstants.REQUIRE_CLIENT_AUTH, true) and setOption(GSSConstants.ACCEPT_NO_CLIENT_CERTS, true) will cause the former setting to take precedence; in other words client authentication will be "required".</li>

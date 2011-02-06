@@ -204,8 +204,21 @@ public final class CertificateLoadUtil {
         String line;
         StringBuffer buff = new StringBuffer();
         boolean isCert = false;
+        boolean isKey = false;
         boolean notNull = false;
         while ((line = reader.readLine()) != null) {
+            // Skip key info, if any
+            if (line.indexOf("BEGIN RSA PRIVATE KEY") != -1 ||
+                 line.indexOf("BEGIN PRIVATE KEY") != -1) {
+                isKey = true;
+                continue;
+            } else if (isKey && (line.indexOf("END RSA PRIVATE KEY") != -1 ||
+                                 line.indexOf("END PRIVATE KEY") != -1)) {
+                isKey = false;
+                continue;
+            } else if (isKey)
+                continue;
+
             notNull = true;
             if (line.indexOf("BEGIN CERTIFICATE") != -1) {
                 isCert = true;
