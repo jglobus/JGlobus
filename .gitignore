@@ -9,3 +9,5 @@ test-output
 .project
 .classpath
 .settings
+*.java~
+*.xml~
