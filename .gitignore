@@ -9,3 +9,10 @@ test-output
 .project
 .classpath
 .settings
+.idea~
+.project~
+.classpath~
+.settings~
+.gitignore~
+*.java~
+*.xml~
