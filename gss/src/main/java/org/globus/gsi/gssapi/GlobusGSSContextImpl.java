@@ -700,9 +700,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 		}
 		if (result.getStatus() !=
 			SSLEngineResult.Status.OK) {
+			if (!sslEngine.isInboundDone()) {
                 	throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.TOKEN_FAIL,
                                          result.getStatus().toString());
+			}
 		}
 		// TODO: check for BUFFER_UNDERFLOW and others?
               } while (inBBuff.hasRemaining());
