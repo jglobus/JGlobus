@@ -24,6 +24,8 @@ import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -44,7 +46,6 @@ import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.globus.gsi.GSIConstants;
 import org.globus.gsi.TrustedCertificates;
 import org.globus.gsi.TrustedCertificatesUtil;
@@ -52,8 +53,6 @@ import org.globus.gsi.proxy.ext.ProxyCertInfo;
 import org.globus.gsi.proxy.ext.ProxyPolicy;
 import org.globus.gsi.util.ProxyCertificateUtil;
 import org.globus.util.I18n;
-
-import sun.security.x509.X509CertImpl;
 
 // COMMENT: BCB: removed methods createCertificateType(...) that took a TBSCertificateStructure as parameter
 /**
@@ -455,19 +454,30 @@ public class BouncyCastleUtil {
      * @return the subject DN of the certificate in the Globus format.
      */
     public static String getIdentity(X509Certificate cert) {
-	if (cert == null) {
-	    return null;
-	}
-	if (cert instanceof X509CertificateObject) {
-	    return X509NameHelper.toString((X509Name)cert.getSubjectDN());
-	} else if (cert instanceof X509CertImpl) {
-		String subjectDN = cert.getSubjectX500Principal().getName(X500Principal.RFC2253);
-		X509Name name = new X509Name(true, subjectDN);
-		return X509NameHelper.toString(name);
-	} else {
-            String err = i18n.getMessage("certTypeErr", cert.getClass());
-	    throw new IllegalArgumentException(err);
-	}
+    	if (cert == null) {
+    		return null;
+    	}
+	
+    	String subjectDN = cert.getSubjectX500Principal().getName(X500Principal.RFC2253);
+    	X509Name name = new X509Name(true, subjectDN);
+	    return X509NameHelper.toString(name);
+    }
+
+    public static String getIdentityPrefix(X509Certificate cert) {
+    	if (cert == null) {
+    		return null;
+    	}
+	
+    	String subjectDN = cert.getSubjectX500Principal().getName(X500Principal.RFC2253);
+    	LdapName ldapname = null;
+		try {
+			ldapname = new LdapName(subjectDN);
+			ldapname.remove(ldapname.size() - 1);
+		} catch (InvalidNameException e) {
+			return null;
+		}
+    	X509Name name = new X509Name(true, ldapname.toString());
+	    return X509NameHelper.toString(name);
     }
 
     /**
