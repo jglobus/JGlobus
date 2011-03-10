@@ -27,11 +27,13 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>catalina</artifactId>
       <version>6.0.24</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>coyote</artifactId>
       <version>6.0.24</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
