@@ -137,6 +137,9 @@ public class GlobusTLSContext {
 			throws CertificateException, CertificateEncodingException {
 		if (javaxCerts == null || javaxCerts.length == 0)
 			return null;
+		if(javaxCerts instanceof X509Certificate[]){
+			return (X509Certificate[]) javaxCerts;
+		}
 		int length = javaxCerts.length;
 		X509Certificate[] javaCerts = new X509Certificate[length];
 		java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory
