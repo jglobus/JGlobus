@@ -32,19 +32,22 @@ public class GlobusTLSContext {
 
 	public GlobusTLSContext(SSLSession sslSession) {
 		containerSubject = new Subject();
-		containerSubject.getPrincipals().add(sslSession.getLocalPrincipal());
-		containerSubject.getPublicCredentials().add(
-				getLocalCertChain(sslSession));
+		localPrincipal = sslSession.getLocalPrincipal();
+		containerSubject.getPrincipals().add(localPrincipal);
+		localCertChain = getLocalCertChain(sslSession);
+		containerSubject.getPublicCredentials().add(localCertChain);
 		GlobusTLSContext.containerSubjectHolder.set(containerSubject);
 		peerSubject = new Subject();
 		try {
-			peerSubject.getPrincipals().add(sslSession.getPeerPrincipal());
+			peerPrincipal = sslSession.getPeerPrincipal();
+			peerSubject.getPrincipals().add(peerPrincipal);
 		} catch (SSLPeerUnverifiedException e) {
 			// We should already be verified, but if by some crazy chance we
 			// aren't
 			logger.warn(e.getLocalizedMessage(), e);
 		}
-		peerSubject.getPublicCredentials().add(getPeerCertChain(sslSession));
+		peerCertChain = getPeerCertChain(sslSession);
+		peerSubject.getPublicCredentials().add(peerCertChain);
 
 		creationTime = new Date(sslSession.getCreationTime());
 		try {
