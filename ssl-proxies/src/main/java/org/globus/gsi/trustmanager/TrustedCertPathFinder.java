@@ -15,6 +15,7 @@
 
 package org.globus.gsi.trustmanager;
 
+import org.globus.gsi.util.CertificateUtil;
 import org.globus.gsi.util.KeyStoreUtil;
 
 import java.util.Iterator;
@@ -37,6 +38,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -47,6 +50,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public final class TrustedCertPathFinder {
+    private static Log logger = LogFactory.getLog(TrustedCertPathFinder.class.getCanonicalName());
 
     private TrustedCertPathFinder() {
         //this should not be instantiated.
@@ -66,7 +70,8 @@ public final class TrustedCertPathFinder {
 
             trustedCertPath.add(x509Certificate);
             // FIXME: does this have to be a CA certificate and/or self signed
-            // such that signature is validated.
+            // such that signature is validated.  (checking a self-signature
+            // currently breaks the path validation test suites)
             // trusted certificate found. return.
             try {
                 CertificateFactory certFac = CertificateFactory.getInstance("X.509");
@@ -93,6 +98,7 @@ public final class TrustedCertPathFinder {
      * last certificate in CertPath. If so, return certPath + trusted certificate from trust store If not, throw
      * an exception for lack of valid trust root.
      *
+     * @param keyStore The key store containing CA trust root certificates
      * @param certPath The certpath from which to extract a valid cert path to a trusted certificate.
      * @return The valid CertPath.
      * @throws CertPathValidatorException If the CertPath is invalid.
@@ -141,9 +147,36 @@ public final class TrustedCertPathFinder {
             throw new CertPathValidatorException("No trusted path can be constructed");
         }
 
-        trustedCertPath.add(x509Certificate);
-        // FIXME: unchecked cast here. does the last certificate need to be validated?
-        trustedCertPath.add((X509Certificate) caCerts.iterator().next());
+        boolean foundTrustRoot = false;
+
+        for (Certificate caCert : caCerts) {
+            if (! (caCert instanceof X509Certificate)) {
+                logger.warn("Skipped a certificate: not an X509Certificate");
+                continue;
+            }
+            try {
+                trustedCertPath.add(checkCertificate(trustedCertPath,
+                        x509Certificate, caCert));
+                // currently the caCert self-signature is not checked
+                // to be consistent with the isTrustedCert() method
+                foundTrustRoot = true;
+                // we found a CA cert that signed the certificate
+                // so we don't need to check any more
+                break;
+            } catch (CertPathValidatorException e) {
+                // fine, just move on to check the next potential CA cert
+                // after the loop we'll check whether any were successful
+                logger.warn("Failed to validate signature of certificate with "
+                          + "subject DN '" + x509Certificate.getSubjectDN()
+                          + "' against a CA certificate with issuer DN '"
+                          + ((X509Certificate)caCert).getSubjectDN() + "'");
+            }
+        }
+
+        if (! foundTrustRoot) {
+            throw new CertPathValidatorException(
+                    "No trusted path can be constructed");
+        }
 
         try {
             CertificateFactory certFac = CertificateFactory.getInstance("X.509");
@@ -158,9 +191,12 @@ public final class TrustedCertPathFinder {
             throws CertPathValidatorException {
         X509Certificate x509IssuerCertificate = (X509Certificate) issuerCertificate;
 
-        // check that the next one is indeed issuer
-        Principal issuerDN = x509Certificate.getIssuerDN();
-        Principal issuerCertDN = x509IssuerCertificate.getSubjectDN();
+        // check that the next one is indeed issuer, normalizing to Globus DN format
+        String issuerDN = CertificateUtil.toGlobusID(
+                x509Certificate.getIssuerX500Principal());
+        String issuerCertDN = CertificateUtil.toGlobusID(
+                x509IssuerCertificate.getSubjectX500Principal());
+
         if (!(issuerDN.equals(issuerCertDN))) {
             throw new IllegalArgumentException("Incorrect certificate path, certificate in chain can only "
                     + "be issuer of previous certificate");
