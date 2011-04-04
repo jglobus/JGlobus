@@ -1353,7 +1353,7 @@ done:      do {
 /*DEL
             this.context.setCredential(this.ctxCred.getX509Credential());
 */
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        KeyStore keyStore = KeyStore.getInstance("JKS");
 	    keyStore.load(null, null);
 	    X509Credential cred = this.ctxCred.getX509Credential();
 
