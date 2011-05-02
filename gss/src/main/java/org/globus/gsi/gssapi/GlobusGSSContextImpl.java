@@ -250,6 +250,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     protected TokenInputStream in;
     protected ByteArrayOutputStream out;
 */
+    private byte[] savedInBytes = null;
     private ByteBuffer outByteBuff = null;
     protected BouncyCastleCertProcessingFactory certFactory;
 
@@ -427,7 +428,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             }
 
 	    this.conn = true;
-	    logger.debug("done initializing in initSecContext");
+	    logger.debug("done initializing in acceptSecContext");
         }
 
 /*DEL
@@ -435,7 +436,21 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         this.in.putToken(inBuff, off, len);
 */
 	this.outByteBuff.clear();
-	ByteBuffer inByteBuff = ByteBuffer.wrap(inBuff, off, len);
+	ByteBuffer inByteBuff;
+        if (savedInBytes != null) {
+            if (len > 0) {
+                byte[] allInBytes = new byte[savedInBytes.length + len];
+                logger.debug("ALLOCATED for allInBytes " + savedInBytes.length + " + " + len + " bytes\n");
+                System.arraycopy(savedInBytes, 0, allInBytes, 0, savedInBytes.length);
+                System.arraycopy(inBuff, off, allInBytes, savedInBytes.length, len);
+                inByteBuff = ByteBuffer.wrap(allInBytes, 0, allInBytes.length);
+            } else {
+                inByteBuff = ByteBuffer.wrap(savedInBytes, 0, savedInBytes.length);
+            }
+            savedInBytes = null;
+        } else {
+            inByteBuff = ByteBuffer.wrap(inBuff, off, len);
+        }
 
         switch (state) {
             
@@ -449,15 +464,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
                 if (handshake_status ==
                         SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
-                        return null;
+                        // return null;
+                    throw new Exception("GSSAPI in HANDSHAKE state but " +
+                         "SSLEngine in NOT_HANDSHAKING state!");
                 } else {
                         outByteBuff = this.sslProcessHandshake(inByteBuff, outByteBuff);
-                        if (inByteBuff.hasRemaining()) {
-                                throw new GlobusGSSException(GSSException.FAILURE,
-		 		new Exception("Not all data processed; Original: " + len
-                        + " Remaining: " + inByteBuff.remaining() +
-                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
-                        }
                 }
 
 		logger.debug("STATUS AFTER: " + this.sslEngine.getHandshakeStatus().toString());
@@ -599,6 +610,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 */
 		outByteBuff = sslDataUnwrap(inByteBuff, outByteBuff);
                 outByteBuff.flip();
+                if (!outByteBuff.hasRemaining())
+                    break;
                 byte [] buf = new byte[outByteBuff.remaining()];
                 outByteBuff.get(buf, 0, buf.length);
 		ByteArrayInputStream inStream = new ByteArrayInputStream(buf, 0, buf.length);
@@ -646,25 +659,31 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             throw new GSSException(GSSException.FAILURE);
         }
 
-        // TODO: we could also add a check if this.in is empty to make sure
-        // we processed all data.
+        if (inByteBuff.hasRemaining()) {
+            // Likely BUFFER_UNDERFLOW; save the
+            // inByteBuff bytes here like in the unwrap() case
+	    logger.debug("Not all data processed; Original: " + len
+                        + " Remaining: " + inByteBuff.remaining() +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus());
+               logger.debug("SAVING unprocessed " + inByteBuff.remaining() + "BYTES\n");
+               savedInBytes = new byte[inByteBuff.remaining()];
+               inByteBuff.get(savedInBytes, 0, savedInBytes.length);
+	}
 
-        logger.debug("exit acceptSeContext");
+        logger.debug("exit acceptSecContext");
 /*DEL
         return (this.out.size() > 0) ? this.out.toByteArray() : null;
 */
 	if (this.outByteBuff.hasRemaining()) {
                 // TODO can we avoid this copy if the ByteBuffer is array based
-                // and we return that array?
+                // and we return that array, each time allocating a new array
+                // for outByteBuff?
                 byte [] out = new byte[this.outByteBuff.remaining()];
                 this.outByteBuff.get(out, 0, out.length);
                 return out;
 	} else
                 return null;
     }
-
-    // TODO: How to handle SSL renegotiation? Should we employ the input token
-    // stream to hold onto non-processed app data? Test renegotiation!!!
 
     // Meant for non-handshake processing
     private ByteBuffer sslDataWrap(ByteBuffer inBBuff, ByteBuffer outBBuff)
@@ -673,10 +692,10 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
               if (sslEngine.getHandshakeStatus() !=
 			SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
-                  throw new Exception("SSLEngine handshaking needed!");
+                  throw new Exception("SSLEngine handshaking needed! " +
+                        "HandshakeStatus: " +
+                        sslEngine.getHandshakeStatus().toString());
               }
-		// TODO why are we checking for handshake status while processing
-		// app data?
 		int iter = 0;
 	      do {
 		logger.debug("PROCESSING DATA (WRAP) " + ++iter +
@@ -689,37 +708,43 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 		}
 		if (result.getStatus() ==
 			SSLEngineResult.Status.BUFFER_OVERFLOW) {
-			// Could attempt to drain the dst buffer of any already obtained
-		        // data, but we'll just increase it to the size needed.
+		        // just increase it to the size needed.
 		        int pktSize = sslEngine.getSession().getPacketBufferSize();
 		        ByteBuffer b = ByteBuffer.allocate(pktSize + outBBuff.position());
 		        outBBuff.flip();
 		        b.put(outBBuff);
 		        outBBuff = b;
 			continue;
-		}
+		} else if (result.getStatus() ==
+                            SSLEngineResult.Status.BUFFER_UNDERFLOW) {
+                	throw new GlobusGSSException(GSSException.FAILURE,
+		 		new Exception("Unexpected BUFFER_UNDERFLOW;" +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
+                }
 		if (result.getStatus() !=
 			SSLEngineResult.Status.OK) {
                 	throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.TOKEN_FAIL,
                                          result.getStatus().toString());
 		}
-		// TODO: check for BUFFER_UNDERFLOW and others?
               } while (inBBuff.hasRemaining());
 
 		return outBBuff;
 	} catch (Exception e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
 	}
-	}
+    }
 
+    // Not all in inBBuff might be consumed by this method!!!
     private ByteBuffer sslDataUnwrap(ByteBuffer inBBuff, ByteBuffer outBBuff)
                       throws GSSException {
 	try {
 		int iter = 0;
               if (sslEngine.getHandshakeStatus() !=
 			SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
-                  throw new Exception("SSLEngine handshaking needed!" + sslEngine.getHandshakeStatus().toString());
+                  throw new Exception("SSLEngine handshaking needed! " +
+                        "HandshakeStatus: " +
+                        sslEngine.getHandshakeStatus().toString());
               }
 	      do {
 		logger.debug("PROCESSING DATA (UNWRAP) " + ++iter +
@@ -733,8 +758,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 		}
 		if (result.getStatus() ==
 			SSLEngineResult.Status.BUFFER_OVERFLOW) {
-			// Could attempt to drain the dst buffer of any already obtained
-		        // data, but we'll just increase it to the size needed.
+		        // increase it to the size needed.
 		        int appSize = sslEngine.getSession().getApplicationBufferSize();
 		        ByteBuffer b = ByteBuffer.allocate(appSize + outBBuff.position());
 		        outBBuff.flip();
@@ -782,22 +806,25 @@ done:      do {
 		}
 		if (result.getStatus() ==
 			SSLEngineResult.Status.BUFFER_OVERFLOW) {
-			// Could attempt to drain the dst buffer of any already obtained
-		        // data, but we'll just increase it to the size needed.
+		        // increase it to the size needed.
 		        int pktSize = sslEngine.getSession().getPacketBufferSize();
 		        ByteBuffer b = ByteBuffer.allocate(pktSize + outBBuff.position());
 		        outBBuff.flip();
 		        b.put(outBBuff);
 		        outBBuff = b;
 			continue;
-		}
+		} else if (result.getStatus() ==
+                            SSLEngineResult.Status.BUFFER_UNDERFLOW) {
+                	throw new GlobusGSSException(GSSException.FAILURE,
+		 		new Exception("Unexpected BUFFER_UNDERFLOW;" +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
+                }
 		if (result.getStatus() !=
 			SSLEngineResult.Status.OK) {
                 	throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.TOKEN_FAIL,
                                          result.getStatus().toString());
 		}
-		// TODO: check for BUFFER_UNDERFLOW and others?
               }
 
 		int iter = 0;
@@ -814,8 +841,7 @@ done:      do {
 		}
 		if (result.getStatus() ==
 			SSLEngineResult.Status.BUFFER_OVERFLOW) {
-			// Could attempt to drain the dst buffer of any already obtained
-		        // data, but we'll just increase it to the size needed.
+		        // increase it to the size needed.
 		        int appSize = sslEngine.getSession().getApplicationBufferSize();
 		        ByteBuffer b = ByteBuffer.allocate(appSize + outBBuff.position());
 		        outBBuff.flip();
@@ -826,6 +852,7 @@ done:      do {
 		else if (result.getStatus() ==
 				SSLEngineResult.Status.BUFFER_UNDERFLOW) {
 			// More data needed from peer
+			// break out of outer loop
 			break done;
 		}
 		if (result.getStatus() !=
@@ -936,7 +963,21 @@ done:      do {
 */
 
         this.outByteBuff.clear();
-	ByteBuffer inByteBuff = ByteBuffer.wrap(inBuff, off, len);
+	ByteBuffer inByteBuff;
+        if (savedInBytes != null) {
+            if (len > 0) {
+                byte[] allInBytes = new byte[savedInBytes.length + len];
+                logger.debug("ALLOCATED for allInBytes " + savedInBytes.length + " + " + len + " bytes\n");
+                System.arraycopy(savedInBytes, 0, allInBytes, 0, savedInBytes.length);
+                System.arraycopy(inBuff, off, allInBytes, savedInBytes.length, len);
+                inByteBuff = ByteBuffer.wrap(allInBytes, 0, allInBytes.length);
+            } else {
+                inByteBuff = ByteBuffer.wrap(savedInBytes, 0, savedInBytes.length);
+            }
+            savedInBytes = null;
+        } else {
+            inByteBuff = ByteBuffer.wrap(inBuff, off, len);
+        }
 
         switch (state) {
             
@@ -950,15 +991,11 @@ done:      do {
 
         	if (handshake_status ==
 			SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
-			return null;
+			// return null;
+                    throw new Exception("GSSAPI in HANDSHAKE state but " +
+                         "SSLEngine in NOT_HANDSHAKING state!");
 		} else {
 			outByteBuff = this.sslProcessHandshake(inByteBuff, outByteBuff);
-			if (inByteBuff.hasRemaining()) {
-                		throw new GlobusGSSException(GSSException.FAILURE,
-		 		new Exception("Not all data processed; Original: " + len
-                        + " Remaining: " + inByteBuff.remaining() +
-                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
-			}
 		}
 
 		logger.debug("STATUS AFTER: " +
@@ -995,8 +1032,8 @@ done:      do {
 /*DEL
                     String identity = verifyChain(chain);
 */
-			// TODO chain verification would have already been done by
-			// JSSE correct?
+			// chain verification would have already been done by
+			// JSSE
 
                     String identity = BouncyCastleUtil.getIdentity(bcConvert(BouncyCastleUtil.getIdentityCertificate((X509Certificate [])chain)));
                     this.targetName = new GlobusGSSName(CertificateUtil.toGlobusID(identity, false));
@@ -1073,8 +1110,7 @@ done:      do {
                     setDone();
 		}
 
-		// TODO: Force ASCII encoding?
-		byte[] a = deleg.getBytes();
+		byte[] a = deleg.getBytes("US-ASCII");
 		inByteBuff = ByteBuffer.wrap(a, 0, a.length);
                 outByteBuff = sslDataWrap(inByteBuff, outByteBuff);
 		outByteBuff.flip();
@@ -1099,6 +1135,9 @@ done:      do {
 */
                 outByteBuff = sslDataUnwrap(inByteBuff, outByteBuff);
 		outByteBuff.flip();
+                if (!outByteBuff.hasRemaining())
+                    break;
+
 		byte [] certReq = new byte[outByteBuff.remaining()];
 		outByteBuff.get(certReq, 0, certReq.length);
 
@@ -1136,14 +1175,24 @@ done:      do {
             throw new GSSException(GSSException.FAILURE);
         }
 
-        // TODO: we could also add a check if this.in is empty to make sure
-        // we processed all data.
+        if (inByteBuff.hasRemaining()) {
+            // Likely BUFFER_UNDERFLOW; save the
+            // inByteBuff bytes here like in the unwrap() case
+	    logger.debug("Not all data processed; Original: " + len
+                        + " Remaining: " + inByteBuff.remaining() +
+                        " Handshaking status: " + sslEngine.getHandshakeStatus());
+               logger.debug("SAVING unprocessed " + inByteBuff.remaining() + "BYTES\n");
+               savedInBytes = new byte[inByteBuff.remaining()];
+               inByteBuff.get(savedInBytes, 0, savedInBytes.length);
+	}
 
         logger.debug("exit initSecContext");
-	//TODO: Why is here a check for CLIENT_START_DEL?
-        if (this.outByteBuff.hasRemaining() || this.state == CLIENT_START_DEL) {
-		// TODO can we avoid this copy if the ByteBuffer is array based
-		// and we return that array?
+	//XXX: Why is here a check for CLIENT_START_DEL?
+        // if (this.outByteBuff.hasRemaining() || this.state == CLIENT_START_DEL) {
+        if (this.outByteBuff.hasRemaining()) {
+                // TODO can we avoid this copy if the ByteBuffer is array based
+                // and we return that array, each time allocating a new array
+                // for outByteBuff?
 		byte [] out = new byte[this.outByteBuff.remaining()];
 		this.outByteBuff.get(out, 0, out.length);
 		return out;
@@ -1456,8 +1505,9 @@ done:      do {
         }
 
         if (this.outByteBuff.hasRemaining()) {
-		// TODO can we avoid this copy if the ByteBuffer is array based
-		// and we return that array?
+                // TODO can we avoid this copy if the ByteBuffer is array based
+                // and we return that array, each time allocating a new array
+                // for outByteBuff?
 		byte [] out = new byte[this.outByteBuff.remaining()];
 		this.outByteBuff.get(out, 0, out.length);
 		return out;
@@ -1559,21 +1609,38 @@ done:      do {
         
         return out.toByteArray();
 */
-	ByteBuffer inByteBuff = ByteBuffer.wrap(inBuf, off, len);
+	ByteBuffer inByteBuff;
+        if (savedInBytes != null) {
+            if (len > 0) {
+                byte[] allInBytes = new byte[savedInBytes.length + len];
+                logger.debug("ALLOCATED for allInBytes " + savedInBytes.length + " + " + len + " bytes\n");
+                System.arraycopy(savedInBytes, 0, allInBytes, 0, savedInBytes.length);
+                System.arraycopy(inBuf, off, allInBytes, savedInBytes.length, len);
+                inByteBuff = ByteBuffer.wrap(allInBytes, 0, allInBytes.length);
+            } else {
+                inByteBuff = ByteBuffer.wrap(savedInBytes, 0, savedInBytes.length);
+            }
+            savedInBytes = null;
+        } else {
+            inByteBuff = ByteBuffer.wrap(inBuf, off, len);
+        }
 	this.outByteBuff.clear();
 	outByteBuff = this.sslDataUnwrap(inByteBuff, outByteBuff);
 	outByteBuff.flip();
 
 	if (inByteBuff.hasRemaining()) {
-		throw new GlobusGSSException(GSSException.FAILURE,
-		 		new Exception("Not all data processed; Original: " + len
+	    logger.debug("Not all data processed; Original: " + len
                         + " Remaining: " + inByteBuff.remaining() +
-                        " Handshaking status: " + sslEngine.getHandshakeStatus()));
+                        " Handshaking status: " + sslEngine.getHandshakeStatus());
+               logger.debug("SAVING unprocessed " + inByteBuff.remaining() + "BYTES\n");
+               savedInBytes = new byte[inByteBuff.remaining()];
+               inByteBuff.get(savedInBytes, 0, savedInBytes.length);
 	}
 
         if (this.outByteBuff.hasRemaining()) {
-		// TODO can we avoid this copy if the ByteBuffer is array based
-		// and we return that array?
+                // TODO can we avoid this copy if the ByteBuffer is array based
+                // and we return that array, each time allocating a new array
+                // for outByteBuff?
 		byte [] out = new byte[this.outByteBuff.remaining()];
 		this.outByteBuff.get(out, 0, out.length);
 		return out;
@@ -2345,8 +2412,7 @@ done:      do {
                 X509Certificate cert = 
                     this.certFactory.createCertificate(inData,
                                                        chain[0],
-                                                       // TODO: Is this cast appropriate?
-                                                       (PrivateKey)cred.getPrivateKey(),
+                                                       cred.getPrivateKey(),
                                                        time,
 /*DEL
                                                        getDelegationType(chain[0]));
@@ -2377,6 +2443,7 @@ done:      do {
         logger.debug("Exit initDelegation");
         
         if (this.gssMode != GSIConstants.MODE_SSL && token != null) {
+            // XXX: Why wrap() only when not in MODE_SSL?
             return wrap(token, 0, token.length);
         } else {
             return token;
@@ -2505,6 +2572,7 @@ done:      do {
         logger.debug("Exit acceptDelegation");
 
         if (this.gssMode != GSIConstants.MODE_SSL && token != null) {
+            // XXX: Why wrap() only when not in MODE_SSL?
             return wrap(token, 0, token.length);
         } else {
             return token;
