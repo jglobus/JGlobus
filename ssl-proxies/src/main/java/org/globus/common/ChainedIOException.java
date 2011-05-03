@@ -57,7 +57,7 @@ public class ChainedIOException extends java.io.IOException {
      * @see #getException
      */
     public ChainedIOException (String detail, Throwable ex) {
-        super(detail);
+        super(detail, ex);
         exception = ex;
     }
 

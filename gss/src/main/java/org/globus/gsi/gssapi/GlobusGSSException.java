@@ -53,6 +53,7 @@ public class GlobusGSSException extends GSSException {
 			      Throwable exception) {
 	super(majorCode);
 	this.exception = exception;
+	initCause(exception);
     }
 
     public GlobusGSSException(int majorCode, 
@@ -61,6 +62,7 @@ public class GlobusGSSException extends GSSException {
 			      Throwable exception) {
 	super(majorCode, minorCode, minorString);
 	this.exception = exception;
+	initCause(exception);
     }
 
     public GlobusGSSException(int majorCode,
