@@ -1402,9 +1402,9 @@ done:      do {
 	    X509Credential cred = this.ctxCred.getX509Credential();
 
 	    keyStore.setKeyEntry("default", cred.getPrivateKey(),
-			"".toCharArray(), cred.getCertificateChain());
+			"password".toCharArray(), cred.getCertificateChain());
 	    this.sslConfigurator.setCredentialStore(keyStore);
-	    this.sslConfigurator.setCredentialStorePassword("");
+	    this.sslConfigurator.setCredentialStorePassword("password");
 
         } catch (GeneralSecurityException e) {
             throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
