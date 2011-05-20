@@ -1250,13 +1250,10 @@ done:      do {
 	// TODO: Document the following behavior
 	// NOTE: requireClientAuth Vs. acceptNoClientCerts
 	// which one takes precedence? for now err on the side of security
-	// if (this.requireClientAuth.booleanValue() == Boolean.TRUE) {
-        //     this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
-	// } else
-        //     this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
-	this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
-	this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
-	this.sslEngine.setWantClientAuth(true);
+	 if (this.requireClientAuth.booleanValue() == Boolean.TRUE) {
+             this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
+	 } else
+             this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
 
         this.sslEngine.setUseClientMode(how == INITIATE);
 
