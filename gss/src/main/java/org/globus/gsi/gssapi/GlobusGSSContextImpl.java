@@ -653,7 +653,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 /*DEL
         return (this.out.size() > 0) ? this.out.toByteArray() : null;
 */
-	if (this.outByteBuff.hasRemaining() || this.state == CLIENT_START_DEL) {
+	if (this.outByteBuff.hasRemaining()) {
                 // TODO can we avoid this copy if the ByteBuffer is array based
                 // and we return that array?
                 byte [] out = new byte[this.outByteBuff.remaining()];
