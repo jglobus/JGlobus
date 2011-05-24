@@ -674,7 +674,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 /*DEL
         return (this.out.size() > 0) ? this.out.toByteArray() : null;
 */
-	if (this.outByteBuff.hasRemaining()) {
+	if (this.outByteBuff.hasRemaining() || this.state == CLIENT_START_DEL) {
                 // TODO can we avoid this copy if the ByteBuffer is array based
                 // and we return that array, each time allocating a new array
                 // for outByteBuff?
@@ -723,9 +723,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 }
 		if (result.getStatus() !=
 			SSLEngineResult.Status.OK) {
+			if (!sslEngine.isInboundDone()) {
                 	throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.TOKEN_FAIL,
                                          result.getStatus().toString());
+			}
 		}
               } while (inBBuff.hasRemaining());
 
@@ -1297,10 +1299,13 @@ done:      do {
 	// TODO: Document the following behavior
 	// NOTE: requireClientAuth Vs. acceptNoClientCerts
 	// which one takes precedence? for now err on the side of security
-	if (this.requireClientAuth.booleanValue() == Boolean.TRUE) {
-            this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
-	} else
-            this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
+	// if (this.requireClientAuth.booleanValue() == Boolean.TRUE) {
+        //     this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
+	// } else
+        //     this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
+	this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
+	this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
+	this.sslEngine.setWantClientAuth(true);
 
         this.sslEngine.setUseClientMode(how == INITIATE);
 
@@ -1397,7 +1402,7 @@ done:      do {
 /*DEL
             this.context.setCredential(this.ctxCred.getX509Credential());
 */
-            KeyStore keyStore = KeyStore.getInstance("JKS");
+        KeyStore keyStore = KeyStore.getInstance("JKS");
 	    keyStore.load(null, null);
 	    X509Credential cred = this.ctxCred.getX509Credential();
 
