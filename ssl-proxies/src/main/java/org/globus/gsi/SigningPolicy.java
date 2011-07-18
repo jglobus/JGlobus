@@ -99,10 +99,8 @@ public class SigningPolicy {
 
         String subjectDN = CertificateUtil.toGlobusID(subject);
 
-        // no policy
-        // FIXME: probably should be false?
         if ((this.allowedDNs == null) || (this.allowedDNs.size() < 1)) {
-            return true;
+            return false;
         }
 
         int size = this.allowedDNs.size();

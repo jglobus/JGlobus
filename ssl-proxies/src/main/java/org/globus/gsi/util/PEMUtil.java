@@ -17,7 +17,7 @@ package org.globus.gsi.util;
 import java.io.IOException;
 import java.io.OutputStream;
 
-// FIXME: how much of this can be borrwed directly form BC?
+// JGLOBUS-95 : how much of this can be borrwed directly form BC?
 
 /**
  * Fill Me

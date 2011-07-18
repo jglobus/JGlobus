@@ -31,7 +31,7 @@ import java.security.cert.CertificateEncodingException;
 import org.springframework.core.io.Resource;
 
 /**
- * FIXME: document me
+ * JGLOBUS-87 : document me
  *
  * @author Tom Howe
  */

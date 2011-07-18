@@ -295,17 +295,7 @@ public final class CertificateUtil {
             }
         }
 
-        /** FIXME: this looks like validation
-         if (ProxyCertificateUtil.isProxy(type)) {
-         X509NameHelper iss = new X509NameHelper(crt.getIssuer());
-         iss.add((ASN1Set)BouncyCastleUtil.duplicate(entry));
-         X509Name issuer = iss.getAsName();
-         if (!issuer.equals(subject)) {
-         String err = i18n.getMessage("proxyDNErr");
-         throw new CertificateException(err);
-         }
-         }
-         */
+        
         return certType;
     }
 
@@ -589,7 +579,7 @@ public final class CertificateUtil {
         return new X500Principal(dn);
     }
 
-    // FIXME: This is super naive, fix it.
+    // JGLOBUS-91 
     public static CertPath getCertPath(X509Certificate[] certs) throws CertificateException {
 
         CertificateFactory factory = CertificateFactory.getInstance("X.509");

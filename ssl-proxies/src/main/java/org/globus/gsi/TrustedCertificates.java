@@ -88,7 +88,7 @@ public class TrustedCertificates implements Serializable {
     public TrustedCertificates(X509Certificate [] certs,
                                SigningPolicy[] policies) {
 
-        // FIXME: this could cause NPE
+        // JGLOBUS-91 
         this.certSubjectDNMap = new HashMap();
         for (int i=0;i<certs.length;i++) {
             if (certs[i] != null) {

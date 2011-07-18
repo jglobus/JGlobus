@@ -613,7 +613,7 @@ public class X509Credential {
 
     protected void loadKey(InputStream input) throws CredentialException {
 
-        // FIXME: BC seems to have some PEM utility but the actual
+        // JGLOBUS-95: BC seems to have some PEM utility but the actual
         // load is in private methods and cannot be leveraged.
         // Investigate availability of standard libraries for these
         // low level reads. FOr now, copying from CoG

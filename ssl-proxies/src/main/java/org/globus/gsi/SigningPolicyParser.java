@@ -183,11 +183,7 @@ public class SigningPolicyParser {
                     // check for neg or pos rights with restrictions
                     checkRights(policies, bufferedReader, caDN, usefulEntry, posNegRights);
                 }
-                // entry needs to start with that.
-                //String err = i18n.getMessage("invalidAccessId", line);
-                //   String err = "invalidAccessId";
-                // throw new SigningPolicyException(err);
-                // FIXME: look for correct line?
+                // JGLOBUS-94 
             }
         } catch (IOException exp) {
             throw new SigningPolicyException("", exp);

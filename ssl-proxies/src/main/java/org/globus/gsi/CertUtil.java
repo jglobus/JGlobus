@@ -311,7 +311,7 @@ public class CertUtil {
         return VersionUtil.isGsi2Enabled();
     }
 
-    // CRL Utilities FIXME - move to separate class ?
+    // CRL Utilities JGLOBUS-91 
     public static X509CRL loadCrl(String file) 
         throws IOException, GeneralSecurityException {
         return CertificateLoadUtil.loadCrl(file);

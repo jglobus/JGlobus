@@ -29,7 +29,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
- * // FIXME: add javadoc
+ * // JGLOBUS-91 : add javadoc
  * 
  * @param <T>
  *            Type of security object
@@ -75,7 +75,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 	protected void init(Resource initialResource, T initialSecurityObject)
 			throws ResourceStoreException {
 		if (initialSecurityObject == null) {
-			// FIXME: better exception?
+			// JGLOBUS-88 : better exception?
 			throw new IllegalArgumentException("Object cannot be null");
 		}
 		this.securityObject = initialSecurityObject;

@@ -23,9 +23,9 @@ import java.util.Map;
 import org.globus.gsi.proxy.ProxyPolicyHandler;
 
 /**
- * FILL ME
+ * 
  * <p/>
- * FIXME: Refactor to have an interface that retuns trusted certificates, crls,
+ * Refactor to have an interface that retuns trusted certificates, crls,
  * keys and policy. Manage stores within parameters. PKITrustManager can take
  * that interface and the validator can also be agnostic of this implementation
  * (can support say CertStore or KeyStore for trsuted certs).

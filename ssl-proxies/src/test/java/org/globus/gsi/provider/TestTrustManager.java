@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  * FILL ME
  * <p/>
- * // FIXME: separate this from proxy path validator test class.
+ * // JGLOBUS-103  separate this from proxy path validator test class.
  *
  * @author ranantha@mcs.anl.gov
  */

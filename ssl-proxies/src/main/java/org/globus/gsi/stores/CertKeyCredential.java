@@ -84,7 +84,7 @@ public class CertKeyCredential implements SecurityObjectWrapper<X509Credential>,
             throws ResourceStoreException {
 
         if (initCredential == null) {
-            // FIXME: better exception?
+            // JGLOBUS-88 : better exception?
             throw new IllegalArgumentException("Object cannot be null");
         }
         this.credential = initCredential;

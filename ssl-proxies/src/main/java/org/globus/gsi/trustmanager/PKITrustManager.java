@@ -46,7 +46,7 @@ import javax.net.ssl.X509TrustManager;
  * This is an implementation of an X509TrustManager which supports the validation of proxy certificates.
  * It uses the Globus CertPathValidator.
  * <p/>
- * FIXME: ability to accept anonymous connections?
+ * JGLOBUS-97 : ability to accept anonymous connections?
  *
  * @version ${version}
  * @since 1.0
@@ -88,7 +88,7 @@ public class PKITrustManager implements X509TrustManager {
      */
     public void checkClientTrusted(X509Certificate[] x509Certificates, String authType)
             throws CertificateException {
-        // FIXME: anonymous clients?
+        // JGLOBUS-97 : anonymous clients?
         CertPath certPath = CertificateUtil.getCertPath(x509Certificates);
         try {
             this.result = this.validator.engineValidate(certPath, parameters);

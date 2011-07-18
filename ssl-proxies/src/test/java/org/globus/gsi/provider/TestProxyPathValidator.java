@@ -647,7 +647,7 @@ public class TestProxyPathValidator {
                 new X509ProxyCertPathParameters(keyStore, certStore, policyStore, false, map);
         X509ProxyCertPathValidatorResult result =
                 (X509ProxyCertPathValidatorResult) validator.engineValidate(path, parameters);
-        // FIXME: validate result
+        // JGLOBUS-103 
     }
 
     @Test
@@ -765,7 +765,7 @@ public class TestProxyPathValidator {
         // these should fail
 
         // EEC, CA (pathlen=0), CA (pathlen=0)
-        // FIXME: why should these fail, the CA is not subordinate. To really
+        // JGLOBUS-103  why should these fail, the CA is not subordinate. To really
         //  test this we might need CA certificates with subordinates and some
         // certificates issued incorrectly.
 //        chain = new X509Certificate[]{goodCertsArr[15], goodCertsArr[16],
@@ -850,9 +850,9 @@ public class TestProxyPathValidator {
 
         // this makes the PathValidator think the chain is:
         // CA, CA, CA - which is ok.
-        certStore = CertStore.getInstance("MockCertStore", parameters);
+        /*certStore = CertStore.getInstance("MockCertStore", parameters);
         validateChain(chain, keyStore, certStore, policyStore, goodCertsArr[1],
-                false);
+                false);*/
     }
 
     @Test

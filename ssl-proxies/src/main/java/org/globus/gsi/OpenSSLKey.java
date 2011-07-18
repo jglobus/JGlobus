@@ -365,11 +365,15 @@ public abstract class OpenSSLKey {
      * @throws IOException if I/O problems writing the key
      */
     public void writeTo(String file) throws IOException {
-        File f = FileUtil.createFile(file);
-        // FIXME: no platform agnostic way of doing this?
-        //   .setOwnerAccessOnly(file);
-
-        PrintWriter p = new PrintWriter(new FileOutputStream(f));
+    	File privateKey = FileUtil.createFile(file);
+        // JGLOBUS-96 
+        try{
+        	privateKey.setReadable(false, true);//setOwnerAccessOnly(file);
+        	privateKey.setWritable(false, true);//setOwnerAccessOnly(file);        	
+        }catch(SecurityException e){
+        	
+        }
+        PrintWriter p = new PrintWriter(new FileOutputStream(privateKey));
 
         try {
             p.write(toPEM());
@@ -455,9 +459,7 @@ public abstract class OpenSSLKey {
         int len = s.length() / 2;
         if (len != this.ivLength) {
             String err = "ivLength";
-            // FIXME
-            //, new String[] {
-            //   Integer.toString(this.ivLength), Integer.toString(len) });
+            //JGLOBUS-91 
             throw new GeneralSecurityException(err);
         }
         byte[] ivBytes = new byte[len];
@@ -539,7 +541,7 @@ public abstract class OpenSSLKey {
                     data,
                     "-----END RSA PRIVATE KEY-----");
         } catch (IOException e) {
-            // FIXME !!
+            // JGLOBUS-91 
             throw new RuntimeException("Unexpected error", e);
         }
 

@@ -68,7 +68,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 	// Default trusted certificates directory
 	public static final String DEFAULT_DIRECTORY_KEY = "default_directory";
 	// List of directory names to load certificates from
-	// FIXME: does it take certificate file names in this list?
+	// JGLOBUS-90 : does it take certificate file names in this list?
 	public static final String DIRECTORY_LIST_KEY = "directory_list";
 	// X.509 Certificate file name, should be set along with KEY_FILENAME
 	public static final String CERTIFICATE_FILENAME = "certificateFilename";
@@ -477,7 +477,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 				this.certFilenameMap.remove(cert);
 				boolean success = descriptor.getFile().delete();
 				if (!success) {
-					// FIXME: warn? throw error?
+					// JGLOBUS-91 : warn? throw error?
 					logger.info("Unable to delete certificate");
 				}
 			} else if (object instanceof ResourceProxyCredential) {
@@ -490,7 +490,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 				}
 				boolean success = proxy.getFile().delete();
 				if (!success) {
-					// FIXME: warn? throw error?
+					// JGLOBUS-91 : warn? throw error?
 					logger.info("Unable to delete credential");
 				}
 			}
@@ -556,7 +556,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 			AbstractResourceSecurityWrapper proxyWrapper = (AbstractResourceSecurityWrapper) proxyCredential;
 			file = proxyWrapper.getFile();
 		} else {
-			// FIXME: should alias be file name? or generate?
+			// JGLOBUS-91 : should alias be file name? or generate?
 			file = new File(defaultDirectory, s + "-key.pem");
 		}
 		try {
@@ -618,7 +618,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 	public void engineSetKeyEntry(String s, byte[] bytes,
 			Certificate[] certificates) throws KeyStoreException {
 		throw new UnsupportedOperationException();
-		// FIXME
+		// JGLOBUS-91 
 	}
 
 	/**

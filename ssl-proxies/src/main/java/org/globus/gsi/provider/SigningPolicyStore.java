@@ -19,12 +19,12 @@ import javax.security.auth.x500.X500Principal;
 import org.globus.gsi.SigningPolicy;
 
 /**
- * // FIXME: Maybe a provider  access to this?
+ * // JGLOBUS-91 
  */
 public interface SigningPolicyStore {
 
     /**
-     * FixMe: Document me
+     * JGLOBUS-87 
      *
      * @param caPrincipal Document Me.
      * @return Document Me.

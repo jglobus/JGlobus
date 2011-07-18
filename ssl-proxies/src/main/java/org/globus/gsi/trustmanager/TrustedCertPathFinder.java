@@ -66,13 +66,10 @@ public final class TrustedCertPathFinder {
             throw new CertPathValidatorException(
                     "Error accessing trusted certificate store", e);
         }
-        if (caCerts.size() > 0) {
+        if ((caCerts.size() > 0)&&(x509Certificate.getBasicConstraints() != -1)) {
 
             trustedCertPath.add(x509Certificate);
-            // FIXME: does this have to be a CA certificate and/or self signed
-            // such that signature is validated.  (checking a self-signature
-            // currently breaks the path validation test suites)
-            // trusted certificate found. return.
+            // JGLOBUS-92
             try {
                 CertificateFactory certFac = CertificateFactory.getInstance("X.509");
                 return certFac.generateCertPath(trustedCertPath);

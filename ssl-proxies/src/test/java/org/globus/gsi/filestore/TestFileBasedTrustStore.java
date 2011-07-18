@@ -64,8 +64,7 @@ public class TestFileBasedTrustStore {
 	@BeforeClass
 	public static void setUp() throws Exception {
 
-		// FIXME: mock the actual reading of the files and test the idea that
-		// modified is used and map is used to pull information.
+		// JGLOBUS-103 
 		dir = new DirSetupUtil(new String[] { "testTrustStore/1c3f2ca8.0", "testTrustStore/b38b4d8c.0",
 				"testTrustStore/d1b603c3.0", "testTrustStore/1c3f2ca8.r0", "testTrustStore/d1b603c3.r0",
 				"testTrustStore/1c3f2ca8.signing_policy", "testTrustStore/b38b4d8c.signing_policy",
@@ -84,12 +83,7 @@ public class TestFileBasedTrustStore {
 	@Test
 	public void testEngineGetCertificates() throws Exception {
 
-//		File tempDir = dir.getTempDirectory();
 
-		// number of CA files
-		// String[] caFiles = tempDir.list(new TrustAnchorFilter());
-
-		// Get comparison parameters
 		certStore = CertStore.getInstance("PEMFilebasedCertStore", parameters);
 
 		assert certStore != null;
@@ -110,7 +104,7 @@ public class TestFileBasedTrustStore {
 
 		}
 
-		// FIXME: figure out whether reload functions as expected
+		// JGLOBUS-103 
 
 	}
 
@@ -184,7 +178,7 @@ public class TestFileBasedTrustStore {
 
 		}
 
-		// FIXME: figure out whether reload functions as expected
+		// JGLOBUS-103 
 	}
 
 	@Test
@@ -213,7 +207,7 @@ public class TestFileBasedTrustStore {
 			assert (policy.getAllowedDNs() != null);
 		}
 
-		// FIXME: figure out whether reload functions as expected
+		// JGLOBUS-103 
 	}
 	public static boolean deleteDir(File dir) { 
 		if (dir.isDirectory()) { 

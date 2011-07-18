@@ -499,10 +499,7 @@ public class BouncyCastleCertProcessingFactory {
             certGen.setNotAfter(date.getTime());
         }
 
-        /**
-         * FIXME: Copy appropriate cert extensions - this should NOT be done the last time we talked to Doug
-         * E. This should investigated more.
-         */
+        
 
         return certGen.generateX509Certificate(issuerKey);
     }
@@ -913,10 +910,7 @@ public class BouncyCastleCertProcessingFactory {
             certGen.setNotAfter(date.getTime());
         }
 
-        /**
-         * FIXME: Copy appropriate cert extensions - this should NOT be done the last time we talked to Doug
-         * E. This should investigated more.
-         */
+        
         return certGen.generateX509Certificate(issuerKey);
     }
 

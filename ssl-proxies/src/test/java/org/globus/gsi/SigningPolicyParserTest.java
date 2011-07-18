@@ -183,8 +183,7 @@ public class SigningPolicyParserTest {
         assertTrue(policy.isValidSubject(subject63));
     }
 
-    // FIXME: ideally should be able to test raw output from the file
-    // without the pattern pieces. API today does not allow it
+    // JGLOBUS-103 
     @Test
     public void testFileSuccess() throws Exception {
 

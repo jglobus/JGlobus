@@ -68,7 +68,7 @@ public class ResourceSigningPolicy {
     protected void init(Resource initResource, Map<X500Principal, SigningPolicy> initSigningPolicy)
             throws ResourceStoreException {
         if (initSigningPolicy == null) {
-            // FIXME: better exception?
+            // JGLOBUS-88 : better exception?
             throw new IllegalArgumentException("Object cannot be null");
         }
         this.signingPolicyMap = initSigningPolicy;

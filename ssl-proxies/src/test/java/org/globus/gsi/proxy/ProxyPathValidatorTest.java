@@ -431,9 +431,10 @@ public class ProxyPathValidatorTest extends TestCase {
         validateChain(chain, trustedCerts, goodCertsArr[15], false);
 
         // GSI 2 limited PC, EEC, CA (pathlen=0)
-        //chain = new X509Certificate[] { goodCertsArr[3], goodCertsArr[15], goodCertsArr[16] };
+        chain = new X509Certificate[] { goodCertsArr[3], goodCertsArr[15], goodCertsArr[16] };
         //validateChain(chain, trustedCerts, goodCertsArr[15], true);
-
+        validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
+        
         // GSI 3 PC, EEC, CA (pathlen=0)
         chain = new X509Certificate[] { goodCertsArr[17], goodCertsArr[15], goodCertsArr[16] };
         validateChain(chain, trustedCerts, goodCertsArr[15], false);
@@ -446,26 +447,27 @@ public class ProxyPathValidatorTest extends TestCase {
         // these should fail
 
         // EEC, CA (pathlen=0), CA (pathlen=0)
-        //chain = new X509Certificate[] { goodCertsArr[15], goodCertsArr[16], goodCertsArr[16] };
-        //validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
+        chain = new X509Certificate[] { goodCertsArr[15], goodCertsArr[16], goodCertsArr[16] };
+        validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
 
         // GSI 2 limited PC, EEC, CA (pathlen=0), CA (pathlen=2), CA (pathlen=2), CA (pathlen=2)
-        //chain = new X509Certificate[] { goodCertsArr[3], goodCertsArr[15], goodCertsArr[16], goodCertsArr[13],
-        //       goodCertsArr[13], goodCertsArr[13] };
-        //validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
+        chain = new X509Certificate[] { goodCertsArr[3], goodCertsArr[15], goodCertsArr[16], goodCertsArr[13],
+               goodCertsArr[13], goodCertsArr[13] };
+        validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
 
         // GSI 3 PC, GSI 3 PC pathlen=1, EEC, CA
-        //chain = new X509Certificate[] { goodCertsArr[10], goodCertsArr[12], goodCertsArr[1], goodCertsArr[13] };
-        //validateChain(chain, trustedCerts, goodCertsArr[10], false);
+        chain = new X509Certificate[] { goodCertsArr[10/*10*/], goodCertsArr[12], goodCertsArr[1], goodCertsArr[13] };
+        //validateChain(chain, trustedCerts, goodCertsArr[10/*10*/], false);
+        validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
 
         // GSI 3 PC, GSI 3 PC, GSI 3 PC pathlen=1, EEC, CA
-        //chain = new X509Certificate[] { goodCertsArr[10], goodCertsArr[10], goodCertsArr[12], goodCertsArr[1],
-        //        goodCertsArr[13] };
-        //validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
+        chain = new X509Certificate[] { goodCertsArr[10], goodCertsArr[10], goodCertsArr[12], goodCertsArr[1],
+                goodCertsArr[13] };
+        validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
 
         // GSI 3 PC, GSI 3 PC pathlen=0, EEC, CA
-        //chain = new X509Certificate[] { goodCertsArr[10], goodCertsArr[11], goodCertsArr[1], goodCertsArr[13] };
-        //validateError(chain, trustedCerts, ProxyPathValidatorException.FAILURE);
+        chain = new X509Certificate[] { goodCertsArr[10], goodCertsArr[11], goodCertsArr[1], goodCertsArr[13] };
+        validateError(chain, trustedCerts, ProxyPathValidatorException.FAILURE);
     }
 
     public void testKeyUsage() throws Exception {
@@ -492,27 +494,35 @@ public class ProxyPathValidatorTest extends TestCase {
 
     public void testNoBasicConstraintsExtension() throws Exception {
         X509Certificate[] chain = null;
-        X509Certificate[] trustedCAs = new X509Certificate[] { goodCertsArr[0] };
+        X509Certificate[] trustedCAs = new X509Certificate[] { goodCertsArr[16] };
+        X509Certificate[] trustedCerts = new X509Certificate[] { goodCertsArr[16] };
         // EEC, EEC, CA - that should fail
-        chain = new X509Certificate[] { goodCertsArr[1], goodCertsArr[1], goodCertsArr[0] };
+        //chain = new X509Certificate[] { goodCertsArr[1], goodCertsArr[1], goodCertsArr[0] };
+        chain = new X509Certificate[] { goodCertsArr[15], goodCertsArr[15], goodCertsArr[16] };
+        //validateChain(chain, trustedCerts, goodCertsArr[15], false);
+        
         validateChain(chain, trustedCAs);
+       
 
         TestProxyPathValidator v = new TestProxyPathValidator();
-        TrustedCertificates trustedCert = new TrustedCertificates(new X509Certificate[] { goodCertsArr[1] },
+        TrustedCertificates trustedCert = new TrustedCertificates(new X509Certificate[] { goodCertsArr[16] },
             new SigningPolicy[] { new SigningPolicy(new X500Principal("CN=foo"), new String[] { "CN=foo" }) });
-
+        
+        //X509Certificate[] trustedCerts = new X509Certificate[] { goodCertsArr[1] };
+        chain = new X509Certificate[] { goodCertsArr[16], goodCertsArr[16], goodCertsArr[0] };
         // this makes the PathValidator think the chain is:
         // CA, CA, CA - which is ok. irrelevant to signing policy.
         try {
+         
             v.validate(chain, trustedCert);
+            
         } catch (ProxyPathValidatorException e) {
             e.printStackTrace();
             fail("Unexpected exception: " + e.getMessage());
         }
     }
 
-    // removed date validity check.
-    // FIXME
+    //JGLOBUS-103 
     public void testCrlsChecks() throws Exception {
 
         TestProxyPathValidator tvalidator = new TestProxyPathValidator();
