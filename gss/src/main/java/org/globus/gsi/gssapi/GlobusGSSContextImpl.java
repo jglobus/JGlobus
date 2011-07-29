@@ -723,8 +723,13 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 }
 		if (result.getStatus() !=
 			SSLEngineResult.Status.OK) {
+<<<<<<< HEAD
                 	throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.TOKEN_FAIL,
+=======
+               	throw new GlobusGSSException(GSSException.FAILURE,
+                                         GlobusGSSException.TOKEN_FAIL,
+>>>>>>> 5351574d0d33fa6a6d45e5ee943572b060c9d66d
                                          result.getStatus().toString());
 		}
               } while (inBBuff.hasRemaining());
@@ -1297,10 +1302,17 @@ done:      do {
 	// TODO: Document the following behavior
 	// NOTE: requireClientAuth Vs. acceptNoClientCerts
 	// which one takes precedence? for now err on the side of security
+<<<<<<< HEAD
 	if (this.requireClientAuth.booleanValue() == Boolean.TRUE) {
             this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
 	} else
             this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
+=======
+	 if (this.requireClientAuth.booleanValue() == Boolean.TRUE) {
+             this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
+	 } else
+             this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
+>>>>>>> 5351574d0d33fa6a6d45e5ee943572b060c9d66d
 
         this.sslEngine.setUseClientMode(how == INITIATE);
 
