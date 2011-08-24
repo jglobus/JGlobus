@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.core</artifactId>
-      <version>3.0.1.RELEASE-A</version>
+      <version>3.0.3.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
