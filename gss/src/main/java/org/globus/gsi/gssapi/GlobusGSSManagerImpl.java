@@ -209,38 +209,47 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
 	}
 
 	InputStream input = null;
-
-	switch (option) {
-	case ExtendedGSSCredential.IMPEXP_OPAQUE:
-	    input = new ByteArrayInputStream(buff);
-	    break;
-	case ExtendedGSSCredential.IMPEXP_MECH_SPECIFIC:
-	    String s = new String(buff);
-	    int pos = s.indexOf('=');
-	    if (pos == -1) {
-		throw new GSSException(GSSException.FAILURE);
-	    }
-	    String filename = s.substring(pos+1).trim();
-	    try {
-		input = new FileInputStream(filename);
-	    } catch (IOException e) {
-		throw new GlobusGSSException(GSSException.FAILURE, e);
-	    }
-	    break;
-	default:
-	    throw new GlobusGSSException(GSSException.FAILURE, 
-					 GlobusGSSException.BAD_ARGUMENT,
-					 "unknownOption",
-					 new Object[] {new Integer(option)});
-	}
-
 	X509Credential cred = null;
-	try {
-	    cred = new X509Credential(input);
-	} catch(CredentialException e) {
-	    throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
-	} catch (Exception e) {
-	    throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
+	try{
+		switch (option) {
+		case ExtendedGSSCredential.IMPEXP_OPAQUE:
+		    input = new ByteArrayInputStream(buff);
+		    break;
+		case ExtendedGSSCredential.IMPEXP_MECH_SPECIFIC:
+		    String s = new String(buff);
+		    int pos = s.indexOf('=');
+		    if (pos == -1) {
+			throw new GSSException(GSSException.FAILURE);
+		    }
+		    String filename = s.substring(pos+1).trim();
+		    try {
+			input = new FileInputStream(filename);
+		    } catch (IOException e) {
+			throw new GlobusGSSException(GSSException.FAILURE, e);
+		    }
+		    break;
+		default:
+		    throw new GlobusGSSException(GSSException.FAILURE, 
+						 GlobusGSSException.BAD_ARGUMENT,
+						 "unknownOption",
+						 new Object[] {new Integer(option)});
+		}
+	
+		try {
+		    cred = new X509Credential(input);
+		} catch(CredentialException e) {
+		    throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
+		} catch (Exception e) {
+		    throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL, e);
+		}
+	}finally{
+		if (input != null) {
+            try {
+            	input.close();
+            } catch (Exception e) {
+                logger.warn("Unable to close streamreader.");
+            }
+        }
 	}
 	
 	return new GlobusGSSCredentialImpl(cred, usage);

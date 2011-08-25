@@ -15,10 +15,13 @@
 
 package org.globus.gsi.stores;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.gsi.util.CertificateIOUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.TrustAnchor;
@@ -34,7 +37,7 @@ import org.springframework.core.io.Resource;
  * To change this template use File | Settings | File Templates.
  */
 public class ResourceTrustAnchor extends AbstractResourceSecurityWrapper<TrustAnchor> {
-
+	private Log logger = LogFactory.getLog(getClass().getCanonicalName());
 
     public ResourceTrustAnchor(String fileName) throws ResourceStoreException {
         init(resolver.getResource(fileName));
@@ -59,12 +62,22 @@ public class ResourceTrustAnchor extends AbstractResourceSecurityWrapper<TrustAn
     @Override
     protected TrustAnchor create(Resource resource) throws ResourceStoreException {
         X509Certificate certificate;
+        InputStream inputStream = null;
         try {
-            certificate = CertificateLoadUtil.loadCertificate(resource.getInputStream());
+        	inputStream = resource.getInputStream();
+            certificate = CertificateLoadUtil.loadCertificate(inputStream);
         } catch (IOException e) {
             throw new ResourceStoreException(e);
         } catch (GeneralSecurityException e) {
             throw new ResourceStoreException(e);
+        }finally{
+        	try {
+        		if(inputStream != null){
+        			inputStream.close();
+        		}
+			} catch (IOException e) {
+				logger.warn("Unable to close stream.");
+			}
         }
 
         return new TrustAnchor(certificate, null);
