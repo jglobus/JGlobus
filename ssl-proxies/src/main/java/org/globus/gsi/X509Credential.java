@@ -461,7 +461,7 @@ public class X509Credential {
             KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
             CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
             ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
-            keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsLocation));
+            keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsLocation +"/*.0"));
             X509ProxyCertPathParameters parameters = new X509ProxyCertPathParameters(keyStore, crlStore, sigPolStore, false);
             X509ProxyCertPathValidator validator = new X509ProxyCertPathValidator();
             validator.engineValidate(CertificateUtil.getCertPath(certChain), parameters);
