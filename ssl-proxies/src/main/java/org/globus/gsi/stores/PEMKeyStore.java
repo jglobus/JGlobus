@@ -340,10 +340,12 @@ public class PEMKeyStore extends KeyStoreSpi {
 			initialize(defaultDirectoryString, directoryListString,
 					proxyFilename, certFilename, keyFilename);
 		} finally {
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-				logger.info("Error closing inputStream", e);
+			if(inputStream != null){
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					logger.info("Error closing inputStream", e);
+				}
 			}
 		}
 	}
