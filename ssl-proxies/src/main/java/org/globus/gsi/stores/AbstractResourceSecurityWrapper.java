@@ -46,6 +46,11 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 	private T securityObject;
 	private long lastModified = -1;
 	private String alias;
+	private boolean inMemory = false;
+	
+	protected AbstractResourceSecurityWrapper(boolean inMemory) {
+		this.inMemory = inMemory;
+	}
 
 	protected void init(String locationPattern) throws ResourceStoreException {
 		init(resolver.getResource(locationPattern));
@@ -80,6 +85,14 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 		}
 		this.securityObject = initialSecurityObject;
 		this.resource = initialResource;
+		try {
+			this.alias = this.resource.getURL().toExternalForm();
+			if(!inMemory){
+				this.lastModified = this.resource.lastModified();
+			}
+		} catch (IOException e) {
+			throw new ResourceStoreException(e);
+		}
 	}
 
 	public Resource getResource() {
@@ -105,17 +118,19 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 	}
 
 	public void refresh() throws ResourceStoreException {
-		this.changed = false;
-		long latestLastModified;
-		try {
-			latestLastModified = this.resource.lastModified();
-		} catch (IOException e) {
-			throw new ResourceStoreException(e);
-		}
-		if (this.lastModified < latestLastModified) {
-			this.securityObject = create(this.resource);
-			this.lastModified = latestLastModified;
-			this.changed = true;
+		if(!inMemory){
+			this.changed = false;
+			long latestLastModified;
+			try {
+				latestLastModified = this.resource.lastModified();
+			} catch (IOException e) {
+				throw new ResourceStoreException(e);
+			}
+			if (this.lastModified < latestLastModified) {
+				this.securityObject = create(this.resource);
+				this.lastModified = latestLastModified;
+				this.changed = true;
+			}
 		}
 	}
 

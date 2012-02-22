@@ -40,18 +40,22 @@ public class ResourceTrustAnchor extends AbstractResourceSecurityWrapper<TrustAn
 	private Log logger = LogFactory.getLog(getClass().getCanonicalName());
 
     public ResourceTrustAnchor(String fileName) throws ResourceStoreException {
+    	super(false);
         init(resolver.getResource(fileName));
     }
 
-    public ResourceTrustAnchor(Resource resource) throws ResourceStoreException {
+    public ResourceTrustAnchor(boolean inMemory, Resource resource) throws ResourceStoreException {
+    	super(inMemory);
         init(resource);
     }
 
     public ResourceTrustAnchor(String fileName, TrustAnchor cachedAnchor) throws ResourceStoreException {
+    	super(false);
         init(resolver.getResource(fileName), cachedAnchor);
     }
 
-    public ResourceTrustAnchor(Resource resource, TrustAnchor cachedAnchor) throws ResourceStoreException {
+    public ResourceTrustAnchor(boolean inMemory, Resource resource, TrustAnchor cachedAnchor) throws ResourceStoreException {
+    	super(inMemory);
         init(resource, cachedAnchor);
     }
 

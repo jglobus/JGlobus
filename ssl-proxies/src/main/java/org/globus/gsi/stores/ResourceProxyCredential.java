@@ -41,18 +41,22 @@ public class ResourceProxyCredential extends AbstractResourceSecurityWrapper<X50
     private Log logger = LogFactory.getLog(getClass().getCanonicalName());
 
     public ResourceProxyCredential(String locationPattern) throws ResourceStoreException {
+    	super(false);
         init(locationPattern);
     }
 
     public ResourceProxyCredential(Resource resource) throws ResourceStoreException {
+    	super(false);
         init(resource);
     }
 
     public ResourceProxyCredential(String filename, X509Credential object) throws ResourceStoreException {
+    	super(false);
         init(filename, object);
     }
 
-    public ResourceProxyCredential(Resource resource, X509Credential object) throws ResourceStoreException {
+    public ResourceProxyCredential(boolean inMemory, Resource resource, X509Credential object) throws ResourceStoreException {
+    	super(inMemory);
         init(resource, object);
     }
 

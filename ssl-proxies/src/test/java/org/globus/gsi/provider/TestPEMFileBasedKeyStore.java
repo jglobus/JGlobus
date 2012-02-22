@@ -156,7 +156,7 @@ public class TestPEMFileBasedKeyStore {
 
     @Test
     public void testCreationDate() throws Exception {
-        KeyStore store = KeyStore.getInstance("PEMFilebasedKeyStore", "Globus");
+        KeyStore store = KeyStore.getInstance("PEMbasedKeyStore", "Globus");
 
         // Parameters in properties file
         Properties properties = new Properties();
