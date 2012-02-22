@@ -35,7 +35,7 @@ public final class GlobusProvider extends Provider {
 	public static final String PROVIDER_NAME = "Globus";
 	public static final String CERTSTORE_TYPE = "PEMFilebasedCertStore";
 	public static final String CERT_PATH_VALIDATOR_TYPE = "X509ProxyPath";
-	public static final String KEYSTORE_TYPE = "PEMFilebasedKeyStore";
+	public static final String KEYSTORE_TYPE = "PEMBasedKeyStore";
 	public static final String TRUSTMANAGER_TYPE = "GlobusTrustManager";
 
 	private static final long serialVersionUID = -6275241207604782362L;
@@ -52,7 +52,7 @@ public final class GlobusProvider extends Provider {
 						.getName());
 				put("CertPathValidator.X509ProxyPath",
 						X509ProxyCertPathValidator.class.getName());
-				put("KeyStore.PEMFilebasedKeyStore", PEMKeyStore.class
+				put("KeyStore.PEMBasedKeyStore", PEMKeyStore.class
 						.getName());
 				put("TrustManagerFactory.GSI",
 						PKITrustManagerFactory.class.getCanonicalName());

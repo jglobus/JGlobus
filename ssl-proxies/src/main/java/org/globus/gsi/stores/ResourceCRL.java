@@ -34,14 +34,17 @@ import org.springframework.core.io.Resource;
 public class ResourceCRL extends AbstractResourceSecurityWrapper<X509CRL> {
 
     public ResourceCRL(String fileName) throws ResourceStoreException {
+    	super(false);
         init(resolver.getResource(fileName));
     }
 
-    public ResourceCRL(Resource resource) throws ResourceStoreException {
+    public ResourceCRL(boolean inMemory, Resource resource) throws ResourceStoreException {
+    	super(inMemory);
         init(resource);
     }
 
     public ResourceCRL(String fileName, X509CRL crl) throws ResourceStoreException {
+    	super(false);
         init(resolver.getResource(fileName), crl);
     }
 
