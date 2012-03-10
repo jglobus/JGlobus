@@ -8,6 +8,7 @@
 	<version>2.0-SNAPSHOT</version>
 	<modules>
 		<module>gss</module>
+		<module>gridftp</module>
 		<module>jsse</module>
 		<module>ssl-proxies</module>
 		<module>test-utils</module>
