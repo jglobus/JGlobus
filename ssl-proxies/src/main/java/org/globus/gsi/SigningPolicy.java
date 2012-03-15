@@ -98,7 +98,21 @@ public class SigningPolicy {
         }
 
         String subjectDN = CertificateUtil.toGlobusID(subject);
-
+        
+        /* 
+         * If the 'subjectDN' String contains characters that are not printable,
+         * we must remove them otherwise the pattern matching will not work.
+         * 
+         *   i.e:
+         *   
+         *   subject="GIVENNAME=PAUL + CN=00B1043104 + SURNAME=MEDECIN4310, OU=Médecin, O=TEST, C=FR"
+         *   subjectDN="/C=FR/O=TEST/OU=M�decin/2.5.4.42=#14045041554c+CN=00B1043104+2.5.4.4=#140b4d45444543494e34333130"
+         *   
+         *   The next line will simply remove the � char and replace it by ?
+         *  
+         */
+        subjectDN = subjectDN.replaceAll("[^\\p{Print}]", "?");
+        
         if ((this.allowedDNs == null) || (this.allowedDNs.size() < 1)) {
             return false;
         }
