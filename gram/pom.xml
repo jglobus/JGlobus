@@ -4,13 +4,10 @@
 	<parent>
 		<artifactId>jglobus-all</artifactId>
 		<groupId>org.jglobus</groupId>
-		<version>2.0-SNAPSHOT</version>
+		<version>2.0-Beta5</version>
 	</parent>
-	<groupId>org.jglobus</groupId>
 
 	<artifactId>gram</artifactId>
-	<version>2.0-SNAPSHOT</version>
-
 
 	<name>"Grid Resource Allocation and Management(GRAM)"</name>
 	<url>http://maven.apache.org</url>
@@ -54,17 +51,17 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>ssl-proxies</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>2.0-Beta5</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>gss</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>2.0-Beta5</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jsse</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>2.0-Beta5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -86,12 +83,10 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>3.0.1.RELEASE</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>org.springframework.core</artifactId>
+	      <version>3.0.3.RELEASE</version>
+	    </dependency>
 	</dependencies>
 </project>
