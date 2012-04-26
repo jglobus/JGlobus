@@ -35,6 +35,7 @@ import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -111,8 +112,7 @@ public class CRLChecker implements CertificateChecker {
             // which implies not checking this CRL should be fine.
             return;
         }
-        Certificate caCert = caCerts.iterator().next();
-
+        
         for (CRL o : crls) {
 
             X509CRL crl = (X509CRL) o;
@@ -122,9 +122,24 @@ public class CRLChecker implements CertificateChecker {
                 checkCRLDateValidity(crl);
             }
 
-            // validate CRL
-            verifyCRL(caCert, crl);
-
+            // validate CRL: If more than 1 CA is found we must check all of them.
+            boolean error = true;
+            SignatureException signatureException = null;
+            for (Iterator<? extends Certificate> iterator = caCerts.iterator(); iterator.hasNext();) {
+    			Certificate caCert = (Certificate) iterator.next();
+	            try {
+					verifyCRL(caCert, crl);
+					error = false;
+					break;
+				} catch (SignatureException e) {
+					//Ignore: let's try another CA if exist. If not the exception will be raised after.
+					signatureException = e;
+				}
+            }
+            if(error){
+            	throw new CertPathValidatorException(
+                        "Error validating CRL from CA " + crl.getIssuerDN(), signatureException);
+            }
             if (crl.isRevoked(cert)) {
                 throw new CertPathValidatorException(
                         "Certificate " + cert.getSubjectDN() + " has been revoked");
@@ -133,7 +148,7 @@ public class CRLChecker implements CertificateChecker {
         }
     }
 
-    private void verifyCRL(Certificate caCert, X509CRL crl) throws CertPathValidatorException {
+    private void verifyCRL(Certificate caCert, X509CRL crl) throws CertPathValidatorException, SignatureException {
         try {
             crl.verify(caCert.getPublicKey());
         } catch (CRLException e) {
@@ -146,9 +161,6 @@ public class CRLChecker implements CertificateChecker {
             throw new CertPathValidatorException(
                     "Error validating CRL from CA " + crl.getIssuerDN(), e);
         } catch (NoSuchProviderException e) {
-            throw new CertPathValidatorException(
-                    "Error validating CRL from CA " + crl.getIssuerDN(), e);
-        } catch (SignatureException e) {
             throw new CertPathValidatorException(
                     "Error validating CRL from CA " + crl.getIssuerDN(), e);
         }
