@@ -12,6 +12,7 @@
 		<module>ssl-proxies</module>
 		<module>test-utils</module>
 		<module>container-test-utils</module>
+		<module>ssl-proxies-tomcat</module>
 	</modules>
 	<name>JGlobus 2.0</name>
 	<packaging>pom</packaging>
