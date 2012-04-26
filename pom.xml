@@ -33,8 +33,9 @@
 	</pluginRepositories>
 	<distributionManagement>
 		<repository>
-			<id>globus.release.repository</id>
-			<url>http://repo.globus.org/content/repositories/releases/</url>
+			<id>maatg-fr-releases</id>
+			<name>maatG France Releases</name>
+			<url>http://nexus.maatg.fr/content/repositories/maatg-fr-releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>maatg-fr-snapshots</id>
