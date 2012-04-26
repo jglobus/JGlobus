@@ -69,6 +69,7 @@ public final class GlobusSSLHelper {
 			String trustAnchorStoreType, String trustAnchorStoreLocation,
 			String trustAnchorStorePassword)
 			throws GlobusSSLConfigurationException {
+		InputStream keyStoreInput = null;
 		try {
 			KeyStore trustAnchorStore;
 			if (provider == null) {
@@ -77,7 +78,7 @@ public final class GlobusSSLHelper {
 				trustAnchorStore = KeyStore.getInstance(trustAnchorStoreType,
 						provider);
 			}
-			InputStream keyStoreInput = getStream(trustAnchorStoreLocation);
+			keyStoreInput = getStream(trustAnchorStoreLocation);
 			trustAnchorStore.load(keyStoreInput,
 					trustAnchorStorePassword == null ? null
 							: trustAnchorStorePassword.toCharArray());
@@ -92,6 +93,12 @@ public final class GlobusSSLHelper {
 			throw new GlobusSSLConfigurationException(e);
 		} catch (NoSuchProviderException e) {
 			throw new GlobusSSLConfigurationException(e);
+		}finally{
+			if (keyStoreInput != null) {
+                try {
+                	keyStoreInput.close();
+                } catch (Exception e) {}
+            }
 		}
 	}
 
@@ -116,6 +123,7 @@ public final class GlobusSSLHelper {
 			String credentialStoreType, String credentialStoreLocation,
 			String credentialStorePassword)
 			throws GlobusSSLConfigurationException {
+		InputStream keyStoreInput = null;
 		try {
 			KeyStore credentialStore;
 			if (provider == null) {
@@ -124,7 +132,7 @@ public final class GlobusSSLHelper {
 				credentialStore = KeyStore.getInstance(credentialStoreType,
 						provider);
 			}
-			InputStream keyStoreInput = getStream(credentialStoreLocation);
+			keyStoreInput = getStream(credentialStoreLocation);
 			credentialStore.load(keyStoreInput,
 					credentialStorePassword == null ? null
 							: credentialStorePassword.toCharArray());
@@ -139,6 +147,12 @@ public final class GlobusSSLHelper {
 			throw new GlobusSSLConfigurationException(e);
 		} catch (NoSuchProviderException e) {
 			throw new GlobusSSLConfigurationException(e);
+		}finally{
+			if (keyStoreInput != null) {
+                try {
+                	keyStoreInput.close();
+                } catch (Exception e) {}
+            }
 		}
 	}
 

@@ -171,13 +171,18 @@ public class Util {
      */
     public static String getInput(String prompt) {
         System.out.print(prompt);
-        
+        BufferedReader in = null;
         try {
-            BufferedReader in = 
-                new BufferedReader(new InputStreamReader(System.in));
+            in = new BufferedReader(new InputStreamReader(System.in));
             return in.readLine();
         } catch(IOException e) {
             return null;
+        }finally{
+        	if (in != null) {
+                try {
+                	in.close();
+                } catch (Exception e) {}
+            }
         }
     }
 
@@ -192,16 +197,21 @@ public class Util {
         System.out.print(prompt);
 
         PrivateInputThread privateInput = new PrivateInputThread();
-        BufferedReader in = 
-            new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader in = null;
 
         privateInput.start();
         try {
+        	in = new BufferedReader(new InputStreamReader(System.in));
             return in.readLine();
         } catch(Exception e) {
             return null;
         } finally {
             privateInput.kill();
+            if (in != null) {
+                try {
+                	in.close();
+                } catch (Exception e) {}
+            }
         }
     }
 

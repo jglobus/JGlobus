@@ -92,12 +92,22 @@ public class ResourceSigningPolicy {
     public Map<X500Principal, SigningPolicy> create(Resource signingPolicyResource) throws ResourceStoreException {
         SigningPolicyParser parser = new SigningPolicyParser();
         Map<X500Principal, SigningPolicy> policies;
+        InputStreamReader inputStreamReader = null;
         try {
-            policies = parser.parse(new InputStreamReader(signingPolicyResource.getInputStream()));
+        	inputStreamReader = new InputStreamReader(signingPolicyResource.getInputStream());
+            policies = parser.parse(inputStreamReader);
         } catch (IOException e) {
             throw new ResourceStoreException(e);
         } catch (SigningPolicyException e) {
             throw new ResourceStoreException(e);
+        }finally{
+        	if (inputStreamReader != null) {
+                try {
+                	inputStreamReader.close();
+                } catch (Exception e) {
+                    logger.warn("Unable to close streamreader.");
+                }
+            }
         }
 
         return policies;

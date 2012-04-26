@@ -37,9 +37,26 @@
 			<url>http://repo.globus.org/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>globus.snapshot.repository</id>
-			<url>http://repo.globus.org/content/repositories/snapshots/</url>
+			<id>maatg-fr-snapshots</id>
+			<name>maatG France Snapshots</name>
+			<url>http://nexus.maatg.fr/content/repositories/maatg-fr-snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.0.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
