@@ -96,7 +96,11 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
             try {
                 loadSigningPolicy(resource, newPolicyMap, newPolicyFileMap);
             } catch (Exception e) {
-                logger.warn("Failed to load signing policy: " + resource.getFilename(), e);
+            	if(logger.isDebugEnabled()){
+            		logger.warn("Failed to load signing policy: " + resource.getFilename(), e);
+            	}else{
+            		logger.warn("Failed to load signing policy: " + resource.getFilename() +": " + e.getMessage());
+            	}
             }
         }
 

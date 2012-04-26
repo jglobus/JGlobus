@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 
 /**
@@ -31,7 +33,8 @@ import org.springframework.core.io.Resource;
  */
 
 public class CertKeyCredential implements SecurityObjectWrapper<X509Credential>, Storable, CredentialWrapper {
-
+	private Log logger = LogFactory.getLog(getClass().getCanonicalName());
+	
     protected Resource certFile;
     protected Resource keyFile;
 
@@ -123,8 +126,8 @@ public class CertKeyCredential implements SecurityObjectWrapper<X509Credential>,
 
     protected X509Credential createObject(Resource certSource, Resource keySource)
             throws ResourceStoreException {
-        InputStream certIns;
-        InputStream keyIns;
+        InputStream certIns = null;
+        InputStream keyIns = null;
         try {
             certIns = certSource.getInputStream();
             keyIns = keySource.getInputStream();
@@ -135,6 +138,21 @@ public class CertKeyCredential implements SecurityObjectWrapper<X509Credential>,
             throw new ResourceStoreException(e);
         } catch (IOException ioe) {
             throw new ResourceStoreException(ioe);
+        }finally{
+        	if(certIns != null){
+        		try {
+					certIns.close();
+				} catch (IOException e) {
+					logger.warn("Unable to close stream.");
+				}
+        	}
+        	if(keyIns != null){
+        		try {
+        			keyIns.close();
+				} catch (IOException e) {
+					logger.warn("Unable to close stream.");
+				}
+        	}
         }
     }
 

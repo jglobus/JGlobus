@@ -40,7 +40,7 @@ public class ResourceCACertStore extends ResourceSecurityWrapperStore<ResourceTr
 
     @Override
     public ResourceTrustAnchor create(Resource resource) throws ResourceStoreException {
-        return new ResourceTrustAnchor(resource);
+        return new ResourceTrustAnchor(false, resource);
     }
 
     @Override

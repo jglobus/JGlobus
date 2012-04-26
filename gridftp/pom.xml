@@ -6,11 +6,11 @@
 	<parent>
 		<artifactId>jglobus-all</artifactId>
 		<groupId>org.jglobus</groupId>
-		<version>2.0-SNAPSHOT</version>
+		<version>2.0-Beta5</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>gridftp</artifactId>
-	<version>2.0-SNAPSHOT</version>
+
 	<name>gridftp</name>
 
 	<build>
@@ -31,17 +31,17 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>ssl-proxies</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>2.0-Beta5</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>gss</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>2.0-Beta5</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jsse</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>2.0-Beta5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -63,12 +63,10 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>3.0.1.RELEASE</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>org.springframework.core</artifactId>
+	      <version>3.0.3.RELEASE</version>
+	    </dependency>
 	</dependencies>
 </project>
