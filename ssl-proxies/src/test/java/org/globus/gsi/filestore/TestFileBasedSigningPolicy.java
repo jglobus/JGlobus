@@ -20,7 +20,7 @@ import org.globus.gsi.stores.ResourceSigningPolicy;
 import org.globus.gsi.testutils.FileSetupUtil;
 import java.util.Collection;
 import org.globus.gsi.SigningPolicy;
-import org.springframework.core.io.FileSystemResource;
+import org.globus.util.GlobusResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class TestFileBasedSigningPolicy {
         this.testPolicy1.copyFileToTemp();
 
         ResourceSigningPolicy filePolicy =
-                new ResourceSigningPolicy(new FileSystemResource(testPolicy1.getAbsoluteFilename()));
+                new ResourceSigningPolicy(new GlobusResource(testPolicy1.getAbsoluteFilename()));
 
         Collection<SigningPolicy> policies = filePolicy.getSigningPolicies();
 

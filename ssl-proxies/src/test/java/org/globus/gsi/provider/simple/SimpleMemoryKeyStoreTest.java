@@ -7,7 +7,7 @@ import org.junit.Before;
 
 import java.util.Enumeration;
 
-import org.springframework.core.io.ClassPathResource;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 
 import java.security.cert.CertificateFactory;
 import org.junit.AfterClass;
@@ -29,7 +29,7 @@ public class SimpleMemoryKeyStoreTest {
         Security.addProvider(new BouncyCastleProvider());
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         cert = (X509Certificate) factory.generateCertificate(
-            new ClassPathResource("validatorTest/testca.pem").getInputStream());
+            new GlobusPathMatchingResourcePatternResolver().getResource("classpath:/validatorTest/testca.pem").getInputStream());
     }
 
     @Before

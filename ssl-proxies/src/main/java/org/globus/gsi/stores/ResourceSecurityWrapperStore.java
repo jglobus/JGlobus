@@ -30,10 +30,8 @@ import java.util.Map;
 import java.util.Set;
 
 
-
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.globus.util.GlobusResource;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 
 /**
  * Created by IntelliJ IDEA. User: turtlebender Date: Dec 29, 2009 Time:
@@ -44,7 +42,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSecurityWrapper<V>, V> {
 	private Collection<V> rootObjects;
-	private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    private GlobusPathMatchingResourcePatternResolver globusResolver = new GlobusPathMatchingResourcePatternResolver();
 	private Map<String, T> wrapperMap = new HashMap<String, T>();
 	private Log logger = LogFactory.getLog(ResourceSecurityWrapperStore.class.getCanonicalName());
 
@@ -55,9 +53,9 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 	public void loadWrappers(String[] locations) throws ResourceStoreException {
 		for (String location : locations) {
 			File file = new File(location);
-			FileSystemResource resource = new FileSystemResource(file);
+			GlobusResource globusResource = new GlobusResource(file.getAbsolutePath());
 			try {
-				loadWrappers(resource.getURL().toExternalForm());
+				loadWrappers(globusResource.getURL().toExternalForm());
 			} catch (IOException ioe) {
 				throw new ResourceStoreException(ioe);
 			}
@@ -97,85 +95,82 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 		this.wrapperMap = newWrapperMap;
 	}
 
-	private boolean loadResources(String locationPattern, Set<V> updatedList,
+    private boolean loadResources(String locationPattern, Set<V> updatedList,
 			Map<String, T> newWrapperMap) throws ResourceStoreException {
 		boolean changed = false;
 		try {
-			Resource[] resources = resolver.getResources(locationPattern);
-			for (Resource resource : resources) {
-				URI uri = resource.getURI();
-				if (!resource.isReadable()) {
-					getLog().warn("Cannot read: " + uri.toASCIIString());
-					continue;
-				}
-				changed = load(resource, updatedList, newWrapperMap);
-			}
-		} catch (IOException e) {
-			throw new ResourceStoreException(e);
-		}
+            GlobusResource[] globusResources = globusResolver.getResources(locationPattern);
+            for (GlobusResource globusResource : globusResources){
+                URI uri =globusResource.getURI();
+                if (!globusResource.isReadable()) {
+                    getLog().warn("Cannot read: " + uri.toASCIIString());
+                    continue;
+                }
+                changed = load(globusResource, updatedList, newWrapperMap);
+            }
+        }
+        catch (IOException e) {
+            throw new ResourceStoreException(e);
+        }
 		return changed;
 	}
 
-	private boolean load(Resource resource, Set<V> currentRoots,
-			Map<String, T> newWrapperMap) throws ResourceStoreException {
-		if (!resource.isReadable()) {
-			throw new ResourceStoreException("Cannot read file");
-		}
-		try {
-			if (resource.getFile().isDirectory()) {
-				File directory = resource.getFile();
-				currentRoots.addAll(addCredentials(directory, newWrapperMap));
-				return true;
-			}
-		} catch (IOException e) {
-			// This is ok, it just means the resource is not a
-			// filesystemresources
-			logger.debug("Not a filesystem resource", e);
-		}
-		try {
-			String resourceUri = resource.getURL().toExternalForm();
-			T fbo = this.wrapperMap.get(resourceUri);
-			if (fbo == null) {
-				fbo = create(resource);
-			}
-			V target = fbo.create(resource);
-			newWrapperMap.put(resourceUri, fbo);
-			currentRoots.add(target);
-			return true;
-		} catch (IOException e) {
-			throw new ResourceStoreException(e);
-		}
+    private boolean load(GlobusResource globusResource, Set<V> currentRoots,
+                         Map<String, T> newWrapperMap) throws ResourceStoreException {
+        if (!globusResource.isReadable()) {
+            throw new ResourceStoreException("Cannot read file");
+        }
+        try {
+            if (globusResource.getFile().isDirectory()) {
+                File directory = globusResource.getFile();
+                currentRoots.addAll(addCredentials(directory, newWrapperMap));
+                return true;
+            }
+        } catch (IOException e) {
+            // This is ok, it just means the resource is not a
+            // filesystemresources
+            logger.debug("Not a filesystem resource", e);
+        }
+        try {
+            String resourceUri = globusResource.getURL().toExternalForm();
+            T fbo = this.wrapperMap.get(resourceUri);
+            if (fbo == null) {
+                fbo = create(globusResource);
+            }
+            V target = fbo.create(globusResource);
+            newWrapperMap.put(resourceUri, fbo);
+            currentRoots.add(target);
+            return true;
+        } catch (IOException e) {
+            throw new ResourceStoreException(e);
+        }
 
-	}
+    }
 
-	private Set<V> addCredentials(File directory, Map<String, T> newWrapperMap) throws ResourceStoreException {
-		FilenameFilter filter = getDefaultFilenameFilter();
-		String[] children = directory.list(filter);
-		Set<V> roots = new HashSet<V>();
-		try {
-			for (String child : children) {
-				File childFile = new File(directory, child);
-				if (childFile.isDirectory()) {
-					roots.addAll(addCredentials(childFile, newWrapperMap));
-				} else {
-					Resource resource = new FileSystemResource(childFile);
-					String resourceUri = resource.getURI().toASCIIString();
-					T fbo = this.wrapperMap.get(resourceUri);
-					if (fbo == null) {
-						fbo = create(new FileSystemResource(childFile));
-					}
-					V target = fbo.create(resource);
-					newWrapperMap.put(resourceUri, fbo);
-					roots.add(target);
-				}
-			}
-			return roots;
-		} catch (IOException e) {
-			throw new ResourceStoreException(e);
-		}
-	}
+    private Set<V> addCredentials(File directory, Map<String, T> newWrapperMap) throws ResourceStoreException {
+        FilenameFilter filter = getDefaultFilenameFilter();
+        String[] children = directory.list(filter);
+        Set<V> roots = new HashSet<V>();
+            for (String child : children) {
+                File childFile = new File(directory, child);
+                if (childFile.isDirectory()) {
+                    roots.addAll(addCredentials(childFile, newWrapperMap));
+                } else {
+                    GlobusResource globusResource = new GlobusResource(childFile.getAbsolutePath());
+                    String resourceUri = globusResource.toURI();
+                    T fbo = this.wrapperMap.get(resourceUri);
+                    if (fbo == null) {
+                        fbo = create(new GlobusResource(childFile.getAbsolutePath()));
+                    }
+                    V target = fbo.create(globusResource);
+                    newWrapperMap.put(resourceUri, fbo);
+                    roots.add(target);
+                }
+            }
+            return roots;
+    }
 
-	public abstract T create(Resource resource) throws ResourceStoreException;
+    public abstract T create(GlobusResource globusResource) throws ResourceStoreException;
 
 	public abstract FilenameFilter getDefaultFilenameFilter();
 

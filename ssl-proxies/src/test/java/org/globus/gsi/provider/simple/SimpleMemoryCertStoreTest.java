@@ -5,7 +5,7 @@ import org.globus.gsi.provider.simple.SimpleMemoryCertStoreParams;
 import java.security.cert.X509CRLSelector;
 import java.security.cert.X509CertSelector;
 import org.junit.AfterClass;
-import org.springframework.core.io.ClassPathResource;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -26,9 +26,9 @@ public class SimpleMemoryCertStoreTest {
         Security.addProvider(new BouncyCastleProvider());
         CertificateFactory factory = CertificateFactory.getInstance("X.509", "BC");
         cert = (X509Certificate) factory.generateCertificate(
-            new ClassPathResource("validatorTest/usercert.pem").getInputStream());
+            new GlobusPathMatchingResourcePatternResolver().getResource("classpath:/validatorTest/usercert.pem").getInputStream());
         crl = (X509CRL) factory.generateCRL(
-            new ClassPathResource("validatorTest/ca2crl.r0").getInputStream());
+            new GlobusPathMatchingResourcePatternResolver().getResource("classpath:/validatorTest/ca2crl.r0").getInputStream());
     }
 
     @Test

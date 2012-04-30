@@ -1,0 +1,1855 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Building gridftp
+[INFO]    task-segment: [test]
+[INFO] ------------------------------------------------------------------------
+[INFO] [resources:resources {execution: default-resources}]
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /home/vg/Desktop/JGlobus/JGlobus/gridftp/src/main/resources
+[INFO] [compiler:compile {execution: default-compile}]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [resources:testResources {execution: default-testResources}]
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource
+[INFO] [compiler:testCompile {execution: default-testCompile}]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [surefire:test {execution: default-test}]
+[INFO] Surefire report directory: /home/vg/Desktop/JGlobus/JGlobus/gridftp/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.globus.ftp.test.TransferAppTest
+Tests run: 15, Failures: 0, Errors: 13, Skipped: 0, Time elapsed: 1.145 sec <<< FAILURE!
+Running org.globus.ftp.test.DataChannelReuseTest
+[main] INFO  test.DataChannelReuseTest  - basic data channel reuse
+[main] INFO  test.DataChannelReuseTest  - basic data channel reuse with put
+[main] INFO  test.DataChannelReuseTest  - data channel reuse with changing d.c. protection
+[main] INFO  test.DataChannelReuseTest  - data channel reuse with put and protection
+[main] INFO  test.DataChannelReuseTest  - data channel reuse with changing TCP buffer size
+[main] INFO  test.DataChannelReuseTest  - data channel reuse with put and changing tcp buffer
+[main] INFO  test.DataChannelReuseTest  - data channel reuse interspersed by setActive/passive
+[main] INFO  test.DataChannelReuseTest  - data channel reuse with put and interspersed setActive/passive
+Tests run: 8, Failures: 0, Errors: 8, Skipped: 0, Time elapsed: 0.337 sec <<< FAILURE!
+Running org.globus.ftp.test.FTPControlChannelTest
+[main] INFO  test.FTPControlChannelTest  - USER/PASS
+[main] INFO  test.FTPControlChannelTest  - RETR
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.079 sec
+Running org.globus.ftp.test.GridFTPRestartMarkerTest
+[main] INFO  test.GridFTPRestartMarkerTest  - constructing bad: 111 Range Marker 0-29
+[main] INFO  test.GridFTPRestartMarkerTest  - constructing bad: 129-Perf Marker
+
+[main] INFO  test.GridFTPRestartMarkerTest  - constructing bad: Range Marker 30-45,30-20,50-51
+[main] INFO  test.GridFTPRestartMarkerTest  - constructing bad: Range Marker 30-45,46-2e
+[main] INFO  test.GridFTPRestartMarkerTest  - constructing bad: Range Marker -3,70-82
+[main] INFO  test.GridFTPRestartMarkerTest  - constructing bad: Range Marker 30-4570-82
+[main] INFO  test.GridFTPRestartMarkerTest  -  constructing: 30-66 -> 30-66
+[main] INFO  test.GridFTPRestartMarkerTest  -  constructing: 30-45,60-71,100-134 -> 30-45,60-71,100-134
+[main] INFO  test.GridFTPRestartMarkerTest  -  constructing: 0-17,18-50,51-114 -> 0-114
+[main] INFO  test.GridFTPRestartMarkerTest  -  constructing: 51-114,18-49,0-16 -> 0-16,18-49,51-114
+[main] INFO  test.GridFTPRestartMarkerTest  -  constructing: 44-99,1-5,30-37,0-36 -> 0-37,44-99
+[main] INFO  test.GridFTPRestartMarkerTest  -  constructing: 0-134545408 -> 0-134545408
+[main] INFO  test.GridFTPRestartMarkerTest  -  constructing: 134545408-298778624 -> 134545408-298778624
+[main] INFO  test.GridFTPRestartMarkerTest  -  constructing: 298778624-466747392 -> 298778624-466747392
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 sec
+Running org.globus.ftp.test.GridFTPClientTest
+[main] INFO  test.GridFTPClientTest  - getSize()
+[main] INFO  test.GridFTPClientTest  - makeDir()
+[main] INFO  test.GridFTPClientTest  - setRestartMarker()
+[main] INFO  test.GridFTPClientTest  - 3 party
+[main] ERROR test.GridFTPClientTest  - 
+java.net.SocketException: Socket closed
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:99)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:124)
+	at org.globus.ftp.vanilla.FTPControlChannel.writeStr(FTPControlChannel.java:472)
+	at org.globus.ftp.vanilla.FTPControlChannel.write(FTPControlChannel.java:415)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:946)
+	at org.globus.ftp.test.GridFTPClientTest.test3Party(GridFTPClientTest.java:796)
+	at org.globus.ftp.test.GridFTPClientTest.test3Party(GridFTPClientTest.java:529)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] ERROR test.GridFTPClientTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.GridFTPClientTest.test3Party_setParams(GridFTPClientTest.java:813)
+	at org.globus.ftp.test.GridFTPClientTest.test3Party(GridFTPClientTest.java:789)
+	at org.globus.ftp.test.GridFTPClientTest.test3Party(GridFTPClientTest.java:529)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClientTest  - getFeatureList()
+[main] INFO  test.GridFTPClientTest  - retrieveOptions()
+[main] INFO  test.GridFTPClientTest  - show list output using GridFTPClient
+[main] INFO  test.GridFTPClientTest  - show list output using GridFTPClient
+[main] INFO  test.GridFTPClientTest  - show list output using GridFTPClient
+[main] INFO  test.GridFTPClientTest  - show list output using GridFTPClient
+[main] INFO  test.GridFTPClientTest  - show list output using GridFTPClient
+[main] INFO  test.GridFTPClientTest  - show list output using GridFTPClient
+[main] INFO  test.GridFTPClientTest  - test two consective list, using both list functions, using GridFTPClient
+[main] INFO  test.GridFTPClientTest  - 3 party mode E
+[main] ERROR test.GridFTPClientTest  - 
+java.net.SocketException: Socket closed
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:99)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:124)
+	at org.globus.ftp.vanilla.FTPControlChannel.writeStr(FTPControlChannel.java:472)
+	at org.globus.ftp.vanilla.FTPControlChannel.write(FTPControlChannel.java:415)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:946)
+	at org.globus.ftp.test.GridFTPClientTest.test3PartyModeE(GridFTPClientTest.java:850)
+	at org.globus.ftp.test.GridFTPClientTest.test3PartyModeE(GridFTPClientTest.java:502)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] ERROR test.GridFTPClientTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.GridFTPClientTest.test3PartyModeE_setParams(GridFTPClientTest.java:867)
+	at org.globus.ftp.test.GridFTPClientTest.test3PartyModeE(GridFTPClientTest.java:838)
+	at org.globus.ftp.test.GridFTPClientTest.test3PartyModeE(GridFTPClientTest.java:502)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClientTest  - 3 party with bad port
+[main] INFO  test.GridFTPClientTest  - 3 party with bad server
+[main] INFO  test.GridFTPClientTest  - 3 party with bad src file
+[main] ERROR test.GridFTPClientTest  - 
+java.net.SocketException: Socket closed
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:99)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:124)
+	at org.globus.ftp.vanilla.FTPControlChannel.writeStr(FTPControlChannel.java:472)
+	at org.globus.ftp.vanilla.FTPControlChannel.write(FTPControlChannel.java:415)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:946)
+	at org.globus.ftp.test.GridFTPClientTest.test3Party(GridFTPClientTest.java:796)
+	at org.globus.ftp.test.GridFTPClientTest.test3PartyNoSuchSrcFile(GridFTPClientTest.java:704)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClientTest  - 3 party with bad dest dir
+[main] ERROR test.GridFTPClientTest  - 
+java.net.SocketException: Socket closed
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:99)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:124)
+	at org.globus.ftp.vanilla.FTPControlChannel.writeStr(FTPControlChannel.java:472)
+	at org.globus.ftp.vanilla.FTPControlChannel.write(FTPControlChannel.java:415)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:946)
+	at org.globus.ftp.test.GridFTPClientTest.test3Party(GridFTPClientTest.java:796)
+	at org.globus.ftp.test.GridFTPClientTest.test3PartyNoSuchDestDir(GridFTPClientTest.java:741)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+Tests run: 30, Failures: 2, Errors: 24, Skipped: 0, Time elapsed: 1.188 sec <<< FAILURE!
+Running org.globus.ftp.test.ByteRangeListTest
+[main] INFO  test.ByteRangeListTest  - merging range: 0-298778624 + 298778624-466747392
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 1-6
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 1-19
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 1-6,9-19
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 1-3,6-19
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 1-3,6-19
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 0-3,9-19
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 0-19
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 6-19,50-64
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 6-7,9-19,50-64
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 6-7,9-19
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 6-7,30-40
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 3-100
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 3-100
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 1-1,3-3,6-8
+[main] INFO  test.ByteRangeListTest  - merging vector of ranges: 1-4
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 0-5
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 7-11
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 3-15
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 10-18
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 10-23
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 10-30
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 10-50
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 10-53
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 13-16
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 12-17
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 16-31
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 12-100
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 24-26
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 20-23
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 20-29
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 20-30
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 20-49
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 27-27
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 27-30
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 26-40
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 46-51
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 51-52
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 52-53
+[main] INFO  test.ByteRangeListTest  - merging range: 12-17,24-26,31-31,40-45,52-52 + 54-67
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.036 sec
+Running org.globus.ftp.test.FileInfoTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 sec
+Running org.globus.ftp.test.OutputStreamDataSourceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.058 sec
+Running org.globus.ftp.test.FTPClient2PartyTest
+[main] INFO  test.FTPClient2PartyTest  - get
+[main] INFO  test.FTPClient2PartyTest  - active, image, stream
+[main] INFO  test.FTPClient2PartyTest  - put
+[main] INFO  test.FTPClient2PartyTest  - active, image, stream
+[main] INFO  test.FTPClient2PartyTest  - get with bad src file
+[main] INFO  test.FTPClient2PartyTest  - active, image, stream
+[main] INFO  test.FTPClient2PartyTest  - put with bad dest dir
+[main] INFO  test.FTPClient2PartyTest  - active, image, stream
+[main] INFO  test.FTPClient2PartyTest  - get from non existent port
+[main] INFO  test.FTPClient2PartyTest  - active, image, stream
+[main] INFO  test.FTPClient2PartyTest  - put to non existent port
+[main] INFO  test.FTPClient2PartyTest  - active, image, stream
+[main] INFO  test.FTPClient2PartyTest  - get from non existent server
+[main] INFO  test.FTPClient2PartyTest  - active, image, stream
+[main] INFO  test.FTPClient2PartyTest  - put to non existent server
+[main] INFO  test.FTPClient2PartyTest  - active, image, stream
+Tests run: 6, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.246 sec <<< FAILURE!
+Running org.globus.ftp.test.InputStreamDataSinkTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.061 sec
+Running org.globus.ftp.test.GridFTPClient2PartyTransferTest
+[main] INFO  test.GridFTPClient2PartyTransferTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTransferTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTransferTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTransferTest  - with configuration: nodcau, clear
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.343 sec <<< FAILURE!
+Running org.globus.ftp.test.FTPClientTest
+[main] INFO  test.FTPClientTest  - getSize()
+[main] INFO  test.FTPClientTest  - makeDir()
+[main] INFO  test.FTPClientTest  - setActive()/setPassive()
+[main] INFO  test.FTPClientTest  - setRestartMarker()
+[main] INFO  test.FTPClientTest  - 3 party
+[main] INFO  test.FTPClientTest  - 3 party with bad port
+[main] INFO  test.FTPClientTest  - 3 party with bad server
+[main] INFO  test.FTPClientTest  - 3 party with bad server
+[main] INFO  test.FTPClientTest  - 3 party with bad src file
+[main] INFO  test.FTPClientTest  - 3 party with bad dest dir
+Tests run: 11, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 34.608 sec <<< FAILURE!
+Running org.globus.ftp.test.HostPortTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 sec
+Running org.globus.ftp.test.MarkerTest
+[main] ERROR test.MarkerTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.MarkerTest.setParams(MarkerTest.java:188)
+	at org.globus.ftp.test.MarkerTest.testModeEMarkers(MarkerTest.java:152)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] ERROR test.MarkerTest  - 
+java.net.SocketException: Socket closed
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:99)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:124)
+	at org.globus.ftp.vanilla.FTPControlChannel.writeStr(FTPControlChannel.java:472)
+	at org.globus.ftp.vanilla.FTPControlChannel.write(FTPControlChannel.java:415)
+	at org.globus.ftp.vanilla.FTPControlChannel.exchange(FTPControlChannel.java:432)
+	at org.globus.ftp.vanilla.FTPControlChannel.execute(FTPControlChannel.java:459)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:948)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:930)
+	at org.globus.ftp.test.MarkerTest.testModeEMarkers(MarkerTest.java:171)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.083 sec <<< FAILURE!
+Running org.globus.ftp.test.GridFTPClient2PartyTest
+[main] INFO  test.GridFTPClient2PartyTest  - testing get
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] ERROR test.GridFTPClient2PartyTest  - 
+Defective credential detected
+. Caused by 
+org.globus.gsi.CredentialException: proxy not found
+	at org.globus.gsi.X509Credential.<init>(X509Credential.java:136)
+	at org.globus.gsi.X509Credential.reloadDefaultCredential(X509Credential.java:480)
+	at org.globus.gsi.X509Credential.getDefaultCredential(X509Credential.java:465)
+	at org.globus.gsi.gssapi.GlobusGSSManagerImpl.createCredential(GlobusGSSManagerImpl.java:130)
+	at org.globus.gsi.gssapi.GlobusGSSManagerImpl.createCredential(GlobusGSSManagerImpl.java:71)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.getCredential(GridFTPClient2PartyTest.java:632)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.get(GridFTPClient2PartyTest.java:426)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:391)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:310)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClient2PartyTest  - testing put
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] ERROR test.GridFTPClient2PartyTest  - 
+Defective credential detected
+. Caused by 
+org.globus.gsi.CredentialException: proxy not found
+	at org.globus.gsi.X509Credential.<init>(X509Credential.java:136)
+	at org.globus.gsi.X509Credential.reloadDefaultCredential(X509Credential.java:480)
+	at org.globus.gsi.X509Credential.getDefaultCredential(X509Credential.java:465)
+	at org.globus.gsi.gssapi.GlobusGSSManagerImpl.createCredential(GlobusGSSManagerImpl.java:130)
+	at org.globus.gsi.gssapi.GlobusGSSManagerImpl.createCredential(GlobusGSSManagerImpl.java:71)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.getCredential(GridFTPClient2PartyTest.java:632)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.put(GridFTPClient2PartyTest.java:598)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:563)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:461)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:99)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClient2PartyTest  - get from non existent port
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - get from non existent server
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - put to non existent server
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - get with bad src file
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] ERROR test.GridFTPClient2PartyTest  - 
+Defective credential detected
+. Caused by 
+org.globus.gsi.CredentialException: proxy not found
+	at org.globus.gsi.X509Credential.<init>(X509Credential.java:136)
+	at org.globus.gsi.X509Credential.reloadDefaultCredential(X509Credential.java:480)
+	at org.globus.gsi.X509Credential.getDefaultCredential(X509Credential.java:465)
+	at org.globus.gsi.gssapi.GlobusGSSManagerImpl.createCredential(GlobusGSSManagerImpl.java:130)
+	at org.globus.gsi.gssapi.GlobusGSSManagerImpl.createCredential(GlobusGSSManagerImpl.java:71)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.getCredential(GridFTPClient2PartyTest.java:632)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.get(GridFTPClient2PartyTest.java:426)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:391)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:310)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGetNoSuchSrcFile(GridFTPClient2PartyTest.java:244)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClient2PartyTest  - put with bad dest dir
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] ERROR test.GridFTPClient2PartyTest  - 
+Defective credential detected
+. Caused by 
+org.globus.gsi.CredentialException: proxy not found
+	at org.globus.gsi.X509Credential.<init>(X509Credential.java:136)
+	at org.globus.gsi.X509Credential.reloadDefaultCredential(X509Credential.java:480)
+	at org.globus.gsi.X509Credential.getDefaultCredential(X509Credential.java:465)
+	at org.globus.gsi.gssapi.GlobusGSSManagerImpl.createCredential(GlobusGSSManagerImpl.java:130)
+	at org.globus.gsi.gssapi.GlobusGSSManagerImpl.createCredential(GlobusGSSManagerImpl.java:71)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.getCredential(GridFTPClient2PartyTest.java:632)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.put(GridFTPClient2PartyTest.java:598)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:563)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:461)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPutNoSuchDestDir(GridFTPClient2PartyTest.java:277)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+Tests run: 6, Failures: 4, Errors: 0, Skipped: 0, Time elapsed: 0.167 sec <<< FAILURE!
+Running org.globus.ftp.test.GridFTPClient2PartyAsynchTransferTest
+[main] INFO  test.GridFTPClient2PartyTransferTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTransferTest  - with configuration: nodcau, clear
+Tests run: 4, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.076 sec <<< FAILURE!
+Running org.globus.ftp.test.FTPClientListTest
+[main] INFO  test.FTPClientListTest  - test two consective list, using both list functions
+Tests run: 3, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 0.108 sec <<< FAILURE!
+Running org.globus.ftp.test.ReplyTest
+[main] INFO  test.ReplyTest  - testing object: 230 User pafcio logged in.
+
+[main] INFO  test.ReplyTest  - testing object: 200 Command okay.
+
+[main] INFO  test.ReplyTest  - testing object: 123-First line
+ Second line
+ 234 A line beginning with numbers
+123 The last line
+
+[main] INFO  test.ReplyTest  - testing object: 200 Command okay.
+aaaa
+[main] INFO  test.ReplyTest  - bad construction:
+[main] INFO  test.ReplyTest  - bad construction:
+
+[main] INFO  test.ReplyTest  - bad construction:0
+[main] INFO  test.ReplyTest  - bad construction:1   fds
+
+[main] INFO  test.ReplyTest  - bad construction:  1   fds
+
+[main] INFO  test.ReplyTest  - bad construction:200p   fds
+
+[main] INFO  test.ReplyTest  - bad construction:2000   fds
+
+[main] INFO  test.ReplyTest  - bad construction:345454
+[main] INFO  test.ReplyTest  - bad construction:345454
+
+[main] INFO  test.ReplyTest  - bad construction:123-First line
+ Second line
+ 234 A line beginning with numbers123 The last line
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.01 sec
+Running org.globus.ftp.test.PerfMarkerTest
+[main] INFO  test.PerfMarkerTest  - checking object:
+Perf Marker
+ Timestamp: 111222333444.5
+ Stripe Index: 5
+ Stripe Bytes Transferred: 987654321987654321
+ Total Stripe Count: 30
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking object:
+Perf Marker
+ Total Stripe Count: 30
+ Stripe Index: 5
+ Stripe Bytes Transferred: 987654321987654321
+ Timestamp: 111222333444.5
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking object:
+Perf Marker
+ Timestamp: 111222333444.5
+ Total Stripe Count: 30
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking object:
+Perf Marker
+ Timestamp: 111222333444.5
+ Stripe Index: 5
+ Stripe Bytes Transferred: 987654321987654321
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking object:
+Perf Marker
+ Timestamp: 111222333444.5
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking object:
+Perf Marker
+ Timestamp: 0
+ Stripe Index: 0
+ Stripe Bytes Transferred: 0
+ Total Stripe Count: 0
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking bad construction:
+ Timestamp: 111222333444.5
+ Stripe Index: 5
+ Stripe Bytes Transferred: 987654321987654321
+ Total Stripe Count: 30
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking bad construction:
+112-Perf Marker
+ Timestamp: 111222333444.5
+ Stripe Index: 5
+ Stripe Bytes Transferred: 987654321987654321
+ Total Stripe Count: 30
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking bad construction:
+Perf Marker
+ Stripe Index: 5
+ Stripe Bytes Transferred: 987654321987654321
+ Total Stripe Count: 30
+112 End
+
+[main] INFO  test.PerfMarkerTest  - checking bad construction:
+Extensions supported:
+ REST STREAM
+ ESTO
+ ERET
+ MDTM
+ SIZE
+ PARALLEL
+ DCAU
+211 END
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.01 sec
+Running org.globus.ftp.test.MlsxTest
+[main] INFO  test.MlsxTest  - test creation of MlsxEntry
+[main] INFO  test.MlsxTest  - test MLST
+[main] INFO  test.MlsxTest  - show mlsd output using GridFTPClient
+[main] INFO  test.MlsxTest  - get mlsd output using GridFTPClient, EBlock, Image
+[main] INFO  test.MlsxTest  - test two consective mlsd, using both mlsd functions, using GridFTPClient
+Tests run: 5, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.161 sec <<< FAILURE!
+Running org.globus.ftp.test.DataChannelReuseVaryingParTest
+[main] INFO  test.DataChannelReuseVaryingParTest  - data channel reuse with get and changing parallelism
+[main] INFO  test.DataChannelReuseVaryingParTest  - data channel reuse with put and changing parallelism
+Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.071 sec <<< FAILURE!
+Running org.globus.ftp.test.GridFTPClient2PartyParallelTest
+[main] INFO  test.GridFTPClient2PartyTest  - Testing:
+[main] INFO  test.GridFTPClient2PartyTest  - parallel 2 party transfer
+
+
+[main] INFO  test.GridFTPClient2PartyTest  - testing get
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] ERROR test.GridFTPClient2PartyTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.get(GridFTPClient2PartyParallelTest.java:133)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:391)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.testGet(GridFTPClient2PartyParallelTest.java:95)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:77)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.testGet(GridFTPClient2PartyParallelTest.java:68)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClient2PartyTest  - Testing:
+[main] INFO  test.GridFTPClient2PartyTest  - parallel 2 party transfer
+
+
+[main] INFO  test.GridFTPClient2PartyTest  - testing put
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] ERROR test.GridFTPClient2PartyTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.put(GridFTPClient2PartyParallelTest.java:177)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:563)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.testPut(GridFTPClient2PartyParallelTest.java:115)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:99)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.testPut(GridFTPClient2PartyParallelTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClient2PartyTest  - get from non existent port
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - get from non existent server
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - put to non existent server
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - get with bad src file
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - put with bad dest dir
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+Tests run: 6, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.15 sec <<< FAILURE!
+Running org.globus.ftp.test.GridFTPClient2PartyStripingTest
+[main] INFO  test.GridFTPClient2PartyTest  - Testing:
+[main] INFO  test.GridFTPClient2PartyTest  - striped 2 party transfer
+
+
+[main] INFO  test.GridFTPClient2PartyTest  - testing get
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] ERROR test.GridFTPClient2PartyTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.GridFTPClient2PartyStripingTest.get(GridFTPClient2PartyStripingTest.java:77)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:391)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.testGet(GridFTPClient2PartyParallelTest.java:95)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testGet(GridFTPClient2PartyTest.java:77)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.testGet(GridFTPClient2PartyParallelTest.java:68)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClient2PartyTest  - Testing:
+[main] INFO  test.GridFTPClient2PartyTest  - striped 2 party transfer
+
+
+[main] INFO  test.GridFTPClient2PartyTest  - testing put
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] ERROR test.GridFTPClient2PartyTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.GridFTPClient2PartyStripingTest.put(GridFTPClient2PartyStripingTest.java:128)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:563)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.testPut(GridFTPClient2PartyParallelTest.java:115)
+	at org.globus.ftp.test.GridFTPClient2PartyTest.testPut(GridFTPClient2PartyTest.java:99)
+	at org.globus.ftp.test.GridFTPClient2PartyParallelTest.testPut(GridFTPClient2PartyParallelTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPClient2PartyTest  - get from non existent port
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - get from non existent server
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - put to non existent server
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - get with bad src file
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, passive, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+[main] INFO  test.GridFTPClient2PartyTest  - put with bad dest dir
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: parallel, active, image, eblock
+[main] INFO  test.GridFTPClient2PartyTest  - with configuration: nodcau, clear
+Tests run: 6, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.145 sec <<< FAILURE!
+Running org.globus.ftp.test.GridFTPControlChannelTest
+[main] INFO  test.GridFTPControlChannelTest  - 3rd party
+[main] ERROR test.GridFTPControlChannelTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:140)
+	at org.globus.ftp.test.GridFTPControlChannelTest.test3Party(GridFTPControlChannelTest.java:183)
+	at org.globus.ftp.test.GridFTPControlChannelTest.test3Party(GridFTPControlChannelTest.java:98)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPControlChannelTest  - 3rd party parallel (using OPTS RETR Parallelism)
+[main] ERROR test.GridFTPControlChannelTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:140)
+	at org.globus.ftp.test.GridFTPControlChannelTest.test3PartyParallel(GridFTPControlChannelTest.java:277)
+	at org.globus.ftp.test.GridFTPControlChannelTest.test3PartyParallel(GridFTPControlChannelTest.java:56)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPControlChannelTest  - authenticate()
+[main] ERROR test.GridFTPControlChannelTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:140)
+	at org.globus.ftp.test.GridFTPControlChannelTest.testAuth(GridFTPControlChannelTest.java:153)
+	at org.globus.ftp.test.GridFTPControlChannelTest.testAuth(GridFTPControlChannelTest.java:82)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.GridFTPControlChannelTest  - 3rd party striping (using SPAS/SPOR)
+[main] ERROR test.GridFTPControlChannelTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:140)
+	at org.globus.ftp.test.GridFTPControlChannelTest.test3PartyStriping(GridFTPControlChannelTest.java:435)
+	at org.globus.ftp.test.GridFTPControlChannelTest.test3PartyStriping(GridFTPControlChannelTest.java:124)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+Tests run: 4, Failures: 4, Errors: 0, Skipped: 0, Time elapsed: 0.151 sec <<< FAILURE!
+Running org.globus.ftp.test.ByteRangeTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
+Running org.globus.ftp.test.MultipleTransfersTest
+[main] INFO  test.MultipleTransfersTest  - GridFTP client - client-server - multiple files - stream mode
+[main] INFO  test.MultipleTransfersTest  - GridFTP client - client-server - multiple files - stream mode - no d.c. reuse
+[main] INFO  test.MultipleTransfersTest  - GridFTP client - 3 party - multiple files - stream mode
+[main] ERROR test.MultipleTransfersTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.MultipleTransfersTest.setParamsModeS(MultipleTransfersTest.java:193)
+	at org.globus.ftp.test.MultipleTransfersTest.test3PartyMultipleTransfers(MultipleTransfersTest.java:157)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] ERROR test.MultipleTransfersTest  - 
+java.net.SocketException: Socket closed
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:99)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:124)
+	at org.globus.ftp.vanilla.FTPControlChannel.writeStr(FTPControlChannel.java:472)
+	at org.globus.ftp.vanilla.FTPControlChannel.write(FTPControlChannel.java:415)
+	at org.globus.ftp.vanilla.FTPControlChannel.exchange(FTPControlChannel.java:432)
+	at org.globus.ftp.vanilla.FTPControlChannel.execute(FTPControlChannel.java:459)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:948)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:930)
+	at org.globus.ftp.test.MultipleTransfersTest.test3PartyMultipleTransfers(MultipleTransfersTest.java:176)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] INFO  test.MultipleTransfersTest  - GridFTPClient - 3 party - multiple files - mode E
+[main] ERROR test.MultipleTransfersTest  - 
+org.globus.ftp.exception.ServerException: Server refused performing the request. Custom message: Server refused GSSAPI authentication. (error code 1) [Nested exception message:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.].  Nested exception is 
+org.globus.ftp.exception.UnexpectedReplyCodeException:  Custom message: Unexpected reply: 530-globus_xio: Server side credential failure
+530-globus_gsi_gssapi: Error with gss credential handle
+530-globus_credential: Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Valid credentials could not be found in any of the possible locations specified by the credential search order.
+530-Attempt 1
+530-globus_credential: Error reading host credential
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: Error with certificate filename
+530-globus_sysconfig: File is not owned by current user: /etc/grid-security/hostcert.pem is not owned by current user
+530-Attempt 2
+530-globus_credential: Error reading proxy credential
+530-globus_sysconfig: Could not find a valid proxy certificate file location
+530-globus_sysconfig: Error with key filename
+530-globus_sysconfig: File does not exist: /tmp/x509up_u1000 is not a valid file
+530-Attempt 3
+530-globus_credential: Error reading user credential
+530-globus_credential: Key is password protected: GSI does not currently support password protected private keys.
+530-OpenSSL Error: pem_lib.c:406: in library: PEM routines, function PEM_do_header: bad password read
+530 End.
+	at org.globus.ftp.extended.GridFTPControlChannel.authenticate(GridFTPControlChannel.java:171)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:127)
+	at org.globus.ftp.GridFTPClient.authenticate(GridFTPClient.java:103)
+	at org.globus.ftp.test.MultipleTransfersTest.setParamsModeE(MultipleTransfersTest.java:262)
+	at org.globus.ftp.test.MultipleTransfersTest.test3PartyMultipleTransfersModeE(MultipleTransfersTest.java:229)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+[main] ERROR test.MultipleTransfersTest  - 
+java.net.SocketException: Socket closed
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:99)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:124)
+	at org.globus.ftp.vanilla.FTPControlChannel.writeStr(FTPControlChannel.java:472)
+	at org.globus.ftp.vanilla.FTPControlChannel.write(FTPControlChannel.java:415)
+	at org.globus.ftp.vanilla.FTPControlChannel.exchange(FTPControlChannel.java:432)
+	at org.globus.ftp.vanilla.FTPControlChannel.execute(FTPControlChannel.java:459)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:948)
+	at org.globus.ftp.FTPClient.close(FTPClient.java:930)
+	at org.globus.ftp.test.MultipleTransfersTest.test3PartyMultipleTransfersModeE(MultipleTransfersTest.java:245)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.junit.JUnitTestSet.execute(JUnitTestSet.java:213)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.executeTestSet(AbstractDirectoryTestSuite.java:140)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.execute(AbstractDirectoryTestSuite.java:127)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:345)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:1009)
+Tests run: 4, Failures: 2, Errors: 2, Skipped: 0, Time elapsed: 0.224 sec <<< FAILURE!
+Running org.globus.ftp.test.FTPExceptionTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
+Running org.globus.ftp.test.AsciiTranslatorTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 sec
+Running org.globus.ftp.test.TestEnv
+Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 sec
+Running org.globus.ftp.test.HostPortListTest
+[main] INFO  test.HostPortListTest  - testing construction from String
+[main] INFO  test.HostPortListTest  - checking bad message: MODE E ok.
+[main] INFO  test.HostPortListTest  - checking bad message: Extensions supported:
+ REST STREAM
+ ESTO
+ ERET
+ MDTM
+ SIZE
+ PARALLEL
+ DCAU
+211 END
+[main] INFO  test.HostPortListTest  - testing construction from HostPort object
+[main] INFO  test.HostPortListTest  - testing construction from String, and later modification by add(HostPort)
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 sec
+Running org.globus.ftp.test.FeatureListTest
+[main] INFO  test.FeatureListTest  - testing parsed feature set:
+[main] INFO  test.FeatureListTest  - okay, contains REST STREAM
+[main] INFO  test.FeatureListTest  - okay, contains ESTO
+[main] INFO  test.FeatureListTest  - okay, contains DCAU
+[main] INFO  test.FeatureListTest  - okay, contains PARALLEL
+[main] INFO  test.FeatureListTest  - okay, contains PARALLEL
+[main] INFO  test.FeatureListTest  - okay, contains SIZE
+[main] INFO  test.FeatureListTest  - okay, contains MDTM
+[main] INFO  test.FeatureListTest  - okay, contains ERET
+[main] INFO  test.FeatureListTest  - okay, does not contain Extensions supported:
+[main] INFO  test.FeatureListTest  - okay, does not contain 211 END
+[main] INFO  test.FeatureListTest  - okay, throws exception as expected.
+[main] INFO  test.FeatureListTest  - okay, does not contain 
+[main] INFO  test.FeatureListTest  - okay, does not contain TVFS
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 sec
+
+Results :
+
+Failed tests: 
+  test3Party(org.globus.ftp.test.GridFTPClientTest)
+  test3PartyModeE(org.globus.ftp.test.GridFTPClientTest)
+  testModeEMarkers(org.globus.ftp.test.MarkerTest)
+  testGet(org.globus.ftp.test.GridFTPClient2PartyTest)
+  testPut(org.globus.ftp.test.GridFTPClient2PartyTest)
+  testGetNoSuchSrcFile(org.globus.ftp.test.GridFTPClient2PartyTest)
+  testPutNoSuchDestDir(org.globus.ftp.test.GridFTPClient2PartyTest)
+  testGet(org.globus.ftp.test.GridFTPClient2PartyParallelTest)
+  testPut(org.globus.ftp.test.GridFTPClient2PartyParallelTest)
+  testGet(org.globus.ftp.test.GridFTPClient2PartyStripingTest)
+  testPut(org.globus.ftp.test.GridFTPClient2PartyStripingTest)
+  test3Party(org.globus.ftp.test.GridFTPControlChannelTest)
+  test3PartyParallel(org.globus.ftp.test.GridFTPControlChannelTest)
+  testAuth(org.globus.ftp.test.GridFTPControlChannelTest)
+  test3PartyStriping(org.globus.ftp.test.GridFTPControlChannelTest)
+  test3PartyMultipleTransfers(org.globus.ftp.test.MultipleTransfersTest)
+  test3PartyMultipleTransfersModeE(org.globus.ftp.test.MultipleTransfersTest)
+
+Tests in error: 
+  testDefault(org.globus.ftp.test.TransferAppTest)
+  testStreamImage(org.globus.ftp.test.TransferAppTest)
+  testStreamAscii(org.globus.ftp.test.TransferAppTest)
+  testStreamAsciiPasv(org.globus.ftp.test.TransferAppTest)
+  testParallel5(org.globus.ftp.test.TransferAppTest)
+  testParallel3Strip(org.globus.ftp.test.TransferAppTest)
+  testPBSZ(org.globus.ftp.test.TransferAppTest)
+  testAuthNone(org.globus.ftp.test.TransferAppTest)
+  testAuthSelf(org.globus.ftp.test.TransferAppTest)
+  testProtClear(org.globus.ftp.test.TransferAppTest)
+  testProtPrivate(org.globus.ftp.test.TransferAppTest)
+  testTCPBufferSmall(org.globus.ftp.test.TransferAppTest)
+  testTCPBufferLarge(org.globus.ftp.test.TransferAppTest)
+  testBasicGet(org.globus.ftp.test.DataChannelReuseTest)
+  testBasicPut(org.globus.ftp.test.DataChannelReuseTest)
+  testGetProtection(org.globus.ftp.test.DataChannelReuseTest)
+  testPutProtection(org.globus.ftp.test.DataChannelReuseTest)
+  testGetTCPBuffer(org.globus.ftp.test.DataChannelReuseTest)
+  testPutTCPBuffer(org.globus.ftp.test.DataChannelReuseTest)
+  testGetTearing(org.globus.ftp.test.DataChannelReuseTest)
+  testPutTearing(org.globus.ftp.test.DataChannelReuseTest)
+  testSize(org.globus.ftp.test.GridFTPClientTest)
+  testDir(org.globus.ftp.test.GridFTPClientTest)
+  testRestartMarker(org.globus.ftp.test.GridFTPClientTest)
+  testControlChannelProtectionEnc(org.globus.ftp.test.GridFTPClientTest)
+  testControlChannelProtectionSig(org.globus.ftp.test.GridFTPClientTest)
+  testExists(org.globus.ftp.test.GridFTPClientTest)
+  testFeature(org.globus.ftp.test.GridFTPClientTest)
+  testQuote(org.globus.ftp.test.GridFTPClientTest)
+  testSite(org.globus.ftp.test.GridFTPClientTest)
+  testDirRename(org.globus.ftp.test.GridFTPClientTest)
+  testOptions(org.globus.ftp.test.GridFTPClientTest)
+  testAllocate(org.globus.ftp.test.GridFTPClientTest)
+  testChecksum(org.globus.ftp.test.GridFTPClientTest)
+  testListAscii(org.globus.ftp.test.GridFTPClientTest)
+  testSetChecksum(org.globus.ftp.test.GridFTPClientTest)
+  testListEblock(org.globus.ftp.test.GridFTPClientTest)
+  testNListAscii(org.globus.ftp.test.GridFTPClientTest)
+  testNListEblock(org.globus.ftp.test.GridFTPClientTest)
+  testMListAscii(org.globus.ftp.test.GridFTPClientTest)
+  testMListEblock(org.globus.ftp.test.GridFTPClientTest)
+  testList2(org.globus.ftp.test.GridFTPClientTest)
+  testConnectionReset1(org.globus.ftp.test.GridFTPClientTest)
+  testConnectionReset2(org.globus.ftp.test.GridFTPClientTest)
+  testConnectionReset3(org.globus.ftp.test.GridFTPClientTest)
+  testGet(org.globus.ftp.test.FTPClient2PartyTest)
+  testPut(org.globus.ftp.test.FTPClient2PartyTest)
+  testGetNoSuchSrcFile(org.globus.ftp.test.FTPClient2PartyTest)
+  testPutNoSuchDestDir(org.globus.ftp.test.FTPClient2PartyTest)
+  testGetPassive(org.globus.ftp.test.GridFTPClient2PartyTransferTest)
+  testGetActive(org.globus.ftp.test.GridFTPClient2PartyTransferTest)
+  testPutPassive(org.globus.ftp.test.GridFTPClient2PartyTransferTest)
+  testPutActive(org.globus.ftp.test.GridFTPClient2PartyTransferTest)
+  testSize(org.globus.ftp.test.FTPClientTest)
+  test3Party(org.globus.ftp.test.FTPClientTest)
+  testGetPassive(org.globus.ftp.test.GridFTPClient2PartyAsynchTransferTest)
+  testPutPassive(org.globus.ftp.test.GridFTPClient2PartyAsynchTransferTest)
+  testListPassive(org.globus.ftp.test.FTPClientListTest)
+  testListActive(org.globus.ftp.test.FTPClientListTest)
+  test2(org.globus.ftp.test.FTPClientListTest)
+  testMlst(org.globus.ftp.test.MlsxTest)
+  test3(org.globus.ftp.test.MlsxTest)
+  test4(org.globus.ftp.test.MlsxTest)
+  test5(org.globus.ftp.test.MlsxTest)
+  testGetVarPar(org.globus.ftp.test.DataChannelReuseVaryingParTest)
+  testPutVarPar(org.globus.ftp.test.DataChannelReuseVaryingParTest)
+  test2PartyMultipleTransfers(org.globus.ftp.test.MultipleTransfersTest)
+  test2PartyMultipleTransfersModeE(org.globus.ftp.test.MultipleTransfersTest)
+
+Tests run: 160, Failures: 17, Errors: 68, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] There are test failures.
+
+Please refer to /home/vg/Desktop/JGlobus/JGlobus/gridftp/target/surefire-reports for the individual test results.
+[INFO] ------------------------------------------------------------------------
+[INFO] For more information, run Maven with the -e switch
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1 minute 10 seconds
+[INFO] Finished at: Fri Mar 30 09:38:07 CDT 2012
+[INFO] Final Memory: 8M/19M
+[INFO] ------------------------------------------------------------------------

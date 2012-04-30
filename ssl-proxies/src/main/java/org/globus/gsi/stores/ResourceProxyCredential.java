@@ -27,8 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
 
-
-import org.springframework.core.io.Resource;
+import org.globus.util.GlobusResource;
 
 /**
  * JGLOBUS-87 : document me
@@ -44,29 +43,28 @@ public class ResourceProxyCredential extends AbstractResourceSecurityWrapper<X50
         init(locationPattern);
     }
 
-    public ResourceProxyCredential(Resource resource) throws ResourceStoreException {
-        init(resource);
+    public ResourceProxyCredential(GlobusResource globusResource) throws ResourceStoreException {
+        init(globusResource);
     }
 
     public ResourceProxyCredential(String filename, X509Credential object) throws ResourceStoreException {
         init(filename, object);
     }
 
-    public ResourceProxyCredential(Resource resource, X509Credential object) throws ResourceStoreException {
-        init(resource, object);
+    public ResourceProxyCredential(GlobusResource globusResource, X509Credential object) throws ResourceStoreException {
+        init(globusResource, object);
     }
 
     public X509Credential getCredential() throws ResourceStoreException {
         return getSecurityObject();
     }
 
-    protected X509Credential create(Resource resource) throws ResourceStoreException {
-
+    protected X509Credential create(GlobusResource globusResource) throws ResourceStoreException {
         InputStream keyInputStream = null;
         InputStream certInputStream = null;
         try {
-            keyInputStream = new BufferedInputStream(resource.getInputStream());
-            certInputStream = new BufferedInputStream(resource.getInputStream());
+            keyInputStream = new BufferedInputStream(globusResource.getInputStream());
+            certInputStream = new BufferedInputStream(globusResource.getInputStream());
             return new X509Credential(keyInputStream, certInputStream);
         } catch (IOException e) {
             throw new ResourceStoreException(e);
@@ -91,10 +89,11 @@ public class ResourceProxyCredential extends AbstractResourceSecurityWrapper<X50
         }
     }
 
+
     public void store() throws ResourceStoreException {
         try {
             X509Credential credential = getCredential();
-            credential.writeToFile(resource.getFile());
+            credential.writeToFile(globusResource.getFile());
         } catch (IOException ioe) {
             throw new ResourceStoreException(ioe);
         } catch (CertificateEncodingException e) {
