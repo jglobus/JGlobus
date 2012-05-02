@@ -55,7 +55,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.springframework.core.io.FileSystemResource;
+import org.globus.util.GlobusResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -279,7 +279,7 @@ public class TestPEMFileBasedKeyStore {
         Enumeration aliases = store.engineAliases();
         assert (aliases.hasMoreElements());
         // proxy file 1
-        String proxyId1 = new FileSystemResource(this.proxyFile1.getTempFile()).getFile().toString();//getURL().toExternalForm();
+        String proxyId1 = new GlobusResource(this.proxyFile1.getTempFile().getAbsolutePath()).getFile().toString();//getURL().toExternalForm();
         Key key = store.engineGetKey("file:"+ this.proxyFile1.getAbsoluteFilename(), null);
        
         assertTrue(store.engineIsKeyEntry("file:"+ this.proxyFile1.getAbsoluteFilename()));
@@ -304,7 +304,7 @@ public class TestPEMFileBasedKeyStore {
             }
         }
         // proxy file 2
-        String proxyId2 = new FileSystemResource(this.proxyFile2.getTempFile()).getURL().toExternalForm();
+        String proxyId2 = new GlobusResource(this.proxyFile2.getTempFile().getAbsolutePath()).getURL().toExternalForm();
         key = store.engineGetKey("file:" + this.proxyFile2.getAbsoluteFilename(), null);
         assertTrue(store.engineIsKeyEntry("file:" + this.proxyFile2.getAbsoluteFilename()));
         assertNotNull(key);
@@ -332,9 +332,9 @@ public class TestPEMFileBasedKeyStore {
         PEMKeyStore store = new PEMKeyStore();
         // Parameters in properties file
         Properties properties = new Properties();
-        properties.setProperty(PEMKeyStore.CERTIFICATE_FILENAME, new FileSystemResource(
-                this.certFile.getTempFile()).getURL().toExternalForm());
-        properties.setProperty(PEMKeyStore.KEY_FILENAME, new FileSystemResource(this.keyFile.getTempFile())
+        properties.setProperty(PEMKeyStore.CERTIFICATE_FILENAME, new GlobusResource(
+                this.certFile.getTempFile().getAbsolutePath()).getURL().toExternalForm());
+        properties.setProperty(PEMKeyStore.KEY_FILENAME, new GlobusResource(this.keyFile.getTempFile().getAbsolutePath())
                 .getURL().toExternalForm());
         InputStream ins = null;
         try {
@@ -370,9 +370,9 @@ public class TestPEMFileBasedKeyStore {
 
         store = new PEMKeyStore();
         properties.setProperty(PEMKeyStore.CERTIFICATE_FILENAME,
-                new FileSystemResource(this.certFile.getTempFile()).getURL().toExternalForm());
+                new GlobusResource(this.certFile.getTempFile().getAbsolutePath()).getURL().toExternalForm());
         properties.setProperty(PEMKeyStore.KEY_FILENAME,
-                new FileSystemResource(this.keyEncFile.getTempFile()).getURL().toExternalForm());
+                new GlobusResource(this.keyEncFile.getTempFile().getAbsolutePath()).getURL().toExternalForm());
         try {
             ins = getProperties(properties);
             store.engineLoad(ins, null);

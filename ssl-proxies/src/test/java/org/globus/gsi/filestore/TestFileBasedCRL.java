@@ -20,7 +20,7 @@ import org.globus.gsi.stores.ResourceCRL;
 import org.globus.gsi.testutils.FileSetupUtil;
 import java.io.File;
 import java.security.cert.X509CRL;
-import org.springframework.core.io.FileSystemResource;
+import org.globus.util.GlobusResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class TestFileBasedCRL {
 
         String tempFileName = this.testCrl1.getAbsoluteFilename();
 
-        ResourceCRL fileCrl = new ResourceCRL(new FileSystemResource(new File(tempFileName)));
+        ResourceCRL fileCrl = new ResourceCRL(new GlobusResource(tempFileName));
 
 //        assert (fileCrl != null);
 

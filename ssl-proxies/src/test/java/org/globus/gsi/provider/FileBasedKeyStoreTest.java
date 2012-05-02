@@ -28,8 +28,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 
-
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 import org.junit.Test;
 
 /**
@@ -41,7 +40,7 @@ import org.junit.Test;
  */
 public class FileBasedKeyStoreTest {
     private PEMKeyStore keystore = new PEMKeyStore();
-    private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    private GlobusPathMatchingResourcePatternResolver globusResolver = new GlobusPathMatchingResourcePatternResolver();
     private Log logger = LogFactory.getLog(FileBasedKeyStoreTest.class.getCanonicalName());
     
     @Test

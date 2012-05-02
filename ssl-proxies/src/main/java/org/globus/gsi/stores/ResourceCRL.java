@@ -17,11 +17,13 @@ package org.globus.gsi.stores;
 
 import org.globus.gsi.util.CertificateLoadUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 
-import org.springframework.core.io.Resource;
+
+import org.globus.util.GlobusResource;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,15 +35,15 @@ import org.springframework.core.io.Resource;
 public class ResourceCRL extends AbstractResourceSecurityWrapper<X509CRL> {
 
     public ResourceCRL(String fileName) throws ResourceStoreException {
-        init(resolver.getResource(fileName));
+        init(globusResolver.getResource(fileName));
     }
 
-    public ResourceCRL(Resource resource) throws ResourceStoreException {
-        init(resource);
+    public ResourceCRL(GlobusResource globusResource) throws ResourceStoreException {
+        init(globusResource);
     }
 
     public ResourceCRL(String fileName, X509CRL crl) throws ResourceStoreException {
-        init(resolver.getResource(fileName), crl);
+        init(globusResolver.getResource(fileName), crl);
     }
 
     public X509CRL getCrl() throws ResourceStoreException {
@@ -49,9 +51,9 @@ public class ResourceCRL extends AbstractResourceSecurityWrapper<X509CRL> {
     }
 
     @Override
-    protected X509CRL create(Resource resource) throws ResourceStoreException {
+    protected X509CRL create(GlobusResource globusResource) throws ResourceStoreException {
         try {
-            return CertificateLoadUtil.loadCrl(resource.getInputStream());
+            return CertificateLoadUtil.loadCrl(globusResource.getInputStream());
         } catch (IOException e) {
             throw new ResourceStoreException(e);
         } catch (GeneralSecurityException e) {
