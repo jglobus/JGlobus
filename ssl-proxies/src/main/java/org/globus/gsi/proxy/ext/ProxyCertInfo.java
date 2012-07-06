@@ -96,7 +96,7 @@ public class ProxyCertInfo implements DEREncodable {
     }
 
     /**
-     * Returns an inÂstance of <code>ProxyCertInfo</code> from given object.
+     * Returns an instance of <code>ProxyCertInfo</code> from given object.
      *
      * @param obj the object to create the instance from.
      * @return <code>ProxyCertInfo</code> instance.
