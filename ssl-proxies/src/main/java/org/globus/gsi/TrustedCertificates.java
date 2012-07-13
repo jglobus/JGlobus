@@ -235,7 +235,7 @@ public class TrustedCertificates implements Serializable {
             KeyStore keyStore = null;
             try {
                 keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-                keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertLocation));
+                keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertLocation + "/*.0"));
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(keyStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
