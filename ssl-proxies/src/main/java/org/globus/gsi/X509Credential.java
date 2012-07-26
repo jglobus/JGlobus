@@ -57,6 +57,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Vector;
+import java.security.NoSuchAlgorithmException;
 
 
 
@@ -88,6 +89,11 @@ public class X509Credential {
     // to load the proxy from a file.
     private static boolean credentialSet = false;
     private static File credentialFile = null;
+    
+    //static fields for caching loaded CA certs/sig/crl
+    private static KeyStore ms_trustStore = null;
+    private static CertStore ms_crlStore = null;
+    private static ResourceSigningPolicyStore ms_sigPolStore = null;
 
     static {
         new ProviderLoader();
@@ -425,6 +431,47 @@ public class X509Credential {
         return pathLength;
     }
     
+    private static KeyStore getTrustStore(String caCertsLocation) throws  GeneralSecurityException, IOException
+    {
+        if(X509Credential.ms_trustStore != null)
+            return X509Credential.ms_trustStore;
+        
+        String caCertsPattern = caCertsLocation + "/*.0";
+        KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
+        keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsPattern));
+        
+        X509Credential.ms_trustStore = keyStore;
+        
+        return keyStore;
+    }
+    
+    private static CertStore getCRLStore(String caCertsLocation) throws GeneralSecurityException, NoSuchAlgorithmException
+    {
+        if(X509Credential.ms_crlStore != null)
+            return X509Credential.ms_crlStore;
+        
+        String crlPattern = caCertsLocation + "/*.r*";
+        CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
+        
+        X509Credential.ms_crlStore = crlStore ;
+        
+        return crlStore;
+    }
+    
+    private static ResourceSigningPolicyStore getSigPolStore(String caCertsLocation) throws GeneralSecurityException
+    {
+        if(X509Credential.ms_sigPolStore != null)
+            return X509Credential.ms_sigPolStore;
+        
+        String sigPolPattern = caCertsLocation + "/*.signing_policy";
+        ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
+        
+        X509Credential.ms_sigPolStore = sigPolStore;
+        
+        return sigPolStore;
+    }
+    
+    
     /**
      * Verifies the validity of the credentials. All certificate path validation is performed using trusted
      * certificates in default locations.
@@ -435,14 +482,11 @@ public class X509Credential {
     public void verify() throws CredentialException {
         try {
             String caCertsLocation = "file:" + CoGProperties.getDefault().getCaCertLocations();
-            String crlPattern = caCertsLocation + "/*.r*";
-            String sigPolPattern = caCertsLocation + "/*.signing_policy";
-            String caCertsPattern = caCertsLocation + "/*.0";
+
+            KeyStore keyStore = X509Credential.getTrustStore(caCertsLocation);
+            CertStore crlStore = X509Credential.getCRLStore(caCertsLocation); 
+            ResourceSigningPolicyStore sigPolStore = X509Credential.getSigPolStore(caCertsLocation);
             
-            KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-            CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
-            ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
-            keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsPattern));
             X509ProxyCertPathParameters parameters = new X509ProxyCertPathParameters(keyStore, crlStore, sigPolStore, false);
             X509ProxyCertPathValidator validator = new X509ProxyCertPathValidator();
             validator.engineValidate(CertificateUtil.getCertPath(certChain), parameters);
