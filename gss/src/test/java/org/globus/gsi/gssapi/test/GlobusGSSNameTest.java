@@ -32,13 +32,13 @@ public class GlobusGSSNameTest extends TestCase {
 
 	name = new GlobusGSSName("/C=US/O=Globus/O=ANL/OU=MCS/CN=gawor/CN=proxy");
 
-	name = new GlobusGSSName("/C=US/O=Globus/O=ANL/OU=MCS/CN=gawor/CN=host/wiggum.mcs.anl.gov");
+	name = new GlobusGSSName("/C=US/O=Globus/O=ANL/OU=MCS/CN=gawor/CN=host/tlager-mbp.mcs.anl.gov");
 
-	name = new GlobusGSSName("/C=US/O=Globus/O=ANL/OU=MCS/CN=host/wiggum.mcs.anl.gov/CN=gawor");
+	name = new GlobusGSSName("/C=US/O=Globus/O=ANL/OU=MCS/CN=host/tlager-mbp.mcs.anl.gov/CN=gawor");
 
 	name = new GlobusGSSName("/C=US/CN=host/pitcairn.mcs.anl.gov/CN=gawor+OU=ANL");
 
-	name = new GlobusGSSName("/C=US/CN=gawor+OU=ANL/CN=host/wiggum.mcs.anl.gov");
+	name = new GlobusGSSName("/C=US/CN=gawor+OU=ANL/CN=host/tlager-mbp.mcs.anl.gov");
     }
 
     public void testAnonymous() throws Exception {
@@ -76,7 +76,7 @@ public class GlobusGSSNameTest extends TestCase {
 	
 	GSSName n1 = new GlobusGSSName("ftp@140.221.11.99", GSSName.NT_HOSTBASED_SERVICE);
 	
-        assertEquals("/CN=ftp/wiggum.mcs.anl.gov", n1.toString());
+        assertEquals("/CN=ftp/tlager-mbp.mcs.anl.gov", n1.toString());
 
 	GSSName n2 = new GlobusGSSName("/C=US/O=Globus/O=ANL/CN=gawor", null);
 	
@@ -91,27 +91,27 @@ public class GlobusGSSNameTest extends TestCase {
 	}
 
 	try {
-	    GSSName n2 = new GlobusGSSName("host/wiggum.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
+	    GSSName n2 = new GlobusGSSName("host/tlager-mbp.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
 	    fail("Did not thrown exception.");
 	} catch (GSSException e) {
 	}
 
-	GSSName n3 = new GlobusGSSName("host@wigGUm.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
+	GSSName n3 = new GlobusGSSName("host@tlager-mbp.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
 
-	GSSName n4 = new GlobusGSSName("/C=US/O=Globus/CN=wiggum.mcs-7.anl.gov", null);
-	GSSName n5 = new GlobusGSSName("/C=US/O=Globus/CN=wiggum-8", null);
+	GSSName n4 = new GlobusGSSName("/C=US/O=Globus/CN=tlager-mbp.mcs-7.anl.gov", null);
+	GSSName n5 = new GlobusGSSName("/C=US/O=Globus/CN=tlager-mbp-8", null);
 
 	// test with interface name, host cn entry at the end
-	GSSName n6 = new GlobusGSSName("/C=US/O=Globus/CN=wiggum-9.mcs.anl.gov", null);
+	GSSName n6 = new GlobusGSSName("/C=US/O=Globus/CN=tlager-mbp-9.mcs.anl.gov", null);
 
 	// test with interface name, host cn entry in the middle
-	GSSName n7 = new GlobusGSSName("/C=US/CN=wiggum-9.mcs.anl.gov/O=Globus", null);
+	GSSName n7 = new GlobusGSSName("/C=US/CN=tlager-mbp-9.mcs.anl.gov/O=Globus", null);
 
 	// test with regular, host cn entry in the middle
-	GSSName n8 = new GlobusGSSName("/C=US/CN=wiggum.mcs.anl.gov/O=Globus", null);
+	GSSName n8 = new GlobusGSSName("/C=US/CN=tlager-mbp.mcs.anl.gov/O=Globus", null);
 
 	// test with regular name, host cn entry at the end
-	GSSName n9 = new GlobusGSSName("/C=US/O=Globus/CN=wiggum.mcs.anl.gov", null);
+	GSSName n9 = new GlobusGSSName("/C=US/O=Globus/CN=tlager-mbp.mcs.anl.gov", null);
 	
 
 	assertTrue(!n3.equals(n4));
@@ -139,21 +139,21 @@ public class GlobusGSSNameTest extends TestCase {
     }
 
     public void testHostbasedService3() throws Exception {
-    GSSName n1 = new GlobusGSSName("host@wiggum.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
-    GSSName n2 = new GlobusGSSName("/C=US/O=Globus/CN=host/wiggum.mcs.anl.gov/CN=12345678", null);
+    GSSName n1 = new GlobusGSSName("host@tlager-mbp.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
+    GSSName n2 = new GlobusGSSName("/C=US/O=Globus/CN=host/tlager-mbp.mcs.anl.gov/CN=12345678", null);
     
     assertTrue(n1.equals(n2));
     }
 
     public void testEquals2() throws Exception {
 	
-	GSSName n1 = new GlobusGSSName("host@wigGUm.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
-	GSSName n2 = new GlobusGSSName("/C=US/O=Globus/CN=wiggum.mcs.anl.gov", null);
-	GSSName n3 = new GlobusGSSName("/C=US/O=Globus/CN=host/wiggum.MCS.anl.gov", null);
-	GSSName n4 = new GlobusGSSName("/C=US/O=Globus/CN=ftp/wiggum.mcs.anl.gOv", null);
-	GSSName n5 = new GlobusGSSName("ftp@wiggum.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
+	GSSName n1 = new GlobusGSSName("host@tlager-mbp.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
+	GSSName n2 = new GlobusGSSName("/C=US/O=Globus/CN=tlager-mbp.mcs.anl.gov", null);
+	GSSName n3 = new GlobusGSSName("/C=US/O=Globus/CN=host/tlager-mbp.MCS.anl.gov", null);
+	GSSName n4 = new GlobusGSSName("/C=US/O=Globus/CN=ftp/tlager-mbp.mcs.anl.gOv", null);
+	GSSName n5 = new GlobusGSSName("ftp@tlager-mbp.mcs.anl.gov", GSSName.NT_HOSTBASED_SERVICE);
 	GSSName n6 = new GlobusGSSName("host@140.221.11.99", GSSName.NT_HOSTBASED_SERVICE);
-	GSSName n7 = new GlobusGSSName("/C=US/O=Globus/CN=wiggum-9.mcs.anl.gov", null);
+	GSSName n7 = new GlobusGSSName("/C=US/O=Globus/CN=tlager-mbp-9.mcs.anl.gov", null);
 	
 	assertTrue(n1.equals(n1));
 	assertTrue(n2.equals(n2));

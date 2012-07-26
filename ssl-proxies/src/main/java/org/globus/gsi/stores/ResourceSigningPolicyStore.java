@@ -48,6 +48,8 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     private Map<String, SigningPolicy> policyMap = new HashMap<String, SigningPolicy>();
     private ResourceSigningPolicyStoreParameters parameters;
     private Log logger = LogFactory.getLog(ResourceSigningPolicyStore.class.getCanonicalName());
+    private String oldLocations = null;
+    
 
     public ResourceSigningPolicyStore(SigningPolicyStoreParameters param) throws InvalidAlgorithmParameterException {
         if (param == null) {
@@ -75,7 +77,11 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
 
         String locations = this.parameters.getTrustRootLocations();
         Resource[] resources;
-
+        
+        if(locations.equals(this.oldLocations))
+        {
+        	return;
+        }
         try {
             resources = resolver.getResources(locations);
         } catch (IOException e) {
@@ -102,6 +108,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
 
         this.policyMap = newPolicyMap;
         this.signingPolicyFileMap = newPolicyFileMap;
+        this.oldLocations = locations;
     }
 
     private void loadSigningPolicy(
