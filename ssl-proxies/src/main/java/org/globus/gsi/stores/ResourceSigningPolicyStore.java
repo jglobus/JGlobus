@@ -49,8 +49,10 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     private ResourceSigningPolicyStoreParameters parameters;
     private Log logger = LogFactory.getLog(ResourceSigningPolicyStore.class.getCanonicalName());
     private final Map<String, Long> invalidPoliciesCache = new HashMap<String, Long>();
-    private static long CACHE_TIME_MILLIS = 60*1000;
-
+    private final static long CACHE_TIME_MILLIS = 3600*1000;
+    private String oldLocations = null;
+    private long lastUpdate = 0;
+    
     public ResourceSigningPolicyStore(SigningPolicyStoreParameters param) throws InvalidAlgorithmParameterException {
         if (param == null) {
             throw new IllegalArgumentException();
@@ -77,7 +79,12 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
 
         String locations = this.parameters.getTrustRootLocations();
         Resource[] resources;
-
+        
+        long curTime = System.currentTimeMillis();
+        if(locations.equals(this.oldLocations) && (curTime - lastUpdate > CACHE_TIME_MILLIS))
+        {
+        	return;
+        }
         try {
             resources = resolver.getResources(locations);
         } catch (IOException e) {
@@ -99,7 +106,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
 
             String filename = resource.getFilename();
             Long cacheTime = invalidPoliciesCache.get(filename);
-            if ((cacheTime != null) && (cacheTime - now < CACHE_TIME_MILLIS)) {
+            if ((cacheTime != null) && (cacheTime - now < 10*CACHE_TIME_MILLIS)) {
                 continue;
             }
 
@@ -115,6 +122,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
 
         this.policyMap = newPolicyMap;
         this.signingPolicyFileMap = newPolicyFileMap;
+        this.oldLocations = locations;
     }
 
     private void loadSigningPolicy(

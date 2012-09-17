@@ -43,6 +43,7 @@ import org.globus.common.CoGProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.io.Serializable;
+import java.io.IOException;
 
 // COMMENT: What is the replacement for this?
 // COMMENT: We lost the refresh functionality: Currently an entirely new store is loaded upon load()
@@ -82,6 +83,11 @@ public class TrustedCertificates implements Serializable {
      * certificates.
      */
     public static String SIGNING_POLICY_FILE_SUFFIX = ".signing_policy";
+    private static KeyStore ms_trustStore = null;
+//    private static CertStore ms_crlStore = null;
+    private static ResourceSigningPolicyStore ms_sigPolStore = null;
+    
+
     
     protected TrustedCertificates() {}
     
@@ -205,6 +211,45 @@ public class TrustedCertificates implements Serializable {
         }
     }
 
+    private static KeyStore getTrustStore(String caCertsLocation) throws  GeneralSecurityException, IOException
+    {
+        if(TrustedCertificates.ms_trustStore != null)
+            return TrustedCertificates.ms_trustStore;
+        
+        String caCertsPattern = caCertsLocation + "/*.0";
+        KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
+        keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsPattern));
+        
+        TrustedCertificates.ms_trustStore = keyStore;
+        
+        return keyStore;
+    }
+    
+//    private static CertStore getCRLStore(String caCertsLocation) throws GeneralSecurityException, NoSuchAlgorithmException
+//    {
+//        if(TrustedCertificates.ms_crlStore != null)
+//            return TrustedCertificates.ms_crlStore;
+//        
+//        String crlPattern = caCertsLocation + "/*.r*";
+//        CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
+//        
+//        TrustedCertificates.ms_crlStore = crlStore ;
+//        
+//        return crlStore;
+//    }
+    
+    private static ResourceSigningPolicyStore getSigPolStore(String caCertsLocation) throws GeneralSecurityException
+    {
+        if(TrustedCertificates.ms_sigPolStore != null)
+            return TrustedCertificates.ms_sigPolStore;
+        
+        String sigPolPattern = caCertsLocation + "/*.signing_policy";
+        ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
+        
+        TrustedCertificates.ms_sigPolStore = sigPolStore;
+        
+        return sigPolStore;
+    }
     public void refresh() {
         reload(null);
     }
@@ -231,16 +276,16 @@ public class TrustedCertificates implements Serializable {
             }
 
             String caCertLocation = "file:" + caDir.getAbsolutePath();
-            String sigPolPattern = caCertLocation + "/*.signing_policy";
-            if (!caDir.isDirectory()) {
-                sigPolPattern = getPolicyFileName(caCertLocation);
-            }
+//            String sigPolPattern = caCertLocation + "/*.signing_policy";
+//            if (!caDir.isDirectory()) {
+//                sigPolPattern = getPolicyFileName(caCertLocation);
+//            }
 
-            KeyStore keyStore = null;
+            KeyStore trustStore = null;
             try {
-                keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-                keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertLocation));
-                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(keyStore, new X509CertSelector());
+                trustStore = TrustedCertificates.getTrustStore(caCertLocation);
+                
+                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
@@ -251,8 +296,8 @@ public class TrustedCertificates implements Serializable {
             }
                 
             try {
-                ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
-                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(keyStore, new X509CertSelector());
+                ResourceSigningPolicyStore sigPolStore = TrustedCertificates.getSigPolStore(caCertLocation);
+                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
