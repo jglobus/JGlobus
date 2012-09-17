@@ -30,8 +30,10 @@ import java.security.KeyStore;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.Collection;
 import java.util.Iterator;
@@ -69,6 +71,8 @@ public class TrustedCertificates implements Serializable {
 
     // Vector of X.509 Certificate objects
     private Vector certList;
+
+    private final Set<X500Principal> invalidPolicies = new HashSet<X500Principal>();
 
     private boolean changed;
 
@@ -253,7 +257,16 @@ public class TrustedCertificates implements Serializable {
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
                     X500Principal principal = cert.getSubjectX500Principal();
-                    SigningPolicy policy = sigPolStore.getSigningPolicy(principal);
+                    SigningPolicy policy;
+                    try {
+                        policy = sigPolStore.getSigningPolicy(principal);
+                    } catch (Exception e) {
+                        if (!invalidPolicies.contains(principal)) {
+                            logger.warn("Invalid signing policy for CA certificate; skipping",e);
+                            invalidPolicies.add(principal);
+                        }
+                        continue;
+                    }
                     if (policy != null) {
                         newSigningDNMap.put(CertificateUtil.toGlobusID(policy.getCASubjectDN()), policy);
                     } else {

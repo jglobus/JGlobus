@@ -48,6 +48,8 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     private Map<String, SigningPolicy> policyMap = new HashMap<String, SigningPolicy>();
     private ResourceSigningPolicyStoreParameters parameters;
     private Log logger = LogFactory.getLog(ResourceSigningPolicyStore.class.getCanonicalName());
+    private final Map<String, Long> invalidPoliciesCache = new HashMap<String, Long>();
+    private static long CACHE_TIME_MILLIS = 60*1000;
 
     public ResourceSigningPolicyStore(SigningPolicyStoreParameters param) throws InvalidAlgorithmParameterException {
         if (param == null) {
@@ -86,6 +88,8 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
         Map<URI, ResourceSigningPolicy> newPolicyFileMap =
                 new HashMap<URI, ResourceSigningPolicy>();
 
+        long now = System.currentTimeMillis();
+
         for (Resource resource : resources) {
 
             if (!resource.isReadable()) {
@@ -93,10 +97,19 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
                 continue;
             }
 
+            String filename = resource.getFilename();
+            Long cacheTime = invalidPoliciesCache.get(filename);
+            if ((cacheTime != null) && (cacheTime - now < CACHE_TIME_MILLIS)) {
+                continue;
+            }
+
             try {
                 loadSigningPolicy(resource, newPolicyMap, newPolicyFileMap);
             } catch (Exception e) {
-                logger.warn("Failed to load signing policy: " + resource.getFilename(), e);
+                if (!invalidPoliciesCache.containsKey(filename)) {
+                    logger.warn("Failed to load signing policy: " + filename, e);
+                    invalidPoliciesCache.put(filename, now);
+                }
             }
         }
 
