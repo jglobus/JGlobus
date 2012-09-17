@@ -315,7 +315,10 @@ public class TrustedCertificates implements Serializable {
                     if (policy != null) {
                         newSigningDNMap.put(CertificateUtil.toGlobusID(policy.getCASubjectDN()), policy);
                     } else {
-                        logger.warn("no signing policy for ca cert " + cert.getSubjectDN());
+                        if (!invalidPolicies.contains(principal)) {
+                            logger.warn("no signing policy for ca cert " + cert.getSubjectDN());
+                            invalidPolicies.add(principal);
+                        }
                     }
                 }
             } catch (Exception e) {
