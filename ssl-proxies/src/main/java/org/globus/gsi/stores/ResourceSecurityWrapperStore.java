@@ -152,6 +152,9 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 		FilenameFilter filter = getDefaultFilenameFilter();
 		String[] children = directory.list(filter);
 		Set<V> roots = new HashSet<V>();
+        if (children == null) {
+            return roots;
+        }
 		try {
 			for (String child : children) {
 				File childFile = new File(directory, child);
