@@ -48,11 +48,15 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Properties;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import org.globus.gsi.util.CertificateIOUtil;
 
 /**
  * This class provides a KeyStore implementation that supports trusted
@@ -438,15 +442,21 @@ public class PEMKeyStore extends KeyStoreSpi {
 			caDelegate.loadWrappers(directoryList);
 			Map<String, ResourceTrustAnchor> wrapperMap = caDelegate
 					.getWrapperMap();
+            Set<String> knownCerts = new HashSet<String>();
 			for (ResourceTrustAnchor trustAnchor : wrapperMap.values()) {
 				String alias = trustAnchor.getResourceURL().toExternalForm();
 				TrustAnchor tmpTrustAnchor = trustAnchor.getTrustAnchor();
 				X509Certificate trustCert = tmpTrustAnchor.getTrustedCert();
-				certFilenameMap.put(trustCert, alias);
-				if (this.aliasObjectMap == null) {
-					System.out.println("Alias Map Null");
-				}
-				this.aliasObjectMap.put(alias, trustAnchor);
+                String hash = CertificateIOUtil.nameHash(trustCert.getSubjectDN());
+                if (this.aliasObjectMap == null) {
+                    System.out.println("Alias Map Null");
+                }
+                this.aliasObjectMap.put(alias, trustAnchor);
+                if (knownCerts.contains(hash)) {
+                    continue;
+                }
+                knownCerts.add(hash);
+                certFilenameMap.put(trustCert, alias);
 			}
 		} catch (ResourceStoreException e) {
 			throw new CertificateException("",e);

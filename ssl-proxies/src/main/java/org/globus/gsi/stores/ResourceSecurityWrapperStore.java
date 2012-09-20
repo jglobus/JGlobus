@@ -140,8 +140,8 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 			}
 			V target = fbo.create(resource);
 			newWrapperMap.put(resourceUri, fbo);
-			currentRoots.add(target);
-			return true;
+	        currentRoots.add(target);
+            return true;
 		} catch (IOException e) {
 			throw new ResourceStoreException(e);
 		}

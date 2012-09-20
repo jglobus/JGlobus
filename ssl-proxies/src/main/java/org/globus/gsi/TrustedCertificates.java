@@ -289,7 +289,8 @@ public class TrustedCertificates implements Serializable {
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
-                    newCertSubjectDNMap.put(cert.getSubjectDN().toString(), cert);
+                    if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString()));
+                        newCertSubjectDNMap.put(cert.getSubjectDN().toString(), cert);
                 }
             } catch (Exception e) {
                 logger.warn("Failed to create trust store",e);
@@ -302,12 +303,16 @@ public class TrustedCertificates implements Serializable {
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
                     X500Principal principal = cert.getSubjectX500Principal();
+                    if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString())) {
+                        continue;
+                    }
                     SigningPolicy policy;
                     try {
                         policy = sigPolStore.getSigningPolicy(principal);
                     } catch (Exception e) {
                         if (!invalidPolicies.contains(principal)) {
-                            logger.warn("Invalid signing policy for CA certificate; skipping",e);
+                            logger.warn("Invalid signing policy for CA certificate; skipping");
+                            logger.debug("Invalid signing policy for CA certificate; skipping",e);
                             invalidPolicies.add(principal);
                         }
                         continue;
