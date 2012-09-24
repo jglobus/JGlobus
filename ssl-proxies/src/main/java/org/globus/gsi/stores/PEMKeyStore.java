@@ -451,11 +451,11 @@ public class PEMKeyStore extends KeyStoreSpi {
                 if (this.aliasObjectMap == null) {
                     System.out.println("Alias Map Null");
                 }
-                this.aliasObjectMap.put(alias, trustAnchor);
-                if (knownCerts.contains(hash)) {
+                if (knownCerts.contains(hash) || !alias.contains(hash)) {
                     continue;
                 }
                 knownCerts.add(hash);
+                this.aliasObjectMap.put(alias, trustAnchor);
                 certFilenameMap.put(trustCert, alias);
 			}
 		} catch (ResourceStoreException e) {
