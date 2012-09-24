@@ -196,7 +196,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     // gss context state variables
     protected boolean credentialDelegation = false;
     protected boolean anonymity = false;
-    protected boolean encryption = false;
+    protected boolean encryption = true;
     protected boolean established = false;
 
     /** The name of the context initiator */
@@ -314,6 +314,22 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             // http://java.sun.com/j2se/1.4.2/relnotes.html#security
             if (System.getProperty("com.sun.net.ssl.rsaPreMasterSecretFix") == null)
                System.setProperty("com.sun.net.ssl.rsaPreMasterSecretFix", "true");
+
+            // WARNING WARNING:
+            // The new jglobus2-based srm-client is not compatible with old bestman2
+            // servers UNLESS we change this setting.
+            //
+            // The protection we are turning off helps against the BEAST attack.
+            // When enabled, it will insert empty TLS application records into the
+            // stream.  However, the old server will deadlock on the extra records.
+            //
+            // To our knowledge, the BEAST attack is not applicable to this client as
+            // we don't have any concurrent insecure connections.  Regardless, we ought
+            // to remove this as soon as we can drop support for the old servers.
+            //
+            // -BB.  Sept 24, 2012.
+            //
+            System.setProperty("jsse.enableCBCProtection", "false");
 
 	} catch  (Exception e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
@@ -1113,7 +1129,7 @@ done:      do {
                         // break. otherwise we fall through!!!
                         if (this.outByteBuff.remaining() > 0) {
                             break;
-                        } 
+                        }
                     } else {
                         setDone();
                         break;
@@ -1130,6 +1146,7 @@ done:      do {
 
         case CLIENT_START_DEL:
             
+            logger.debug("CLIENT_START_DEL");
             // sanity check - might be invalid state
             if (this.state != CLIENT_START_DEL || this.outByteBuff.remaining() > 0) {
                 throw new GSSException(GSSException.FAILURE);
@@ -1166,6 +1183,7 @@ done:      do {
 
         case CLIENT_END_DEL:
 
+            logger.debug("CLIENT_END_DEL");
 	    if (!inByteBuff.hasRemaining()) {
                 throw new GSSException(GSSException.DEFECTIVE_TOKEN);
 	    }
