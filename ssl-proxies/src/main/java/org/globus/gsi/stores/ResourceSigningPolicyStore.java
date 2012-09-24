@@ -33,8 +33,6 @@ import java.util.Map;
 import javax.security.auth.x500.X500Principal;
 
 import org.globus.gsi.SigningPolicy;
-import org.globus.gsi.util.CertificateIOUtil;
-
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -51,8 +49,8 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     private ResourceSigningPolicyStoreParameters parameters;
     private Log logger = LogFactory.getLog(ResourceSigningPolicyStore.class.getCanonicalName());
     private final Map<String, Long> invalidPoliciesCache = new HashMap<String, Long>();
-    private final Map<String, Long> validPoliciesCache = new HashMap<String, Long>();
     private final static long CACHE_TIME_MILLIS = 3600*1000;
+    private String oldLocations = null;
     private long lastUpdate = 0;
     
     public ResourceSigningPolicyStore(SigningPolicyStoreParameters param) throws InvalidAlgorithmParameterException {
@@ -68,63 +66,63 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
         this.parameters = (ResourceSigningPolicyStoreParameters) param;
     }
 
-    public synchronized SigningPolicy getSigningPolicy(X500Principal caPrincipal) throws SigningPolicyStoreException {
+    public SigningPolicy getSigningPolicy(X500Principal caPrincipal) throws SigningPolicyStoreException {
 
         if (caPrincipal == null) {
             return null;
         }
-        String name = caPrincipal.getName();
-        long now = System.currentTimeMillis();
-        String hash = CertificateIOUtil.nameHash(caPrincipal);
-        Long validCacheTime = validPoliciesCache.get(hash);
-        Long invalidCacheTime = invalidPoliciesCache.get(hash);
-        if ((invalidCacheTime != null) && (invalidCacheTime - now < 10*CACHE_TIME_MILLIS)) {
-            return null;
-        }
-        if ((validCacheTime == null) || (validCacheTime-now > CACHE_TIME_MILLIS) || !this.policyMap.containsKey(name)) {
-            loadPolicy(hash);
-        }
-        return this.policyMap.get(name);
+        loadPolicies();
+        return this.policyMap.get(caPrincipal.getName());
     }
 
-    private synchronized void loadPolicy(String hash) throws SigningPolicyStoreException {
+    private void loadPolicies() throws SigningPolicyStoreException {
 
         String locations = this.parameters.getTrustRootLocations();
         Resource[] resources;
         
         long curTime = System.currentTimeMillis();
+        if(locations.equals(this.oldLocations) && (curTime - lastUpdate > CACHE_TIME_MILLIS))
+        {
+        	return;
+        }
         try {
             resources = resolver.getResources(locations);
         } catch (IOException e) {
             throw new SigningPolicyStoreException(e);
         }
+        Map<String, SigningPolicy> newPolicyMap =
+                new HashMap<String, SigningPolicy>();
+        Map<URI, ResourceSigningPolicy> newPolicyFileMap =
+                new HashMap<URI, ResourceSigningPolicy>();
 
         long now = System.currentTimeMillis();
 
         for (Resource resource : resources) {
-
-            String filename = resource.getFilename();
-            if (!filename.startsWith(hash)) {
-                continue;
-            }
 
             if (!resource.isReadable()) {
                 logger.debug("Cannot read: " + resource.getFilename());
                 continue;
             }
 
+            String filename = resource.getFilename();
+            Long cacheTime = invalidPoliciesCache.get(filename);
+            if ((cacheTime != null) && (cacheTime - now < 10*CACHE_TIME_MILLIS)) {
+                continue;
+            }
+
             try {
-                loadSigningPolicy(resource, policyMap, signingPolicyFileMap);
+                loadSigningPolicy(resource, newPolicyMap, newPolicyFileMap);
             } catch (Exception e) {
                 if (!invalidPoliciesCache.containsKey(filename)) {
-                    logger.warn("Failed to load signing policy: " + filename);
-                    logger.debug("Failed to load signing policy: " + filename, e);
+                    logger.warn("Failed to load signing policy: " + filename, e);
                     invalidPoliciesCache.put(filename, now);
                 }
             }
-            validPoliciesCache.put(hash, now);
         }
 
+        this.policyMap = newPolicyMap;
+        this.signingPolicyFileMap = newPolicyFileMap;
+        this.oldLocations = locations;
     }
 
     private void loadSigningPolicy(
