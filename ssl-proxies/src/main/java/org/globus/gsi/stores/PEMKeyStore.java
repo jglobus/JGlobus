@@ -443,6 +443,14 @@ public class PEMKeyStore extends KeyStoreSpi {
 			Map<String, ResourceTrustAnchor> wrapperMap = caDelegate
 					.getWrapperMap();
             Set<String> knownCerts = new HashSet<String>();
+			// The alias hashing merits explanation.  Loading all the files in a directory triggers a
+			// deadlock bug for old jglobus clients if the directory contains repeated CAs (like the
+			// modern IGTF bundle does).  So, we ignore the cert if the alias is incorrect or already seen.
+			// However, we track all the certs we ignore and load any that were completely ignored due to
+			// aliases.  So, non-hashed directories will still work.
+			Map<String, String> ignoredAlias = new HashMap<String, String>();
+			Map<String, ResourceTrustAnchor> ignoredAnchor = new HashMap<String, ResourceTrustAnchor>();
+			Map<String, X509Certificate> ignoredCert = new HashMap<String, X509Certificate>();
 			for (ResourceTrustAnchor trustAnchor : wrapperMap.values()) {
 				String alias = trustAnchor.getResourceURL().toExternalForm();
 				TrustAnchor tmpTrustAnchor = trustAnchor.getTrustAnchor();
@@ -451,12 +459,27 @@ public class PEMKeyStore extends KeyStoreSpi {
                 if (this.aliasObjectMap == null) {
                     System.out.println("Alias Map Null");
                 }
-                if (knownCerts.contains(hash) || !alias.contains(hash)) {
+				boolean hash_in_alias = !alias.contains(hash);
+				if (knownCerts.contains(hash) || !hash_in_alias) {
+					if (!hash_in_alias) {
+						ignoredAlias.put(hash, alias);
+						ignoredAnchor.put(hash, trustAnchor);
+						ignoredCert.put(hash, trustCert);
+					}
                     continue;
                 }
                 knownCerts.add(hash);
                 this.aliasObjectMap.put(alias, trustAnchor);
                 certFilenameMap.put(trustCert, alias);
+			}
+			// Add any CA we skipped above.
+			for (String hash : ignoredAlias.keySet()) {
+				if (knownCerts.contains(hash)) {
+					continue;
+				}
+				String alias = ignoredAlias.get(hash);
+				this.aliasObjectMap.put(alias, ignoredAnchor.get(hash));
+				certFilenameMap.put(ignoredCert.get(hash), alias);
 			}
 		} catch (ResourceStoreException e) {
 			throw new CertificateException("",e);
