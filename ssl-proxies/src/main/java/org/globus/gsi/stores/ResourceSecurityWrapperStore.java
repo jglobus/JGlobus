@@ -140,8 +140,8 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 			}
 			V target = fbo.create(resource);
 			newWrapperMap.put(resourceUri, fbo);
-			currentRoots.add(target);
-			return true;
+	        currentRoots.add(target);
+            return true;
 		} catch (IOException e) {
 			throw new ResourceStoreException(e);
 		}
@@ -152,6 +152,9 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 		FilenameFilter filter = getDefaultFilenameFilter();
 		String[] children = directory.list(filter);
 		Set<V> roots = new HashSet<V>();
+        if (children == null) {
+            return roots;
+        }
 		try {
 			for (String child : children) {
 				File childFile = new File(directory, child);

@@ -58,8 +58,8 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.core</artifactId>
-      <version>3.0.1.RELEASE-A</version>
+      <artifactId>spring-core</artifactId>
+      <version>3.0.1.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

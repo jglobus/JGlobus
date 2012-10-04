@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Map;
@@ -92,12 +93,22 @@ public class ResourceSigningPolicy {
     public Map<X500Principal, SigningPolicy> create(Resource signingPolicyResource) throws ResourceStoreException {
         SigningPolicyParser parser = new SigningPolicyParser();
         Map<X500Principal, SigningPolicy> policies;
+        Reader reader;
         try {
-            policies = parser.parse(new InputStreamReader(signingPolicyResource.getInputStream()));
+            reader = new InputStreamReader(signingPolicyResource.getInputStream());
         } catch (IOException e) {
             throw new ResourceStoreException(e);
+        }
+        try {
+            policies = parser.parse(reader);
         } catch (SigningPolicyException e) {
             throw new ResourceStoreException(e);
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                throw new ResourceStoreException(e);
+            }
         }
 
         return policies;

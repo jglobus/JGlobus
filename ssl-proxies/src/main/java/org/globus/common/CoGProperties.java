@@ -48,7 +48,7 @@ public class CoGProperties extends Properties {
         LogFactory.getLog(CoGProperties.class.getName());
     
     private static final String DEFAULT_RANDOM_PROVIDER =
-	"cryptix.jce.provider.CryptixRandom";
+	"org.bouncycastle.jce.provider.BouncyCastleProvider";
     
     private static final String DEFAULT_RANDOM_ALGORITHM = 
 	"DevRandom";
@@ -517,10 +517,12 @@ public class CoGProperties extends Properties {
 
 
     /**
-     * Returns the CRL cache lifetime. If this property is not set or
+     * Returns the CRL cache lifetime. If this property is
      * set to zero or less, no caching is done. The value is the
      * number of milliseconds the CRLs are cached without checking for
      * modifications on disk.
+     *
+     * Defaults to 60s.
      *
      * @throws NumberFormatException if the cache lifetime property
      *         could not be parsed
@@ -529,7 +531,7 @@ public class CoGProperties extends Properties {
     public long getCRLCacheLifetime()
         throws NumberFormatException {
 
-        long value = 0;
+        long value = 60*1000;
 
         String property = getProperty(CRL_CACHE_LIFETIME);
         if (property != null && property.length() > 0) {
