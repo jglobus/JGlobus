@@ -34,7 +34,7 @@ import javax.security.auth.x500.X500Principal;
 
 import org.globus.gsi.SigningPolicy;
 import org.globus.gsi.SigningPolicyParser;
-import org.springframework.core.io.Resource;
+import org.globus.util.GlobusResource;
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,36 +44,36 @@ import org.springframework.core.io.Resource;
  * To change this template use File | Settings | File Templates.
  */
 public class ResourceSigningPolicy {
-    protected Resource resource;
+    protected GlobusResource globusResource;
 
     private Log logger = LogFactory.getLog(ResourceSigningPolicy.class.getCanonicalName());
     private boolean changed;
     private Map<X500Principal, SigningPolicy> signingPolicyMap;
     private long lastModified = -1;
 
-    public ResourceSigningPolicy(Resource resource) throws ResourceStoreException {
+    public ResourceSigningPolicy(GlobusResource resource) throws ResourceStoreException {
         init(resource);
     }
 
-    protected void init(Resource initResource) throws ResourceStoreException {
-        this.resource = initResource;
-        this.signingPolicyMap = create(this.resource);
-        logger.debug(String.format("Loading initResource: %s", this.resource.toString()));
+    protected void init(GlobusResource initResource) throws ResourceStoreException {
+        this.globusResource = initResource;
+        this.signingPolicyMap = create(this.globusResource);
+        logger.debug(String.format("Loading initResource: %s", this.globusResource.toString()));
         try {
-            this.lastModified = this.resource.lastModified();
+            this.lastModified = this.globusResource.lastModified();
         } catch (IOException e) {
             throw new ResourceStoreException(e);
         }
     }
 
-    protected void init(Resource initResource, Map<X500Principal, SigningPolicy> initSigningPolicy)
+    protected void init(GlobusResource initResource, Map<X500Principal, SigningPolicy> initSigningPolicy)
             throws ResourceStoreException {
         if (initSigningPolicy == null) {
             // JGLOBUS-88 : better exception?
             throw new IllegalArgumentException("Object cannot be null");
         }
         this.signingPolicyMap = initSigningPolicy;
-        this.resource = initResource;
+        this.globusResource = initResource;
     }
 
     public Collection<SigningPolicy> getSigningPolicies()
@@ -90,7 +90,7 @@ public class ResourceSigningPolicy {
         return null;
     }
 
-    public Map<X500Principal, SigningPolicy> create(Resource signingPolicyResource) throws ResourceStoreException {
+    public Map<X500Principal, SigningPolicy> create(GlobusResource signingPolicyResource) throws ResourceStoreException {
         SigningPolicyParser parser = new SigningPolicyParser();
         Map<X500Principal, SigningPolicy> policies;
         Reader reader;
@@ -120,19 +120,19 @@ public class ResourceSigningPolicy {
         this.changed = false;
         long latestLastModified;
         try {
-            latestLastModified = this.resource.lastModified();
+            latestLastModified = this.globusResource.lastModified();
         } catch (IOException e) {
             throw new ResourceStoreException(e);
         }
         if (this.lastModified < latestLastModified) {
-            this.signingPolicyMap = create(this.resource);
+            this.signingPolicyMap = create(this.globusResource);
             this.lastModified = latestLastModified;
             this.changed = true;
         }
     }
 
-    public Resource getResource() {
-        return this.resource;
+    public GlobusResource getResource() {
+        return this.globusResource;
     }
 
     protected Map<X500Principal, SigningPolicy> getObject() throws ResourceStoreException {

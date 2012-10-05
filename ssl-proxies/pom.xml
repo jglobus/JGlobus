@@ -57,11 +57,6 @@
       <version>2.4</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>3.0.1.RELEASE</version>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
@@ -84,10 +79,6 @@
       <id>globus-snapshots</id>
       <name>Globus Snapshot Repository</name>
       <url>http://repo.globus.org/content/groups/public-snapshots/</url>
-    </repository>
-    <repository>
-      <id>spring-release</id>
-      <url>http://dev.springsprout.org/nexus/content/groups/public/</url>
     </repository>
   </repositories>
 </project>

@@ -24,7 +24,7 @@ import java.io.FilenameFilter;
 import java.security.cert.X509CRL;
 
 
-import org.springframework.core.io.Resource;
+import org.globus.util.GlobusResource;
 
 /**
  * Fill Me
@@ -36,8 +36,8 @@ public class ResourceCRLStore extends ResourceSecurityWrapperStore<ResourceCRL, 
     private Log logger = LogFactory.getLog(getClass().getCanonicalName());
 
     @Override
-    public ResourceCRL create(Resource resource) throws ResourceStoreException {
-        return new ResourceCRL(resource);
+    public ResourceCRL create(GlobusResource globusResource) throws ResourceStoreException {
+        return new ResourceCRL(globusResource);
     }
 
     @Override
