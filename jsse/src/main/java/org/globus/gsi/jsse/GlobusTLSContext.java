@@ -48,7 +48,7 @@ public class GlobusTLSContext {
 
 		creationTime = new Date(sslSession.getCreationTime());
 		try {
-			sessionId = Hex.encodeHexString(sslSession.getId());
+			sessionId = new String(Hex.encodeHex(sslSession.getId()));
 		} catch (Exception e) {
 			logger.warn(e.getLocalizedMessage(), e);
 		}

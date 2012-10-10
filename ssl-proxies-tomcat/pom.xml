@@ -25,17 +25,17 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>catalina</artifactId>
+      <artifactId>tomcat-catalina</artifactId>
       <version>6.0.24</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>coyote</artifactId>
+      <artifactId>tomcat-coyote</artifactId>
       <version>6.0.24</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15</artifactId>
+      <artifactId>bcprov-jdk16</artifactId>
       <version>1.45</version>
     </dependency>
     <dependency>

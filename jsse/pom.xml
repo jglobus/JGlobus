@@ -65,9 +65,5 @@
       <name>Globus Snapshot Repository</name>
       <url>http://repo.globus.org/content/groups/public-snapshots/</url>
     </repository>
-    <repository>
-      <id>spring-release</id>
-      <url>http://dev.springsprout.org/nexus/content/groups/public/</url>
-    </repository>
   </repositories>
 </project>
