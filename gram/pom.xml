@@ -80,8 +80,8 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
 			<version>140</version>
 			<type>jar</type>
 			<scope>compile</scope>
