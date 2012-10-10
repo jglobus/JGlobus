@@ -68,17 +68,19 @@ public class GlobusPathMatchingResourcePatternResolver {
     public GlobusResource[] getResources(String locationPattern) {
         String mainPath = "";
         if (locationPattern.startsWith("classpath:")) {
-            URL resourceURL = getClass().getClassLoader().getResource(getPathUntilWildcard(locationPattern.replaceFirst("classpath:/", "")));
+            String pathUntilWildcard = getPathUntilWildcard(locationPattern.replaceFirst("classpath:/", ""), false);
+            URL resourceURL = getClass().getClassLoader().getResource(pathUntilWildcard);
             this.mainClassPath = resourceURL.getPath();
-            this.locationPattern = Pattern.compile(antToRegexConverter(locationPattern.replaceFirst("classpath:/", "")));
+            this.locationPattern = Pattern.compile(antToRegexConverter(locationPattern.replaceFirst("classpath:/", "").replaceFirst(pathUntilWildcard, "")));
+            System.err.println("Main classpath: " + this.mainClassPath);
             parseDirectoryStructure(new File(this.mainClassPath));
         } else if (locationPattern.startsWith("file:")) {
-            if ((locationPattern.replaceFirst("file:", "").compareTo(getPathUntilWildcard(locationPattern.replaceFirst("file:", "")))) == 0) {//Check to see if the pattern is not a pattern
+            if ((locationPattern.replaceFirst("file:", "").compareTo(getPathUntilWildcard(locationPattern.replaceFirst("file:", ""), true))) == 0) {//Check to see if the pattern is not a pattern
                 pathsMatchingLocationPattern.add(new GlobusResource(locationPattern.replaceFirst("file:", "")));
             }
             else {
                 try {
-                    URL resourceURL = new File(getPathUntilWildcard(locationPattern.replaceFirst("file:", ""))).toURL();
+                    URL resourceURL = new File(getPathUntilWildcard(locationPattern.replaceFirst("file:", ""), true)).toURL();
                     mainPath = resourceURL.getPath();
                     this.locationPattern = Pattern.compile(antToRegexConverter(locationPattern.replaceFirst("file:", "")));
                     parseDirectoryStructure(new File(mainPath));
@@ -86,7 +88,7 @@ public class GlobusPathMatchingResourcePatternResolver {
                 }
             }
         } else {
-            mainPath = getPathUntilWildcard(locationPattern);
+            mainPath = getPathUntilWildcard(locationPattern, true);
             this.locationPattern = Pattern.compile(antToRegexConverter(locationPattern));
             parseDirectoryStructure(new File(mainPath));
         }
@@ -117,7 +119,7 @@ public class GlobusPathMatchingResourcePatternResolver {
      * @param locationPatternString The Ant-Style location pattern.
      * @return  A substring of the locationPatternString from the beginning to the first occurrence of a wildcard character
      */
-    private String getPathUntilWildcard(String locationPatternString) {
+    private String getPathUntilWildcard(String locationPatternString, boolean defaultToLocaldir) {
         String currentLocationPatternString;
 
         int locationPatternStringLength = locationPatternString.length();
@@ -131,7 +133,7 @@ public class GlobusPathMatchingResourcePatternResolver {
             questionMarkIndex = locationPatternStringLength;
 
         currentLocationPatternString = locationPatternString.substring(0, Math.min(startIndex, questionMarkIndex));
-        if (!(new File(currentLocationPatternString).canRead()))
+        if (defaultToLocaldir && !(new File(currentLocationPatternString).canRead()))
             currentLocationPatternString = "./";
         return currentLocationPatternString;
     }
@@ -143,9 +145,11 @@ public class GlobusPathMatchingResourcePatternResolver {
     private void parseDirectoryStructure(File currentDirectory) {
         parseFilesInDirectory(currentDirectory);
         File[] directoryContents = currentDirectory.listFiles();
-        for (File currentFile : directoryContents) {
-            if (currentFile.isDirectory()) {
-                parseDirectoryStructure(currentFile);
+        if (directoryContents != null) {
+            for (File currentFile : directoryContents) {
+                if (currentFile.isDirectory()) {
+                    parseDirectoryStructure(currentFile);
+                }
             }
         }
     }
@@ -156,7 +160,13 @@ public class GlobusPathMatchingResourcePatternResolver {
      * @param currentDirectory  The directory whose files to parse.
      */
     private void parseFilesInDirectory(File currentDirectory) {
-        File[] directoryContents = currentDirectory.listFiles();    //Get a list of the files and directories
+        File[] directoryContents = null;
+        if (currentDirectory.isDirectory()) {
+            directoryContents = currentDirectory.listFiles();    //Get a list of the files and directories
+        } else {
+            directoryContents = new File[1];
+            directoryContents[0] = currentDirectory;
+        }
         String absolutePath = null;
         Matcher locationPatternMatcher = null;
         if(directoryContents != null){
