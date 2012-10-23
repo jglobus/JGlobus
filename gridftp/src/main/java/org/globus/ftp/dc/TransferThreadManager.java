@@ -297,14 +297,14 @@ public class TransferThreadManager {
        The thread will perform it when it's ready with other
        waiting tasks.
     **/
-    private void runTask(Task task) {
+    private synchronized void runTask(Task task) {
         if (taskThread == null) {
             taskThread = new TaskThread();
         }
         taskThread.runTask(task);
     }
 
-    public void stopTaskThread() {
+    public synchronized void stopTaskThread() {
         if (taskThread != null) {
             taskThread.stop();
             taskThread.join();
