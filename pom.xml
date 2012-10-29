@@ -16,6 +16,7 @@
 		<module>io</module>
 		<module>test-utils</module>
 		<module>container-test-utils</module>
+		<module>myproxy</module>
 	</modules>
 	<name>JGlobus 2.0</name>
 	<packaging>pom</packaging>
