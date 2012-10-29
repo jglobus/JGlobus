@@ -9,7 +9,6 @@
 	<groupId>org.jglobus</groupId>
 
 	<artifactId>gram</artifactId>
-	<version>2.0-SNAPSHOT</version>
 
 
 	<name>"Grid Resource Allocation and Management(GRAM)"</name>
@@ -54,17 +53,17 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>ssl-proxies</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>gss</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jsse</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
