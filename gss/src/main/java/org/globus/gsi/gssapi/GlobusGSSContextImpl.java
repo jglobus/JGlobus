@@ -780,12 +780,12 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 		 		new Exception("Unexpected BUFFER_UNDERFLOW;" +
                         " Handshaking status: " + sslEngine.getHandshakeStatus()));
                 }
-		if (result.getStatus() !=
-			SSLEngineResult.Status.OK) {
-               	throw new GlobusGSSException(GSSException.FAILURE,
-                                         GlobusGSSException.TOKEN_FAIL,
-                                         result.getStatus().toString());
-		}
+//		if (result.getStatus() !=
+//			SSLEngineResult.Status.OK) {
+//               	throw new GlobusGSSException(GSSException.FAILURE,
+//                                         GlobusGSSException.TOKEN_FAIL,
+//                                         result.getStatus().toString());
+//		}
               } while (inBBuff.hasRemaining());
 
 		return outBBuff;
@@ -830,12 +830,12 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 			// More data needed from peer
 			break;
 		}
-		if (result.getStatus() !=
-			SSLEngineResult.Status.OK) {
-                	throw new GlobusGSSException(GSSException.FAILURE,
-                                             GlobusGSSException.TOKEN_FAIL,
-                                         result.getStatus().toString());
-		}
+//		if (result.getStatus() !=
+//			SSLEngineResult.Status.OK) {
+//                	throw new GlobusGSSException(GSSException.FAILURE,
+//                                             GlobusGSSException.TOKEN_FAIL,
+//                                         result.getStatus().toString());
+//		}
               } while (inBBuff.hasRemaining());
 		return outBBuff;
 	} catch (IllegalArgumentException e) {
