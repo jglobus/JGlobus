@@ -59,6 +59,7 @@ public class GlobusGSSName implements GSSName, Serializable {
             return ipPattern.matcher(str).matches();
         }
         
+        // Use TreeMap to avoid clustering in any case
         final protected Map<String, MapEntry> cache = new TreeMap<String, MapEntry>();        
         final long duration;
         long oldest = System.currentTimeMillis();
