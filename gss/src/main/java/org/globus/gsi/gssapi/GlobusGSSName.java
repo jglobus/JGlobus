@@ -28,12 +28,84 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 /**
  * An implementation of <code>GSSName</code>.
  */
 public class GlobusGSSName implements GSSName, Serializable {
 
+    final static long cacheDuration = 3600 * 1000;
+    
+    static class ReverseDNSCache {
+        static class MapEntry {
+            final String hostName;
+            Long inserted;
+
+            public MapEntry(String hostName, Long inserted) {
+                this.hostName = hostName;
+                this.inserted = inserted;
+            }    
+        }
+        
+        final static Pattern ipPattern = 
+                Pattern.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|((([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|(([0-9A-Fa-f]{1,4}:){0,5}:((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|(::([0-9A-Fa-f]{1,4}:){0,5}((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))$");
+        
+        static boolean isIPAddress(String str) {
+            return ipPattern.matcher(str).matches();
+        }
+        
+        // Use TreeMap to avoid clustering in any case
+        final protected Map<String, MapEntry> cache = new TreeMap<String, MapEntry>();        
+        final long duration;
+        long oldest = System.currentTimeMillis();
+
+        public ReverseDNSCache(long duration) {
+            this.duration = duration;
+        }
+        
+        protected void enforceConstraints() {
+            if(oldest + duration > System.currentTimeMillis()) {
+                long newOldest = System.currentTimeMillis();
+                List<String> toClear = new LinkedList<String>();
+                for(Map.Entry<String, MapEntry> e: cache.entrySet()) {
+                    if(e.getValue().inserted + duration > System.currentTimeMillis()) toClear.add(e.getKey());
+                    else if(e.getValue().inserted < newOldest) newOldest = e.getValue().inserted;
+                }
+                for(String k: toClear) cache.remove(k);
+                oldest = newOldest;
+            }
+        }
+        
+        public synchronized String resolve(String ip) throws UnknownHostException {
+            MapEntry inCache = cache.get(ip);
+            if(inCache == null) {
+                String name = queryHost(ip);
+                inCache = new MapEntry(name, System.currentTimeMillis());
+                cache.put(ip, inCache);
+            } else {
+                inCache.inserted = System.currentTimeMillis();
+            }
+            enforceConstraints();
+            return inCache.hostName;
+        }
+        
+        protected String queryHost(String name) throws UnknownHostException {
+           InetAddress i = InetAddress.getByName(name);
+           String host = InetAddress.getByName(i.getHostAddress()).getHostName();
+           if (isIPAddress(host)) throw new UnknownHostException(host);
+           return host;
+        }
+        
+    }
+    
+    
+    final static ReverseDNSCache reverseDNSCache = new ReverseDNSCache(cacheDuration);
+    
     protected Oid nameType;
     protected X500Principal name;
 
@@ -113,11 +185,10 @@ public class GlobusGSSName implements GSSName, Serializable {
 						     "badName00");
 		    }
 		    // performs reverse DNS lookup
-		    String host = name.substring(atPos+1);
+		    String host; 
 		    try {
-			InetAddress i = InetAddress.getByName(host);
-			host = InetAddress.getByName(i.getHostAddress()).getHostName();
-		    } catch (UnknownHostException e) {
+			host = reverseDNSCache.resolve(name.substring(atPos+1));
+                    } catch (UnknownHostException e) {
 			throw new GlobusGSSException(GSSException.FAILURE, e);
 		    }
 
