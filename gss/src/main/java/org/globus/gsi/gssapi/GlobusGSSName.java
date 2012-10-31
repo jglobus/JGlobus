@@ -110,9 +110,9 @@ public class GlobusGSSName implements GSSName, Serializable {
             try {
                return getCached(ip).get();
             } catch(InterruptedException e) {
-               throw (UnknownHostException) e.getCause();
+               throw new UnknownHostException(e.getMessage());
             } catch(ExecutionException e) {
-               throw (UnknownHostException) e.getCause();
+               throw new UnknownHostException(e.getMessage());
             }
 
         }
