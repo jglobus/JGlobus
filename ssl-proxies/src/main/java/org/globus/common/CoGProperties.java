@@ -65,7 +65,12 @@ public class CoGProperties extends Properties {
     public static final String MDSHOST = "localhost";
     public static final String MDSPORT = "2135";
     public static final String BASEDN  = "Mds-Vo-name=local, o=Grid";
-    
+
+    private static final String REVERSE_DNS_CACHETYPE = "org.globus.gsi.gssapi.cache.type";
+    private static final String REVERSE_DNS_CACHE_LIFETIME = "org.globus.gsi.gssapi.cache.lifetime";
+    final static public String NO_CACHE = "NoCache";
+    final static public String THREADED_CACHE = "ThreadedCache";
+
     /** the configuration file properties are read from -- 
      * located in ~/.globus" */
     public static final String CONFIG_FILE = "cog.properties";
@@ -551,6 +556,54 @@ public class CoGProperties extends Properties {
         }
 
         return value;
+    }
+
+    /**
+     * Returns the reverse DNS cache time.
+     *
+     * Defaults to 1h.
+     *
+     * @throws NumberFormatException if the cache lifetime property
+     *         could not be parsed
+     * @return the reverse DNS cache lifetime in milliseconds
+     */
+    public long getReveseDNSCacheLifetime()
+            throws NumberFormatException {
+
+        long value = 60*60*1000;
+
+        String property = getProperty(REVERSE_DNS_CACHE_LIFETIME);
+        if (property != null && property.length() > 0) {
+            long parsedValue = Long.parseLong(property);
+            if (parsedValue > 0) {
+                value = parsedValue;
+            }
+        }
+
+        // System property takes precedence
+        property = System.getProperty(REVERSE_DNS_CACHE_LIFETIME);
+        if (property != null && property.length() > 0) {
+            long parsedValue = Long.parseLong(property);
+            if (parsedValue > 0) {
+                value = parsedValue;
+            }
+        }
+
+        return value;
+    }
+
+    /**
+     * Returns the reverse DNS cache type.
+     * Defaults to a threaded chache.
+     *
+     * @return the type of cache for reverse DNS requests
+     */
+    public String getReverseDNSCacheType() {
+        String value = System.getProperty(REVERSE_DNS_CACHETYPE);
+        if (value != null) {
+            return value;
+        }
+        return getProperty(REVERSE_DNS_CACHETYPE, THREADED_CACHE);
     }
 
     public String getSecureRandomProvider() {

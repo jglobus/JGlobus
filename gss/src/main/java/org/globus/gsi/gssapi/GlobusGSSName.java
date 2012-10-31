@@ -17,6 +17,7 @@ package org.globus.gsi.gssapi;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.globus.common.CoGProperties;
 import org.globus.gsi.util.CertificateUtil;
 import org.ietf.jgss.GSSName;
 import org.ietf.jgss.GSSException;
@@ -32,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
 /**
@@ -39,29 +41,28 @@ import java.util.regex.Pattern;
  */
 public class GlobusGSSName implements GSSName, Serializable {
 
-    final static long cacheDuration = 3600 * 1000;
-    
     static class ReverseDNSCache {
         static class MapEntry {
-            final String hostName;
+            final Future<String> hostName;
             Long inserted;
 
-            public MapEntry(String hostName, Long inserted) {
+            public MapEntry(Future<String> hostName, Long inserted) {
                 this.hostName = hostName;
                 this.inserted = inserted;
             }    
         }
         
-        final static Pattern ipPattern = 
-                Pattern.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|((([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|(([0-9A-Fa-f]{1,4}:){0,5}:((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|(::([0-9A-Fa-f]{1,4}:){0,5}((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))$");
-        
-        static boolean isIPAddress(String str) {
-            return ipPattern.matcher(str).matches();
-        }
-        
         // Use TreeMap to avoid clustering in any case
         final protected Map<String, MapEntry> cache = new TreeMap<String, MapEntry>();        
         final long duration;
+        final ExecutorService threads = Executors.newCachedThreadPool(new ThreadFactory() {
+            public Thread newThread(Runnable runnable) {
+                Thread t = new Thread(runnable);
+                t.setName("Reverse DNS request");
+                t.setDaemon(true);
+                return t;
+            }
+        });
         long oldest = System.currentTimeMillis();
 
         public ReverseDNSCache(long duration) {
@@ -80,11 +81,15 @@ public class GlobusGSSName implements GSSName, Serializable {
                 oldest = newOldest;
             }
         }
-        
-        public synchronized String resolve(String ip) throws UnknownHostException {
+
+        protected synchronized Future<String> getCached(final String ip) {
             MapEntry inCache = cache.get(ip);
             if(inCache == null) {
-                String name = queryHost(ip);
+                Future<String> name = threads.submit(new Callable<String>() {
+                    public String call() throws Exception {
+                        return queryHost(ip);
+                    }
+                });
                 inCache = new MapEntry(name, System.currentTimeMillis());
                 cache.put(ip, inCache);
             } else {
@@ -93,18 +98,34 @@ public class GlobusGSSName implements GSSName, Serializable {
             enforceConstraints();
             return inCache.hostName;
         }
-        
-        protected String queryHost(String name) throws UnknownHostException {
-           InetAddress i = InetAddress.getByName(name);
-           String host = InetAddress.getByName(i.getHostAddress()).getHostName();
-           if (isIPAddress(host)) throw new UnknownHostException(host);
-           return host;
+
+        public String resolve(String ip) throws UnknownHostException {
+            try {
+               return getCached(ip).get();
+            } catch(InterruptedException e) {
+               throw new UnknownHostException(e.getMessage());
+            } catch(ExecutionException e) {
+               throw new UnknownHostException(e.getMessage());
+            }
+
         }
         
     }
+
+    static String queryHost(String name) throws UnknownHostException {
+        InetAddress i = InetAddress.getByName(name);
+        String host = InetAddress.getByName(i.getHostAddress()).getHostName();
+        if (isIPAddress(host)) throw new UnknownHostException(host);
+        return host;
+    }
+    static Pattern ipPattern =
+        Pattern.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|((([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|(([0-9A-Fa-f]{1,4}:){0,5}:((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|(::([0-9A-Fa-f]{1,4}:){0,5}((b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b).){3}(b((25[0-5])|(1d{2})|(2[0-4]d)|(d{1,2}))b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))$");
+
+    static boolean isIPAddress(String str) {
+        return ipPattern.matcher(str).matches();
+    }
     
-    
-    final static ReverseDNSCache reverseDNSCache = new ReverseDNSCache(cacheDuration);
+    final static ReverseDNSCache reverseDNSCache = new ReverseDNSCache(CoGProperties.getDefault().getReveseDNSCacheLifetime());
     
     protected Oid nameType;
     protected X500Principal name;
@@ -185,11 +206,15 @@ public class GlobusGSSName implements GSSName, Serializable {
 						     "badName00");
 		    }
 		    // performs reverse DNS lookup
-		    String host; 
+		    String host = name.substring(atPos+1);
 		    try {
-			host = reverseDNSCache.resolve(name.substring(atPos+1));
-                    } catch (UnknownHostException e) {
-			throw new GlobusGSSException(GSSException.FAILURE, e);
+                if (CoGProperties.getDefault().getReverseDNSCacheType().equals(CoGProperties.THREADED_CACHE)) {
+                    host = reverseDNSCache.resolve(host);
+                } else {
+                    host = queryHost(host);
+                }
+            } catch (UnknownHostException e) {
+			    throw new GlobusGSSException(GSSException.FAILURE, e);
 		    }
 
             hostBasedServiceCN = name.substring(0, atPos) + "/" + host;
