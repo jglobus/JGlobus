@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
 /**
@@ -43,10 +44,10 @@ public class GlobusGSSName implements GSSName, Serializable {
     
     static class ReverseDNSCache {
         static class MapEntry {
-            final String hostName;
+            final Future<String> hostName;
             Long inserted;
 
-            public MapEntry(String hostName, Long inserted) {
+            public MapEntry(Future<String> hostName, Long inserted) {
                 this.hostName = hostName;
                 this.inserted = inserted;
             }    
@@ -62,6 +63,13 @@ public class GlobusGSSName implements GSSName, Serializable {
         // Use TreeMap to avoid clustering in any case
         final protected Map<String, MapEntry> cache = new TreeMap<String, MapEntry>();        
         final long duration;
+        final ExecutorService threads = Executors.newCachedThreadPool(new ThreadFactory() {
+            public Thread newThread(Runnable runnable) {
+                Thread t = new Thread(runnable);
+                t.setDaemon(true);
+                return t;
+            }
+        });
         long oldest = System.currentTimeMillis();
 
         public ReverseDNSCache(long duration) {
@@ -80,11 +88,15 @@ public class GlobusGSSName implements GSSName, Serializable {
                 oldest = newOldest;
             }
         }
-        
-        public synchronized String resolve(String ip) throws UnknownHostException {
+
+        protected synchronized Future<String> getCached(final String ip) {
             MapEntry inCache = cache.get(ip);
             if(inCache == null) {
-                String name = queryHost(ip);
+                Future<String> name = threads.submit(new Callable<String>() {
+                    public String call() throws Exception {
+                        return queryHost(ip);
+                    }
+                });
                 inCache = new MapEntry(name, System.currentTimeMillis());
                 cache.put(ip, inCache);
             } else {
@@ -92,6 +104,17 @@ public class GlobusGSSName implements GSSName, Serializable {
             }
             enforceConstraints();
             return inCache.hostName;
+        }
+
+        public String resolve(String ip) throws UnknownHostException {
+            try {
+               return getCached(ip).get();
+            } catch(InterruptedException e) {
+               throw (UnknownHostException) e.getCause();
+            } catch(ExecutionException e) {
+               throw (UnknownHostException) e.getCause();
+            }
+
         }
         
         protected String queryHost(String name) throws UnknownHostException {
