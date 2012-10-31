@@ -66,8 +66,8 @@ public class CoGProperties extends Properties {
     public static final String MDSPORT = "2135";
     public static final String BASEDN  = "Mds-Vo-name=local, o=Grid";
 
-    private static final String REVERSE_DNS_CACHETYPE = "org.globus.gsi.gssapi.chache.type";
-    private static final String REVERSE_DNS_CACHE_LIFETIME = "org.globus.gsi.gssapi.chache.lifetime";
+    private static final String REVERSE_DNS_CACHETYPE = "org.globus.gsi.gssapi.cache.type";
+    private static final String REVERSE_DNS_CACHE_LIFETIME = "org.globus.gsi.gssapi.cache.lifetime";
     final static public String NO_CACHE = "NoCache";
     final static public String THREADED_CACHE = "ThreadedCache";
 
