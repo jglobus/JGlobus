@@ -66,6 +66,7 @@ public class GlobusGSSName implements GSSName, Serializable {
         final ExecutorService threads = Executors.newCachedThreadPool(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
                 Thread t = new Thread(runnable);
+                t.setName("Reverse DNS request");
                 t.setDaemon(true);
                 return t;
             }
