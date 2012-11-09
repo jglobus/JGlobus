@@ -626,15 +626,10 @@ public class CoGProperties extends Properties {
     }
 
     /**
-     * Returns the timeout (in seconds) for creating a new socket connection
-     * to a MyProxy host.  The socket timeout property can be set either as
-     * the Java system property "MYPROXY_SOCKET_TIMEOUT" (i.e. via the '-D'
-     * command line option or environment variable) or via the
-     * "sockettimeout" property in the cog.properties file.  If no such
-     * property is found, the default timeout of 10 seconds is returned.
+     * Returns the timeout (in milliseconds) for sockets operations. The default
+     * timeout of 30 seconds (30,000 ms) is returned.
      *
-     * @return The timeout for creating a socket connectino to a MyProxy
-     *         host. Defaults to 10 seconds.
+     * @return The timeout for sockets operations. Defaults to 30 seconds.
      */
     public int getSocketTimeout() {
         int timeoutInt = -1;  // -1 indicates it hasn't been set yet
@@ -655,7 +650,7 @@ public class CoGProperties extends Properties {
             }
         }
         if (timeoutInt == -1) { // Didn't find any property at all
-            timeoutInt = 10;
+            timeoutInt = 30 * 1000;
         }
         return timeoutInt;
     }
