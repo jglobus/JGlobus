@@ -319,40 +319,46 @@ public class FTPControlChannel extends BasicClientControlChannel {
 	public void waitFor(Flag aborted, int ioDelay, int maxWait) throws ServerException,
 			IOException, InterruptedException {
 
-		int c = 0;
-		if (maxWait != WAIT_FOREVER) {
-			this.socket.setSoTimeout(maxWait);
-		} else {
-			this.socket.setSoTimeout(0);
-		}
+        int oldTimeout = this.socket.getSoTimeout();
 
-        c = this.checkSocketDone(aborted, ioDelay, maxWait);
+        try {
+            int c = 0;
+            if (maxWait != WAIT_FOREVER) {
+                this.socket.setSoTimeout(maxWait);
+            } else {
+                this.socket.setSoTimeout(0);
+            }
 
-        /*
-          A bug in the server causes it to append \0 to each reply.
-          As the result, we receive this \0 before the next reply.
-          The code below handles this case.
-          
-        */
-		if (c != 0) {
-			// if we're here, the server is healthy
-			// and the reply is waiting in the buffer
-			return;
-		}
-
-		// if we're here, we deal with the buggy server.
-		// we discarded the \0 and now resume wait.
-
-		logger.debug("Server sent \\0; resume wait");
-		try {
-            // gotta read past the 0 we just remarked
-			c = ftpIn.read();
             c = this.checkSocketDone(aborted, ioDelay, maxWait);
-		} catch (SocketTimeoutException e) {
-			throw new ServerException(ServerException.REPLY_TIMEOUT);
-		} catch (EOFException e) {
-			throw new InterruptedException();
-		}
+
+            /*
+              A bug in the server causes it to append \0 to each reply.
+              As the result, we receive this \0 before the next reply.
+              The code below handles this case.
+
+            */
+            if (c != 0) {
+                // if we're here, the server is healthy
+                // and the reply is waiting in the buffer
+                return;
+            }
+
+            // if we're here, we deal with the buggy server.
+            // we discarded the \0 and now resume wait.
+
+            logger.debug("Server sent \\0; resume wait");
+            try {
+                // gotta read past the 0 we just remarked
+                c = ftpIn.read();
+                c = this.checkSocketDone(aborted, ioDelay, maxWait);
+            } catch (SocketTimeoutException e) {
+                throw new ServerException(ServerException.REPLY_TIMEOUT);
+            } catch (EOFException e) {
+                throw new InterruptedException();
+            }
+        } finally {
+            this.socket.setSoTimeout(oldTimeout);
+        }
 	}
     
     
