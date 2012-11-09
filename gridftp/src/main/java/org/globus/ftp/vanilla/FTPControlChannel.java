@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
+import org.globus.common.CoGProperties;
 import org.globus.net.SocketFactory;
 import org.globus.ftp.exception.ServerException;
 import org.globus.ftp.exception.UnexpectedReplyCodeException;
@@ -139,29 +140,8 @@ public class FTPControlChannel extends BasicClientControlChannel {
         //depending on constructor used, we may already have streams
         if (!haveStreams()) {
             boolean                     found = false;
-            int                         timeout = 30000;
             int                         i = 0;
             boolean                     firstPass = true;
-            
-            String toS = System.getProperty("org.globus.ftp.openTO");
-            if(toS != null)
-            {
-                try
-                {
-                    timeout = Integer.parseInt(toS);
-                }
-                catch(NumberFormatException ex)
-                {
-                    throw new NumberFormatException("Invalid value for property "
-                        + "org.globus.ftp.openTO (" + toS + "). Must be numeric.");
-                }
-            }
-            else
-            {
-                timeout = 0;
-                firstPass = false;
-            }
-
 
             allIPs = InetAddress.getAllByName(host);
 
@@ -175,7 +155,8 @@ public class FTPControlChannel extends BasicClientControlChannel {
                         new InetSocketAddress(allIPs[i], port);
 
                     socket = new Socket();
-                    socket.connect(isa, timeout);
+                    socket.setSoTimeout(CoGProperties.getDefault().getSocketTimeout());
+                    socket.connect(isa);
                     found = true;
                 }
                 catch(IOException ioEx)
@@ -189,7 +170,6 @@ public class FTPControlChannel extends BasicClientControlChannel {
                         {
                             firstPass = false;
                             i = 0;
-                            timeout = 0; // next time let system time it out
                         }
                         else
                         {
