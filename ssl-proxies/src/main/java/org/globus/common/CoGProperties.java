@@ -66,6 +66,7 @@ public class CoGProperties extends Properties {
     public static final String MDSPORT = "2135";
     public static final String BASEDN  = "Mds-Vo-name=local, o=Grid";
 
+    final static String SOCKET_TIMEOUT = "org.globus.socket.timeout";
     private static final String REVERSE_DNS_CACHETYPE = "org.globus.gsi.gssapi.cache.type";
     private static final String REVERSE_DNS_CACHE_LIFETIME = "org.globus.gsi.gssapi.cache.lifetime";
     final static public String NO_CACHE = "NoCache";
@@ -637,7 +638,7 @@ public class CoGProperties extends Properties {
      */
     public int getSocketTimeout() {
         int timeoutInt = -1;  // -1 indicates it hasn't been set yet
-        String timeoutStr = System.getProperty("MYPROXY_SOCKET_TIMEOUT");
+        String timeoutStr = System.getProperty(SOCKET_TIMEOUT);
         if (timeoutStr != null && timeoutStr.length() > 0) {
             int parsedTimeoutInt = Integer.parseInt(timeoutStr);
             if (parsedTimeoutInt >= 0) {
@@ -645,7 +646,7 @@ public class CoGProperties extends Properties {
             }
         }
         if (timeoutInt == -1) { // Didn't find a system property
-            timeoutStr = getProperty("sockettimeout");
+            timeoutStr = getProperty(SOCKET_TIMEOUT);
             if (timeoutStr != null && timeoutStr.length() > 0) {
                 int parsedTimeoutInt = Integer.parseInt(timeoutStr);
                 if (parsedTimeoutInt >= 0) {
@@ -660,7 +661,7 @@ public class CoGProperties extends Properties {
     }
 
     public void setSocketTimeout(int socketTimeout) {
-        put("sockettimeout", String.valueOf(socketTimeout));
+        put(SOCKET_TIMEOUT, String.valueOf(socketTimeout));
     }
 
 
