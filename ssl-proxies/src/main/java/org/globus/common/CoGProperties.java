@@ -66,6 +66,7 @@ public class CoGProperties extends Properties {
     public static final String MDSPORT = "2135";
     public static final String BASEDN  = "Mds-Vo-name=local, o=Grid";
 
+    final static String SOCKET_TIMEOUT = "org.globus.socket.timeout";
     private static final String REVERSE_DNS_CACHETYPE = "org.globus.gsi.gssapi.cache.type";
     private static final String REVERSE_DNS_CACHE_LIFETIME = "org.globus.gsi.gssapi.cache.lifetime";
     final static public String NO_CACHE = "NoCache";
@@ -625,19 +626,14 @@ public class CoGProperties extends Properties {
     }
 
     /**
-     * Returns the timeout (in seconds) for creating a new socket connection
-     * to a MyProxy host.  The socket timeout property can be set either as
-     * the Java system property "MYPROXY_SOCKET_TIMEOUT" (i.e. via the '-D'
-     * command line option or environment variable) or via the
-     * "sockettimeout" property in the cog.properties file.  If no such
-     * property is found, the default timeout of 10 seconds is returned.
+     * Returns the timeout (in milliseconds) for sockets operations. The default
+     * timeout of 30 seconds (30,000 ms) is returned.
      *
-     * @return The timeout for creating a socket connectino to a MyProxy
-     *         host. Defaults to 10 seconds.
+     * @return The timeout for sockets operations. Defaults to 30 seconds.
      */
     public int getSocketTimeout() {
         int timeoutInt = -1;  // -1 indicates it hasn't been set yet
-        String timeoutStr = System.getProperty("MYPROXY_SOCKET_TIMEOUT");
+        String timeoutStr = System.getProperty(SOCKET_TIMEOUT);
         if (timeoutStr != null && timeoutStr.length() > 0) {
             int parsedTimeoutInt = Integer.parseInt(timeoutStr);
             if (parsedTimeoutInt >= 0) {
@@ -645,7 +641,7 @@ public class CoGProperties extends Properties {
             }
         }
         if (timeoutInt == -1) { // Didn't find a system property
-            timeoutStr = getProperty("sockettimeout");
+            timeoutStr = getProperty(SOCKET_TIMEOUT);
             if (timeoutStr != null && timeoutStr.length() > 0) {
                 int parsedTimeoutInt = Integer.parseInt(timeoutStr);
                 if (parsedTimeoutInt >= 0) {
@@ -654,13 +650,13 @@ public class CoGProperties extends Properties {
             }
         }
         if (timeoutInt == -1) { // Didn't find any property at all
-            timeoutInt = 10;
+            timeoutInt = 30 * 1000;
         }
         return timeoutInt;
     }
 
     public void setSocketTimeout(int socketTimeout) {
-        put("sockettimeout", String.valueOf(socketTimeout));
+        put(SOCKET_TIMEOUT, String.valueOf(socketTimeout));
     }
 
 

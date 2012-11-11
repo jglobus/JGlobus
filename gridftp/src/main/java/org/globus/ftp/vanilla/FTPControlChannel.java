@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
+import org.globus.common.CoGProperties;
 import org.globus.net.SocketFactory;
 import org.globus.ftp.exception.ServerException;
 import org.globus.ftp.exception.UnexpectedReplyCodeException;
@@ -139,29 +140,8 @@ public class FTPControlChannel extends BasicClientControlChannel {
         //depending on constructor used, we may already have streams
         if (!haveStreams()) {
             boolean                     found = false;
-            int                         timeout = 30000;
             int                         i = 0;
             boolean                     firstPass = true;
-            
-            String toS = System.getProperty("org.globus.ftp.openTO");
-            if(toS != null)
-            {
-                try
-                {
-                    timeout = Integer.parseInt(toS);
-                }
-                catch(NumberFormatException ex)
-                {
-                    throw new NumberFormatException("Invalid value for property "
-                        + "org.globus.ftp.openTO (" + toS + "). Must be numeric.");
-                }
-            }
-            else
-            {
-                timeout = 0;
-                firstPass = false;
-            }
-
 
             allIPs = InetAddress.getAllByName(host);
 
@@ -175,7 +155,8 @@ public class FTPControlChannel extends BasicClientControlChannel {
                         new InetSocketAddress(allIPs[i], port);
 
                     socket = new Socket();
-                    socket.connect(isa, timeout);
+                    socket.setSoTimeout(CoGProperties.getDefault().getSocketTimeout());
+                    socket.connect(isa);
                     found = true;
                 }
                 catch(IOException ioEx)
@@ -189,7 +170,6 @@ public class FTPControlChannel extends BasicClientControlChannel {
                         {
                             firstPass = false;
                             i = 0;
-                            timeout = 0; // next time let system time it out
                         }
                         else
                         {
@@ -339,40 +319,46 @@ public class FTPControlChannel extends BasicClientControlChannel {
 	public void waitFor(Flag aborted, int ioDelay, int maxWait) throws ServerException,
 			IOException, InterruptedException {
 
-		int c = 0;
-		if (maxWait != WAIT_FOREVER) {
-			this.socket.setSoTimeout(maxWait);
-		} else {
-			this.socket.setSoTimeout(0);
-		}
+        int oldTimeout = this.socket.getSoTimeout();
 
-        c = this.checkSocketDone(aborted, ioDelay, maxWait);
+        try {
+            int c = 0;
+            if (maxWait != WAIT_FOREVER) {
+                this.socket.setSoTimeout(maxWait);
+            } else {
+                this.socket.setSoTimeout(0);
+            }
 
-        /*
-          A bug in the server causes it to append \0 to each reply.
-          As the result, we receive this \0 before the next reply.
-          The code below handles this case.
-          
-        */
-		if (c != 0) {
-			// if we're here, the server is healthy
-			// and the reply is waiting in the buffer
-			return;
-		}
-
-		// if we're here, we deal with the buggy server.
-		// we discarded the \0 and now resume wait.
-
-		logger.debug("Server sent \\0; resume wait");
-		try {
-            // gotta read past the 0 we just remarked
-			c = ftpIn.read();
             c = this.checkSocketDone(aborted, ioDelay, maxWait);
-		} catch (SocketTimeoutException e) {
-			throw new ServerException(ServerException.REPLY_TIMEOUT);
-		} catch (EOFException e) {
-			throw new InterruptedException();
-		}
+
+            /*
+              A bug in the server causes it to append \0 to each reply.
+              As the result, we receive this \0 before the next reply.
+              The code below handles this case.
+
+            */
+            if (c != 0) {
+                // if we're here, the server is healthy
+                // and the reply is waiting in the buffer
+                return;
+            }
+
+            // if we're here, we deal with the buggy server.
+            // we discarded the \0 and now resume wait.
+
+            logger.debug("Server sent \\0; resume wait");
+            try {
+                // gotta read past the 0 we just remarked
+                c = ftpIn.read();
+                c = this.checkSocketDone(aborted, ioDelay, maxWait);
+            } catch (SocketTimeoutException e) {
+                throw new ServerException(ServerException.REPLY_TIMEOUT);
+            } catch (EOFException e) {
+                throw new InterruptedException();
+            }
+        } finally {
+            this.socket.setSoTimeout(oldTimeout);
+        }
 	}
     
     
