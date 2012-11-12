@@ -92,6 +92,8 @@ public class PEMKeyStore extends KeyStoreSpi {
 	private File defaultDirectory;
 	private ResourceSecurityWrapperStore<ResourceTrustAnchor, TrustAnchor> caDelegate = new ResourceCACertStore();
 	private ResourceSecurityWrapperStore<ResourceProxyCredential, X509Credential> proxyDelegate = new ResourceProxyCredentialStore();
+	
+	private boolean inMemoryOnly = false;
 
 	public void setCACertStore(
 			ResourceSecurityWrapperStore<ResourceTrustAnchor, TrustAnchor> caCertStore) {
@@ -328,10 +330,17 @@ public class PEMKeyStore extends KeyStoreSpi {
 			throws IOException, NoSuchAlgorithmException, CertificateException {
 		try {
 			Properties properties = new Properties();
-			properties.load(inputStream);
-			if (properties.size() == 0) {
-				throw new CertificateException(
-						"Properties file for configuration was null");
+			if(inputStream != null){
+				properties.load(inputStream);
+				if (properties.size() == 0) {
+					throw new CertificateException(
+							"Properties file for configuration was empty?");
+				}
+			}else{
+				if(chars == null){
+					// keyStore.load(null,null) -> in memory only keystore
+					inMemoryOnly = true;
+				}
 			}
 			String defaultDirectoryString = properties
 					.getProperty(DEFAULT_DIRECTORY_KEY);
@@ -343,10 +352,12 @@ public class PEMKeyStore extends KeyStoreSpi {
 			initialize(defaultDirectoryString, directoryListString,
 					proxyFilename, certFilename, keyFilename);
 		} finally {
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-				logger.info("Error closing inputStream", e);
+			if(inputStream != null){
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					logger.info("Error closing inputStream", e);
+				}
 			}
 		}
 	}
@@ -577,7 +588,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 		this.aliasObjectMap.put(wrapper.getAlias(), wrapper);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private CredentialWrapper createProxyCredential(String s,
 			X509Credential credential) throws KeyStoreException {
 		CredentialWrapper wrapper;
@@ -592,7 +603,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 			file = new File(defaultDirectory, s + "-key.pem");
 		}
 		try {
-			wrapper = new ResourceProxyCredential(new GlobusResource(file.getAbsolutePath()),
+			wrapper = new ResourceProxyCredential(inMemoryOnly, new GlobusResource(file.getAbsolutePath()),
 					credential);
 		} catch (ResourceStoreException e) {
 			throw new KeyStoreException(e);
@@ -628,10 +639,12 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	private void storeWrapper(CredentialWrapper wrapper)
 			throws KeyStoreException {
-		try {
-			wrapper.store();
-		} catch (ResourceStoreException e) {
-			throw new KeyStoreException("Error storing credential", e);
+		if(!inMemoryOnly){
+			try {
+				wrapper.store();
+			} catch (ResourceStoreException e) {
+				throw new KeyStoreException("Error storing credential", e);
+			}
 		}
 	}
 
@@ -714,8 +727,10 @@ public class PEMKeyStore extends KeyStoreSpi {
 		}
 		X509Certificate x509Cert = (X509Certificate) certificate;
 		try {
-			writeCertificate(x509Cert, file);
-			ResourceTrustAnchor anchor = new ResourceTrustAnchor(
+			if(!inMemoryOnly){
+				writeCertificate(x509Cert, file);
+			}
+			ResourceTrustAnchor anchor = new ResourceTrustAnchor(inMemoryOnly,
 					new GlobusResource(file.getAbsolutePath()), new TrustAnchor(x509Cert,
 							null));
 			this.aliasObjectMap.put(alias, anchor);

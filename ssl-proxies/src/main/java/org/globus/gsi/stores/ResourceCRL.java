@@ -17,7 +17,6 @@ package org.globus.gsi.stores;
 
 import org.globus.gsi.util.CertificateLoadUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -36,14 +35,17 @@ import org.globus.util.GlobusResource;
 public class ResourceCRL extends AbstractResourceSecurityWrapper<X509CRL> {
 
     public ResourceCRL(String fileName) throws ResourceStoreException {
-        init(globusResolver.getResource(fileName));
+    	super(false);
+    	init(globusResolver.getResource(fileName));
     }
 
-    public ResourceCRL(GlobusResource globusResource) throws ResourceStoreException {
+    public ResourceCRL(boolean inMemory, GlobusResource globusResource) throws ResourceStoreException {
+    	super(inMemory);
         init(globusResource);
     }
 
     public ResourceCRL(String fileName, X509CRL crl) throws ResourceStoreException {
+    	super(false);
         init(globusResolver.getResource(fileName), crl);
     }
 
