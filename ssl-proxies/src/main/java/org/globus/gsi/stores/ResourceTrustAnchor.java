@@ -38,18 +38,22 @@ public class ResourceTrustAnchor extends AbstractResourceSecurityWrapper<TrustAn
 
 
     public ResourceTrustAnchor(String fileName) throws ResourceStoreException {
+    	super(false);
         init(globusResolver.getResource(fileName));
     }
 
-    public ResourceTrustAnchor(GlobusResource globusResource) throws ResourceStoreException {
+    public ResourceTrustAnchor(boolean inMemory, GlobusResource globusResource) throws ResourceStoreException {
+    	super(inMemory);
         init(globusResource);
     }
 
     public ResourceTrustAnchor(String fileName, TrustAnchor cachedAnchor) throws ResourceStoreException {
+    	super(false);
         init(globusResolver.getResource(fileName), cachedAnchor);
     }
 
-    public ResourceTrustAnchor(GlobusResource globusResource, TrustAnchor cachedAnchor) throws ResourceStoreException {
+    public ResourceTrustAnchor(boolean inMemory, GlobusResource globusResource, TrustAnchor cachedAnchor) throws ResourceStoreException {
+    	super(inMemory);
         init(globusResource, cachedAnchor);
     }
 

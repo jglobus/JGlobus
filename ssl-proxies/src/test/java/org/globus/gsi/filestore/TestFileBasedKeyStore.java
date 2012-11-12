@@ -1,15 +1,21 @@
 package org.globus.gsi.filestore;
 
-import org.junit.Ignore;
-/**
- * Created by IntelliJ IDEA.
- * User: turtlebender
- * Date: Jan 4, 2010
- * Time: 3:29:11 PM
- * To change this template use File | Settings | File Templates.
- */
-@Ignore
+import java.security.KeyStore;
+
+import org.globus.gsi.provider.GlobusProvider;
+import org.junit.Test;
+
 public class TestFileBasedKeyStore {
-
-
+	@Test
+    public void testLoadEmptyStore() throws Exception {
+		KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE);
+		boolean worked = false;
+		try{
+			keyStore.load(null, null);
+			worked = true;
+		}catch(Exception e){
+			//Error...
+		}
+		assert (worked == true);
+	}
 }
