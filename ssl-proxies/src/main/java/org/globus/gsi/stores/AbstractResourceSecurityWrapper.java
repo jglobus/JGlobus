@@ -44,6 +44,11 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 	private T securityObject;
 	private long lastModified = -1;
 	private String alias;
+	private boolean inMemory = false;
+
+	protected AbstractResourceSecurityWrapper(boolean inMemory) {
+		this.inMemory = inMemory;
+	}
 
 	protected void init(String locationPattern) throws ResourceStoreException {
 		init(globusResolver.getResource(locationPattern));
@@ -70,17 +75,23 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 		init(globusResolver.getResource(locationPattern), initialSecurityObject);
 	}
 
-
-    protected void init(GlobusResource initialResource, T initialSecurityObject)
-            throws ResourceStoreException {
-        if (initialSecurityObject == null) {
-            // JGLOBUS-88 : better exception?
-            throw new IllegalArgumentException("Object cannot be null");
-        }
-        this.securityObject = initialSecurityObject;
-        this.globusResource = initialResource;
-    }
-
+	protected void init(GlobusResource initialResource, T initialSecurityObject)
+			throws ResourceStoreException {
+		if (initialSecurityObject == null) {
+			// JGLOBUS-88 : better exception?
+			throw new IllegalArgumentException("Object cannot be null");
+		}
+		this.securityObject = initialSecurityObject;
+		this.globusResource = initialResource;
+		try {
+			this.alias = this.globusResource.getURL().toExternalForm();
+			if(!inMemory){
+				this.lastModified = this.globusResource.lastModified();
+			}
+		} catch (IOException e) {
+			throw new ResourceStoreException(e);
+		}
+	}
 
     public GlobusResource getGlobusResource(){
         return globusResource;
@@ -105,18 +116,20 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 		}
 	}
 
-	public void refresh() throws ResourceStoreException {//TODO replace with globusResource
-		this.changed = false;
-		long latestLastModified;
-		try {
-			latestLastModified = this.globusResource.lastModified();
-		} catch (IOException e) {
-			throw new ResourceStoreException(e);
-		}
-		if (this.lastModified < latestLastModified) {
-			this.securityObject = create(this.globusResource);
-			this.lastModified = latestLastModified;
-			this.changed = true;
+	public void refresh() throws ResourceStoreException {
+		if(!inMemory){
+			this.changed = false;
+			long latestLastModified;
+			try {
+				latestLastModified = this.globusResource.lastModified();
+			} catch (IOException e) {
+				throw new ResourceStoreException(e);
+			}
+			if (this.lastModified < latestLastModified) {
+				this.securityObject = create(this.globusResource);
+				this.lastModified = latestLastModified;
+				this.changed = true;
+			}
 		}
 	}
 

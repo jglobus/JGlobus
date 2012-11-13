@@ -48,7 +48,7 @@ public class TestFileBasedCRL {
 
         String tempFileName = this.testCrl1.getAbsoluteFilename();
 
-        ResourceCRL fileCrl = new ResourceCRL(new GlobusResource(tempFileName));
+        ResourceCRL fileCrl = new ResourceCRL(false, new GlobusResource(tempFileName));
 
 //        assert (fileCrl != null);
 

@@ -37,7 +37,7 @@ public class ResourceCRLStore extends ResourceSecurityWrapperStore<ResourceCRL, 
 
     @Override
     public ResourceCRL create(GlobusResource globusResource) throws ResourceStoreException {
-        return new ResourceCRL(globusResource);
+        return new ResourceCRL(false, globusResource);
     }
 
     @Override
