@@ -28,22 +28,11 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
-                <dependency>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk16</artifactId>
-                        <version>1.45</version>
-	                <scope>compile</scope>
-                </dependency>
-                <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>ssl-proxies</artifactId>
-                        <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>gss</artifactId>
-                        <version>${project.version}</version>
-                </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gss</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

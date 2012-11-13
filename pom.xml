@@ -7,15 +7,15 @@
 	<artifactId>jglobus-all</artifactId>
 	<version>2.0-SNAPSHOT</version>
 	<modules>
+		<module>test-utils</module>
 		<module>ssl-proxies</module>
+		<module>container-test-utils</module>
 		<module>jsse</module>
 		<module>gss</module>
 		<module>gram</module>
 		<module>gridftp</module>
 		<module>ssl-proxies-tomcat</module>
 		<module>io</module>
-		<module>test-utils</module>
-		<module>container-test-utils</module>
 		<module>myproxy</module>
 	</modules>
 	<name>JGlobus 2.0</name>
@@ -46,5 +46,20 @@
 			<url>http://repo.globus.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.0.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
