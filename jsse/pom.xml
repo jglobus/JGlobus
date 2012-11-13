@@ -25,24 +25,6 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.1.1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.4</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
@@ -54,16 +36,4 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>globus-releases</id>
-      <name>Globus Release Repository</name>
-      <url>http://repo.globus.org/content/groups/public/</url>
-    </repository>
-    <repository>
-      <id>globus-snapshots</id>
-      <name>Globus Snapshot Repository</name>
-      <url>http://repo.globus.org/content/groups/public-snapshots/</url>
-    </repository>
-  </repositories>
 </project>
