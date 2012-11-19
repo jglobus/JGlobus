@@ -471,7 +471,12 @@ public class BouncyCastleCertProcessingFactory {
             }
         }
 
-        X509Name issuerDN = (X509Name) issuerCert.getSubjectDN();
+        X509Name issuerDN;
+        if (issuerCert.getSubjectDN() instanceof X509Name) {
+        	issuerDN = (X509Name)issuerCert.getSubjectDN();
+        } else {
+        	issuerDN = new X509Name(true,issuerCert.getSubjectX500Principal().getName());
+        }
 
         X509NameHelper issuer = new X509NameHelper(issuerDN);
 
@@ -884,7 +889,12 @@ public class BouncyCastleCertProcessingFactory {
             }
         }
 
-        X509Name issuerDN = (X509Name) issuerCert.getSubjectDN();
+        X509Name issuerDN;
+        if (issuerCert.getSubjectDN() instanceof X509Name) {
+        	issuerDN = (X509Name)issuerCert.getSubjectDN();
+        } else {
+        	issuerDN = new X509Name(true,issuerCert.getSubjectX500Principal().getName());
+        }
         X509NameHelper issuer = new X509NameHelper(issuerDN);
         X509NameHelper subject = new X509NameHelper(issuerDN);
         subject.add(X509Name.CN, (cnValue == null) ? delegDN : cnValue);
