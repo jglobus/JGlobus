@@ -18,7 +18,7 @@
 		<module>io</module>
 		<module>myproxy</module>
 	</modules>
-	<name>JGlobus 2.0</name>
+	<name>JGlobus</name>
 	<packaging>pom</packaging>
 
 	<issueManagement>
@@ -27,6 +27,7 @@
 	</issueManagement>
 
 	<scm>
+		<connection>scm:git:git@github.com:jglobus/JGlobus.git</connection>
 		<url>scm:git:git@github.com:jglobus/JGlobus.git</url>
 		<tag>dev</tag>
 	</scm>
