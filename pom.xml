@@ -17,6 +17,7 @@
 		<module>ssl-proxies-tomcat</module>
 		<module>io</module>
 		<module>myproxy</module>
+		<module>axis</module>
 	</modules>
 	<name>JGlobus</name>
 	<packaging>pom</packaging>
