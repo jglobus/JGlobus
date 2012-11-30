@@ -211,7 +211,7 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
     public void testIdleConnectionSweeper() throws Exception {
         CommonsHttpConnectionManager manager = 
             new CommonsHttpConnectionManager(null);
-        manager.setConnectionIdleTime(1000 * 60);
+        manager.setConnectionIdleTime(1000 * 2);
 
         HostConfiguration h1 = new HostConfiguration();
         h1.setHost(address, server1.getLocalPort());
@@ -222,7 +222,7 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
         assertTrue(!c1.isOpen());
         c1.open();
         
-        Thread.sleep(1000 * 30);
+        Thread.sleep(1000);
         
         c1.releaseConnection();
 
@@ -230,7 +230,7 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
         assertTrue(c1.isOpen());
         c1.releaseConnection();
 
-        Thread.sleep(1000 * 60 * 2);
+        Thread.sleep(1000 * 4);
 
         HttpConnection c2 = manager.getConnection(h1);
 
