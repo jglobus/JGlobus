@@ -243,9 +243,35 @@ public class SigningPolicyParser {
             int startIndex = CONDITION_SUBJECT.length();
             int endIndex = line.length();
             Vector<Pattern> allowedDNs = getAllowedDNs(line.substring(startIndex, endIndex));
-            X500Principal caPrincipal = CertificateUtil.toPrincipal(caDN);
-            SigningPolicy policy = new SigningPolicy(caPrincipal, allowedDNs);
-            policies.put(caPrincipal, policy);
+            // Some IGTF CA signing policies include all the various versions of having the emailAddress
+            // in the DN.  The "E=" variant causes an exception to be thrown in modern JVMs.
+            // Hence, we ignore invalid DNs.  Luckily, the signing policies contain all variants so
+            // it is safe to ignore.
+            try {
+                X500Principal caPrincipal = CertificateUtil.toPrincipal(caDN);
+                SigningPolicy policy = new SigningPolicy(caPrincipal, allowedDNs);
+                policies.put(caPrincipal, policy);
+            } catch (java.lang.IllegalArgumentException e) {
+                if (caDN == null) {
+                    throw e;
+                }
+                String [] components = caDN.split("/");
+                boolean hasE = false;
+                for (int i=0; i<components.length; i++) {
+                    String attribute = components[i].split("=")[0];
+                    if (attribute.equals("E")) {
+                        hasE = true;
+                        break;
+                    }
+                }
+                if (hasE) {
+                    logger.warn("Invalid DN (" + caDN + ") in the CA policy");
+                    logger.debug("Invalid DN in the CA policy", e);
+                    return true;
+                } else {
+                    throw e;
+                }
+            }
             return true;
         }
         return false;
