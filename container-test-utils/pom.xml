@@ -9,30 +9,15 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>container-test-utils</artifactId>
   <name>Connector test utilities</name>
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+
   <dependencies>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.0.1</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -42,8 +27,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.1</version>
-      <type>jar</type>
     </dependency>
   </dependencies>
 </project>
