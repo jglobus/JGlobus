@@ -45,18 +45,12 @@ import java.util.Map;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.KeyPair;
-import java.security.PrivateKey;
 import java.security.GeneralSecurityException;
 import java.security.interfaces.RSAPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 
 import org.globus.gsi.ProviderLoader;
-import org.globus.gsi.provider.GlobusProvider;
-import org.globus.gsi.provider.KeyStoreParametersFactory;
-
-import org.globus.gsi.stores.ResourceCertStoreParameters;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
-import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
 
 import java.security.cert.CertStore;
 import java.security.cert.CertificateFactory;
@@ -67,9 +61,7 @@ import org.globus.gsi.X509Credential;
 import org.globus.gsi.util.CertificateLoadUtil;
 import org.globus.gsi.bc.BouncyCastleUtil;
 import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
-import org.globus.gsi.proxy.ProxyPolicyHandler;
 import org.globus.util.I18n;
-import org.globus.common.CoGProperties;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -79,7 +71,6 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import org.globus.gsi.jsse.SSLConfigurator;
 
 import org.bouncycastle.jce.provider.X509CertificateObject;
-import java.security.NoSuchAlgorithmException;
 
 /*
 import COM.claymoresystems.ptls.SSLConn;
@@ -96,6 +87,8 @@ import COM.claymoresystems.util.Util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.globus.gsi.stores.Stores;
 
 /**
  * Implementation of SSL/GSI mechanism for Java GSS-API. The implementation
@@ -297,15 +290,13 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
 	    // set trust parameters in SSLConfigurator
 
-    	    String caCertsLocation = "file:" + CoGProperties.getDefault().getCaCertLocations();
-
-            KeyStore trustStore = GlobusGSSContextImpl.getTrustStore(caCertsLocation);
+            KeyStore trustStore = Stores.getDefaultTrustStore();
             sslConfigurator.setTrustAnchorStore(trustStore);
 
-            CertStore crlStore = GlobusGSSContextImpl.getCRLStore(caCertsLocation); 
+            CertStore crlStore = Stores.getDefaultCRLStore(); 
             sslConfigurator.setCrlStore(crlStore);
 
-            ResourceSigningPolicyStore sigPolStore = GlobusGSSContextImpl.getSigPolStore(caCertsLocation);
+            ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
             sslConfigurator.setPolicyStore(sigPolStore);
 
             // Need to set this so we are able to communicate properly with
@@ -359,45 +350,6 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     }
 */
 
-    private static KeyStore getTrustStore(String caCertsLocation) throws  GeneralSecurityException, IOException
-    {
-        if(GlobusGSSContextImpl.ms_trustStore != null)
-            return GlobusGSSContextImpl.ms_trustStore;
-        
-        String caCertsPattern = caCertsLocation + "/*.0";
-        KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-        keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsPattern));
-        
-        GlobusGSSContextImpl.ms_trustStore = keyStore;
-        
-        return keyStore;
-    }
-    
-    private static CertStore getCRLStore(String caCertsLocation) throws GeneralSecurityException, NoSuchAlgorithmException
-    {
-        if(GlobusGSSContextImpl.ms_crlStore != null)
-            return GlobusGSSContextImpl.ms_crlStore;
-        
-        String crlPattern = caCertsLocation + "/*.r*";
-        CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
-        
-        GlobusGSSContextImpl.ms_crlStore = crlStore ;
-        
-        return crlStore;
-    }
-    
-    private static ResourceSigningPolicyStore getSigPolStore(String caCertsLocation) throws GeneralSecurityException
-    {
-        if(GlobusGSSContextImpl.ms_sigPolStore != null)
-            return GlobusGSSContextImpl.ms_sigPolStore;
-        
-        String sigPolPattern = caCertsLocation + "/*.signing_policy";
-        ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
-        
-        GlobusGSSContextImpl.ms_sigPolStore = sigPolStore;
-        
-        return sigPolStore;
-    }
     /*
      * If the result indicates that we have outstanding tasks to do,
      * go ahead and run them in this thread.

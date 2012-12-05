@@ -15,6 +15,7 @@
 package org.globus.gsi;
 
 import org.globus.gsi.stores.ResourceCertStoreParameters;
+import org.globus.gsi.stores.Stores;
 
 import org.globus.gsi.provider.GlobusProvider;
 
@@ -89,8 +90,7 @@ public class CertificateRevocationLists {
             
             try {
               String location = tokens.nextToken().toString().trim();
-              ResourceCertStoreParameters parameters = new ResourceCertStoreParameters(null, "file:" + location + "/*.r*");
-              CertStore tmp = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, parameters);
+              CertStore tmp = Stores.getCRLStore("file:" + location + "/*.r*");
               Collection<X509CRL> coll = (Collection<X509CRL>) tmp.getCRLs(new X509CRLSelector());
               for (X509CRL crl : coll) {
                 newCrlIssuerDNMap.put(crl.getIssuerDN().getName(), crl);

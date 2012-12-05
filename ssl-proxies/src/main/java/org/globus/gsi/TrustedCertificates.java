@@ -19,6 +19,7 @@ import org.globus.gsi.util.KeyStoreUtil;
 
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
 import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
+import org.globus.gsi.stores.Stores;
 
 import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.provider.KeyStoreParametersFactory;
@@ -211,45 +212,6 @@ public class TrustedCertificates implements Serializable {
         }
     }
 
-    private static KeyStore getTrustStore(String caCertsLocation) throws  GeneralSecurityException, IOException
-    {
-        if(TrustedCertificates.ms_trustStore != null)
-            return TrustedCertificates.ms_trustStore;
-        
-        String caCertsPattern = caCertsLocation + "/*.0";
-        KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-        keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsPattern));
-        
-        TrustedCertificates.ms_trustStore = keyStore;
-        
-        return keyStore;
-    }
-    
-//    private static CertStore getCRLStore(String caCertsLocation) throws GeneralSecurityException, NoSuchAlgorithmException
-//    {
-//        if(TrustedCertificates.ms_crlStore != null)
-//            return TrustedCertificates.ms_crlStore;
-//        
-//        String crlPattern = caCertsLocation + "/*.r*";
-//        CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
-//        
-//        TrustedCertificates.ms_crlStore = crlStore ;
-//        
-//        return crlStore;
-//    }
-    
-    private static ResourceSigningPolicyStore getSigPolStore(String caCertsLocation) throws GeneralSecurityException
-    {
-        if(TrustedCertificates.ms_sigPolStore != null)
-            return TrustedCertificates.ms_sigPolStore;
-        
-        String sigPolPattern = caCertsLocation + "/*.signing_policy";
-        ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
-        
-        TrustedCertificates.ms_sigPolStore = sigPolStore;
-        
-        return sigPolStore;
-    }
     public void refresh() {
         reload(null);
     }
@@ -283,7 +245,7 @@ public class TrustedCertificates implements Serializable {
 
             KeyStore trustStore = null;
             try {
-                trustStore = TrustedCertificates.getTrustStore(caCertLocation);
+                trustStore = Stores.getTrustStore(caCertLocation + "/" + Stores.getDefaultCAFilesPattern());
                 
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
@@ -297,7 +259,7 @@ public class TrustedCertificates implements Serializable {
             }
                 
             try {
-                ResourceSigningPolicyStore sigPolStore = TrustedCertificates.getSigPolStore(caCertLocation);
+                ResourceSigningPolicyStore sigPolStore = Stores.getSigningPolicyStore(caCertLocation+ "/" + Stores.getDefaultSigningPolicyFilesPattern());
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
