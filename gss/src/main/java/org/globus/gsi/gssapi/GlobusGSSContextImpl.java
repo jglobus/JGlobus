@@ -281,17 +281,6 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
             this.sslConfigurator = new SSLConfigurator();
 
-	    // set trust parameters in SSLConfigurator
-
-            KeyStore trustStore = Stores.getDefaultTrustStore();
-            sslConfigurator.setTrustAnchorStore(trustStore);
-
-            CertStore crlStore = Stores.getDefaultCRLStore(); 
-            sslConfigurator.setCrlStore(crlStore);
-
-            ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
-            sslConfigurator.setPolicyStore(sigPolStore);
-
             // Need to set this so we are able to communicate properly with
             // GT4.0.8 servers that use only SSLv3 (no TLSv1). Thanks to
             // Jon Siwek for pointing this and the following link out:
@@ -1284,6 +1273,18 @@ done:      do {
         this.conn.init();
 */
 	try {
+	    // set trust parameters in SSLConfigurator
+		if(this.tc == null){
+	        KeyStore trustStore = Stores.getDefaultTrustStore();
+	        sslConfigurator.setTrustAnchorStore(trustStore);
+	
+	        CertStore crlStore = Stores.getDefaultCRLStore(); 
+	        sslConfigurator.setCrlStore(crlStore);
+	
+	        ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
+	        sslConfigurator.setPolicyStore(sigPolStore);
+		}
+        
 		this.sslConfigurator.setRejectLimitProxy(rejectLimitedProxy);
                 if (proxyPolicyHandlers != null)
                     sslConfigurator.setHandlers(proxyPolicyHandlers);
