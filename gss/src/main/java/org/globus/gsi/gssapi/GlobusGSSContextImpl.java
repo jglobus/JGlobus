@@ -261,17 +261,25 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     /** Limited peer credentials */
     protected Boolean peerLimited = null;
     
-    private static KeyStore ms_trustStore = null;
-    private static CertStore ms_crlStore = null;
-    private static ResourceSigningPolicyStore ms_sigPolStore = null;
-    
 
     /**
      * @param target expected target name. Can be null.
      * @param cred credential. Cannot be null. Might be anonymous.
+     * @throws GSSException 
      */
     public GlobusGSSContextImpl(GSSName target,
-                                GlobusGSSCredentialImpl cred)
+                                GlobusGSSCredentialImpl cred) throws GSSException{
+    	this(target, cred, null);
+    }
+    
+    /**
+     * @param target expected target name. Can be null.
+     * @param cred credential. Cannot be null. Might be anonymous.
+     * @param caCertsDir CA certificates directories. Can be null.
+     * @throws GSSException
+     */
+    public GlobusGSSContextImpl(GSSName target,
+                                GlobusGSSCredentialImpl cred, String caCertsDir)
         throws GSSException {
 
         if (cred == null) {
@@ -288,16 +296,26 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
             this.sslConfigurator = new SSLConfigurator();
 
-	    // set trust parameters in SSLConfigurator
-
-            KeyStore trustStore = Stores.getDefaultTrustStore();
-            sslConfigurator.setTrustAnchorStore(trustStore);
-
-            CertStore crlStore = Stores.getDefaultCRLStore(); 
-            sslConfigurator.setCrlStore(crlStore);
-
-            ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
-            sslConfigurator.setPolicyStore(sigPolStore);
+            // set trust parameters in SSLConfigurator
+            if(caCertsDir == null){
+	            KeyStore trustStore = Stores.getDefaultTrustStore();
+	            sslConfigurator.setTrustAnchorStore(trustStore);
+	
+	            CertStore crlStore = Stores.getDefaultCRLStore(); 
+	            sslConfigurator.setCrlStore(crlStore);
+	
+	            ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
+	            sslConfigurator.setPolicyStore(sigPolStore);
+            }else{
+            	KeyStore trustStore = Stores.getTrustStore("file:" + caCertsDir + "/" + Stores.getDefaultCAFilesPattern());
+	            sslConfigurator.setTrustAnchorStore(trustStore);
+	
+	            CertStore crlStore = Stores.getCRLStore("file:" + caCertsDir + "/" + Stores.getDefaultCRLFilesPattern()); 
+	            sslConfigurator.setCrlStore(crlStore);
+	
+	            ResourceSigningPolicyStore sigPolStore = Stores.getSigningPolicyStore("file:" + caCertsDir + "/" + Stores.getDefaultSigningPolicyFilesPattern());
+	            sslConfigurator.setPolicyStore(sigPolStore);
+            }
 
             // Need to set this so we are able to communicate properly with
             // GT4.0.8 servers that use only SSLv3 (no TLSv1). Thanks to
@@ -373,10 +391,20 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     private X509Certificate bcConvert(X509Certificate cert)
             throws GSSException {
         if (!(cert instanceof X509CertificateObject)) {
+        	ByteArrayInputStream inputStream = null;
             try {
-                return CertificateLoadUtil.loadCertificate(new ByteArrayInputStream(cert.getEncoded()));
+            	inputStream = new ByteArrayInputStream(cert.getEncoded());
+                return CertificateLoadUtil.loadCertificate(inputStream);
             } catch (Exception e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
+            }finally{
+            	if (inputStream != null) {
+                    try {
+                    	inputStream.close();
+                    } catch (Exception e) {
+                        logger.warn("Unable to close streamreader.");
+                    }
+                }
             }
         } else {
                 return cert;
@@ -626,9 +654,14 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 byte [] buf = new byte[outByteBuff.remaining()];
                 outByteBuff.get(buf, 0, buf.length);
 		ByteArrayInputStream inStream = new ByteArrayInputStream(buf, 0, buf.length);
-		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		X509Certificate certificate = (X509Certificate)cf.generateCertificate(inStream);
-		inStream.close();
+		CertificateFactory cf = null;
+		X509Certificate certificate = null;
+		try{
+			cf = CertificateFactory.getInstance("X.509");
+			certificate = (X509Certificate)cf.generateCertificate(inStream);
+		}finally{
+			inStream.close();
+		}
 
                 if (logger.isTraceEnabled()) {
                     logger.trace("Received delegated cert: " + 
@@ -1140,6 +1173,7 @@ done:      do {
                 throw new GSSException(GSSException.DEFECTIVE_TOKEN);
 	    }
 
+	    ByteArrayInputStream byteArrayInputStream = null;
             try {
 /*DEL
                 if (this.in.available() <= 0) {
@@ -1156,8 +1190,9 @@ done:      do {
 
                 X509Certificate [] chain = this.ctxCred.getCertificateChain();
 
+                byteArrayInputStream = new ByteArrayInputStream(certReq);
                 X509Certificate cert = 
-                    this.certFactory.createCertificate(new ByteArrayInputStream(certReq),
+                    this.certFactory.createCertificate(byteArrayInputStream,
                                                        chain[0],
                                                        this.ctxCred.getPrivateKey(),
                                                        -1,
@@ -1180,6 +1215,14 @@ done:      do {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
             } catch (IOException e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
+            }finally{
+            	if (byteArrayInputStream != null) {
+                    try {
+                    	byteArrayInputStream.close();
+                    } catch (Exception e) {
+                        logger.warn("Unable to close stream.");
+                    }
+                }
             }
 
             break;
@@ -2401,8 +2444,6 @@ done:      do {
 
         case DELEGATION_SIGN_CERT:
 
-            ByteArrayInputStream inData
-                = new ByteArrayInputStream(buf, off, len);
             
             if (credential == null) {
                 // get default credential
@@ -2421,7 +2462,10 @@ done:      do {
             
             int time = (lifetime == GSSCredential.DEFAULT_LIFETIME) ? -1 : lifetime;
             
+            ByteArrayInputStream inData = null;
+            ByteArrayOutputStream out = null;
             try {
+            	inData = new ByteArrayInputStream(buf, off, len);
                 X509Certificate cert = 
                     this.certFactory.createCertificate(inData,
                                                        chain[0],
@@ -2432,8 +2476,8 @@ done:      do {
 */
                                                        BouncyCastleCertProcessingFactory.decideProxyType(chain[0], this.delegationType));
                 
-                ByteArrayOutputStream out 
-                    = new ByteArrayOutputStream();
+                 
+                out = new ByteArrayOutputStream();
 
                 out.write(cert.getEncoded());
                 for (int i=0;i<chain.length;i++) {
@@ -2443,6 +2487,21 @@ done:      do {
                 token = out.toByteArray();
             } catch (Exception e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
+            }finally{
+            	if (inData != null) {
+                    try {
+                    	inData.close();
+                    } catch (Exception e) {
+                        logger.warn("Unable to close stream.");
+                    }
+                }
+            	if (out != null) {
+                    try {
+                    	out.close();
+                    } catch (Exception e) {
+                        logger.warn("Unable to close stream.");
+                    }
+                }
             }
             
             this.delegationState = DELEGATION_START;
@@ -2546,13 +2605,12 @@ done:      do {
             
         case DELEGATION_COMPLETE_CRED:
 
-            ByteArrayInputStream in = 
-                new ByteArrayInputStream(buf, off, len);
-
+            ByteArrayInputStream in = null;
             X509Certificate [] chain = null;
             LinkedList certList = new LinkedList();
             X509Certificate cert = null;
             try {
+            	in = new ByteArrayInputStream(buf, off, len);
                 while(in.available() > 0) {
                     cert = CertificateLoadUtil.loadCertificate(in);
                     certList.add(cert);
@@ -2565,6 +2623,14 @@ done:      do {
 
             } catch (GeneralSecurityException e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
+            }finally{
+            	if (in != null) {
+                    try {
+                    	in.close();
+                    } catch (Exception e) {
+                        logger.warn("Unable to close streamreader.");
+                    }
+                }
             }
 
             X509Credential proxy = 
