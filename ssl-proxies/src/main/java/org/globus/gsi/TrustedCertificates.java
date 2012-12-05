@@ -25,6 +25,8 @@ import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.provider.KeyStoreParametersFactory;
 
 import javax.security.auth.x500.X500Principal;
+
+import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509CertSelector;
 import java.security.KeyStore;
@@ -84,11 +86,10 @@ public class TrustedCertificates implements Serializable {
      * certificates.
      */
     public static String SIGNING_POLICY_FILE_SUFFIX = ".signing_policy";
-    private static KeyStore ms_trustStore = null;
-//    private static CertStore ms_crlStore = null;
-    private static ResourceSigningPolicyStore ms_sigPolStore = null;
     
-
+    private static KeyStore ms_trustStore = null;
+    private static CertStore ms_crlStore = null;
+    private static ResourceSigningPolicyStore ms_sigPolStore = null;
     
     protected TrustedCertificates() {}
     
@@ -243,11 +244,10 @@ public class TrustedCertificates implements Serializable {
 //                sigPolPattern = getPolicyFileName(caCertLocation);
 //            }
 
-            KeyStore trustStore = null;
             try {
-                trustStore = Stores.getTrustStore(caCertLocation + "/" + Stores.getDefaultCAFilesPattern());
+                ms_trustStore = Stores.getTrustStore(caCertLocation + "/" + Stores.getDefaultCAFilesPattern());
                 
-                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(trustStore, new X509CertSelector());
+                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
@@ -257,10 +257,16 @@ public class TrustedCertificates implements Serializable {
             } catch (Exception e) {
                 logger.warn("Failed to create trust store",e);
             }
+            
+            try {
+				ms_sigPolStore = Stores.getSigningPolicyStore(caCertLocation + "/" + Stores.getDefaultSigningPolicyFilesPattern());
+			} catch (GeneralSecurityException e) {
+				logger.warn("Failed to create signing_policy store",e);
+			}
                 
             try {
-                ResourceSigningPolicyStore sigPolStore = Stores.getSigningPolicyStore(caCertLocation+ "/" + Stores.getDefaultSigningPolicyFilesPattern());
-                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(trustStore, new X509CertSelector());
+            	ms_sigPolStore = Stores.getSigningPolicyStore(caCertLocation+ "/" + Stores.getDefaultSigningPolicyFilesPattern());
+                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
@@ -270,7 +276,7 @@ public class TrustedCertificates implements Serializable {
                     }
                     SigningPolicy policy;
                     try {
-                        policy = sigPolStore.getSigningPolicy(principal);
+                        policy = ms_sigPolStore.getSigningPolicy(principal);
                     } catch (Exception e) {
                         if (!invalidPolicies.contains(principal)) {
                             logger.warn("Invalid signing policy for CA certificate; skipping");
@@ -352,7 +358,19 @@ public class TrustedCertificates implements Serializable {
         return trustedCertificates;
     }
     
-    private static class DefaultTrustedCertificates 
+    public static KeyStore getTrustStore() {
+		return ms_trustStore;
+	}
+
+	public static CertStore getcrlStore() {
+		return ms_crlStore;
+	}
+
+	public static ResourceSigningPolicyStore getsigPolStore() {
+		return ms_sigPolStore;
+	}
+
+	private static class DefaultTrustedCertificates 
         extends TrustedCertificates {
         
         public void refresh() {

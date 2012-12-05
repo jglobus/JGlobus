@@ -57,6 +57,7 @@ import java.security.cert.CertificateFactory;
 import java.security.KeyStore;
 
 import org.globus.gsi.GSIConstants;
+import org.globus.gsi.TrustedCertificates;
 import org.globus.gsi.X509Credential;
 import org.globus.gsi.util.CertificateLoadUtil;
 import org.globus.gsi.bc.BouncyCastleUtil;
@@ -251,35 +252,19 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     /** Used during delegation */
     protected KeyPair keyPair;
 
-    /* Needed to verifing certs */
-/*DEL
     protected TrustedCertificates tc;
-*/
     
     protected Map proxyPolicyHandlers;
 
     /** Limited peer credentials */
     protected Boolean peerLimited = null;
-    
 
     /**
      * @param target expected target name. Can be null.
      * @param cred credential. Cannot be null. Might be anonymous.
-     * @throws GSSException 
      */
     public GlobusGSSContextImpl(GSSName target,
-                                GlobusGSSCredentialImpl cred) throws GSSException{
-    	this(target, cred, null);
-    }
-    
-    /**
-     * @param target expected target name. Can be null.
-     * @param cred credential. Cannot be null. Might be anonymous.
-     * @param caCertsDir CA certificates directories. Can be null.
-     * @throws GSSException
-     */
-    public GlobusGSSContextImpl(GSSName target,
-                                GlobusGSSCredentialImpl cred, String caCertsDir)
+                                GlobusGSSCredentialImpl cred)
         throws GSSException {
 
         if (cred == null) {
@@ -296,26 +281,16 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
             this.sslConfigurator = new SSLConfigurator();
 
-            // set trust parameters in SSLConfigurator
-            if(caCertsDir == null){
-	            KeyStore trustStore = Stores.getDefaultTrustStore();
-	            sslConfigurator.setTrustAnchorStore(trustStore);
-	
-	            CertStore crlStore = Stores.getDefaultCRLStore(); 
-	            sslConfigurator.setCrlStore(crlStore);
-	
-	            ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
-	            sslConfigurator.setPolicyStore(sigPolStore);
-            }else{
-            	KeyStore trustStore = Stores.getTrustStore("file:" + caCertsDir + "/" + Stores.getDefaultCAFilesPattern());
-	            sslConfigurator.setTrustAnchorStore(trustStore);
-	
-	            CertStore crlStore = Stores.getCRLStore("file:" + caCertsDir + "/" + Stores.getDefaultCRLFilesPattern()); 
-	            sslConfigurator.setCrlStore(crlStore);
-	
-	            ResourceSigningPolicyStore sigPolStore = Stores.getSigningPolicyStore("file:" + caCertsDir + "/" + Stores.getDefaultSigningPolicyFilesPattern());
-	            sslConfigurator.setPolicyStore(sigPolStore);
-            }
+	    // set trust parameters in SSLConfigurator
+
+            KeyStore trustStore = Stores.getDefaultTrustStore();
+            sslConfigurator.setTrustAnchorStore(trustStore);
+
+            CertStore crlStore = Stores.getDefaultCRLStore(); 
+            sslConfigurator.setCrlStore(crlStore);
+
+            ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
+            sslConfigurator.setPolicyStore(sigPolStore);
 
             // Need to set this so we are able to communicate properly with
             // GT4.0.8 servers that use only SSLv3 (no TLSv1). Thanks to
@@ -2285,7 +2260,6 @@ done:      do {
         this.proxyPolicyHandlers = (Map)value;
     }
 
-/*DEL
     protected void setTrustedCertificates(Object value) 
         throws GSSException {
         if (!(value instanceof TrustedCertificates)) {
@@ -2295,10 +2269,13 @@ done:      do {
                                          new Object[] {"Trusted certificates", 
                                                        TrustedCertificates.class});
         }
-	//TODO: set this in SSLConfigurator before creating SSLContext and engine?
-        this.tc = (TrustedCertificates)value;
+        this.tc = (TrustedCertificates) value;
+        //TODO: set this in SSLConfigurator before creating SSLContext and engine?
+        sslConfigurator.setTrustAnchorStore(((TrustedCertificates)value).getTrustStore());
+        sslConfigurator.setCrlStore(((TrustedCertificates)value).getcrlStore());
+        sslConfigurator.setPolicyStore(((TrustedCertificates)value).getsigPolStore());
     }
-*/
+
     
     public void setOption(Oid option, Object value)
         throws GSSException {
@@ -2328,8 +2305,7 @@ done:      do {
             setGrimPolicyHandler(value);
 */
         } else if (option.equals(GSSConstants.TRUSTED_CERTIFICATES)) {
-            // setTrustedCertificates(value);
-            throw new GSSException(GSSException.UNAVAILABLE);
+            setTrustedCertificates(value);
         } else if (option.equals(GSSConstants.PROXY_POLICY_HANDLERS)) {
             setProxyPolicyHandlers(value);
         } else if (option.equals(GSSConstants.ACCEPT_NO_CLIENT_CERTS)) {
@@ -2367,8 +2343,7 @@ done:      do {
         } else if (option.equals(GSSConstants.REQUIRE_CLIENT_AUTH)) {
             return this.requireClientAuth;
         } else if (option.equals(GSSConstants.TRUSTED_CERTIFICATES)) {
-            // return this.tc;
-            throw new GSSException(GSSException.UNAVAILABLE);
+            return this.tc;
         } else if (option.equals(GSSConstants.PROXY_POLICY_HANDLERS)) {
             // return this.proxyPolicyHandlers;
             throw new GSSException(GSSException.UNAVAILABLE);
