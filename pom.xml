@@ -79,6 +79,11 @@
 				<version>1.4</version>
 			</dependency>
 			<dependency>
+				<groupId>axis</groupId>
+				<artifactId>axis-jaxrpc</artifactId>
+				<version>1.4</version>
+			</dependency>
+			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>gss</artifactId>
 				<version>${project.version}</version>
