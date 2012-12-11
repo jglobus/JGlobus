@@ -29,6 +29,9 @@ public class ResourceCertStoreParameters implements CertStoreParameters {
     private String certLocationPattern;
     private String crlLocationPattern;
 
+    /**
+     * Please use the {@link Stores} class to generate Key/Cert stores
+     */
     public ResourceCertStoreParameters(String certLocationPattern, String crlLocationPattern) {
         this.certLocationPattern = certLocationPattern;
         this.crlLocationPattern = crlLocationPattern;
