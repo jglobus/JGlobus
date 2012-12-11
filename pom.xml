@@ -20,33 +20,41 @@
 	</modules>
 	<name>JGlobus</name>
 	<packaging>pom</packaging>
+	<description>Java implementation of the Grid Security Infrastructure (GSI), developed by the Globus project.</description>
+	<url>https://github.com/jglobus/JGlobus</url>
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>bbockelm</id>
+			<name>Brian Bockelman</name>
+			<email>bockelman+maven@gmail.com</email>
+		</developer>
+	</developers>
 
 	<issueManagement>
-		<system>JIRA</system>
-		<url>http://jira.globus.org/browse/JGLOBUS</url>
+		<system>Github</system>
+		<url>https://github.com/jglobus/JGlobus/issues</url>
 	</issueManagement>
 
 	<scm>
 		<connection>scm:git:git@github.com:jglobus/JGlobus.git</connection>
+		<developerConnection>scm:git:git@github.com:jglobus/JGlobus.git</developerConnection>
 		<url>scm:git:git@github.com:jglobus/JGlobus.git</url>
-		<tag>dev</tag>
 	</scm>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>onejar-maven-plugin.googlecode.com</id>
-			<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
-		</pluginRepository>
-	</pluginRepositories>
-	<distributionManagement>
-		<repository>
-			<id>globus.release.repository</id>
-			<url>http://repo.globus.org/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>globus.snapshot.repository</id>
-			<url>http://repo.globus.org/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
+
+	<!-- Sonatype repo integration -->
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 	<build>
 		<plugins>
 			<plugin>
