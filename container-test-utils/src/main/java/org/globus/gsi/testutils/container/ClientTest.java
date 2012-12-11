@@ -25,7 +25,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.globus.gsi.jsse.SSLConfigurator;
 import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
-import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
+import org.globus.gsi.stores.Stores;
 import org.junit.Test;
 import static org.junit.Assert.fail;
 
@@ -82,10 +82,7 @@ public abstract class ClientTest {
 		config.setTrustAnchorStorePassword("password");
 		config.setTrustAnchorStoreType(GlobusProvider.KEYSTORE_TYPE);
 
-		ResourceSigningPolicyStoreParameters policyParams = new ResourceSigningPolicyStoreParameters(
-				"classpath:/globus_ca.signing_policy");
-		ResourceSigningPolicyStore policyStore = new ResourceSigningPolicyStore(policyParams);
-
+		ResourceSigningPolicyStore policyStore = Stores.getSigningPolicyStore("classpath:/globus_ca.signing_policy");
 		config.setPolicyStore(policyStore);
 		return config;
 	}

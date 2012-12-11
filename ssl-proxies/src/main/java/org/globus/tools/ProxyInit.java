@@ -20,14 +20,12 @@ import org.globus.gsi.util.ProxyCertificateUtil;
 
 import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
 
-import org.globus.gsi.stores.ResourceCertStoreParameters;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
-import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
+import org.globus.gsi.stores.Stores;
 
 import org.globus.gsi.X509ProxyCertPathParameters;
 
 import org.globus.gsi.provider.GlobusProvider;
-import org.globus.gsi.provider.KeyStoreParametersFactory;
 
 import java.security.Security;
 import java.util.HashMap;
@@ -167,13 +165,9 @@ public abstract class ProxyInit {
             });
         }
     
-        String caCertsLocation = "file:" + CoGProperties.getDefault().getCaCertLocations();
-        String crlPattern = caCertsLocation + "/*.r*";
-        String sigPolPattern = caCertsLocation + "/*.signing_policy";
-        KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-        CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
-        ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
-        keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsLocation));
+        KeyStore keyStore = Stores.getDefaultTrustStore();
+        CertStore crlStore = Stores.getDefaultCRLStore();
+        ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
         X509ProxyCertPathParameters parameters = new X509ProxyCertPathParameters(keyStore, crlStore, sigPolStore, false, handlers);
         X509ProxyCertPathValidator validator = new X509ProxyCertPathValidator();               
         validator.engineValidate(CertificateUtil.getCertPath(proxy.getCertificateChain()), parameters);     

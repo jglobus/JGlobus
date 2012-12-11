@@ -19,11 +19,14 @@ import org.globus.gsi.util.KeyStoreUtil;
 
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
 import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
+import org.globus.gsi.stores.Stores;
 
 import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.provider.KeyStoreParametersFactory;
 
 import javax.security.auth.x500.X500Principal;
+
+import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509CertSelector;
 import java.security.KeyStore;
@@ -83,11 +86,10 @@ public class TrustedCertificates implements Serializable {
      * certificates.
      */
     public static String SIGNING_POLICY_FILE_SUFFIX = ".signing_policy";
-    private static KeyStore ms_trustStore = null;
-//    private static CertStore ms_crlStore = null;
-    private static ResourceSigningPolicyStore ms_sigPolStore = null;
     
-
+    private static KeyStore ms_trustStore = null;
+    private static CertStore ms_crlStore = null;
+    private static ResourceSigningPolicyStore ms_sigPolStore = null;
     
     protected TrustedCertificates() {}
     
@@ -211,45 +213,6 @@ public class TrustedCertificates implements Serializable {
         }
     }
 
-    private static KeyStore getTrustStore(String caCertsLocation) throws  GeneralSecurityException, IOException
-    {
-        if(TrustedCertificates.ms_trustStore != null)
-            return TrustedCertificates.ms_trustStore;
-        
-        String caCertsPattern = caCertsLocation + "/*.0";
-        KeyStore keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-        keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(caCertsPattern));
-        
-        TrustedCertificates.ms_trustStore = keyStore;
-        
-        return keyStore;
-    }
-    
-//    private static CertStore getCRLStore(String caCertsLocation) throws GeneralSecurityException, NoSuchAlgorithmException
-//    {
-//        if(TrustedCertificates.ms_crlStore != null)
-//            return TrustedCertificates.ms_crlStore;
-//        
-//        String crlPattern = caCertsLocation + "/*.r*";
-//        CertStore crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null,crlPattern));
-//        
-//        TrustedCertificates.ms_crlStore = crlStore ;
-//        
-//        return crlStore;
-//    }
-    
-    private static ResourceSigningPolicyStore getSigPolStore(String caCertsLocation) throws GeneralSecurityException
-    {
-        if(TrustedCertificates.ms_sigPolStore != null)
-            return TrustedCertificates.ms_sigPolStore;
-        
-        String sigPolPattern = caCertsLocation + "/*.signing_policy";
-        ResourceSigningPolicyStore sigPolStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(sigPolPattern));
-        
-        TrustedCertificates.ms_sigPolStore = sigPolStore;
-        
-        return sigPolStore;
-    }
     public void refresh() {
         reload(null);
     }
@@ -281,11 +244,10 @@ public class TrustedCertificates implements Serializable {
 //                sigPolPattern = getPolicyFileName(caCertLocation);
 //            }
 
-            KeyStore trustStore = null;
             try {
-                trustStore = TrustedCertificates.getTrustStore(caCertLocation);
+                ms_trustStore = Stores.getTrustStore(caCertLocation + "/" + Stores.getDefaultCAFilesPattern());
                 
-                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(trustStore, new X509CertSelector());
+                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
@@ -295,10 +257,16 @@ public class TrustedCertificates implements Serializable {
             } catch (Exception e) {
                 logger.warn("Failed to create trust store",e);
             }
+            
+            try {
+				ms_sigPolStore = Stores.getSigningPolicyStore(caCertLocation + "/" + Stores.getDefaultSigningPolicyFilesPattern());
+			} catch (GeneralSecurityException e) {
+				logger.warn("Failed to create signing_policy store",e);
+			}
                 
             try {
-                ResourceSigningPolicyStore sigPolStore = TrustedCertificates.getSigPolStore(caCertLocation);
-                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(trustStore, new X509CertSelector());
+            	ms_sigPolStore = Stores.getSigningPolicyStore(caCertLocation+ "/" + Stores.getDefaultSigningPolicyFilesPattern());
+                Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
@@ -308,7 +276,7 @@ public class TrustedCertificates implements Serializable {
                     }
                     SigningPolicy policy;
                     try {
-                        policy = sigPolStore.getSigningPolicy(principal);
+                        policy = ms_sigPolStore.getSigningPolicy(principal);
                     } catch (Exception e) {
                         if (!invalidPolicies.contains(principal)) {
                             logger.warn("Invalid signing policy for CA certificate; skipping");
@@ -390,7 +358,19 @@ public class TrustedCertificates implements Serializable {
         return trustedCertificates;
     }
     
-    private static class DefaultTrustedCertificates 
+    public static KeyStore getTrustStore() {
+		return ms_trustStore;
+	}
+
+	public static CertStore getcrlStore() {
+		return ms_crlStore;
+	}
+
+	public static ResourceSigningPolicyStore getsigPolStore() {
+		return ms_sigPolStore;
+	}
+
+	private static class DefaultTrustedCertificates 
         extends TrustedCertificates {
         
         public void refresh() {

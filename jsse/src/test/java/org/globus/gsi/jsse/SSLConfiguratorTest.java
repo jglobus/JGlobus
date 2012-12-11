@@ -36,7 +36,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
-import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
+import org.globus.gsi.stores.Stores;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,10 +67,7 @@ public class SSLConfiguratorTest {
 		config.setTrustAnchorStorePassword("password");
 		config.setTrustAnchorStoreType(GlobusProvider.KEYSTORE_TYPE);
 
-		ResourceSigningPolicyStoreParameters policyParams = new ResourceSigningPolicyStoreParameters(
-				"classpath:/configuratorTest/TestCA1.signing_policy");
-		ResourceSigningPolicyStore policyStore = new ResourceSigningPolicyStore(
-				policyParams);
+		ResourceSigningPolicyStore policyStore = Stores.getSigningPolicyStore("classpath:/configuratorTest/TestCA1.signing_policy");
 
 		config.setPolicyStore(policyStore);
 
