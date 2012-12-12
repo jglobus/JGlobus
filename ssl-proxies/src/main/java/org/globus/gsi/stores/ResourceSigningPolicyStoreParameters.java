@@ -24,7 +24,10 @@ import org.globus.gsi.provider.SigningPolicyStoreParameters;
 public class ResourceSigningPolicyStoreParameters implements SigningPolicyStoreParameters {
 
     private String locations;
-
+    
+    /**
+     * Please use the {@link Stores} class to generate Key/Cert stores
+     */
     public ResourceSigningPolicyStoreParameters(String locations) {
         if (locations == null) {
             throw new IllegalArgumentException();

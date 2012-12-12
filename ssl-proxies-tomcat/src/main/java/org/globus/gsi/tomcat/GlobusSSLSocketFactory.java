@@ -22,7 +22,8 @@ import org.globus.gsi.provider.GlobusProvider;
 import org.globus.gsi.trustmanager.PKITrustManager;
 import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
-import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
+import org.globus.gsi.stores.Stores;
+
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.TrustManager;
 import java.io.IOException;
@@ -69,8 +70,7 @@ public class GlobusSSLSocketFactory extends JSSESocketFactory {
         Object signingPolicyLocation = attributes.get("signingPolicyLocation");
         ResourceSigningPolicyStore policyStore = null;
         if (signingPolicyLocation != null) {
-            policyStore = new ResourceSigningPolicyStore(
-                    new ResourceSigningPolicyStoreParameters(attributes.get("signingPolicyLocation").toString()));
+            policyStore = Stores.getSigningPolicyStore((String) attributes.get("signingPolicyLocation"));
         }
         Object rejectLimitedProxyEntry = attributes.get("rejectLimitedProxy");
 

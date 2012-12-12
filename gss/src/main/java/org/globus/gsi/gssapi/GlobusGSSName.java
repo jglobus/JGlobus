@@ -70,11 +70,11 @@ public class GlobusGSSName implements GSSName, Serializable {
         }
         
         protected void enforceConstraints() {
-            if(oldest + duration > System.currentTimeMillis()) {
+            if(oldest + duration < System.currentTimeMillis()) {
                 long newOldest = System.currentTimeMillis();
                 List<String> toClear = new LinkedList<String>();
                 for(Map.Entry<String, MapEntry> e: cache.entrySet()) {
-                    if(e.getValue().inserted + duration > System.currentTimeMillis()) toClear.add(e.getKey());
+                    if(e.getValue().inserted + duration < System.currentTimeMillis()) toClear.add(e.getKey());
                     else if(e.getValue().inserted < newOldest) newOldest = e.getValue().inserted;
                 }
                 for(String k: toClear) cache.remove(k);

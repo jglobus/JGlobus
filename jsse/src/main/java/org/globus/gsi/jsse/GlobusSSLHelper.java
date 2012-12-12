@@ -16,8 +16,8 @@ package org.globus.gsi.jsse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.globus.gsi.provider.GlobusProvider;
-import org.globus.gsi.stores.ResourceCertStoreParameters;
+import org.globus.gsi.stores.Stores;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -181,14 +182,15 @@ public final class GlobusSSLHelper {
 	 */
 	public static CertStore findCRLStore(String crlPattern)
 			throws GlobusSSLConfigurationException {
-		ResourceCertStoreParameters crlStoreParams = new ResourceCertStoreParameters(
-				null, crlPattern);
 		try {
-			return CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE,
-					crlStoreParams);
+			return Stores.getCRLStore(crlPattern);
 		} catch (InvalidAlgorithmParameterException e) {
 			throw new GlobusSSLConfigurationException(e);
 		} catch (NoSuchAlgorithmException e) {
+			Log logger = LogFactory.getLog(GlobusSSLHelper.class.getCanonicalName());
+			logger.warn("Error Loading CRL store", e);
+			throw new GlobusSSLConfigurationException(e);
+		} catch (GeneralSecurityException e) {
 			Log logger = LogFactory.getLog(GlobusSSLHelper.class.getCanonicalName());
 			logger.warn("Error Loading CRL store", e);
 			throw new GlobusSSLConfigurationException(e);
