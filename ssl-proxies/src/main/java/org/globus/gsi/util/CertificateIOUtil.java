@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
@@ -77,7 +76,7 @@ public final class CertificateIOUtil {
      * @param subjectDN
      * @return hash for certificate names
      */
-    public static String nameHash(Principal subjectDN) {
+    public static String nameHash(X500Principal subjectDN) {
         try {
             return hash(encodePrincipal(subjectDN));
         } catch (Exception e) {
@@ -86,21 +85,30 @@ public final class CertificateIOUtil {
         }
     }
 
-    public static byte[] encodePrincipal(Principal subject) throws IOException {
-        if (subject instanceof X500Principal) {
-            return ((X500Principal) subject).getEncoded();
-            //} else if (subject instanceof X500Name) {
-            //    return ((X500Name)subject).getEncoded();
-        } else if (subject instanceof X509Name) {
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            DEROutputStream der = new DEROutputStream(bout);
-            X509Name nm = (X509Name) subject;
-            der.writeObject(nm.getDERObject());
-            return bout.toByteArray();
-        } else {
-            throw new ClassCastException("unsupported input class: "
-                    + subject.getClass().toString());
+    /**
+     * Returns equivalent of: openssl x509 -in "cert-file" -hash -noout
+     *
+     * @param subjectDN
+     * @return hash for certificate names
+     */
+    public static String nameHash(X509Name subjectDN) {
+        try {
+            return hash(encodePrincipal(subjectDN));
+        } catch (Exception e) {
+            logger.error("", e);
+            return null;
         }
+    }
+
+    public static byte[] encodePrincipal(X500Principal subject) throws IOException {
+        return subject.getEncoded();
+    }
+
+    public static byte[] encodePrincipal(X509Name subject) throws IOException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        DEROutputStream der = new DEROutputStream(bout);
+        der.writeObject(subject.getDERObject());
+        return bout.toByteArray();
     }
 
     private static String hash(byte[] data) {
