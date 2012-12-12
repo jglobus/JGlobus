@@ -465,7 +465,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 				String alias = trustAnchor.getResourceURL().toExternalForm();
 				TrustAnchor tmpTrustAnchor = trustAnchor.getTrustAnchor();
 				X509Certificate trustCert = tmpTrustAnchor.getTrustedCert();
-                String hash = CertificateIOUtil.nameHash(trustCert.getSubjectDN());
+                String hash = CertificateIOUtil.nameHash(trustCert.getSubjectX500Principal());
                 if (this.aliasObjectMap == null) {
                     System.out.println("Alias Map Null");
                 }
