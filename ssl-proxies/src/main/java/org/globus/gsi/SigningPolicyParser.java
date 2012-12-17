@@ -282,7 +282,7 @@ public class SigningPolicyParser {
         if (line.startsWith(ACCESS_ID_CA)) {
             outCaDN = getCA(line.substring(ACCESS_ID_CA.length(),
                     line.length()));
-            logger.debug("CA DN is " + caDN);
+            logger.debug("CA DN is " + outCaDN);
         }
         return outCaDN;
     }
