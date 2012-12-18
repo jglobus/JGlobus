@@ -130,8 +130,8 @@ public class MyProxy  {
     /** The default MyProxy server port (7512). */
     public static final int DEFAULT_PORT = 7512;
 
-    /** The default key size (1024 bits). */
-    public static final int DEFAULT_KEYBITS = 1024;
+    /** The default key size (2048 bits). */
+    public static final int DEFAULT_KEYBITS = 2048;
 
     /** The integer command number for the MyProxy 'Get' command (0). */
     public static final int GET_PROXY       = 0;
