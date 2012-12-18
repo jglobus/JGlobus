@@ -85,10 +85,10 @@ public class InitParams
         buf.append(super.makeRequest(includePassword));
         
         add(buf, RETRIEVER, retriever);
+        add(buf, CRED_RETRIEVER_TRUSTED, trusted_retriever);
         add(buf, RENEWER, renewer);
         add(buf, CRED_NAME, credentialName);
         add(buf, CRED_DESC, credentialDescription);
-        add(buf, TRUSTED_RETRIEVER, trusted_retriever);
         
         return buf.toString();
     }
