@@ -117,7 +117,7 @@ public class SigningPolicyParser {
     public Map<X500Principal, SigningPolicy> parse(String fileName)
             throws FileNotFoundException, SigningPolicyException {
 
-        if ((fileName == null) || (fileName.trim().equals(""))) {
+        if ((fileName == null) || (fileName.trim().isEmpty())) {
             throw new IllegalArgumentException();
         }
 
@@ -342,7 +342,7 @@ public class SigningPolicyParser {
         String trimmedLine = line.trim();
 
         // if line is empty or comment character, skip it.
-        if (trimmedLine.equals("") || trimmedLine.startsWith("#")) {
+        if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
             return false;
         }
 
@@ -400,7 +400,7 @@ public class SigningPolicyParser {
             value = value.substring(startIndex, endIndex);
             value = value.trim();
 
-            if (value.equals("")) {
+            if (value.isEmpty()) {
                 String err = "empty subjects";
                 //i18n.getMessage("emptySubjects", lineForErr);
                 throw new SigningPolicyException(err);
