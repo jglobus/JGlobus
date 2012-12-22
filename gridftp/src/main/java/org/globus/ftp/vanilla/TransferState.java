@@ -81,7 +81,7 @@ public class TransferState {
 	       ClientException,
 	       IOException {
         try {
-            while(!isDone()) {
+            while(!isDone() && !hasError()) {
                 wait();
             }
         } catch(InterruptedException e) {
