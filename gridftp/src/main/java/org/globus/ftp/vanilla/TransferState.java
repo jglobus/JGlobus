@@ -72,11 +72,15 @@ public class TransferState {
         return this.transferDone >= 2;
     }
 
+    public synchronized boolean isStarted() {
+        return this.transferStarted >= 2;
+    }
+
     /**
      * Blocks until the transfer is complete or 
      * the transfer fails.
      */
-    public synchronized void waitForEnd() 
+    public void waitForEnd()
 	throws ServerException,
 	       ClientException,
 	       IOException {
@@ -87,29 +91,25 @@ public class TransferState {
         } catch(InterruptedException e) {
             // break
         }
-	checkError();
+	    checkError();
     }
 
     /**
      * Blocks until the transfer begins or
      * the transfer fails to start.
      */
-    public synchronized void waitForStart() 
+    public void waitForStart()
 	throws ServerException,
 	       ClientException,
 	       IOException {
-	if (this.transferStarted >= 2) {
+	    try {
+	        while(!isStarted() && !hasError()) {
+		        wait();
+	        }
+	    } catch(InterruptedException e) {
+            // break
+	    }
 	    checkError();
-	    return;
-	}
-	try {
-	    while(this.transferStarted != 2 &&
-		  this.transferException == null) {
-		wait();
-	    } 
-	} catch(Exception e) {
-	}
-	checkError();
     }
     
     public synchronized boolean hasError() {
