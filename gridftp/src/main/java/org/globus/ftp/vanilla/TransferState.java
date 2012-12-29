@@ -80,7 +80,7 @@ public class TransferState {
      * Blocks until the transfer is complete or 
      * the transfer fails.
      */
-    public void waitForEnd()
+    public synchronized void waitForEnd()
 	throws ServerException,
 	       ClientException,
 	       IOException {
@@ -98,7 +98,7 @@ public class TransferState {
      * Blocks until the transfer begins or
      * the transfer fails to start.
      */
-    public void waitForStart()
+    public synchronized void waitForStart()
 	throws ServerException,
 	       ClientException,
 	       IOException {
