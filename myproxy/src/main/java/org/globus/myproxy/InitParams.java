@@ -25,6 +25,7 @@ public class InitParams
     private String renewer;
     private String credentialName;
     private String credentialDescription;
+    private String trusted_retriever;
 
     public InitParams() {
         super(MyProxy.PUT_PROXY);
@@ -61,6 +62,14 @@ public class InitParams
     public String getRenewer() {
         return this.renewer;
     }
+    
+    public void setTrustedRetriever(String trusted_retriever) {
+        this.trusted_retriever = trusted_retriever;
+    }
+
+    public String getTrustedRetriever() {
+        return this.trusted_retriever;
+    }
 
     /**
      * If the passpharse is not set returns
@@ -76,6 +85,7 @@ public class InitParams
         buf.append(super.makeRequest(includePassword));
         
         add(buf, RETRIEVER, retriever);
+        add(buf, CRED_RETRIEVER_TRUSTED, trusted_retriever);
         add(buf, RENEWER, renewer);
         add(buf, CRED_NAME, credentialName);
         add(buf, CRED_DESC, credentialDescription);

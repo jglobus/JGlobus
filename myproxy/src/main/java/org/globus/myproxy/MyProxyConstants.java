@@ -29,18 +29,19 @@ public interface MyProxyConstants {
         credentials from the server.  */
     public static final int DEFAULT_LIFETIME            = 12 * 3600;
 
-    static final String VERSION    = "VERSION=" + MYPROXY_PROTOCOL_VERSION;
-    static final String COMMAND    = "COMMAND=";
-    static final String USERNAME   = "USERNAME=";
-    static final String PASSPHRASE = "PASSPHRASE=";
-    static final String LIFETIME   = "LIFETIME=";
-    static final String CRED_NAME  = "CRED_NAME=";
-    static final String TRUSTROOTS = "TRUSTED_CERTS=";
-    static final String RETRIEVER  = "RETRIEVER=";
-    static final String RENEWER    = "RENEWER=";
-    static final String CRED_DESC  = "CRED_DESC=";
-    static final String NEW_PHRASE = "NEW_PHRASE=";
-    static final String CRLF       = "\n";
-    static final String VONAME     = "VONAME=";
-    static final String VOMSES     = "VOMSES=";
+    static final String VERSION                = "VERSION=" + MYPROXY_PROTOCOL_VERSION;
+    static final String COMMAND                = "COMMAND=";
+    static final String USERNAME               = "USERNAME=";
+    static final String PASSPHRASE             = "PASSPHRASE=";
+    static final String LIFETIME               = "LIFETIME=";
+    static final String CRED_NAME              = "CRED_NAME=";
+    static final String TRUSTROOTS             = "TRUSTED_CERTS=";
+    static final String RETRIEVER              = "RETRIEVER=";
+    static final String CRED_RETRIEVER_TRUSTED = "CRED_RETRIEVER_TRUSTED=";
+    static final String RENEWER                = "RENEWER=";
+    static final String CRED_DESC              = "CRED_DESC=";
+    static final String NEW_PHRASE             = "NEW_PHRASE=";
+    static final String CRLF                   = "\n";
+    static final String VONAME                 = "VONAME=";
+    static final String VOMSES                 = "VOMSES=";
 }
