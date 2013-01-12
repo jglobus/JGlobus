@@ -89,6 +89,7 @@ public class SocketFactory {
 
             try {
                 socket = new Socket(address, port, localAddr, localPort);
+                socket.setSoTimeout(CoGProperties.getDefault().getSocketTimeout());
                 this.portRange.setUsed(localPort);
                 return socket;
             } catch(BindException e) {
