@@ -259,6 +259,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     /** Limited peer credentials */
     protected Boolean peerLimited = null;
 
+    private String[] bannedCiphers = new String[0];
+
     /**
      * @param target expected target name. Can be null.
      * @param cred credential. Cannot be null. Might be anonymous.
@@ -1321,6 +1323,7 @@ done:      do {
                cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
             }
         }
+        cs.removeAll(Arrays.asList(bannedCiphers));
         String[] testSuite = new String[0];
         this.sslEngine.setEnabledCipherSuites(cs.toArray(testSuite));
         logger.debug("CIPHER SUITE IS: " + Arrays.toString(
@@ -2699,6 +2702,12 @@ done:      do {
         
         return null;
     }
+
+    public void setBannedCiphers(String[] ciphers) {
+        bannedCiphers = new String[ciphers.length];
+        System.arraycopy(ciphers, 0, bannedCiphers, 0, ciphers.length);
+    }
+
 
 
     // ==================================================================
