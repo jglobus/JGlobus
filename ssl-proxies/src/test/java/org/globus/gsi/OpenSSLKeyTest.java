@@ -15,6 +15,12 @@
 
 package org.globus.gsi;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -81,4 +87,78 @@ public class OpenSSLKeyTest {
 	// public void testNullAlgo() throws Exception{
 	// new BouncyCastleOpenSSLKey(null, new byte[]{});
 	// }
+
+
+        @Test
+        public void testEqualsNull() throws Exception
+        {
+		OpenSSLKey key =
+                        new BouncyCastleOpenSSLKey(file.getAbsoluteFilename());
+                assertThat(key, not(equalTo(null)));
+        }
+
+        @Test
+        public void testEqualsReflexive() throws Exception
+        {
+		OpenSSLKey key =
+                        new BouncyCastleOpenSSLKey(file.getAbsoluteFilename());
+
+                assertThat(key, equalTo(key));
+        }
+
+        @Test
+        public void testEqualsSymmetricForEqualKeys() throws Exception
+        {
+                OpenSSLKey key1 =
+                        new BouncyCastleOpenSSLKey(file.getAbsoluteFilename());
+                OpenSSLKey key2 =
+                        new BouncyCastleOpenSSLKey(file.getAbsoluteFilename());
+
+                assertThat(key2, equalTo(key1));
+                assertThat(key1, equalTo(key2));
+        }
+
+        @Test
+        public void testEqualsForKeysDifferingByEncrypted() throws Exception
+        {
+                OpenSSLKey key1 =
+                        new BouncyCastleOpenSSLKey(file.getAbsoluteFilename());
+                OpenSSLKey key2 =
+                        new BouncyCastleOpenSSLKey(file.getAbsoluteFilename());
+                key2.encrypt("too many secrets");
+
+                assertThat(key2, not(equalTo(key1)));
+        }
+
+
+        @Test
+        public void testSerializableUnencrypted() throws Exception {
+		OpenSSLKey key =
+                        new BouncyCastleOpenSSLKey(file.getAbsoluteFilename());
+                OpenSSLKey copy = serialiseAndDeserialise(key);
+
+                assertThat(copy, equalTo(key));
+        }
+
+
+        @Test
+        public void testSerializableEncrypted() throws Exception {
+		OpenSSLKey key =
+                        new BouncyCastleOpenSSLKey(file.getAbsoluteFilename());
+                key.encrypt("too many secrets");
+                OpenSSLKey copy = serialiseAndDeserialise(key);
+
+                assertThat(copy, equalTo(key));
+        }
+
+
+        private OpenSSLKey serialiseAndDeserialise(OpenSSLKey key) throws IOException, ClassNotFoundException {
+                ByteArrayOutputStream storage = new ByteArrayOutputStream();
+                new ObjectOutputStream(storage).writeObject(key);
+                byte[] data = storage.toByteArray();
+
+                ObjectInputStream in =
+                        new ObjectInputStream(new ByteArrayInputStream(data));
+                return (OpenSSLKey) in.readObject();
+        }
 }

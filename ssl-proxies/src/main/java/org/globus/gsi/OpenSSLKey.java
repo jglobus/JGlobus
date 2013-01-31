@@ -25,9 +25,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.Writer;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -35,11 +38,13 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import org.bouncycastle.util.Arrays;
 
 import org.bouncycastle.util.encoders.Base64;
 
@@ -52,7 +57,7 @@ import org.bouncycastle.util.encoders.Base64;
  * @version ${version}
  * @since 1.0
  */
-public abstract class OpenSSLKey {
+public abstract class OpenSSLKey implements Serializable {
 
     private static final String HEADER = "-----BEGIN RSA PRIVATE KEY-----";
 
@@ -64,7 +69,8 @@ public abstract class OpenSSLKey {
     // base64 encoded key value
     private byte[] encodedKey;
     private PrivateKey intKey;
-    private IvParameterSpec initializationVector;
+    private byte[] ivData;
+    private transient IvParameterSpec initializationVector;
 
     /*
      * String representation of the encryption algorithm:
@@ -296,8 +302,8 @@ public abstract class OpenSSLKey {
             setEncryptionAlgorithm("DES-EDE3-CBC");
         }
 
-        if (this.initializationVector == null) {
-            this.initializationVector = generateIV();
+        if (this.ivData == null) {
+            generateIV();
         }
 
         Key key = getSecretKey(password, this.initializationVector.getIV());
@@ -466,14 +472,19 @@ public abstract class OpenSSLKey {
         for (int j = 0; j < len; j++) {
             ivBytes[j] = (byte) Integer.parseInt(s.substring(j * 2, j * 2 + 2), 16);
         }
-        this.initializationVector = new IvParameterSpec(ivBytes);
+        setIV(ivBytes);
     }
 
-    private IvParameterSpec generateIV() {
+    private void generateIV() {
         byte[] b = new byte[this.ivLength];
         SecureRandom sr = new SecureRandom(); //.getInstance("PRNG");
         sr.nextBytes(b);
-        return new IvParameterSpec(b);
+        setIV(b);
+    }
+
+    private void setIV(byte[] data) {
+        ivData = data;
+        initializationVector = new IvParameterSpec(data);
     }
 
     private SecretKeySpec getSecretKey(byte[] pwd, byte[] keyInitializationVector) throws GeneralSecurityException {
@@ -548,4 +559,45 @@ public abstract class OpenSSLKey {
         return new String(out.toByteArray());
     }
 
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        s.defaultReadObject();
+
+        if(ivData != null) {
+            initializationVector = new IvParameterSpec(ivData);
+        }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if(other == this) {
+            return true;
+        }
+
+        if(!(other instanceof OpenSSLKey)) {
+            return false;
+        }
+
+        OpenSSLKey otherKey = (OpenSSLKey) other;
+
+        return this.isEncrypted == otherKey.isEncrypted &&
+                Objects.equals(this.keyAlg, otherKey.keyAlg) &&
+                Arrays.areEqual(this.encodedKey, otherKey.encodedKey) &&
+                Objects.equals(this.intKey, otherKey.intKey) &&
+                Arrays.areEqual(this.ivData, otherKey.ivData) &&
+                Objects.equals(this.encAlgStr, otherKey.encAlgStr) &&
+                Objects.equals(this.encAlg, otherKey.encAlg) &&
+                Arrays.areEqual(this.keyData, otherKey.keyData);
+    }
+
+    @Override
+    public int hashCode() {
+        return (isEncrypted ? 1 : 0) ^
+                (keyAlg == null ? 0 : keyAlg.hashCode()) ^
+                (encodedKey == null ? 0 : encodedKey.hashCode()) ^
+                (intKey == null ? 0 : intKey.hashCode()) ^
+                (ivData == null ? 0 : ivData.hashCode()) ^
+                (encAlgStr == null ? 0 : encAlgStr.hashCode()) ^
+                (encAlg == null ? 0 : encAlg.hashCode()) ^
+                (keyData == null ? 0 : keyData.hashCode());
+    }
 }

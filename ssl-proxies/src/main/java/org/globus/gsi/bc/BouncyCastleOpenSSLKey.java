@@ -45,6 +45,7 @@ import org.globus.gsi.OpenSSLKey;
  * @since 1.0
  */
 public class BouncyCastleOpenSSLKey extends OpenSSLKey {
+	private static final long serialVersionUID = 1L;
 	private Log logger = LogFactory.getLog(getClass().getCanonicalName());
 
 	static {
