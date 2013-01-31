@@ -14,9 +14,21 @@
  */
 package org.globus.gsi.gssapi.test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
 
 import java.security.cert.X509Certificate;
+import java.util.Date;
+import javax.security.auth.x500.X500Principal;
 
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.GSSCredential;
@@ -31,16 +43,35 @@ import org.globus.gsi.gssapi.GSSConstants;
 
 import junit.framework.TestCase;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.globus.gsi.X509Credential;
 
 public class GlobusGSSCredentialTest extends TestCase {
 
-    ExtendedGSSManager manager;
-    private Log logger = LogFactory.getLog(GlobusGSSCredentialTest.class);
+    private static final X500Principal SELF_SIGNED_DN =
+                new X500Principal("DC=self-signed,DC=example,DC=org");
     
+    private ExtendedGSSManager manager;
+    private Log logger = LogFactory.getLog(GlobusGSSCredentialTest.class);
+    private X509V3CertificateGenerator certificateGenerator;
+    private KeyPairGenerator kpg;
+
+    @Override
     protected void setUp() throws Exception {
 	manager = new GlobusGSSManagerImpl();
+        kpg = KeyPairGenerator.getInstance("RSA");
+        certificateGenerator = new X509V3CertificateGenerator();
+        certificateGenerator.setIssuerDN(SELF_SIGNED_DN);
+        certificateGenerator.setSubjectDN(SELF_SIGNED_DN);
+        certificateGenerator.setNotBefore(new Date());
+        certificateGenerator.setNotAfter(new Date(System.currentTimeMillis()+1000*60));
+        certificateGenerator.setSerialNumber(BigInteger.ONE);
+        certificateGenerator.setSignatureAlgorithm("SHA1WithRSA");
     }
 
     public void testImportBadFile() throws Exception {
@@ -139,5 +170,91 @@ public class GlobusGSSCredentialTest extends TestCase {
 	assertTrue(tmp instanceof X509Certificate[]);
 	chain = (X509Certificate[])tmp;
 	assertTrue(chain.length > 0);
+    }
+
+    public void testSerialisation() throws Exception {
+        GSSCredential cred = manager.createCredential(GSSCredential.ACCEPT_ONLY);
+        GSSCredential copy = serialiseAndDeserialise(cred);
+        assertThat(copy, equalTo(cred));
+    }
+
+    public void testEqualsForNull() throws GSSException {
+        GSSCredential credential =
+                manager.createCredential(GSSCredential.ACCEPT_ONLY);
+        assertThat(credential, not(equalTo(null)));
+    }
+
+    public void testEqualsReflexive() throws GSSException {
+        GSSCredential credential =
+                manager.createCredential(GSSCredential.ACCEPT_ONLY);
+        assertThat(credential, equalTo(credential));
+    }
+
+    public void testEqualsForSameCredential() throws GSSException {
+        GSSCredential cred1 = manager.createCredential(GSSCredential.ACCEPT_ONLY);
+        GSSCredential cred2 = manager.createCredential(GSSCredential.ACCEPT_ONLY);
+        assertThat(cred1, equalTo(cred2));
+        assertThat(cred2, equalTo(cred1));
+    }
+
+    public void testEqualsForDifferentUsage() throws GSSException {
+        GSSCredential cred1 = manager.createCredential(GSSCredential.ACCEPT_ONLY);
+        GSSCredential cred2 = manager.createCredential(GSSCredential.DEFAULT_LIFETIME);
+        assertThat(cred1, not(equalTo(cred2)));
+        assertThat(cred2, not(equalTo(cred1)));
+    }
+    
+    public void testEqualsForEqualX509Credential() throws Exception {
+        X509Credential x509 = buildSelfSigned();
+        
+        GSSCredential cred1 =
+                buildCredential(x509, GSSCredential.DEFAULT_LIFETIME);
+        
+        GSSCredential cred2 =
+                buildCredential(x509, GSSCredential.DEFAULT_LIFETIME);
+        
+        assertThat(cred1, equalTo(cred2));
+        assertThat(cred2, equalTo(cred1));
+    }
+    
+    public void testEqualsForDifferentX509Credentials() throws Exception {
+        GSSCredential cred1 =
+                buildSelfSigned(GSSCredential.DEFAULT_LIFETIME);
+        GSSCredential cred2 =
+                buildSelfSigned(GSSCredential.DEFAULT_LIFETIME);
+
+        assertThat(cred1, not(equalTo(cred2)));
+        assertThat(cred2, not(equalTo(cred1)));
+    }
+    
+    private GSSCredential buildSelfSigned(int usage) throws GeneralSecurityException, GSSException {
+        return buildCredential(buildSelfSigned(), usage);
+    }
+
+    private GSSCredential buildCredential(X509Credential credential, int usage) throws GSSException {
+        X509Credential.setDefaultCredential(credential);
+        return manager.createCredential(usage);        
+    }
+
+    private X509Credential buildSelfSigned() throws GeneralSecurityException {
+        KeyPair kp = kpg.generateKeyPair();
+        PrivateKey privateKey = kp.getPrivate();
+        certificateGenerator.setPublicKey(kp.getPublic());
+        X509Certificate certificate = certificateGenerator.generate(privateKey);
+        X509Certificate[] certChain = new X509Certificate[]{certificate};
+        return new X509Credential(privateKey, certChain);
+    }
+
+    private GlobusGSSCredentialImpl serialiseAndDeserialise(GSSCredential credential) throws IOException, ClassNotFoundException {
+        if(!(credential instanceof GlobusGSSCredentialImpl)) {
+            throw new RuntimeException("credential not a GlobusGSSCredentialImpl");
+        }
+        ByteArrayOutputStream storage = new ByteArrayOutputStream();
+        new ObjectOutputStream(storage).writeObject(credential);
+        byte[] data = storage.toByteArray();
+
+        ObjectInputStream in =
+                new ObjectInputStream(new ByteArrayInputStream(data));
+        return (GlobusGSSCredentialImpl) in.readObject();
     }
 }

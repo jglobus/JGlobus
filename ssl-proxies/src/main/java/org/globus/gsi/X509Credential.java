@@ -50,11 +50,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
 import java.security.NoSuchAlgorithmException;
@@ -74,8 +76,9 @@ import org.globus.gsi.bc.BouncyCastleOpenSSLKey;
  */
 // COMMENT: Added methods from GlobusCredential
 // COMMENT: Do we need the getDefaultCred functionality?
-public class X509Credential {
+public class X509Credential implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     public static final int BUFFER_SIZE = Integer.MAX_VALUE;
     private static Log logger = LogFactory.getLog(X509Credential.class.getCanonicalName());
     private OpenSSLKey opensslKey;
@@ -688,4 +691,26 @@ public class X509Credential {
         }
     }
 
+    
+    @Override
+    public boolean equals(Object object) {
+        if(object == this) {
+            return true;
+        }
+        
+        if(!(object instanceof X509Credential)) {
+            return false;
+        }
+        
+        X509Credential other = (X509Credential) object;
+
+        return Arrays.equals(this.certChain, other.certChain) &&
+                this.opensslKey.equals(other.opensslKey);
+    }
+    
+    @Override
+    public int hashCode() {
+        return (certChain == null ? 0 : Arrays.hashCode(certChain)) ^
+                opensslKey.hashCode();
+    }
 }
