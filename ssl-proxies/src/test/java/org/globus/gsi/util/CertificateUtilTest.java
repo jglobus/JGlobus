@@ -14,6 +14,8 @@
  */
 package org.globus.gsi.util;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.globus.gsi.testutils.FileSetupUtil;
@@ -29,6 +31,8 @@ import java.security.cert.X509Certificate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.security.auth.x500.X500Principal;
 
 /**
  * FILL ME
@@ -197,6 +201,74 @@ public class CertificateUtilTest {
         }
 
         assertTrue(worked);
+    }
+
+    @Test
+    public void testToGlobusIdForString()
+    {
+        String dn =
+            CertificateUtil.toGlobusID("DC=org, DC=DOEGrids, OU=Certificate Authorities, CN=DOEGrids CA 1",  true);
+        assertThat(dn, is("/DC=org/DC=DOEGrids/OU=Certificate Authorities/CN=DOEGrids CA 1"));
+    }
+
+    @Test
+    public void testToGlobusIdForReverseString()
+    {
+        String dn =
+            CertificateUtil.toGlobusID("CN=DOEGrids CA 1, OU=Certificate Authorities, DC=DOEGrids, DC=org",  false);
+        assertThat(dn, is("/DC=org/DC=DOEGrids/OU=Certificate Authorities/CN=DOEGrids CA 1"));
+    }
+
+    @Test
+    public void testToGlobusIdForX500Principal()
+    {
+        String dn = CertificateUtil.toGlobusID(
+            new X500Principal("CN=DOEGrids CA 1, OU=Certificate Authorities, DC=DOEGrids, DC=org"));
+        assertThat(dn, is("/DC=org/DC=DOEGrids/OU=Certificate Authorities/CN=DOEGrids CA 1"));
+    }
+
+    @Test
+    public void testToPrincipal()
+    {
+        X500Principal principal =
+            CertificateUtil.toPrincipal("/DC=org/DC=DOEGrids/OU=Certificate Authorities/CN=DOEGrids CA 1");
+        assertThat(principal, is(new X500Principal(
+            "CN=DOEGrids CA 1, OU=Certificate Authorities, DC=DOEGrids, DC=org")));
+    }
+
+    @Test
+    public void testToPrincipalWithSlashInAttribute()
+    {
+        X500Principal principal =
+            CertificateUtil.toPrincipal("/DC=org/DC=DOEGrids/OU=Certificate / Authorities/CN=DOEGrids CA 1");
+        assertThat(principal, is(new X500Principal(
+            "CN=DOEGrids CA 1, OU=Certificate / Authorities, DC=DOEGrids, DC=org")));
+    }
+
+    @Test
+    public void testToPrincipalWithEmptyAttribute()
+    {
+        X500Principal principal =
+            CertificateUtil.toPrincipal("/DC=org/DC=DOEGrids//CN=DOEGrids CA 1");
+        assertThat(principal, is(new X500Principal(
+            "CN=DOEGrids CA 1, DC=DOEGrids, DC=org")));
+    }
+
+    @Test
+    public void testToPrincipalWithEmptyString()
+    {
+        X500Principal principal =
+            CertificateUtil.toPrincipal("");
+        assertThat(principal, is(new X500Principal("")));
+    }
+
+    @Test
+    public void testToPrincipalWithWhiteSpace()
+    {
+        X500Principal principal =
+            CertificateUtil.toPrincipal(" /DC=org/ DC=DOEGrids/OU=Certificate Authorities / CN=DOEGrids CA 1   ");
+        assertThat(principal, is(new X500Principal(
+            "CN=DOEGrids CA 1, OU=Certificate Authorities, DC=DOEGrids, DC=org")));
     }
 
     @After
