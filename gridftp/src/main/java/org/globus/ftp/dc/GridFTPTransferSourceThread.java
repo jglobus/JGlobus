@@ -75,11 +75,13 @@ public class GridFTPTransferSourceThread extends TransferSourceThread {
             // we're in stream mode or other non-eblock,
             // or it was indicated that socket should not be reused.
             logger.debug("shutdown; closing the socket");
-            writer.close();
-
-            // do not reuse the socket
-            pool.remove(socketBox);
-            socketBox.setSocket(null);
+            try {
+                writer.close();
+            } finally {
+                // do not reuse the socket
+                pool.remove(socketBox);
+                socketBox.setSocket(null);
+            }
         }
 
         // data sink is shared by all data channels,
