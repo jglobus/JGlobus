@@ -38,8 +38,9 @@ import java.security.Principal;
 
 import org.globus.gsi.bc.X509NameHelper;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.StringTokenizer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -466,22 +467,27 @@ public final class CertificateUtil {
             return null;
         }
 
-        StringTokenizer tokens = new StringTokenizer(dn, ",");
-        StringBuffer buf = new StringBuffer();
-        String token;
-        
-        while(tokens.hasMoreTokens()) {
-            token = tokens.nextToken().trim();
+        StringBuilder buf = new StringBuilder();
 
-            if (noreverse) {
-                buf.append("/");
-                buf.append(token);
-            } else {
-                buf.insert(0, token);
-                buf.insert(0, "/");
+        String[] tokens = dn.split(",");
+        if (noreverse) {
+            for (int i = 0; i < tokens.length; i++) {
+                String token = tokens[i].trim();
+                if (!token.isEmpty()) {
+                    buf.append("/");
+                    buf.append(token.trim());
+                }
+            }
+        } else {
+            for (int i = tokens.length - 1; i >= 0; i--) {
+                String token = tokens[i].trim();
+                if (!token.isEmpty()) {
+                    buf.append("/");
+                    buf.append(token.trim());
+                }
             }
         }
-        
+
         return buf.toString();
     }
 
@@ -519,15 +525,17 @@ public final class CertificateUtil {
 
         String dn = principal.getName();
 
-        StringTokenizer tokens = new StringTokenizer(dn, ",");
-        StringBuffer buf = new StringBuffer();
-        String token;
+        StringBuilder buf = new StringBuilder();
 
-        while (tokens.hasMoreTokens()) {
-            token = tokens.nextToken().trim();
-            buf.insert(0, token);
-            buf.insert(0, "/");
+        String[] tokens = dn.split(",");
+        for (int i = tokens.length - 1; i >= 0; i--) {
+            String token = tokens[i].trim();
+            if (!token.isEmpty()) {
+                buf.append("/");
+                buf.append(token);
+            }
         }
+
         return buf.toString();
     }
 
@@ -546,32 +554,32 @@ public final class CertificateUtil {
             return null;
         }
         String id = globusID.trim();
-        StringTokenizer tokens = new StringTokenizer(id, "/");
-        StringBuffer buf = new StringBuffer();
-        String token;
-        LinkedList<String> rdnList = new LinkedList<String>();
+        StringBuilder buf = new StringBuilder();
 
-        while (tokens.hasMoreTokens()) {
-            token = tokens.nextToken().trim();
+        if (!id.isEmpty()) {
+            String[] tokens = id.split("/");
+            Deque<String> rdnList = new ArrayDeque<String>(tokens.length);
 
-            if (token.contains("=")) {
-                // prepend an RDN type and at least part of its value
-                rdnList.addFirst(token);
-            } else {
-                // insert part of an RDN value that was mistakenly removed
-                // as a result of tokenizing on forward slash
-                rdnList.set(0, rdnList.get(0) + "/" + token);
+            for (String token: tokens) {
+                if (!token.trim().isEmpty()) {
+                    if (token.contains("=")) {
+                        // prepend an RDN type and at least part of its value
+                        rdnList.addFirst(token);
+                    } else {
+                        // insert part of an RDN value that was mistakenly removed
+                        // as a result of tokenizing on forward slash
+                        rdnList.addFirst(rdnList.removeFirst() + "/" + token);
+                    }
+                }
             }
-        }
 
-        for (String rdn : rdnList) {
-            buf.append(",");
-            buf.append(rdn);
-        }
+            for (String rdn : rdnList) {
+                buf.append(rdn.trim());
+                buf.append(",");
+            }
 
-        if (buf.length() > 0) {
             // delete extra comma
-            buf.deleteCharAt(0);
+            buf.deleteCharAt(buf.length() - 1);
         }
 
         String dn = buf.toString();
