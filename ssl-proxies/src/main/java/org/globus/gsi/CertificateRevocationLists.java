@@ -149,9 +149,9 @@ public class CertificateRevocationLists {
         public void refresh() {
              long now = System.currentTimeMillis();
              if (lastRefresh + lifetime <= now) {
-                 reload(getDefaultCRLLocations());
-             }
-         lastRefresh = now;
+		 reload(getDefaultCRLLocations());
+		 lastRefresh = now;
+	     }
         }
 
         private static synchronized String getDefaultCRLLocations() {
