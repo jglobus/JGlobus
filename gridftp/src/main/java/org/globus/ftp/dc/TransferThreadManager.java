@@ -88,17 +88,18 @@ public class TransferThreadManager {
             //this could be improved; for symmetry and performance,
             //make it a separate task class and pass to the taskThread
             for (int i = 0; i < connections; i++) {
-                
                 SocketBox sbox = socketPool.checkOut();
-                GridFTPDataChannel dc = new GridFTPDataChannel(gSession, sbox);
-                EBlockImageDCWriter writer = (EBlockImageDCWriter)dc.getDataChannelSink(context);
-                writer.setDataStream(sbox.getSocket().getOutputStream());
-                // close the socket
-                writer.close();
-                // do not reuse the socket
-                socketPool.remove(sbox);
-                sbox.setSocket(null);
-                
+                try {
+                    GridFTPDataChannel dc = new GridFTPDataChannel(gSession, sbox);
+                    EBlockImageDCWriter writer = (EBlockImageDCWriter)dc.getDataChannelSink(context);
+                    writer.setDataStream(sbox.getSocket().getOutputStream());
+                    // close the socket
+                    writer.close();
+                } finally {
+                    // do not reuse the socket
+                    socketPool.remove(sbox);
+                    sbox.setSocket(null);
+                }
             }
             
         } catch (Exception e) {

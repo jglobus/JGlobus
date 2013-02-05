@@ -71,21 +71,26 @@ public class GridFTPTransferSinkThread extends TransferSinkThread {
                 //the server indicated closing the connection.
                 //remove the useless socket.
                 logger.debug("shutdown; closing the socket");
-                reader.close();
-
-                // do not reuse the socket
-                pool.remove(socketBox);
-                socketBox.setSocket(null);
+                try {
+                    reader.close();
+                } finally {
+                    // do not reuse the socket
+                    pool.remove(socketBox);
+                    socketBox.setSocket(null);
+                }
             }
         } else {
             // we're in stream mode or other non-eblock,
             // close the socket to indicate end of read.
             logger.debug("shutdown; closing the socket");
-            reader.close();
+            try {
+                reader.close();
+            } finally {
+                // do not reuse the socket
+                pool.remove(socketBox);
+                socketBox.setSocket(null);
+            }
 
-            // do not reuse the socket
-            pool.remove(socketBox);
-            socketBox.setSocket(null);
         }
 
         // data sink is shared by all data channels,
