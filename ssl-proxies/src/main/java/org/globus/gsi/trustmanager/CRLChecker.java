@@ -125,11 +125,19 @@ public class CRLChecker implements CertificateChecker {
             // validate CRL
             verifyCRL(caCert, crl);
 
-            if (crl.isRevoked(cert)) {
-                throw new CertPathValidatorException(
-                        "Certificate " + cert.getSubjectDN() + " has been revoked");
-
-            }
+	    /* One would have thought that a CRL is immutable and thus
+             * thread safe, however inside the ASN1 parse tree we find
+             * LazyDERSequence. LazyDERSequence is parsed lazily and
+             * does so in a non-thread safe manner. One may very well
+             * classify this as a bouncy castle bug, but as a
+             * workaround synchronizing on the CRL solves the problem.
+             */
+	    synchronized (crl) {
+		if (crl.isRevoked(cert)) {
+		    throw new CertPathValidatorException(
+			"Certificate " + cert.getSubjectDN() + " has been revoked");
+		}
+	    }
         }
     }
 
