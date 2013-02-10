@@ -144,7 +144,8 @@ public class TransferMonitor implements Runnable {
           
                     logger.debug("reading next reply");
                     this.controlChannel.waitFor(aborted,
-                                                ioDelay);                   
+                                                ioDelay,
+                                                maxWait);
                     logger.debug("got next reply");
                     Reply nextReply = controlChannel.read();
 
