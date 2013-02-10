@@ -650,7 +650,7 @@ public class CoGProperties extends Properties {
             }
         }
         if (timeoutInt == -1) { // Didn't find any property at all
-            timeoutInt = 30 * 1000;
+            timeoutInt = 120 * 1000;
         }
         return timeoutInt;
     }
