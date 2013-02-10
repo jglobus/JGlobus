@@ -502,14 +502,14 @@ public class FTPServerFacade {
                 if (aborted.flag) {
                     throw new InterruptedException();
                 }
-                logger.debug("slept " + i);
-                Thread.sleep(ioDelay);
-                i += ioDelay;
-                if (maxWait != WAIT_FOREVER 
-                    && i >= maxWait) {
+                if (maxWait != WAIT_FOREVER
+                        && i >= maxWait) {
                     logger.debug("timeout");
-                    throw new ServerException(ServerException.REPLY_TIMEOUT);
+                    throw new ServerException(ServerException.REPLY_TIMEOUT, "Max wait was " + maxWait + " and ioDelay " + ioDelay);
                 }
+                Thread.sleep(ioDelay);
+                logger.debug("slept " + i);
+                i += ioDelay;
             }
             logger.debug("local control channel ready");
         }
