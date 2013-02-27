@@ -843,6 +843,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         } catch (SSLException e) {
             if (e.toString().endsWith("bad record MAC"))
                 throw new GlobusGSSException(GSSException.BAD_MIC, e);
+            else if (e.toString().endsWith("ciphertext sanity check failed"))
+                throw new GlobusGSSException(GSSException.DEFECTIVE_TOKEN, e);
             else
                 throw new GlobusGSSException(GSSException.FAILURE, e);
 	} catch (Exception e) {
