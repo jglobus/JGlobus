@@ -119,9 +119,10 @@ public class GSIHttpURLConnection extends GSIURLConnection {
         ((GssSocket)socket).setAuthorization(authorization);
     }
     
-    public void disconnect() {
+    public synchronized void disconnect() {
         if (socket != null) {
             try { socket.close(); } catch (Exception e) {}
+            socket = null;
         }
     }
 
