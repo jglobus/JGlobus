@@ -17,7 +17,7 @@ package org.globus.axis.transport.commons;
 
 import org.apache.commons.httpclient.HostConfiguration;
 
-public class ExtendedHostConfiguration extends HostConfiguration {
+public class ExtendedHostConfiguration extends HostConfiguration  implements Cloneable{
         
     private String [] paramList;
     
