@@ -251,7 +251,7 @@ public class TrustedCertificates implements Serializable {
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
-                    if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString()));
+                    if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString()))
                         newCertSubjectDNMap.put(cert.getSubjectDN().toString(), cert);
                 }
             } catch (Exception e) {
