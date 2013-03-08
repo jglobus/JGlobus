@@ -40,11 +40,11 @@ import org.apache.commons.logging.LogFactory;
  * @deprecated
  */
 public class CertificateRevocationLists {
-    
+
     static {
         new ProviderLoader();
     }
-    
+
     private static Log logger =
         LogFactory.getLog(CertificateRevocationLists.class.getName());
 
@@ -53,7 +53,7 @@ public class CertificateRevocationLists {
     // the default crl locations list derived from prevCaCertLocations
     private static String defaultCrlLocations = null;
     private static CertificateRevocationLists defaultCrl  = null;
-    
+
     private Map crlIssuerDNMap;
 
     private CertificateRevocationLists() {}
@@ -85,9 +85,9 @@ public class CertificateRevocationLists {
 
         StringTokenizer tokens = new StringTokenizer(locations, ",");
         Map newCrlIssuerDNMap = new HashMap();
-        
+
         while(tokens.hasMoreTokens()) {
-            
+
             try {
               String location = tokens.nextToken().toString().trim();
               CertStore tmp = Stores.getCRLStore("file:" + location + "/*.r*");
@@ -98,28 +98,28 @@ public class CertificateRevocationLists {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }        
-        this.crlIssuerDNMap = newCrlIssuerDNMap;        
+        }
+        this.crlIssuerDNMap = newCrlIssuerDNMap;
     }
 
-    
-    public static CertificateRevocationLists 
+
+    public static CertificateRevocationLists
         getCertificateRevocationLists(String locations) {
         CertificateRevocationLists crl = new CertificateRevocationLists();
         crl.reload(locations);
         return crl;
     }
 
-    public static synchronized 
+    public static synchronized
         CertificateRevocationLists getDefaultCertificateRevocationLists() {
         return getDefault();
     }
-    
-    public static void 
+
+    public static void
         setDefaultCertificateRevocationList(CertificateRevocationLists crl) {
         defaultCrl = crl;
     }
-    
+
     public static synchronized CertificateRevocationLists getDefault() {
         if (defaultCrl == null) {
             defaultCrl = new DefaultCertificateRevocationLists();
@@ -136,7 +136,7 @@ public class CertificateRevocationLists {
         }
     }
 
-    private static class DefaultCertificateRevocationLists 
+    private static class DefaultCertificateRevocationLists
         extends CertificateRevocationLists {
 
          private final long lifetime;
@@ -145,23 +145,23 @@ public class CertificateRevocationLists {
          public DefaultCertificateRevocationLists() {
              lifetime = CoGProperties.getDefault().getCRLCacheLifetime();
          }
- 
+
         public void refresh() {
              long now = System.currentTimeMillis();
              if (lastRefresh + lifetime <= now) {
                  reload(getDefaultCRLLocations());
+                 lastRefresh = now;
              }
-         lastRefresh = now;
         }
 
         private static synchronized String getDefaultCRLLocations() {
-            String caCertLocations = 
+            String caCertLocations =
                 CoGProperties.getDefault().getCaCertLocations();
-            
-            if (prevCaCertLocations == null || 
+
+            if (prevCaCertLocations == null ||
                 !prevCaCertLocations.equals(caCertLocations)) {
-                
-                if (caCertLocations == null) { 
+
+                if (caCertLocations == null) {
                     logger.debug("No CA cert locations specified");
                     prevCaCertLocations = null;
                     defaultCrlLocations = null;
@@ -170,7 +170,7 @@ public class CertificateRevocationLists {
                     File crlFile = null;
                     LinkedList crlDirs = new LinkedList();
                     while(tokens.hasMoreTokens()) {
-                        String crlFileName = 
+                        String crlFileName =
                             tokens.nextToken().toString().trim();
                         crlFile = new File(crlFileName);
                         if (crlFile.isDirectory()) {
@@ -182,25 +182,25 @@ public class CertificateRevocationLists {
                             // skip other types
                             continue;
                         }
-                        
+
                         // don't add directories twice
-                        if (crlFileName != null && 
+                        if (crlFileName != null &&
                             !crlDirs.contains(crlFileName)) {
                             crlDirs.add(crlFileName);
                         }
                     }
-                    
+
                     ListIterator iterator = crlDirs.listIterator(0);
                     String locations = null;
                     while (iterator.hasNext()) {
                         if (locations == null) {
                             locations = (String)iterator.next();
                         } else {
-                            locations = locations + "," 
+                            locations = locations + ","
                                 + (String)iterator.next();
                         }
                     }
-                    
+
                     // set defaults
                     prevCaCertLocations = caCertLocations;
                     defaultCrlLocations = locations;
