@@ -1005,8 +1005,7 @@ public class GlobusGSSContextTest extends TestCase {
 	    fail("unwrap did not fail as excepted");
 	} catch (GSSException e) {
 	    if (e.getMajor() != GSSException.DEFECTIVE_TOKEN) {
-		e.printStackTrace();
-		fail("Unexpected GSSException");
+		fail("Unexpected GSSException: " + e.getMajor() + " : " + e.getMajorString());
 	    }
 	}
 

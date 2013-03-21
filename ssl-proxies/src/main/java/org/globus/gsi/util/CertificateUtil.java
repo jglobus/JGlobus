@@ -38,8 +38,11 @@ import java.security.Principal;
 
 import org.globus.gsi.bc.X509NameHelper;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -69,6 +72,8 @@ import org.globus.gsi.GSIConstants;
 import org.globus.gsi.proxy.ext.ProxyCertInfo;
 import org.globus.gsi.proxy.ext.ProxyPolicy;
 
+import static org.globus.gsi.util.Oid.*;
+
 /**
  * FILL ME
  *
@@ -95,6 +100,65 @@ public final class CertificateUtil {
         setProvider("BC");
         logger = LogFactory.getLog(CertificateLoadUtil.class.getCanonicalName());
         installSecureRandomProvider();
+    }
+
+    private static final Map<String, String> KEYWORD_MAP = new HashMap<String, String>();
+
+    private static final Map<String, String> OID_MAP = new HashMap<String, String>();
+
+
+    static {
+        // Taken from BouncyCastle 2.46
+        KEYWORD_MAP.put("SN", SERIALNUMBER.oid);
+        KEYWORD_MAP.put("E", EmailAddress.oid);
+        KEYWORD_MAP.put("EMAIL", EmailAddress.oid);
+        KEYWORD_MAP.put("UNSTRUCTUREDADDRESS", UnstructuredAddress.oid);
+        KEYWORD_MAP.put("UNSTRUCTUREDNAME", UnstructuredName.oid);
+        KEYWORD_MAP.put("UNIQUEIDENTIFIER", UNIQUE_IDENTIFIER.oid);
+        KEYWORD_MAP.put("DN", DN_QUALIFIER.oid);
+        KEYWORD_MAP.put("PSEUDONYM", PSEUDONYM.oid);
+        KEYWORD_MAP.put("POSTALADDRESS", POSTAL_ADDRESS.oid);
+        KEYWORD_MAP.put("NAMEOFBIRTH", NAME_AT_BIRTH.oid);
+        KEYWORD_MAP.put("COUNTRYOFCITIZENSHIP", COUNTRY_OF_CITIZENSHIP.oid);
+        KEYWORD_MAP.put("COUNTRYOFRESIDENCE", COUNTRY_OF_RESIDENCE.oid);
+        KEYWORD_MAP.put("GENDER", GENDER.oid);
+        KEYWORD_MAP.put("PLACEOFBIRTH", PLACE_OF_BIRTH.oid);
+        KEYWORD_MAP.put("DATEOFBIRTH", DATE_OF_BIRTH.oid);
+        KEYWORD_MAP.put("POSTALCODE", POSTAL_CODE.oid);
+        KEYWORD_MAP.put("BUSINESSCATEGORY", BUSINESS_CATEGORY.oid);
+        KEYWORD_MAP.put("TELEPHONENUMBER", TELEPHONE_NUMBER.oid);
+        KEYWORD_MAP.put("NAME", NAME.oid);
+
+        // Taken from CANL library
+        KEYWORD_MAP.put("S", ST.oid);
+        KEYWORD_MAP.put("DNQUALIFIER", DN_QUALIFIER.oid);
+        KEYWORD_MAP.put("IP", IP.oid);
+
+        OID_MAP.put(UnstructuredAddress.oid, "unstructuredAddress");
+        OID_MAP.put(UnstructuredName.oid, "unstructuredName");
+        OID_MAP.put(UNIQUE_IDENTIFIER.oid, "UniqueIdentifier");
+        OID_MAP.put(PSEUDONYM.oid, "Pseudonym");
+        OID_MAP.put(POSTAL_ADDRESS.oid, "PostalAddress");
+        OID_MAP.put(NAME_AT_BIRTH.oid, "NameAtBirth");
+        OID_MAP.put(COUNTRY_OF_CITIZENSHIP.oid, "CountryOfCitizenship");
+        OID_MAP.put(COUNTRY_OF_RESIDENCE.oid, "CountryOfResidence");
+        OID_MAP.put(GENDER.oid, "Fender");
+        OID_MAP.put(PLACE_OF_BIRTH.oid, "PlaceOfBirth");
+        OID_MAP.put(DATE_OF_BIRTH.oid, "DateOfBirth");
+        OID_MAP.put(POSTAL_CODE.oid, "PostalCode");
+        OID_MAP.put(BUSINESS_CATEGORY.oid, "BusinessCategory");
+        OID_MAP.put(TELEPHONE_NUMBER.oid, "TelephoneNumber");
+        OID_MAP.put(NAME.oid, "Name");
+        OID_MAP.put(IP.oid, "IP");
+
+        OID_MAP.put(T.oid, "T");
+        OID_MAP.put(DN_QUALIFIER.oid, "DNQUALIFIER");
+        OID_MAP.put(SURNAME.oid, "SURNAME");
+        OID_MAP.put(GIVENNAME.oid, "GIVENNAME");
+        OID_MAP.put(INITIALS.oid, "INITIALS");
+        OID_MAP.put(GENERATION.oid, "GENERATION");
+        OID_MAP.put(EmailAddress.oid, "EMAILADDRESS");
+        OID_MAP.put(SERIALNUMBER.oid, "SERIALNUMBER");
     }
 
     private CertificateUtil() {
@@ -466,22 +530,27 @@ public final class CertificateUtil {
             return null;
         }
 
-        StringTokenizer tokens = new StringTokenizer(dn, ",");
-        StringBuffer buf = new StringBuffer();
-        String token;
-        
-        while(tokens.hasMoreTokens()) {
-            token = tokens.nextToken().trim();
+        StringBuilder buf = new StringBuilder();
 
-            if (noreverse) {
-                buf.append("/");
-                buf.append(token);
-            } else {
-                buf.insert(0, token);
-                buf.insert(0, "/");
+        String[] tokens = dn.split(",");
+        if (noreverse) {
+            for (int i = 0; i < tokens.length; i++) {
+                String token = tokens[i].trim();
+                if (!token.isEmpty()) {
+                    buf.append("/");
+                    buf.append(token.trim());
+                }
+            }
+        } else {
+            for (int i = tokens.length - 1; i >= 0; i--) {
+                String token = tokens[i].trim();
+                if (!token.isEmpty()) {
+                    buf.append("/");
+                    buf.append(token.trim());
+                }
             }
         }
-        
+
         return buf.toString();
     }
 
@@ -499,6 +568,8 @@ public final class CertificateUtil {
     public static String toGlobusID(Principal name) {
         if (name instanceof X509Name) {
             return X509NameHelper.toString((X509Name)name);
+        } else if (name instanceof X500Principal) {
+            return CertificateUtil.toGlobusID((X500Principal) name);
         } else {
             return CertificateUtil.toGlobusID(name.getName());
         }
@@ -517,17 +588,19 @@ public final class CertificateUtil {
             return null;
         }
 
-        String dn = principal.getName();
+        String dn = principal.getName(X500Principal.RFC2253, OID_MAP);
 
-        StringTokenizer tokens = new StringTokenizer(dn, ",");
-        StringBuffer buf = new StringBuffer();
-        String token;
+        StringBuilder buf = new StringBuilder();
 
-        while (tokens.hasMoreTokens()) {
-            token = tokens.nextToken().trim();
-            buf.insert(0, token);
-            buf.insert(0, "/");
+        String[] tokens = dn.split(",");
+        for (int i = tokens.length - 1; i >= 0; i--) {
+            String token = tokens[i].trim();
+            if (!token.isEmpty()) {
+                buf.append("/");
+                buf.append(token);
+            }
         }
+
         return buf.toString();
     }
 
@@ -546,37 +619,37 @@ public final class CertificateUtil {
             return null;
         }
         String id = globusID.trim();
-        StringTokenizer tokens = new StringTokenizer(id, "/");
-        StringBuffer buf = new StringBuffer();
-        String token;
-        LinkedList<String> rdnList = new LinkedList<String>();
+        StringBuilder buf = new StringBuilder();
 
-        while (tokens.hasMoreTokens()) {
-            token = tokens.nextToken().trim();
+        if (!id.isEmpty()) {
+            String[] tokens = id.split("/");
+            Deque<String> rdnList = new ArrayDeque<String>(tokens.length);
 
-            if (token.contains("=")) {
-                // prepend an RDN type and at least part of its value
-                rdnList.addFirst(token);
-            } else {
-                // insert part of an RDN value that was mistakenly removed
-                // as a result of tokenizing on forward slash
-                rdnList.set(0, rdnList.get(0) + "/" + token);
+            for (String token: tokens) {
+                if (!token.trim().isEmpty()) {
+                    if (token.contains("=")) {
+                        // prepend an RDN type and at least part of its value
+                        rdnList.addFirst(token);
+                    } else {
+                        // insert part of an RDN value that was mistakenly removed
+                        // as a result of tokenizing on forward slash
+                        rdnList.addFirst(rdnList.removeFirst() + "/" + token);
+                    }
+                }
             }
-        }
 
-        for (String rdn : rdnList) {
-            buf.append(",");
-            buf.append(rdn);
-        }
+            for (String rdn : rdnList) {
+                buf.append(rdn.trim());
+                buf.append(",");
+            }
 
-        if (buf.length() > 0) {
             // delete extra comma
-            buf.deleteCharAt(0);
+            buf.deleteCharAt(buf.length() - 1);
         }
 
         String dn = buf.toString();
 
-        return new X500Principal(dn);
+        return new X500Principal(dn, KEYWORD_MAP);
     }
 
     // JGLOBUS-91 
