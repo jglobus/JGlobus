@@ -85,7 +85,7 @@ public class TrustedCertificates implements Serializable {
      * <caHash>.signing_policy in the same directory as the trusted 
      * certificates.
      */
-    public static String SIGNING_POLICY_FILE_SUFFIX = ".signing_policy";
+    public final static String SIGNING_POLICY_FILE_SUFFIX = ".signing_policy";
     
     private static KeyStore ms_trustStore = null;
     private static CertStore ms_crlStore = null;

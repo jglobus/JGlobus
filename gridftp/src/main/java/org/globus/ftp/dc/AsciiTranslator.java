@@ -32,7 +32,7 @@ public class AsciiTranslator {
     
     protected byte[] lineSep;
 
-    protected static byte[] systemLineSep;
+    protected final static byte[] systemLineSep;
 
     static {
 	systemLineSep = System.getProperty("line.separator").getBytes();
