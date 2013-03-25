@@ -21,8 +21,8 @@ public class PEMUtils {
     
     static final int LINE_LENGTH = 64;
     
-    public static String lineSep;
-    public static byte[] lineSepBytes;
+    public final static String lineSep;
+    public final static byte[] lineSepBytes;
     
     static {
 	lineSep = System.getProperty("line.separator");
