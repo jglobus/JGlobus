@@ -213,10 +213,6 @@ public class TrustedCertificates implements Serializable {
         }
     }
 
-    public void refresh() {
-        reload(null);
-    }
-
     public synchronized void reload(String locations) {
         if (locations == null) {
             return;
@@ -354,7 +350,7 @@ public class TrustedCertificates implements Serializable {
         if (trustedCertificates == null) {
             trustedCertificates = new DefaultTrustedCertificates();
         }
-        trustedCertificates.refresh();
+
         return trustedCertificates;
     }
     
