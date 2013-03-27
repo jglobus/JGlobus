@@ -83,7 +83,7 @@ public class  FTPClient {
 
     /**
      * List of the checksum algorithms supported by the server as described in
-     * {@link http://www.ogf.org/documents/GFD.47.pdf [GridFTP v2 Protocol Description]}
+     * <a href="http://www.ogf.org/documents/GFD.47.pdf">GridFTP v2 Protocol Description</a>
      */
     protected List<String> algorithms;
 
@@ -1979,7 +1979,7 @@ public class  FTPClient {
      * Performs third-party transfer between two servers. If possibly,
      * GFD.47 (a.k.a GridFTP2) GET and PUT commands are used.
      *
-     * @param destination   client connected to source server
+     * @param source        client connected to source server
      * @param remoteSrcFile source filename
      * @param destination   client connected to destination server
      * @param remoteDstFile destination filename
@@ -2060,7 +2060,7 @@ public class  FTPClient {
 
     /**
      *  According to
-     * {@link http://www.ogf.org/documents/GFD.47.pdf [GridFTP v2 Protocol Description]}
+     * <a href="http://www.ogf.org/documents/GFD.47.pdf">GridFTP v2 Protocol Description</a>
      * checksum feature has the following syntax:
      * <pre>
      * CKSUM <algorithm>[, …]
@@ -2125,7 +2125,7 @@ public class  FTPClient {
 
     /**
      * implement GridFTP v2 CKSM command from
-     * {@link http://www.ogf.org/documents/GFD.47.pdf [GridFTP v2 Protocol Description]}
+     * <a href="http://www.ogf.org/documents/GFD.47.pdf">GridFTP v2 Protocol Description</a>
      * <pre>
      * 5.1 CKSM
      * This command is used by the client to request checksum calculation over a portion or
@@ -2191,7 +2191,7 @@ public class  FTPClient {
 
     /**
      * implement GridFTP v2 SCKS command as described in
-     * {@link http://www.ogf.org/documents/GFD.47.pdf [GridFTP v2 Protocol Description]}
+     * <a href="http://www.ogf.org/documents/GFD.47.pdf">GridFTP v2 Protocol Description</a>
      * <pre>
      * 5.2 SCKS
      * This command is sent prior to upload command such as STOR, ESTO, PUT. It is used

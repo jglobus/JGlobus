@@ -12,7 +12,6 @@ public interface MlsxEntryWriter {
 	/**
 	 * Writes a single entry from the stream.  
 	 * 
-	 * @return true to continue, false to stop writer
 	 * @param entry the file/directory entry
 	 */
 	public void write(MlsxEntry entry) throws IOException;

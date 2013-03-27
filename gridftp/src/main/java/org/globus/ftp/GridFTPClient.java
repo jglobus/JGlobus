@@ -963,7 +963,6 @@ public class GridFTPClient extends FTPClient {
      * Sets the checksum values ahead of the transfer
      * @param algorithm the checksume algorithm
      * @param value the checksum value as hexadecimal number
-     * @return nothing
      * @exception ServerException if an error occured.
     */
     public void setChecksum(ChecksumAlgorithm algorithm,

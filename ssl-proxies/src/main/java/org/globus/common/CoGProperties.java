@@ -492,9 +492,10 @@ public class CoGProperties extends Properties {
 
     /**
      * Returns the delegation key cache lifetime for all delegations from this
-     * JVM. If this property is not set or set to zero or less, no caching is done. The
-     * value is the number of milliseconds the key/pair is cached.
-     * @return
+     * JVM. If this property is not set or set to zero or less, no caching is
+     * done.
+     *
+     * @return the number of milliseconds the key/pair is cached
      */
     public int getDelegationKeyCacheLifetime() {
 

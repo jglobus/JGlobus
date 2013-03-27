@@ -437,7 +437,7 @@ public class UrlCopy implements Runnable {
      * This method will perform the transfer and signal completion and 
      * errors through the {@link UrlCopyListener#transferCompleted()} and 
      * {@link UrlCopyListener#transferError(Exception)} of any registered listeners
-     * (see {@link addUrlCopyListener}). 
+     * (see {@link #addUrlCopyListener(UrlCopyListener)}). 
      *  
      */     
     public void run() {
