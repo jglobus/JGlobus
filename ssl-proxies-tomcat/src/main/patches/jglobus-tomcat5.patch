@@ -1,6 +1,6 @@
-diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java jglobus-2.0.4/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java
---- jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java	2011-07-29 04:41:20.000000000 +0200
-+++ jglobus-2.0.4/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java	2012-09-30 06:47:06.452646206 +0200
+diff -ur JGlobus.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java JGlobus/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java
+--- JGlobus.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java	2013-03-27 03:48:51.000000000 +0100
++++ JGlobus/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java	2013-03-27 07:02:21.107259131 +0100
 @@ -15,7 +15,7 @@
  
  package org.globus.gsi.tomcat;
@@ -10,7 +10,7 @@ diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomc
  import org.globus.gsi.X509ProxyCertPathParameters;
  import org.globus.gsi.jsse.GlobusSSLHelper;
  import org.globus.gsi.provider.GlobusProvider;
-@@ -39,50 +39,13 @@
+@@ -40,49 +40,13 @@
   * @version 1.0
   * @since 1.0
   */
@@ -45,8 +45,7 @@ diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomc
 -        Object signingPolicyLocation = attributes.get("signingPolicyLocation");
 -        ResourceSigningPolicyStore policyStore = null;
 -        if (signingPolicyLocation != null) {
--            policyStore = new ResourceSigningPolicyStore(
--                    new ResourceSigningPolicyStoreParameters(attributes.get("signingPolicyLocation").toString()));
+-            policyStore = Stores.getSigningPolicyStore((String) attributes.get("signingPolicyLocation"));
 -        }
 -        Object rejectLimitedProxyEntry = attributes.get("rejectLimitedProxy");
 -

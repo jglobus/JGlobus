@@ -1,6 +1,6 @@
-diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java jglobus-2.0.4/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java
---- jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java	2011-07-29 04:41:20.000000000 +0200
-+++ jglobus-2.0.4/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java	2012-06-08 17:22:01.140977362 +0200
+diff -ur JGlobus.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java JGlobus/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java
+--- JGlobus.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java	2013-03-27 03:48:51.000000000 +0100
++++ JGlobus/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java	2013-03-27 06:44:47.749339699 +0100
 @@ -1,6 +1,7 @@
  package org.globus.gsi.tomcat;
  
@@ -20,9 +20,9 @@ diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomc
  	}
  
  }
-diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java jglobus-2.0.4/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java
---- jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java	2011-07-29 04:41:20.000000000 +0200
-+++ jglobus-2.0.4/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java	2012-06-08 18:13:34.293762214 +0200
+diff -ur JGlobus.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java JGlobus/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java
+--- JGlobus.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java	2013-03-27 03:48:51.000000000 +0100
++++ JGlobus/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java	2013-03-27 06:55:52.588080175 +0100
 @@ -15,6 +15,7 @@
  
  package org.globus.gsi.tomcat;
@@ -31,7 +31,7 @@ diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomc
  import org.apache.tomcat.util.net.jsse.JSSESocketFactory;
  import org.globus.gsi.X509ProxyCertPathParameters;
  import org.globus.gsi.jsse.GlobusSSLHelper;
-@@ -44,8 +45,17 @@
+@@ -45,8 +46,17 @@
      static {
          Security.addProvider(new GlobusProvider());
      }
@@ -51,7 +51,7 @@ diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomc
  
      /**
       * Create a Globus trust manager which supports proxy certificates.  This requires that the CRL store, and
-@@ -61,21 +71,21 @@
+@@ -62,20 +72,20 @@
      protected TrustManager[] getTrustManagers(String keystoreType, String keystoreProvider, String algorithm)
              throws Exception {
          KeyStore trustStore = getTrustStore(keystoreType, keystoreProvider);
@@ -66,9 +66,8 @@ diff -ur jglobus-2.0.4.orig/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomc
 +
          ResourceSigningPolicyStore policyStore = null;
          if (signingPolicyLocation != null) {
-             policyStore = new ResourceSigningPolicyStore(
--                    new ResourceSigningPolicyStoreParameters(attributes.get("signingPolicyLocation").toString()));
-+                new ResourceSigningPolicyStoreParameters((String) signingPolicyLocation));
+-            policyStore = Stores.getSigningPolicyStore((String) attributes.get("signingPolicyLocation"));
++            policyStore = Stores.getSigningPolicyStore((String) signingPolicyLocation);
          }
 -        Object rejectLimitedProxyEntry = attributes.get("rejectLimitedProxy");
  
