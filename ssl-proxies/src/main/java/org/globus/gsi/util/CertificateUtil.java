@@ -53,6 +53,8 @@ import java.security.cert.CertPath;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -619,31 +621,49 @@ public final class CertificateUtil {
             return null;
         }
         String id = globusID.trim();
-        StringBuilder buf = new StringBuilder();
+        StringBuilder buf = new StringBuilder(id.length());
 
         if (!id.isEmpty()) {
-            String[] tokens = id.split("/");
-            Deque<String> rdnList = new ArrayDeque<String>(tokens.length);
 
-            for (String token: tokens) {
-                if (!token.trim().isEmpty()) {
-                    if (token.contains("=")) {
-                        // prepend an RDN type and at least part of its value
-                        rdnList.addFirst(token);
-                    } else {
-                        // insert part of an RDN value that was mistakenly removed
-                        // as a result of tokenizing on forward slash
-                        rdnList.addFirst(rdnList.removeFirst() + "/" + token);
-                    }
+            final int IDLE = 0;
+            final int VALUE = 1;
+            final int KEY = 2;
+
+            int state = IDLE;
+
+            int cEnd = 0;
+            char[] asChars = id.toCharArray();
+
+            /*
+             * walk in reverse order and split into RDN
+             */
+            for (int i = asChars.length - 1; i >= 0; i--) {
+
+                char c = asChars[i];
+                switch (state) {
+                    case KEY:
+                        if (c == '/' || c == ' ') {
+                            buf.append(id.substring(i + 1, cEnd + 1)).append(',');
+                            state = IDLE;
+                        }
+                        break;
+                    case VALUE:
+                        if (c == '=') {
+                            state = KEY;
+                        }
+                        break;
+                    default:
+                        // idle
+                        if (c == '/' || c == ' ') {
+                            continue;
+                        } else {
+                            cEnd = i;
+                            state = VALUE;
+                        }                    
                 }
             }
 
-            for (String rdn : rdnList) {
-                buf.append(rdn.trim());
-                buf.append(",");
-            }
-
-            // delete extra comma
+            // delete last extra comma
             buf.deleteCharAt(buf.length() - 1);
         }
 
