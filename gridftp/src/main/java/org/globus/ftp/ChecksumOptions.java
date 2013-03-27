@@ -23,7 +23,7 @@ public class ChecksumOptions extends Options {
     protected ChecksumAlgorithm algo;
 
     /**
-       @param cmd command whose options are represent by this object
+       @param algo algorithm whose options are represent by this object
      */
     public ChecksumOptions(ChecksumAlgorithm algo) {
         super("CKSM");

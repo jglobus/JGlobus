@@ -40,7 +40,7 @@ public final class KeyStoreUtil {
      *
      * @param keyStore
      * @param selector
-     * @return
+     * @return the list of certificates in the KeyStore
      * @throws KeyStoreException
      */
     public static Collection<? extends Certificate> getTrustedCertificates(KeyStore keyStore, X509CertSelector selector)

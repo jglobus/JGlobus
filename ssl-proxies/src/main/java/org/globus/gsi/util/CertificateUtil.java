@@ -203,7 +203,7 @@ public final class CertificateUtil {
      * Return CA Path constraint
      *
      * @param crt
-     * @return
+     * @return the CA path constraint
      * @throws IOException
      */
     public static int getCAPathConstraint(TBSCertificateStructure crt)
@@ -251,41 +251,41 @@ public final class CertificateUtil {
 
     /**
      * Returns certificate type of the given TBS certificate. <BR> The
-     * certificate type is {@link org.globus.gsi.GSIGSIConstants.CertificateType#CA
-     * CertificateType.CA} <B>only</B> if the certificate contains a
+     * certificate type is {@link org.globus.gsi.GSIConstants.CertificateType#CA
+     * GSIConstants.CertificateType.CA} <B>only</B> if the certificate contains a
      * BasicConstraints extension and it is marked as CA.<BR> A certificate is a
      * GSI-2 proxy when the subject DN of the certificate ends with
-     * <I>"CN=proxy"</I> (certificate type {@link org.globus.gsi.GSIGSIConstants.CertificateType#GSI_2_PROXY
-     * CertificateType.GSI_2_PROXY}) or <I>"CN=limited proxy"</I> (certificate
-     * type {@link org.globus.gsi.GSIGSIConstants.CertificateType#GSI_2_LIMITED_PROXY
-     * CertificateType.LIMITED_PROXY}) component and the issuer DN of the
+     * <I>"CN=proxy"</I> (certificate type {@link org.globus.gsi.GSIConstants.CertificateType#GSI_2_PROXY
+     * GSIConstants.CertificateType.GSI_2_PROXY}) or <I>"CN=limited proxy"</I> (certificate
+     * type {@link org.globus.gsi.GSIConstants.CertificateType#GSI_2_LIMITED_PROXY
+     * GSIConstants.CertificateType.LIMITED_PROXY}) component and the issuer DN of the
      * certificate matches the subject DN without the last proxy <I>CN</I>
      * component.<BR> A certificate is a GSI-3 proxy when the subject DN of the
      * certificate ends with a <I>CN</I> component, the issuer DN of the
      * certificate matches the subject DN without the last <I>CN</I> component
-     * and the certificate contains {@link org.globus.security.proxyExtension.ProxyCertInfo
+     * and the certificate contains {@link ProxyCertInfo
      * ProxyCertInfo} critical extension. The certificate type is {@link
-     * org.globus.gsi.GSIGSIConstants.CertificateType#GSI_3_IMPERSONATION_PROXY
-     * CertificateType.GSI_3_IMPERSONATION_PROXY} if the policy language of the
-     * {@link org.globus.security.proxyExtension.ProxyCertInfo ProxyCertInfo}
-     * extension is set to {@link org.globus.security.proxyExtension.ProxyPolicy#IMPERSONATION
+     * org.globus.gsi.GSIConstants.CertificateType#GSI_3_IMPERSONATION_PROXY
+     * GSIConstants.CertificateType.GSI_3_IMPERSONATION_PROXY} if the policy language of the
+     * {@link ProxyCertInfo ProxyCertInfo}
+     * extension is set to {@link ProxyPolicy#IMPERSONATION
      * ProxyPolicy.IMPERSONATION} OID. The certificate type is {@link
-     * org.globus.gsi.GSIGSIConstants.CertificateType#GSI_3_LIMITED_PROXY
-     * CertificateType.GSI_3_LIMITED_PROXY} if the policy language of the {@link
-     * org.globus.security.proxyExtension.ProxyCertInfo ProxyCertInfo} extension
-     * is set to {@link org.globus.security.proxyExtension.ProxyPolicy#LIMITED
+     * org.globus.gsi.GSIConstants.CertificateType#GSI_3_LIMITED_PROXY
+     * GSIConstants.CertificateType.GSI_3_LIMITED_PROXY} if the policy language of the {@link
+     * ProxyCertInfo ProxyCertInfo} extension
+     * is set to {@link ProxyPolicy#LIMITED
      * ProxyPolicy.LIMITED} OID. The certificate type is {@link
-     * org.globus.gsi.GSIGSIConstants.CertificateType#GSI_3_INDEPENDENT_PROXY
-     * CertificateType.GSI_3_INDEPENDENT_PROXY} if the policy language of the
-     * {@link org.globus.security.proxyExtension.ProxyCertInfo ProxyCertInfo}
-     * extension is set to {@link org.globus.security.proxyExtension.ProxyPolicy#INDEPENDENT
+     * org.globus.gsi.GSIConstants.CertificateType#GSI_3_INDEPENDENT_PROXY
+     * GSIConstants.CertificateType.GSI_3_INDEPENDENT_PROXY} if the policy language of the
+     * {@link ProxyCertInfo ProxyCertInfo}
+     * extension is set to {@link ProxyPolicy#INDEPENDENT
      * ProxyPolicy.INDEPENDENT} OID. The certificate type is {@link
-     * org.globus.gsi.GSIGSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY
-     * CertificateType.GSI_3_RESTRICTED_PROXY} if the policy language of the
-     * {@link org.globus.security.proxyExtension.ProxyCertInfo ProxyCertInfo}
+     * org.globus.gsi.GSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY
+     * GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} if the policy language of the
+     * {@link ProxyCertInfo ProxyCertInfo}
      * extension is set to any other OID then the above.<BR> The certificate
-     * type is {@link org.globus.gsi.GSIGSIConstants.CertificateType#EEC
-     * CertificateType.EEC} if the certificate is not a CA certificate or a
+     * type is {@link org.globus.gsi.GSIConstants.CertificateType#EEC
+     * GSIConstants.CertificateType.EEC} if the certificate is not a CA certificate or a
      * GSI-2 or GSI-3 proxy.
      *
      * @param crt the TBS certificate to get the type of.
