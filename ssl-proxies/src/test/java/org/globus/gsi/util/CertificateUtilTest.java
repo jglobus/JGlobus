@@ -281,6 +281,15 @@ public class CertificateUtilTest {
         assertThat(newDn, is(dn));
     }
 
+    @Test
+    public void testToPrincipalWithUrl() {
+        String dn = "/C=US/ST=UT/L=Salt Lake City/O=The USERTRUST Network"
+                + "/OU=http://www.usertrust.com/CN=UTN-USERFirst-Client Authentication and Email";
+        X500Principal principal = CertificateUtil.toPrincipal(dn);
+        String newDn = CertificateUtil.toGlobusID(principal);
+        assertThat(newDn, is(dn));
+    }
+
     @After
     public void tearDown() {
 
