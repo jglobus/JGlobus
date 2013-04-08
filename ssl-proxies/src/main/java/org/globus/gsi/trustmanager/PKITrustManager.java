@@ -93,9 +93,9 @@ public class PKITrustManager implements X509TrustManager {
         try {
             this.result = this.validator.engineValidate(certPath, parameters);
         } catch (CertPathValidatorException exception) {
-            throw new CertificateException("Pathvalidation failed", exception);
+            throw new CertificateException("Path validation failed: " + exception.getMessage(), exception);
         } catch (InvalidAlgorithmParameterException exception) {
-            throw new CertificateException("Pathvalidation failed", exception);
+            throw new CertificateException("Path validation failed: " + exception.getMessage(), exception);
         }
     }
 
