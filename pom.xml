@@ -21,6 +21,10 @@
 	<name>JGlobus</name>
 	<packaging>pom</packaging>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<issueManagement>
 		<system>JIRA</system>
 		<url>http://jira.globus.org/browse/JGLOBUS</url>
