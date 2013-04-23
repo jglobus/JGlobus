@@ -580,13 +580,19 @@ public abstract class OpenSSLKey implements Serializable {
         OpenSSLKey otherKey = (OpenSSLKey) other;
 
         return this.isEncrypted == otherKey.isEncrypted &&
-                Objects.equals(this.keyAlg, otherKey.keyAlg) &&
+                objectsEquals(this.keyAlg, otherKey.keyAlg) &&
                 Arrays.areEqual(this.encodedKey, otherKey.encodedKey) &&
-                Objects.equals(this.intKey, otherKey.intKey) &&
+                objectsEquals(this.intKey, otherKey.intKey) &&
                 Arrays.areEqual(this.ivData, otherKey.ivData) &&
-                Objects.equals(this.encAlgStr, otherKey.encAlgStr) &&
-                Objects.equals(this.encAlg, otherKey.encAlg) &&
+                objectsEquals(this.encAlgStr, otherKey.encAlgStr) &&
+                objectsEquals(this.encAlg, otherKey.encAlg) &&
                 Arrays.areEqual(this.keyData, otherKey.keyData);
+    }
+
+    // Equivalent to Java 7 Objects#equals method; may be replaced when
+    // Java 7 is adopted
+    private static boolean objectsEquals(Object a, Object b) {
+        return (a == b) || (a != null && a.equals(b));
     }
 
     @Override
