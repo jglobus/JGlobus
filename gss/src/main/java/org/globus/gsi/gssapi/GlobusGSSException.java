@@ -48,12 +48,14 @@ public class GlobusGSSException extends GSSException {
     }
     
     private Throwable exception;
+    private final boolean hasMessage;
 
     public GlobusGSSException(int majorCode, 
 			      Throwable exception) {
 	super(majorCode);
 	this.exception = exception;
 	initCause(exception);
+	hasMessage = false;
     }
 
     public GlobusGSSException(int majorCode, 
@@ -63,6 +65,7 @@ public class GlobusGSSException extends GSSException {
 	super(majorCode, minorCode, minorString);
 	this.exception = exception;
 	initCause(exception);
+	hasMessage = true;
     }
 
     public GlobusGSSException(int majorCode,
@@ -87,6 +90,7 @@ public class GlobusGSSException extends GSSException {
 	
 	setMinor(minorCode, msg);
 	this.exception = null;
+	hasMessage = true;
     }
 
     
@@ -140,17 +144,32 @@ public class GlobusGSSException extends GSSException {
     }
 
     public String getMessage() {
-        String answer = super.getMessage();
-        if (exception != null && exception != this) {
-            String msg = exception.getMessage();
-            if (msg == null) {
-                msg = exception.getClass().getName();
+        if (isBoring()) {
+            return describeCause();
+        } else {
+            String message = super.getMessage();
+            if (exception != null && exception != this) {
+                message += " [Caused by: " + describeCause() + "]";
             }
-            answer += " [Caused by: " + msg + "]";
+            return message;
         }
-        return answer;
     }
-    
+
+    private String describeCause() {
+        String msg = exception.getMessage();
+        if (msg == null) {
+            msg = exception.getClass().getName();
+        }
+        return msg;
+    }
+
+    private boolean isBoring() {
+        return getMajor() == GSSException.FAILURE &&
+                getMinor() == 0 &&
+                !hasMessage &&
+                exception != null;
+    }
+
     private String getLocalMessage() {
         String message = super.getMessage();
         return (message == null) ? getClass().getName() : message;
