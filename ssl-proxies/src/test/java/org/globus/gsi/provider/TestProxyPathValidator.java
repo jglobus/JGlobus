@@ -18,7 +18,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.globus.common.CoGProperties;
+
 import org.globus.gsi.util.CertificateLoadUtil;
+
+import org.globus.gsi.CertificateRevocationLists;
 
 import org.globus.gsi.trustmanager.CRLChecker;
 import org.globus.gsi.trustmanager.CertificateChecker;
@@ -283,8 +287,12 @@ public class TestProxyPathValidator {
     public X509CRL[] crls;
     CertificateFactory factory;
 
+    String crlDir;
+
     @Before
     public void setup() throws Exception {
+
+        CoGProperties.getDefault().setProperty(CoGProperties.getDefault().CRL_CACHE_LIFETIME, "1");
 
         Security.addProvider(new MockGlobusProvider());
 
@@ -312,6 +320,8 @@ public class TestProxyPathValidator {
             }
             crls[i] = CertificateLoadUtil.loadCrl(in);
         }
+
+        crlDir = loader.getResource(BASE).getPath();
     }
 
     private void validateChain(X509Certificate[] chainCerts, KeyStore keyStore, CertStore certStore,
@@ -346,7 +356,7 @@ public class TestProxyPathValidator {
             throws Exception {
 
         MockProxyCertPathValidator validator =
-                new MockProxyCertPathValidator(false, false, false);
+                new MockProxyCertPathValidator(false, false, false, false);
         X509ProxyCertPathParameters parameters =
                 new X509ProxyCertPathParameters(keyStore, certStore, policyStore,
                         false);
@@ -359,6 +369,26 @@ public class TestProxyPathValidator {
         assert (expectedIdentity.equals(result.getIdentityCertificate()));
     }
 
+    private void validateChainBuiltin(X509Certificate[] chainCerts,
+                               KeyStore keyStore,
+                               CertStore certStore,
+                               SigningPolicyStore policyStore)
+            throws Exception {
+
+        List<X509Certificate> certList = Arrays.asList(chainCerts);
+        CertPath certPath = factory.generateCertPath(certList);
+        MockProxyCertPathValidator validator =
+                new MockProxyCertPathValidator(false, false, false, true);
+        X509ProxyCertPathParameters parameters =
+                new X509ProxyCertPathParameters(keyStore, certStore, policyStore,
+                        false);
+        X509ProxyCertPathValidatorResult result =
+                (X509ProxyCertPathValidatorResult) validator
+                        .engineValidate(certPath, parameters
+                        );
+
+    }
+
     private void validateError(X509Certificate[] certChain, KeyStore keyStore,
                                CertStore certStore,
                                SigningPolicyStore policyStore, String error)
@@ -368,7 +398,40 @@ public class TestProxyPathValidator {
 
         CertPath chain = factory.generateCertPath(certList);
         MockProxyCertPathValidator validator =
-                new MockProxyCertPathValidator(false, false, false);
+                new MockProxyCertPathValidator(false, false, false, false);
+        X509ProxyCertPathParameters parameters =
+                new X509ProxyCertPathParameters(keyStore, certStore, policyStore,
+                        false);
+        boolean exception = false;
+        try {
+            X509ProxyCertPathValidatorResult result =
+                    (X509ProxyCertPathValidatorResult) validator
+                            .engineValidate(chain, parameters
+                            );
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().indexOf(error) != -1) {
+                exception = true;
+            }
+        } catch (CertPathValidatorException e) {
+            if (e.getMessage().indexOf(error) != -1) {
+
+                exception = true;
+            }
+        }
+
+        assert (exception);
+    }
+
+    private void validateErrorBuiltin(X509Certificate[] certChain, KeyStore keyStore,
+                                     CertStore certStore,
+                                     SigningPolicyStore policyStore, String error)
+            throws Exception {
+
+        List<X509Certificate> certList = Arrays.asList(certChain);
+
+        CertPath chain = factory.generateCertPath(certList);
+        MockProxyCertPathValidator validator =
+                new MockProxyCertPathValidator(false, false, false, true);
         X509ProxyCertPathParameters parameters =
                 new X509ProxyCertPathParameters(keyStore, certStore, policyStore,
                         false);
@@ -404,7 +467,7 @@ public class TestProxyPathValidator {
         CertPath certPath = factory.generateCertPath(certList);
 
         MockProxyCertPathValidator validator =
-                new MockProxyCertPathValidator(false, false, true);
+                new MockProxyCertPathValidator(false, false, true, false);
         X509ProxyCertPathParameters parameters =
                 new X509ProxyCertPathParameters(keyStore, certStore, policyStore,
                         false);
@@ -499,7 +562,7 @@ public class TestProxyPathValidator {
                 goodCertsArr[1], true);
 
         MockProxyCertPathValidator validator =
-                new MockProxyCertPathValidator(false, false, false);
+                new MockProxyCertPathValidator(false, false, false, false);
         X509ProxyCertPathParameters parameters =
                 new X509ProxyCertPathParameters(keyStore, certStore, policyStore,
                         true);
@@ -642,7 +705,7 @@ public class TestProxyPathValidator {
         certList.add(chain[1]);
         certList.add(chain[2]);
         CertPath path = factory.generateCertPath(certList);
-        MockProxyCertPathValidator validator = new MockProxyCertPathValidator(false, false, false);
+        MockProxyCertPathValidator validator = new MockProxyCertPathValidator(false, false, false, false);
         X509ProxyCertPathParameters parameters =
                 new X509ProxyCertPathParameters(keyStore, certStore, policyStore, false, map);
         X509ProxyCertPathValidatorResult result =
@@ -892,6 +955,18 @@ public class TestProxyPathValidator {
         chain = new X509Certificate[]{goodCertsArr[28], goodCertsArr[25]};
         validateChain(chain, keyStore, certStore, policyStore, goodCertsArr[28],
                 false);
+
+        // ca2 user2 revoked CRL
+        // The sleep statements here are to force a CRL refresh.
+        chain = new X509Certificate[]{goodCertsArr[27], goodCertsArr[25]};
+        String caCertLocations =
+                CoGProperties.getDefault().getCaCertLocations();
+        System.setProperty("X509_CERT_DIR", crlDir);
+        Thread.sleep(100);
+        validateErrorBuiltin(chain, keyStore, certStore, policyStore, "revoked");
+        Thread.sleep(100);
+        System.setProperty("X509_CERT_DIR", caCertLocations);
+        validateChainBuiltin(chain, keyStore, certStore, policyStore);
     }
 
     @Test
@@ -932,15 +1007,18 @@ public class TestProxyPathValidator {
         boolean checkCertificateDateValidity;
         boolean checkCRLDateValidity;
         boolean checkSigningPolicy;
+        boolean useBuiltinCRL;
         private CertificateChecker dateChecker = new DateValidityChecker();
 
         public MockProxyCertPathValidator(boolean checkCertificateDateValidity_,
                                           boolean checkCRLDateValidity_,
-                                          boolean checkSigningPolicy_) {
+                                          boolean checkSigningPolicy_,
+                                          boolean useBuiltinCRL_) {
 
             this.checkCertificateDateValidity = checkCertificateDateValidity_;
             this.checkCRLDateValidity = checkCRLDateValidity_;
             this.checkSigningPolicy = checkSigningPolicy_;
+            this.useBuiltinCRL = useBuiltinCRL_;
         }
 
         @Override
@@ -951,7 +1029,12 @@ public class TestProxyPathValidator {
             }
             checkers.add(new UnsupportedCriticalExtensionChecker());
             checkers.add(new IdentityChecker(this));
-            checkers.add(new CRLChecker(this.certStore, this.keyStore, this.checkCertificateDateValidity));
+            if (useBuiltinCRL) {
+              CertificateRevocationLists crls = CertificateRevocationLists.getDefaultCertificateRevocationLists();
+              checkers.add(new CRLChecker(crls, this.keyStore, this.checkCertificateDateValidity));
+            } else {
+              checkers.add(new CRLChecker(this.certStore, this.keyStore, this.checkCertificateDateValidity));
+            }
             if (this.checkSigningPolicy) {
                 checkers.add(new SigningPolicyChecker(this.policyStore));
             }

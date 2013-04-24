@@ -19,6 +19,7 @@ import org.globus.gsi.util.ProxyCertificateUtil;
 
 import org.globus.gsi.X509ProxyCertPathParameters;
 import org.globus.gsi.X509ProxyCertPathValidatorResult;
+import org.globus.gsi.CertificateRevocationLists;
 
 import org.globus.gsi.provider.SigningPolicyStore;
 
@@ -436,7 +437,14 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
         checkers.add(new DateValidityChecker());
         checkers.add(new UnsupportedCriticalExtensionChecker());
         checkers.add(new IdentityChecker(this));
-        checkers.add(new CRLChecker(this.certStore, this.keyStore, true));
+        // NOTE: the (possible) refresh of the CRLs happens when we call getDefault.
+        // Hence, we must recreate crlsList for each call to checkCertificate
+        // Sadly, this also means that the amount of work necessary for checkCertificate
+        // can be arbitrarily large (if the CRL is indeed refreshed).
+        //
+        // Note we DO NOT use this.certStore by default!  TODO: This differs from the unit test
+        CertificateRevocationLists crlsList = CertificateRevocationLists.getDefaultCertificateRevocationLists();
+        checkers.add(new CRLChecker(crlsList, this.keyStore, true));
         checkers.add(new SigningPolicyChecker(this.policyStore));
         return checkers;
     }

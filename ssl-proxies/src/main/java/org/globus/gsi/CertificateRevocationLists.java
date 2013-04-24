@@ -18,11 +18,13 @@ import org.globus.gsi.stores.ResourceCertStoreParameters;
 
 import org.globus.gsi.provider.GlobusProvider;
 
+import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509CRLSelector;
 import java.security.cert.CertStore;
 import java.security.cert.X509CRL;
 import java.util.Map;
 import java.util.Collection;
+import java.util.Vector;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -53,7 +55,7 @@ public class CertificateRevocationLists {
     private static String defaultCrlLocations = null;
     private static CertificateRevocationLists defaultCrl  = null;
     
-    private Map crlIssuerDNMap;
+    private volatile Map<String, X509CRL> crlIssuerDNMap;
 
     private CertificateRevocationLists() {}
 
@@ -63,6 +65,25 @@ public class CertificateRevocationLists {
         }
         Collection crls = this.crlIssuerDNMap.values();
         return (X509CRL[]) crls.toArray(new X509CRL[crls.size()]);
+    }
+
+    public Collection<X509CRL> getCRLs(X509CRLSelector selector) {
+        Collection<X500Principal> issuers = selector.getIssuers();
+        int size = issuers.size();
+        Collection<X509CRL> retval = new Vector<X509CRL>(size);
+        // Yup, this stinks.  There's loss when we convert from principal to
+        // string.  Hence, depending on weird encoding effects, we may miss
+        // some CRLs.
+        Map<String, X509CRL> crlMap = this.crlIssuerDNMap;
+        if (crlMap == null) return retval;
+        for (X500Principal principal : issuers) {
+            String dn = principal.getName();
+            X509CRL crl = crlMap.get(dn);
+            if (crl != null) {
+                retval.add(crl);
+            }
+        }
+        return retval;
     }
 
     public X509CRL getCrl(String issuerName) {
@@ -83,7 +104,7 @@ public class CertificateRevocationLists {
         }
 
         StringTokenizer tokens = new StringTokenizer(locations, ",");
-        Map newCrlIssuerDNMap = new HashMap();
+        Map<String, X509CRL> newCrlIssuerDNMap = new HashMap<String, X509CRL>();
         
         while(tokens.hasMoreTokens()) {
             
@@ -93,7 +114,7 @@ public class CertificateRevocationLists {
               CertStore tmp = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, parameters);
               Collection<X509CRL> coll = (Collection<X509CRL>) tmp.getCRLs(new X509CRLSelector());
               for (X509CRL crl : coll) {
-                newCrlIssuerDNMap.put(crl.getIssuerDN().getName(), crl);
+                newCrlIssuerDNMap.put(crl.getIssuerX500Principal().getName(), crl);
               }
             } catch (Exception e) {
                 throw new RuntimeException(e);
