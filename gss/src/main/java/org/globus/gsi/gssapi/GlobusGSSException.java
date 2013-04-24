@@ -26,6 +26,8 @@ import javax.net.ssl.SSLException;
 
 public class GlobusGSSException extends GSSException {
 
+    private static final long serialVersionUID = 1366868883920091438L;
+    
     public static final int
 	PROXY_VIOLATION = 5,
 	BAD_ARGUMENT = 7,
