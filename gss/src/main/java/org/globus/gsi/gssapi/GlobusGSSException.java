@@ -22,6 +22,8 @@ import java.util.MissingResourceException;
 
 import org.ietf.jgss.GSSException;
 
+import javax.net.ssl.SSLException;
+
 public class GlobusGSSException extends GSSException {
 
     public static final int
@@ -186,6 +188,9 @@ public class GlobusGSSException extends GSSException {
      * Instead, the useful information is contained within the causing
      * Throwable.
      * 
+     * Also, an SSLException may be thrown by SSLEngine that wraps some more
+     * interesting exception but the message has no information.
+     * 
      * As part of a work-around for this problem, this method tries to guess
      * whether the supplied Throwable contains useful information.
      * 
@@ -212,6 +217,12 @@ public class GlobusGSSException extends GSSException {
                     return g.getMessage().equals("Failure unspecified at GSS-API level");
                 }
             }
+        }
+        
+        // SSLEngine can return a message with no meaning, therefore boring.
+        if (t instanceof SSLException &&
+                t.getMessage().equals("General SSLEngine problem")) {
+            return true;
         }
 
         return false;
