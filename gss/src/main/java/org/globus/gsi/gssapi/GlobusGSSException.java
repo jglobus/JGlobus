@@ -14,14 +14,20 @@
  */
 package org.globus.gsi.gssapi;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
 import org.ietf.jgss.GSSException;
 
+import javax.net.ssl.SSLException;
+
 public class GlobusGSSException extends GSSException {
 
+    private static final long serialVersionUID = 1366868883920091438L;
+    
     public static final int
 	PROXY_VIOLATION = 5,
 	BAD_ARGUMENT = 7,
@@ -47,22 +53,22 @@ public class GlobusGSSException extends GSSException {
 	}
     }
     
-    private Throwable exception;
+    private final boolean hasCustomMessage;
 
     public GlobusGSSException(int majorCode, 
-			      Throwable exception) {
+			      Throwable cause) {
 	super(majorCode);
-	this.exception = exception;
-	initCause(exception);
+	initCause(cause);
+	hasCustomMessage = false;
     }
 
     public GlobusGSSException(int majorCode, 
 			      int minorCode,
 			      String minorString,
-			      Throwable exception) {
+			      Throwable cause) {
 	super(majorCode, minorCode, minorString);
-	this.exception = exception;
-	initCause(exception);
+	initCause(cause);
+	hasCustomMessage = true;
     }
 
     public GlobusGSSException(int majorCode,
@@ -86,7 +92,8 @@ public class GlobusGSSException extends GSSException {
 	}
 	
 	setMinor(minorCode, msg);
-	this.exception = null;
+        initCause(null);
+	hasCustomMessage = true;
     }
 
     
@@ -95,6 +102,7 @@ public class GlobusGSSException extends GSSException {
      * If this exception has a root exception; the stack trace of the
      * root exception is printed to <tt>System.err</tt> instead.
      */
+    @Override
     public void printStackTrace() {
         printStackTrace( System.err );
     }
@@ -105,14 +113,15 @@ public class GlobusGSSException extends GSSException {
      * root exception is printed to the print stream instead.
      * @param ps The non-null print stream to which to print.
      */
-    public void printStackTrace(java.io.PrintStream ps) {
-        if ( exception != null ) {
+    @Override
+    public void printStackTrace(PrintStream ps) {
+        if ( getCause() != null ) {
             String superString = getLocalMessage();
             synchronized ( ps ) {
                 ps.print(superString);
                 ps.print((superString.endsWith(".") ? 
                           " Caused by " : ". Caused by "));
-                exception.printStackTrace( ps );
+                getCause().printStackTrace( ps );
             }
         } else {
             super.printStackTrace( ps );
@@ -125,35 +134,104 @@ public class GlobusGSSException extends GSSException {
      * root exception is printed to the print writer instead.
      * @param pw The non-null print writer to which to print.
      */
-    public void printStackTrace(java.io.PrintWriter pw) {
-        if ( exception != null ) {
+    @Override
+    public void printStackTrace(PrintWriter pw) {
+        if ( getCause() != null ) {
             String superString = getLocalMessage();
             synchronized (pw) {
                 pw.print(superString);
                 pw.print((superString.endsWith(".") ? 
                           " Caused by " : ". Caused by "));
-                exception.printStackTrace( pw );
+                getCause().printStackTrace( pw );
             }
         } else {
             super.printStackTrace( pw );
         }
     }
 
+    @Override
     public String getMessage() {
-        String answer = super.getMessage();
-        if (exception != null && exception != this) {
-            String msg = exception.getMessage();
-            if (msg == null) {
-                msg = exception.getClass().getName();
+        Throwable cause = getCause();
+        
+        if (isBoring(this)) {
+            return getUsefulMessage(cause);
+        } else {
+            StringBuilder message = new StringBuilder(super.getMessage());
+            if (cause != null) {
+                message.append(" [Caused by: ").append(getUsefulMessage(cause)).append("]");
             }
-            answer += " [Caused by: " + msg + "]";
+            return message.toString();
         }
-        return answer;
     }
-    
+
+    /**
+     * Wrapper around getMessage method that tries to provide a meaningful
+     * message.  This is needed because many GSSException objects provide no
+     * useful information and the actual useful information is in the Throwable
+     * that caused the exception.
+     */
+    private static String getUsefulMessage(Throwable throwable) {
+        while(isBoring(throwable)) {
+            throwable = throwable.getCause();
+        }
+        
+        String message = throwable.getMessage();
+        if (message == null) {
+            message = throwable.getClass().getName();
+        }
+        return message;
+    }
+
+    /**
+     * Use heuristics to determine whether the supplied Throwable has any
+     * semantic content (i.e., does it provide any additional information).
+     * 
+     * It seems that many GSSException objects are created with no information.
+     * Instead, the useful information is contained within the causing
+     * Throwable.
+     * 
+     * Also, an SSLException may be thrown by SSLEngine that wraps some more
+     * interesting exception but the message has no information.
+     * 
+     * As part of a work-around for this problem, this method tries to guess
+     * whether the supplied Throwable contains useful information.
+     * 
+     * @return true if the Throwable contains no useful information, false
+     * otherwise.
+     */
+    private static boolean isBoring(Throwable t) {
+        
+        // Last throwable in the causal chain is never boring.
+        if (t.getCause() == null) {
+            return false;
+        }
+        
+        // Some GSSExceptions have no semantic content, therefore boring.
+        if (t instanceof GSSException) {
+            GSSException g = (GlobusGSSException) t;
+            
+            if (g.getMajor() == GSSException.FAILURE && g.getMinor() == 0) {
+                if (g instanceof GlobusGSSException) {
+                    return !((GlobusGSSException)g).hasCustomMessage;
+                } else {
+                    // Unfortunately, for GSSException, we must compare the
+                    // actual message.
+                    return g.getMessage().equals("Failure unspecified at GSS-API level");
+                }
+            }
+        }
+        
+        // SSLEngine can return a message with no meaning, therefore boring.
+        if (t instanceof SSLException &&
+                t.getMessage().equals("General SSLEngine problem")) {
+            return true;
+        }
+
+        return false;
+    }
+
     private String getLocalMessage() {
         String message = super.getMessage();
         return (message == null) ? getClass().getName() : message;
     }
-
 }
