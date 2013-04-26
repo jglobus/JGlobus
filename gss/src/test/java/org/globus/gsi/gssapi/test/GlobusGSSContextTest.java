@@ -72,6 +72,7 @@ public class GlobusGSSContextTest extends TestCase {
             serverContext = null;
         }
 
+        X509Credential.setDefaultCredential(null);
 
 	GSSManager manager = getGSSManager();
 
@@ -86,7 +87,6 @@ public class GlobusGSSContextTest extends TestCase {
 					      GSSConstants.MECH_OID,
 					      null, 
 					      GSSContext.DEFAULT_LIFETIME);
-
     }
 
     protected void tearDown() throws Exception {
