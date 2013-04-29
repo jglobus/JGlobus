@@ -104,7 +104,7 @@ public class CRLChecker implements CertificateChecker {
                 crls = this.certStore.getCRLs(crlSelector);
             } catch (CertStoreException e) {
                 throw new CertPathValidatorException(
-                    "Error accessing CRL from certificate store", e);
+                    "Error accessing CRL from certificate store: " + e.getMessage(), e);
             }
         }
 
