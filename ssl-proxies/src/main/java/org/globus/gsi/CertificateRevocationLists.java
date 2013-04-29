@@ -24,7 +24,7 @@ import java.security.cert.CertStore;
 import java.security.cert.X509CRL;
 import java.util.Map;
 import java.util.Collection;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -70,7 +70,7 @@ public class CertificateRevocationLists {
     public Collection<X509CRL> getCRLs(X509CRLSelector selector) {
         Collection<X500Principal> issuers = selector.getIssuers();
         int size = issuers.size();
-        Collection<X509CRL> retval = new Vector<X509CRL>(size);
+        Collection<X509CRL> retval = new ArrayList<X509CRL>(size);
         // Yup, this stinks.  There's loss when we convert from principal to
         // string.  Hence, depending on weird encoding effects, we may miss
         // some CRLs.
