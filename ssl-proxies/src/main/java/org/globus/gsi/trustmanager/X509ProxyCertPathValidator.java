@@ -517,18 +517,6 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
         if (keyUsage[CertificateUtil.NON_REPUDIATION] || keyUsage[CertificateUtil.KEY_CERTSIGN]) {
             throw new CertPathValidatorException("Proxy violation: Key usage is asserted.");
         }
-        boolean[] issuerKeyUsage = CertificateUtil.getKeyUsage(issuer);
-        if (issuerKeyUsage.length > 0) {
-            for (int i = 0; i < CertificateUtil.DEFAULT_USAGE_LENGTH; i++) {
-                if (i == CertificateUtil.NON_REPUDIATION || i == CertificateUtil.KEY_CERTSIGN) {
-                    continue;
-                }
-                if (!issuerKeyUsage[i] && keyUsage[i]) {
-                    throw new CertPathValidatorException(
-                            "Proxy violation: Issuer key usage is incorrect");
-                }
-            }
-        }
     }
 
     private void checkExtension(DERObjectIdentifier oid, X509Extension proxyExtension, X509Extension proxyKeyUsage) throws CertPathValidatorException {
