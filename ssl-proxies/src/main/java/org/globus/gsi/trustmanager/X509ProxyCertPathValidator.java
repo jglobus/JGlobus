@@ -85,7 +85,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
      *          specified <code>CertPath</code> are inappropriate for this <code>CertPathValidator</code>
      */
     @SuppressWarnings("unchecked")
-	public CertPathValidatorResult engineValidate(CertPath certPath, CertPathParameters params)
+        public CertPathValidatorResult engineValidate(CertPath certPath, CertPathParameters params)
             throws CertPathValidatorException, InvalidAlgorithmParameterException {
 
         if (certPath == null) {
@@ -93,7 +93,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
                     "Certificate path cannot be null");
         }
 
-		List list = certPath.getCertificates();
+                List list = certPath.getCertificates();
         if (list.size() < 1) {
             throw new IllegalArgumentException(
                     "Certificate path cannot be empty");
@@ -162,20 +162,24 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
 
         cert = (X509Certificate) certificates.get(0);
 
-        tbsCert = getTBSCertificateStructure(cert);
+        try {
+            tbsCert = getTBSCertificateStructure(cert);
 
+            certType = getCertificateType(tbsCert);
+            // validate the first certificate in chain
+            checkCertificate(cert, certType);
 
-        certType = getCertificateType(tbsCert);
-        // validate the first certificate in chain
-        checkCertificate(cert, certType);
-
-        boolean isProxy = ProxyCertificateUtil.isProxy(certType);
-        if (isProxy) {
-            proxyDepth++;
+            boolean isProxy = ProxyCertificateUtil.isProxy(certType);
+            if (isProxy) {
+                proxyDepth++;
+            }
+        } catch (CertPathValidatorException e) {
+            throw new CertPathValidatorException("Path validation failed for " + cert.getSubjectDN() + ": " + e.getMessage(),
+                    e, certPath, 0);
         }
 
-        for (int i = 1; i < certificates.size(); i++) {
 
+        for (int i = 1; i < certificates.size(); i++) {
             boolean certIsProxy = ProxyCertificateUtil.isProxy(certType);
             issuerCert = (X509Certificate) certificates.get(i);
             issuerTbsCert = getTBSCertificateStructure(issuerCert);
@@ -186,21 +190,34 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
                     certIsProxy);
 
             if (certIsProxy) {
-                checkProxyConstraints(certPath, cert, tbsCert, certType, issuerTbsCert, i);
+                try {
+                    checkProxyConstraints(certPath, cert, tbsCert, certType, issuerTbsCert, i);
+                } catch (CertPathValidatorException e) {
+                    throw new CertPathValidatorException("Path validation failed for " + cert.getSubjectDN() + ": " + e.getMessage(),
+                            e, certPath, i - 1);
+                }
             } else {
                 try {
                     checkKeyUsage(issuerTbsCert);
                 } catch (IOException e) {
-                    throw new CertPathValidatorException("Key usage check failed on " + issuerCert.getSubjectDN(), e);
+                    throw new CertPathValidatorException("Key usage check failed on " + issuerCert.getSubjectDN() + ": " + e.getMessage(),
+                            e, certPath, i);
+                } catch (CertPathValidatorException e) {
+                    throw new CertPathValidatorException("Path validation failed for " + issuerCert.getSubjectDN() + ": " + e.getMessage(),
+                            e, certPath, i);
                 }
             }
 
-            checkCertificate(issuerCert, issuerCertType);
+            try {
+                checkCertificate(issuerCert, issuerCertType);
+            } catch (CertPathValidatorException e) {
+                throw new CertPathValidatorException("Path validation failed for " + issuerCert.getSubjectDN() + ": " + e.getMessage(),
+                        e, certPath, i);
+            }
 
             cert = issuerCert;
             certType = issuerCertType;
             tbsCert = issuerTbsCert;
-
         }
 
         return new X509ProxyCertPathValidatorResult(this.identityCert,
