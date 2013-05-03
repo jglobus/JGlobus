@@ -14,49 +14,8 @@
  */
 package org.globus.gsi.util;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.logging.Log;
-
-import java.security.Provider;
-
-
-
-import org.globus.common.CoGProperties;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Security;
-
-import java.security.KeyPairGenerator;
-
-import java.security.GeneralSecurityException;
-
-import java.security.KeyPair;
-
-import java.security.Principal;
-
-import org.globus.gsi.bc.X509NameHelper;
-
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-
-import java.security.cert.CertificateFactory;
-import java.security.cert.CertPath;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import javax.security.auth.x500.X500Principal;
-
+import org.apache.commons.logging.LogFactory;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -70,9 +29,33 @@ import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.globus.common.CoGProperties;
 import org.globus.gsi.GSIConstants;
+import org.globus.gsi.bc.X509NameHelper;
 import org.globus.gsi.proxy.ext.ProxyCertInfo;
 import org.globus.gsi.proxy.ext.ProxyPolicy;
+
+import javax.security.auth.x500.X500Principal;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Principal;
+import java.security.Provider;
+import java.security.Security;
+import java.security.cert.CertPath;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.globus.gsi.util.Oid.*;
 
@@ -82,17 +65,6 @@ import static org.globus.gsi.util.Oid.*;
  * @author ranantha@mcs.anl.gov
  */
 public final class CertificateUtil {
-
-    public static final int DIGITAL_SIGNATURE = 0;
-    public static final int NON_REPUDIATION = 1;
-    public static final int KEY_ENCIPHERMENT = 2;
-    public static final int DATA_ENCIPHERMENT = 3;
-    public static final int KEY_AGREEMENT = 4;
-    public static final int KEY_CERTSIGN = 5;
-    public static final int CRL_SIGN = 6;
-    public static final int ENCIPHER_ONLY = 7;
-    public static final int DECIPHER_ONLY = 8;
-    public static final int DEFAULT_USAGE_LENGTH = 9;
 
     private static String provider;
     private static Log logger;
@@ -186,7 +158,7 @@ public final class CertificateUtil {
     }
 
     /**
-     * Installs SecureRandom provider. 
+     * Installs SecureRandom provider.
      * This function is automatically called when this class is loaded.
      */
     public static void installSecureRandomProvider() {
@@ -194,7 +166,7 @@ public final class CertificateUtil {
         String providerName = props.getSecureRandomProvider();
         try {
             Class providerClass = Class.forName(providerName);
-            Security.insertProviderAt( (Provider)providerClass.newInstance(), 
+            Security.insertProviderAt( (Provider)providerClass.newInstance(),
                                        1 );
         } catch (Exception e) {
             logger.debug("Unable to install PRNG. Using default PRNG.",e);
@@ -229,7 +201,7 @@ public final class CertificateUtil {
         }
         return -1;
     }
-    
+
     /**
      * Generates a key pair of given algorithm and strength.
      *
@@ -238,7 +210,7 @@ public final class CertificateUtil {
      * @return <code>KeyPair</code> the generated key pair.
      * @exception GeneralSecurityException if something goes wrong.
      */
-    public static KeyPair generateKeyPair(String algorithm, int bits) 
+    public static KeyPair generateKeyPair(String algorithm, int bits)
         throws GeneralSecurityException {
         KeyPairGenerator generator = null;
         if (provider == null) {
@@ -361,7 +333,7 @@ public final class CertificateUtil {
             }
         }
 
-        
+
         return certType;
     }
 
@@ -454,15 +426,15 @@ public final class CertificateUtil {
         return TBSCertificateStructure.getInstance(obj);
     }
 
-    public static boolean[] getKeyUsage(TBSCertificateStructure crt)
+    public static EnumSet<KeyUsage> getKeyUsage(TBSCertificateStructure crt)
             throws IOException {
         X509Extensions extensions = crt.getExtensions();
         if (extensions == null) {
-            return new boolean[0];
+            return EnumSet.noneOf(KeyUsage.class);
         }
         X509Extension extension =
                 extensions.getExtension(X509Extensions.KeyUsage);
-        return (extension != null) ? getKeyUsage(extension) : new boolean[0];
+        return (extension != null) ? getKeyUsage(extension) : EnumSet.noneOf(KeyUsage.class);
     }
 
     /**
@@ -471,20 +443,15 @@ public final class CertificateUtil {
      * @throws IOException if failed to extract the KeyUsage extension value.
      * @see java.security.cert.X509Certificate#getKeyUsage
      */
-    public static boolean[] getKeyUsage(X509Extension ext)
+    public static EnumSet<KeyUsage> getKeyUsage(X509Extension ext)
             throws IOException {
         DERBitString bits = (DERBitString) getExtensionObject(ext);
-
-        // copied from X509CertificateObject
-        byte[] bytes = bits.getBytes();
-        int length = (bytes.length * 8) - bits.getPadBits();
-
-        boolean[] keyUsage = new boolean[(length < DEFAULT_USAGE_LENGTH) ? DEFAULT_USAGE_LENGTH : length];
-
-        for (int i = 0; i != length; i++) {
-            keyUsage[i] = (bytes[i / 8] & (0x80 >>> (i % 8))) != 0;
+        EnumSet<KeyUsage> keyUsage = EnumSet.noneOf(KeyUsage.class);
+        for (KeyUsage bit: KeyUsage.values()) {
+            if (bit.isSet(bits)) {
+                keyUsage.add(bit);
+            }
         }
-
         return keyUsage;
     }
 
@@ -500,7 +467,7 @@ public final class CertificateUtil {
     }
 
     /**
-     * Converts DN of the form "CN=A, OU=B, O=C" into Globus 
+     * Converts DN of the form "CN=A, OU=B, O=C" into Globus
      * format "/CN=A/OU=B/O=C".<BR>
      * This function might return incorrect Globus-formatted ID when one of
      * the RDNs in the DN contains commas.
@@ -514,11 +481,11 @@ public final class CertificateUtil {
     }
 
     /**
-     * Converts DN of the form "CN=A, OU=B, O=C" into Globus 
+     * Converts DN of the form "CN=A, OU=B, O=C" into Globus
      * format "/CN=A/OU=B/O=C" or "/O=C/OU=B/CN=A" depending on the
      * <code>noreverse</code> option. If <code>noreverse</code> is true
      * the order of the DN components is not reveresed - "/CN=A/OU=B/O=C" is
-     * returned. If <code>noreverse</code> is false, the order of the 
+     * returned. If <code>noreverse</code> is false, the order of the
      * DN components is reversed - "/O=C/OU=B/CN=A" is returned. <BR>
      * This function might return incorrect Globus-formatted ID when one of
      * the RDNs in the DN contains commas.
@@ -659,7 +626,7 @@ public final class CertificateUtil {
                         } else {
                             cEnd = i;
                             state = VALUE;
-                        }                    
+                        }
                 }
             }
 
@@ -672,12 +639,12 @@ public final class CertificateUtil {
         return new X500Principal(dn, KEYWORD_MAP);
     }
 
-    // JGLOBUS-91 
+    // JGLOBUS-91
     public static CertPath getCertPath(X509Certificate[] certs) throws CertificateException {
 
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         return factory.generateCertPath(Arrays.asList(certs));
     }
 
-    
+
 }

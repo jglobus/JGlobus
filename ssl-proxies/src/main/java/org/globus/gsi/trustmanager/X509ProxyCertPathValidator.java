@@ -14,13 +14,21 @@
  */
 package org.globus.gsi.trustmanager;
 
-import org.globus.gsi.util.CertificateUtil;
-import org.globus.gsi.util.ProxyCertificateUtil;
-
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.TBSCertificateStructure;
+import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.X509Extensions;
+import org.globus.gsi.GSIConstants;
 import org.globus.gsi.X509ProxyCertPathParameters;
 import org.globus.gsi.X509ProxyCertPathValidatorResult;
-
 import org.globus.gsi.provider.SigningPolicyStore;
+import org.globus.gsi.proxy.ProxyPolicyHandler;
+import org.globus.gsi.proxy.ext.ProxyCertInfo;
+import org.globus.gsi.proxy.ext.ProxyPolicy;
+import org.globus.gsi.util.CertificateUtil;
+import org.globus.gsi.util.KeyUsage;
+import org.globus.gsi.util.ProxyCertificateUtil;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -35,19 +43,10 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.TBSCertificateStructure;
-import org.bouncycastle.asn1.x509.X509Extension;
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.globus.gsi.GSIConstants;
-import org.globus.gsi.proxy.ext.ProxyCertInfo;
-import org.globus.gsi.proxy.ext.ProxyPolicy;
-import org.globus.gsi.proxy.ProxyPolicyHandler;
 
 /**
  * Implementation of the CertPathValidatorSpi and the logic for X.509 Proxy Path Validation.
@@ -422,9 +421,8 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
     protected void checkKeyUsage(TBSCertificateStructure issuer)
             throws CertPathValidatorException, IOException {
 
-        boolean[] issuerKeyUsage = CertificateUtil.getKeyUsage(issuer);
-
-        if (issuerKeyUsage != null && issuerKeyUsage.length > 0 && !issuerKeyUsage[CertificateUtil.KEY_CERTSIGN]) {
+        EnumSet<KeyUsage> issuerKeyUsage = CertificateUtil.getKeyUsage(issuer);
+        if (!issuerKeyUsage.contains(KeyUsage.KEY_CERTSIGN)) {
             throw new CertPathValidatorException("Certificate " + issuer.getSubject() + " violated key usage policy.");
         }
     }
@@ -511,23 +509,10 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
     }
 
     private void checkKeyUsage(TBSCertificateStructure issuer, X509Extension proxyExtension) throws IOException, CertPathValidatorException {
-        boolean[] keyUsage =
-                CertificateUtil.getKeyUsage(proxyExtension);
+        EnumSet<KeyUsage> keyUsage = CertificateUtil.getKeyUsage(proxyExtension);
         // these must not be asserted
-        if (keyUsage[CertificateUtil.NON_REPUDIATION] || keyUsage[CertificateUtil.KEY_CERTSIGN]) {
+        if (keyUsage.contains(KeyUsage.NON_REPUDIATION) || keyUsage.contains(KeyUsage.KEY_CERTSIGN)) {
             throw new CertPathValidatorException("Proxy violation: Key usage is asserted.");
-        }
-        boolean[] issuerKeyUsage = CertificateUtil.getKeyUsage(issuer);
-        if (issuerKeyUsage.length > 0) {
-            for (int i = 0; i < CertificateUtil.DEFAULT_USAGE_LENGTH; i++) {
-                if (i == CertificateUtil.NON_REPUDIATION || i == CertificateUtil.KEY_CERTSIGN) {
-                    continue;
-                }
-                if (!issuerKeyUsage[i] && keyUsage[i]) {
-                    throw new CertPathValidatorException(
-                            "Proxy violation: Issuer key usage is incorrect");
-                }
-            }
         }
     }
 
