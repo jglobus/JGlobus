@@ -60,7 +60,7 @@ public class TestTrustManager extends TestProxyPathValidator {
                         null);
         PKITrustManager manager =
                 new PKITrustManager(
-                        new MockProxyCertPathValidator(false, false, false),
+                        new MockProxyCertPathValidator(false, false, false, false),
                         validatorParam);
         X509Certificate[] certChain =
                 new X509Certificate[]{goodCertsArr[5], goodCertsArr[1],
@@ -81,7 +81,7 @@ public class TestTrustManager extends TestProxyPathValidator {
 
         // Fail because of reject limited proxy
         validatorParam = new X509ProxyCertPathParameters(keyStore, certStore, policyStore, true, null);
-        manager = new PKITrustManager(new MockProxyCertPathValidator(false, false, false), validatorParam);
+        manager = new PKITrustManager(new MockProxyCertPathValidator(false, false, false, false), validatorParam);
         certChain = new X509Certificate[]{goodCertsArr[3], goodCertsArr[1], goodCertsArr[0]};
         boolean exception = false;
         try {
