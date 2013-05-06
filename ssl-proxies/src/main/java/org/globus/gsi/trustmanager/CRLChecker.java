@@ -16,6 +16,7 @@
 package org.globus.gsi.trustmanager;
 
 import org.globus.gsi.util.KeyStoreUtil;
+import org.globus.gsi.CertificateRevocationLists;
 
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -47,9 +48,24 @@ import org.globus.gsi.GSIConstants;
  * @since 1.0
  */
 public class CRLChecker implements CertificateChecker {
+    private CertificateRevocationLists crlsList;
     private CertStore certStore;
     private KeyStore keyStore;
     private boolean checkDateValidity;
+
+    /**
+     * Creates a CRLChecker where the CRL's are in the supplied stores.
+     *
+     * @param crlsList          The object containing the CRL's
+     * @param keyStore          The store used to get trusted certs.
+     * @param checkDateValidity Should we check if the CRL date is valid.
+     */
+    public CRLChecker(CertificateRevocationLists crlsList, KeyStore keyStore, boolean checkDateValidity) {
+        this.crlsList = crlsList;
+        this.certStore = null;
+        this.keyStore = keyStore;
+        this.checkDateValidity = checkDateValidity;
+    }
 
     /**
      * Creates a CRLChecker where the CRL's are in the supplied stores.
@@ -59,6 +75,7 @@ public class CRLChecker implements CertificateChecker {
      * @param checkDateValidity Should we check if the CRL date is valid.
      */
     public CRLChecker(CertStore certStore, KeyStore keyStore, boolean checkDateValidity) {
+        this.crlsList = null;
         this.certStore = certStore;
         this.keyStore = keyStore;
         this.checkDateValidity = checkDateValidity;
@@ -80,11 +97,15 @@ public class CRLChecker implements CertificateChecker {
         crlSelector.addIssuer(certIssuer);
 
         Collection<? extends CRL> crls;
-        try {
-            crls = this.certStore.getCRLs(crlSelector);
-        } catch (CertStoreException e) {
-            throw new CertPathValidatorException(
+        if (crlsList != null) {
+            crls = crlsList.getCRLs(crlSelector);
+        } else {
+            try {
+                crls = this.certStore.getCRLs(crlSelector);
+            } catch (CertStoreException e) {
+                throw new CertPathValidatorException(
                     "Error accessing CRL from certificate store", e);
+            }
         }
 
         if (crls.size() < 1) {
