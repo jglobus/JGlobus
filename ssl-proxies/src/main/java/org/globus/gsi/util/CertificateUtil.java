@@ -430,11 +430,11 @@ public final class CertificateUtil {
             throws IOException {
         X509Extensions extensions = crt.getExtensions();
         if (extensions == null) {
-            return EnumSet.noneOf(KeyUsage.class);
+            return null;
         }
         X509Extension extension =
                 extensions.getExtension(X509Extensions.KeyUsage);
-        return (extension != null) ? getKeyUsage(extension) : EnumSet.noneOf(KeyUsage.class);
+        return (extension != null) ? getKeyUsage(extension) : null;
     }
 
     /**
