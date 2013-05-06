@@ -14,6 +14,8 @@
  */
 package org.globus.gsi.proxy;
 
+import org.globus.common.CoGProperties;
+
 import org.globus.gsi.util.CertificateLoadUtil;
 
 import org.globus.gsi.trustmanager.CRLChecker;
@@ -263,6 +265,8 @@ public class ProxyPathValidatorTest extends TestCase {
     }
 
     public static X509Certificate[] initCerts() throws Exception {
+        CoGProperties.getDefault().setProperty(CoGProperties.getDefault().CRL_CACHE_LIFETIME, "1");
+
         X509Certificate[] goodCertsArr = new X509Certificate[certs.length];
         ClassLoader loader = ProxyPathValidatorTest.class.getClassLoader();
         for (int i = 0; i < certs.length; i++) {
