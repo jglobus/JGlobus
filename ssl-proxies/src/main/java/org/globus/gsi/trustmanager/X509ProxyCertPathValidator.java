@@ -424,7 +424,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
             throws CertPathValidatorException, IOException {
 
         EnumSet<KeyUsage> issuerKeyUsage = CertificateUtil.getKeyUsage(issuer);
-        if (!issuerKeyUsage.contains(KeyUsage.KEY_CERTSIGN)) {
+        if (issuerKeyUsage != null && !issuerKeyUsage.contains(KeyUsage.KEY_CERTSIGN)) {
             throw new CertPathValidatorException("Certificate " + issuer.getSubject() + " violated key usage policy.");
         }
     }
