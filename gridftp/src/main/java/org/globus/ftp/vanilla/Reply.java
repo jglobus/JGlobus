@@ -56,7 +56,7 @@ public class Reply
     protected boolean isMultiline;
 
     // for subclassing
-    protected Reply() {};
+    protected Reply() {}
 
     /**
      * @throws EOFException on end of stream

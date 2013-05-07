@@ -213,7 +213,7 @@ public class GlobusCredential implements Serializable {
      */
     public PrivateKey getPrivateKey() {
         try {
-            return (PrivateKey) cred.getPrivateKey();
+            return cred.getPrivateKey();
         } catch (Exception e) {
             return null;
         }
@@ -300,7 +300,7 @@ public class GlobusCredential implements Serializable {
      * @exception GlobusCredentialException
      *                if the credential expired or some other error with the credential.
      */
-    public synchronized static GlobusCredential getDefaultCredential() throws GlobusCredentialException {
+    public static synchronized GlobusCredential getDefaultCredential() throws GlobusCredentialException {
         if (defaultCred == null) {
             reloadDefaultCredential();
         } else if (!credentialSet) {
@@ -329,7 +329,7 @@ public class GlobusCredential implements Serializable {
      * @param cred
      *            the credential to set a default.
      */
-    public synchronized static void setDefaultCredential(GlobusCredential cred) {
+    public static synchronized void setDefaultCredential(GlobusCredential cred) {
         credentialSet = (cred != null);
     }
 

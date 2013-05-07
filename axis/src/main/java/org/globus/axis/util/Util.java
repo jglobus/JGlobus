@@ -36,13 +36,13 @@ public class Util {
 	return (GSSCredential)msgContext.getProperty(GSIConstants.GSI_CREDENTIALS);
     }
 
-    public synchronized static void registerTransport() {
+    public static synchronized void registerTransport() {
 	if (transportRegistered) return;
         reregisterTransport();
 	transportRegistered = true;
     }
 
-    public synchronized static void reregisterTransport() {
+    public static synchronized void reregisterTransport() {
         Call.initialize();
 	Call.addTransportPackage("org.globus.net.protocol");
         Call.setTransportForProtocol("httpg", GSIHTTPTransport.class);

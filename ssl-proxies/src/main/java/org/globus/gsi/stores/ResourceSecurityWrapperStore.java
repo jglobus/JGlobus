@@ -15,9 +15,10 @@
 
 package org.globus.gsi.stores;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
+import org.globus.util.GlobusResource;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -28,10 +29,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-
-import org.globus.util.GlobusResource;
-import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 
 /**
  * Created by IntelliJ IDEA. User: turtlebender Date: Dec 29, 2009 Time:
@@ -98,7 +95,6 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
     private boolean loadResources(String locationPattern, Set<V> updatedList,
 			Map<String, T> newWrapperMap) throws ResourceStoreException {
 		boolean changed = false;
-		try {
             GlobusResource[] globusResources = globusResolver.getResources(locationPattern);
             for (GlobusResource globusResource : globusResources){
                 URI uri =globusResource.getURI();
@@ -108,10 +104,6 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
                 }
                 changed = load(globusResource, updatedList, newWrapperMap);
             }
-        }
-        catch (IOException e) {
-            throw new ResourceStoreException(e);
-        }
 		return changed;
 	}
 
@@ -120,17 +112,11 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 		if (!resource.isReadable()) {
 			throw new ResourceStoreException("Cannot read file");
 		}
-		try {
 			if (resource.getFile().isDirectory()) {
 				File directory = resource.getFile();
 				currentRoots.addAll(addCredentials(directory, newWrapperMap));
 				return true;
 			}
-		} catch (IOException e) {
-			// This is ok, it just means the resource is not a
-			// filesystemresources
-			logger.debug("Not a filesystem resource", e);
-		}
 		try {
 			String resourceUri = resource.getURL().toExternalForm();
 			T fbo = this.wrapperMap.get(resourceUri);
@@ -154,7 +140,6 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
         if (children == null) {
             return roots;
         }
-		try {
 			for (String child : children) {
 				File childFile = new File(directory, child);
 				if (childFile.isDirectory()) {
@@ -172,9 +157,6 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 				}
 			}
 			return roots;
-		} catch (IOException e) {
-			throw new ResourceStoreException(e);
-		}
 	}
 
 	public abstract T create(GlobusResource resource) throws ResourceStoreException;

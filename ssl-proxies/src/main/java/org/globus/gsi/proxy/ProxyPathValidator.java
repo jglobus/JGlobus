@@ -243,7 +243,7 @@ public class ProxyPathValidator {
     throws ProxyPathValidatorException {
     validate(certPath, 
          (TrustedCertificates)null, 
-         (CertificateRevocationLists)null);
+            null);
     }
 
     /**

@@ -14,24 +14,25 @@
  */
 package org.globus.gsi.util;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.globus.gsi.SigningPolicy;
 import org.globus.gsi.SigningPolicyException;
+import org.globus.gsi.SigningPolicyParser;
+import org.globus.gsi.testutils.FileSetupUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import javax.security.auth.x500.X500Principal;
+
+import java.io.FileNotFoundException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import javax.security.auth.x500.X500Principal;
-
-import org.globus.gsi.SigningPolicy;
-import org.globus.gsi.SigningPolicyParser;
-import org.globus.gsi.testutils.FileSetupUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestSigningPolicyFileParser {
 
@@ -227,7 +228,7 @@ public class TestSigningPolicyFileParser {
         assertTrue(allowedDN != null);
         assertTrue(allowedDN.size() == 1);
         patterns.clear();
-        patterns.add(((Pattern) allowedDN.get(0)).pattern());
+        patterns.add(allowedDN.get(0).pattern());
         p1 = SigningPolicyParser
                 .getPattern("/C=us/O=National Computational Science Alliance/*");
         assertTrue(patterns.contains(p1.pattern()));
@@ -247,7 +248,7 @@ public class TestSigningPolicyFileParser {
         assertTrue(allowedDN.size() == 1);
 
         patterns = new Vector(1);
-        patterns.add(((Pattern) allowedDN.get(0)).pattern());
+        patterns.add(allowedDN.get(0).pattern());
 
         p1 = SigningPolicyParser
                 .getPattern("/C=US/O=National Computational Science Alliance/*");
@@ -281,8 +282,8 @@ public class TestSigningPolicyFileParser {
         assertTrue(allowedDN.size() == 2);
 
         Vector patterns = new Vector(2);
-        patterns.add(((Pattern) allowedDN.get(0)).pattern());
-        patterns.add(((Pattern) allowedDN.get(1)).pattern());
+        patterns.add(allowedDN.get(0).pattern());
+        patterns.add(allowedDN.get(1).pattern());
 
         // given the getPattern method is already tested, assuming it
         // works here.
@@ -306,8 +307,8 @@ public class TestSigningPolicyFileParser {
         assertTrue(allowedDN.size() == 2);
 
         patterns.clear();
-        patterns.add(((Pattern) allowedDN.get(0)).pattern());
-        patterns.add(((Pattern) allowedDN.get(1)).pattern());
+        patterns.add(allowedDN.get(0).pattern());
+        patterns.add(allowedDN.get(1).pattern());
 
         // given the getPattern method is already tested, assuming it
         // works here.
@@ -317,7 +318,7 @@ public class TestSigningPolicyFileParser {
         assertTrue(patterns.contains(p1.pattern()));
     }
 
-    @Test(expected = SigningPolicyException.class)
+    @Test(expected = FileNotFoundException.class)
     public void testFileFailure() throws Exception {
         SigningPolicyParser parser = new SigningPolicyParser();
         parser.parse("Foo");

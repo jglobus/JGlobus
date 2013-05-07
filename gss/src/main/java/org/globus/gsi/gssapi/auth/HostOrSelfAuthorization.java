@@ -35,7 +35,7 @@ public class HostOrSelfAuthorization extends GSSAuthorization {
      *
      * @return the instance of this class.
      */
-    public synchronized static HostOrSelfAuthorization getInstance() {
+    public static synchronized HostOrSelfAuthorization getInstance() {
 	if (authorization == null) {
 	    authorization = new HostOrSelfAuthorization("host");
 	}

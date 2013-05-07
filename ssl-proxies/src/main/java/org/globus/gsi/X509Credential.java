@@ -457,7 +457,7 @@ public class X509Credential implements Serializable {
      * @exception CredentialException
      *                if the credential expired or some other error with the credential.
      */
-    public synchronized static X509Credential getDefaultCredential() throws CredentialException {
+    public static synchronized X509Credential getDefaultCredential() throws CredentialException {
         if (defaultCred == null) {
             reloadDefaultCredential();
         } else if (!credentialSet) {
@@ -487,7 +487,7 @@ public class X509Credential implements Serializable {
      * @param cred
      *            the credential to set a default.
      */
-    public synchronized static void setDefaultCredential(X509Credential cred) {
+    public static synchronized void setDefaultCredential(X509Credential cred) {
         defaultCred = cred;
         credentialSet = (cred != null);
     }

@@ -22,9 +22,8 @@ import java.security.cert.CertStoreParameters;
  * User: turtlebender
  * Date: Dec 29, 2009
  * Time: 1:06:39 PM
- * To change this template use File | Settings | File Templates.
  */
-public class ResourceCertStoreParameters implements CertStoreParameters {
+public final class ResourceCertStoreParameters implements CertStoreParameters {
 
     private String certLocationPattern;
     private String crlLocationPattern;

@@ -104,7 +104,7 @@ public class GridFTPRestartMarker implements Marker {
 	if (vector.size() == 0 ) {
 	    badMsg("empty range list", msg);
 	}
-    };
+    }
 
     private void badMsg(String why, String msg) {
 	throw new IllegalArgumentException(
@@ -123,6 +123,6 @@ public class GridFTPRestartMarker implements Marker {
     **/
     public Vector toVector() {
 	return vector;
-    };
+    }
     
 }

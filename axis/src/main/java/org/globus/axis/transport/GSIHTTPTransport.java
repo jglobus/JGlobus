@@ -86,7 +86,7 @@ public class GSIHTTPTransport extends Transport implements GSIConstants
         // (a) has not already been determined, and (b) if a service matching
         // the soap action has been deployed.
         if (mc.getService() == null) {
-            mc.setTargetService( (String)mc.getSOAPActionURI() );
+            mc.setTargetService(mc.getSOAPActionURI());
         }
     }
 

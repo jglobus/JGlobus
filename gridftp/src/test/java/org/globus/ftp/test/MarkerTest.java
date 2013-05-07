@@ -15,6 +15,7 @@
  */
 package org.globus.ftp.test;
 
+import junit.framework.Assert;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.HostPortList;
 import org.globus.ftp.RetrieveOptions;
@@ -63,11 +64,11 @@ public class MarkerTest extends TestCase {
 	    } else if (m instanceof PerfMarker) {
 		perfMarkerArrived((PerfMarker) m);
 	    } else {
-		enclosing.fail("Received unsupported marker type");
+		fail("Received unsupported marker type");
 	    }
-	};
+	}
 	
-	private void restartMarkerArrived(GridFTPRestartMarker marker) {
+        private void restartMarkerArrived(GridFTPRestartMarker marker) {
 	    logger.info("--> restart marker arrived:");
 	    list.merge(marker.toVector());
 	    logger.info("Current transfer state: " + list.toFtpCmdArgument());
@@ -83,7 +84,7 @@ public class MarkerTest extends TestCase {
 		try {
 		    logger.info("Stripe index =" + marker.getStripeIndex());
 		} catch (PerfMarkerException e) {
-		    enclosing.fail(e.toString());
+		    fail(e.toString());
 		}
 	    }else {
 		logger.info("Stripe index: not present");
@@ -95,7 +96,7 @@ public class MarkerTest extends TestCase {
 		    logger.info("Stripe bytes transferred = "
 				 + marker.getStripeBytesTransferred());
 		} catch (PerfMarkerException e) {
-		    enclosing.fail(e.toString());
+		    fail(e.toString());
 		}
 	    }else {
 		logger.info("Stripe Bytes Transferred: not present");
@@ -107,7 +108,7 @@ public class MarkerTest extends TestCase {
 		    logger.info("Total stripe count = " 
 				 + marker.getTotalStripeCount());
 		} catch (PerfMarkerException e) {
-		    enclosing.fail(e.toString());
+		    fail(e.toString());
 		}
 	    }else {
 		logger.info("Total stripe count: not present");

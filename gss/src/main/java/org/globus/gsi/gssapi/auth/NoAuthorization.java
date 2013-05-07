@@ -38,7 +38,7 @@ public class NoAuthorization extends GSSAuthorization {
      *
      * @return the instance of this class.
      */
-    public synchronized static NoAuthorization getInstance() {
+    public static synchronized NoAuthorization getInstance() {
 	if (authorization == null) {
 	    authorization = new NoAuthorization();
 	}

@@ -53,7 +53,7 @@ public class HostAuthorization
      * @return an instance of this class initialized with
      *         <i>host</i> as a service.
      */
-    public synchronized static HostAuthorization getInstance() {
+    public static synchronized HostAuthorization getInstance() {
         if (hostAuthorization == null) {
             hostAuthorization = new HostAuthorization("host");
         }

@@ -64,7 +64,7 @@ public abstract class ExtendedGSSManager extends GSSManager {
 						    int usage)
 	throws GSSException;
     
-    public synchronized static GSSManager getInstance() {
+    public static synchronized GSSManager getInstance() {
 	if (gssManager == null) {
 	    String className = System.getProperty("org.globus.gsi.gssapi.provider");
 	    if (className == null) {

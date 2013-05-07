@@ -14,13 +14,13 @@
  */
 package org.globus.gsi.util;
 
-import java.io.IOException;
-
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.globus.gsi.GSIConstants;
 import org.globus.gsi.proxy.ext.ProxyCertInfo;
+
+import java.io.IOException;
 
 /**
  * FILL ME
@@ -138,9 +138,7 @@ public final class ProxyCertificateUtil {
         return (proxyCertExt != null) ? proxyCertExt.getPathLenConstraint() : -1;
     }
 
-    public static ProxyCertInfo getProxyCertInfo(TBSCertificateStructure crt)
-            throws IOException {
-
+    public static ProxyCertInfo getProxyCertInfo(TBSCertificateStructure crt) {
         X509Extensions extensions = crt.getExtensions();
         if (extensions == null) {
             return null;

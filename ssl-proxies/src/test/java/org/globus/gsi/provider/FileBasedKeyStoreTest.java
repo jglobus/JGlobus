@@ -15,11 +15,11 @@
 
 package org.globus.gsi.provider;
 
-import org.globus.gsi.stores.PEMKeyStore;
-
 import org.apache.commons.logging.Log;
-
 import org.apache.commons.logging.LogFactory;
+import org.globus.gsi.stores.PEMKeyStore;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,16 +27,10 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
-
-import org.globus.util.GlobusPathMatchingResourcePatternResolver;
-import org.junit.Test;
-
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Dec 30, 2009
  * Time: 1:01:14 PM
- * To change this template use File | Settings | File Templates.
  */
 public class FileBasedKeyStoreTest {
     private PEMKeyStore keystore = new PEMKeyStore();

@@ -128,8 +128,8 @@ public class FTPClientListTest extends TestCase {
 				   buffer.getLength());
 		}
 		public void close() 
-		    throws IOException{};
-	     });
+		    throws IOException{}
+         });
 
 	// transfer done. Data is in received2 stream.
 

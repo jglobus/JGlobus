@@ -15,17 +15,16 @@
 
 package org.globus.gsi.trustmanager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.gsi.util.CertificateUtil;
 import org.globus.gsi.util.KeyStoreUtil;
-
-import java.util.Iterator;
 
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Principal;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertPath;
@@ -38,16 +37,12 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Jan 20, 2010
  * Time: 4:51:38 PM
- * To change this template use File | Settings | File Templates.
  */
 public final class TrustedCertPathFinder {
     private static Log logger = LogFactory.getLog(TrustedCertPathFinder.class.getCanonicalName());

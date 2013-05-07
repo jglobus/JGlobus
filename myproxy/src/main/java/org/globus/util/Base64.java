@@ -26,9 +26,9 @@ package org.globus.util;
  */
 public final class  Base64
 {
-    static private final int  BASELENGTH         = 255;
-    static private final byte PAD                = (byte) '=';
-    static private byte [] base64Alphabet       = new byte[BASELENGTH];
+    private static final int  BASELENGTH         = 255;
+    private static final byte PAD                = (byte) '=';
+    private static byte [] base64Alphabet       = new byte[BASELENGTH];
 
     static
     {

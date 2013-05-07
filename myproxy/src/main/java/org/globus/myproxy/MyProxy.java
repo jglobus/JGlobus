@@ -162,7 +162,7 @@ public class MyProxy  {
     /** Trustroot information and path constant. */
     protected String[] trustrootFilenames;
     protected String[] trustrootData;
-    private final static String TRUSTED_CERT_PATH = "/.globus/certificates";
+    private static final String TRUSTED_CERT_PATH = "/.globus/certificates";
 
     /**
      * Initialize the MyProxy client object with the default
@@ -1134,7 +1134,7 @@ public class MyProxy  {
                     if (tmpDir.mkdir() == true)
                     {
                         String hash = opensslHash(acceptedIssuers[idx]);
-                        String filename = tmpDir.getPath() + tmpDir.separator + hash + ".0";
+                        String filename = tmpDir.getPath() + File.separator + hash + ".0";
 
                         FileOutputStream os = new FileOutputStream(new File(filename));
                         CertUtil.writeCertificate(os, acceptedIssuers[idx]);
@@ -1144,7 +1144,7 @@ public class MyProxy  {
                             logger.debug("wrote trusted certificate to " + filename);
                         }
 
-                        filename = tmpDir.getPath() + tmpDir.separator + hash + ".signing_policy";
+                        filename = tmpDir.getPath() + File.separator + hash + ".signing_policy";
 
                         os = new FileOutputStream(new File(filename));
                         Writer wr = new OutputStreamWriter(os, Charset.forName("UTF-8"));

@@ -14,12 +14,11 @@
  */
 package org.globus.gsi;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.gsi.util.CertificateUtil;
 
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.commons.logging.Log;
-
+import javax.security.auth.x500.X500Principal;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,11 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-
 import java.util.regex.Pattern;
-
-import javax.security.auth.x500.X500Principal;
 
 
 /**
@@ -128,6 +123,8 @@ public class SigningPolicyParser {
         try {
             fileReader = new FileReader(fileName);
             return parse(fileReader);
+        } catch (FileNotFoundException e) {
+            throw e;
         } catch (Exception e) {
             throw new SigningPolicyException(e);
         } finally {

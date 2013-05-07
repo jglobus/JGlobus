@@ -15,19 +15,18 @@
  */
 package org.globus.io.streams;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.net.Socket;
-
-import org.globus.io.gass.client.internal.GASSProtocol;
-import org.globus.io.gass.client.GassException;
-import org.globus.net.SocketFactory;
-import org.globus.util.http.HttpResponse;
-import org.globus.common.ChainedIOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.common.ChainedIOException;
+import org.globus.io.gass.client.GassException;
+import org.globus.io.gass.client.internal.GASSProtocol;
+import org.globus.net.SocketFactory;
+import org.globus.util.http.HttpResponse;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 public class HTTPOutputStream extends GlobusOutputStream {
 
@@ -76,7 +75,7 @@ public class HTTPOutputStream extends GlobusOutputStream {
 		      String file,
 		      long length, 
 		      boolean append)
-	throws GassException, IOException {
+	throws IOException {
 	size        = length;
 	this.append = append;
 	

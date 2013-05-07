@@ -15,6 +15,7 @@
  */
 package org.globus.gram;
 
+import org.globus.gram.internal.GRAMConstants;
 import org.globus.io.gass.server.GassServer;
 import org.globus.util.deactivator.Deactivator;
 
@@ -128,10 +129,10 @@ public class Gram15Test {
 	} catch(Exception e) {
 	}
 
-	if (job.getStatus() == job.STATUS_FAILED) {
+	if (job.getStatus() == GRAMConstants.STATUS_FAILED) {
 	    System.out.println("Error: Timeout expired!");
 	    return false;
-	} else if (job.getStatus() == job.STATUS_UNSUBMITTED) {
+	} else if (job.getStatus() == GRAMConstants.STATUS_UNSUBMITTED) {
 	    return true;
 	}
 

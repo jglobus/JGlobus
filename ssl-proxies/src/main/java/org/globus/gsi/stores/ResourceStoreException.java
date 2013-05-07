@@ -18,11 +18,9 @@ package org.globus.gsi.stores;
 import java.security.GeneralSecurityException;
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Dec 30, 2009
  * Time: 9:25:02 AM
- * To change this template use File | Settings | File Templates.
  */
 public class ResourceStoreException extends GeneralSecurityException {
     public ResourceStoreException() {

@@ -16,22 +16,18 @@
 package org.globus.gsi.stores;
 
 import org.apache.commons.logging.Log;
-
 import org.apache.commons.logging.LogFactory;
+import org.globus.util.GlobusResource;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.security.cert.TrustAnchor;
 
-import org.globus.util.GlobusResource;
-
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Dec 29, 2009
  * Time: 11:49:20 AM
- * To change this template use File | Settings | File Templates.
  */
 public class ResourceCACertStore extends ResourceSecurityWrapperStore<ResourceTrustAnchor, TrustAnchor> {
     

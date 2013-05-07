@@ -134,9 +134,9 @@ public class ByteRangeListTest extends TestCase {
      **/
     public void test3() {
 	//merge 2 -> 1
-	Vector v = new Vector();;
+	Vector v = new Vector();
 
-	v.add(new ByteRange(1,3));
+        v.add(new ByteRange(1,3));
 	v.add(new ByteRange(4,6));	    
 	assertMerge(v,"1-6");
 
@@ -273,7 +273,7 @@ public class ByteRangeListTest extends TestCase {
 	assertTrue(vBefore.equals(vAfter));
 	assertTrue(rBefore.equals(rAfter));
 	logger.debug("ok, original objects intact");
-    };
+    }
 
     /**
        Merge vector into a new ByteRangeList.

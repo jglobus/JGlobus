@@ -91,7 +91,7 @@ public class CertificateRevocationLists {
         if (this.crlIssuerDNMap == null) {
             return null;
         }
-        return (X509CRL)this.crlIssuerDNMap.get(issuerName);
+        return this.crlIssuerDNMap.get(issuerName);
     }
 
     public void refresh() {
@@ -218,7 +218,7 @@ public class CertificateRevocationLists {
                             locations = (String)iterator.next();
                         } else {
                             locations = locations + ","
-                                + (String)iterator.next();
+                                + iterator.next();
                         }
                     }
 

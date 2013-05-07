@@ -15,35 +15,26 @@
  */
 package org.globus.ftp;
 
-import java.io.IOException;
-import java.io.File;
-import java.io.RandomAccessFile;
-import java.util.Vector;
-import java.net.UnknownHostException;
-
-import org.globus.ftp.exception.ClientException;
-import org.globus.ftp.exception.ServerException;
-import org.globus.ftp.exception.FTPReplyParseException;
-import org.globus.ftp.exception.UnexpectedReplyCodeException;
-import org.globus.ftp.vanilla.Command;
-import org.globus.ftp.vanilla.Reply;
-import org.globus.ftp.vanilla.TransferState;
-import org.globus.ftp.vanilla.FTPControlChannel;
-import org.globus.ftp.extended.GridFTPServerFacade;
-import org.globus.ftp.extended.GridFTPControlChannel;
-import org.globus.gsi.gssapi.auth.Authorization;
-import org.globus.ftp.MultipleTransferComplete;
-import org.globus.ftp.MultipleTransferCompleteListener;
-
-import org.ietf.jgss.GSSCredential;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.common.Version;
+import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.FTPReplyParseException;
+import org.globus.ftp.exception.ServerException;
+import org.globus.ftp.exception.UnexpectedReplyCodeException;
+import org.globus.ftp.extended.GridFTPControlChannel;
+import org.globus.ftp.extended.GridFTPServerFacade;
+import org.globus.ftp.vanilla.Command;
+import org.globus.ftp.vanilla.Reply;
+import org.globus.gsi.gssapi.auth.Authorization;
+import org.ietf.jgss.GSSCredential;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
-import org.globus.ftp.exception.FTPException;
+import java.util.Vector;
 
 
 /**
@@ -1057,11 +1048,7 @@ public class GridFTPClient extends FTPClient {
             while (i < len && pos < buf.length) {
                 if (data[i] == '\r' || data[i] == '\n') {
                     if (pos > 0) {
-                        try {
-                            writer.write(new MlsxEntry(new String(buf, 0, pos)));
-                        } catch (FTPException ex) {
-                            throw new IOException();
-                        }
+                        writer.write(new MlsxEntry(new String(buf, 0, pos)));
                     }
                     pos = 0;
                     while (i < len && data[i] < ' ') ++i;

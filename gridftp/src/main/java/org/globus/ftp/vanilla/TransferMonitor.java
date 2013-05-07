@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class TransferMonitor implements Runnable {
 
-    public final static int 
+    public static final int
         LOCAL = 1,
         REMOTE = 2;
     private int side; // source or dest 

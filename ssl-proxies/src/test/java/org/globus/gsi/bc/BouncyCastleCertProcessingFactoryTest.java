@@ -63,7 +63,7 @@ public class BouncyCastleCertProcessingFactoryTest extends TestCase {
                      512,
                      60 * 60,
                      GSIConstants.GSI_3_RESTRICTED_PROXY,
-                     (X509ExtensionSet)null,
+                null,
                      null);
         fail("Expected to fail");
     } catch (IllegalArgumentException e) {

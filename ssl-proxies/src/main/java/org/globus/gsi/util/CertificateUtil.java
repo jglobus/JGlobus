@@ -388,9 +388,7 @@ public final class CertificateUtil {
      * @return the <code>BasicConstraints</code> object.
      * @throws IOException if something fails.
      */
-    public static BasicConstraints getBasicConstraints(X509Extension ext)
-            throws IOException {
-
+    public static BasicConstraints getBasicConstraints(X509Extension ext) {
         ASN1Object object = X509Extension.convertValueToObject(ext);
         return BasicConstraints.getInstance(object);
     }

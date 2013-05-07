@@ -268,7 +268,7 @@ public class GridFTPServerFacade extends FTPServerFacade {
         gSession.serverAddressList.add(hp);
         
         logger.debug("started single striped passive server at port " +
-                     ((HostPort) gSession.serverAddressList.get(0)).getPort());
+                     gSession.serverAddressList.get(0).getPort());
         
         return gSession.serverAddressList;
     }
@@ -472,7 +472,7 @@ public class GridFTPServerFacade extends FTPServerFacade {
         } catch (Exception e) {
             exceptionToControlChannel(e, "ocurred during retrieve()");
         }
-    };
+    }
     
     //override
     public void abort() throws IOException {

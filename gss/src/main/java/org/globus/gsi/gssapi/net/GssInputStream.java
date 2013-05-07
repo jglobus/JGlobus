@@ -14,13 +14,12 @@
  */
 package org.globus.gsi.gssapi.net;
 
-import java.io.InputStream;
-import java.io.IOException;
-
 import org.globus.common.ChainedIOException;
-
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSException;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public abstract class GssInputStream extends InputStream {
   
@@ -84,10 +83,7 @@ public abstract class GssInputStream extends InputStream {
 	if (this.buff.length == this.index) {
 	    readMsg();
 	}
-	if (this.buff == null) {
-            return false;
-        }
-	return (this.buff.length != this.index);
+        return (this.buff != null) && (this.buff.length != this.index);
     }
     
     /* does not dispose of the context */

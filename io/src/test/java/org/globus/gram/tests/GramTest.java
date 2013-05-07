@@ -23,6 +23,7 @@ import org.globus.gram.Gram;
 import org.globus.gram.GramException;
 import org.globus.gram.GramJobListener;
 import org.globus.gram.WaitingForCommitException;
+import org.globus.gram.internal.GRAMConstants;
 import org.globus.gram.util.TestUtil;
 import org.globus.io.gass.server.GassServer;
 
@@ -405,7 +406,7 @@ public class GramTest extends TestCase {
         
         Thread.sleep(75000);
         
-	if (job.getStatus() == job.STATUS_FAILED) {
+	if (job.getStatus() == GRAMConstants.STATUS_FAILED) {
 	    fail("Timeout expired!");
 	}
     }

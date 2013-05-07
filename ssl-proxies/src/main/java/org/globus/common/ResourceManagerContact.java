@@ -23,8 +23,8 @@ import java.util.StringTokenizer;
  */
 public class ResourceManagerContact {
   
-    public final static String DEFAULT_SERVICE = "/jobmanager";
-    public final static int DEFAULT_PORT       = 2119;
+    public static final String DEFAULT_SERVICE = "/jobmanager";
+    public static final int DEFAULT_PORT       = 2119;
     
     protected String hostName    = null;
     protected int portNumber     = -1;

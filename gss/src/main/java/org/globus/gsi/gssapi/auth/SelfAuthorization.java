@@ -42,7 +42,7 @@ public class SelfAuthorization
      *
      * @return the instance of this class.
      */
-    public synchronized static SelfAuthorization getInstance() {
+    public static synchronized SelfAuthorization getInstance() {
 	if (authorization == null) {
 	    authorization = new SelfAuthorization();
 	}

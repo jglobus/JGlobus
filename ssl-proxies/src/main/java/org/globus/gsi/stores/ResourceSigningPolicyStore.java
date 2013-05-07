@@ -14,29 +14,23 @@
  */
 package org.globus.gsi.stores;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.gsi.SigningPolicy;
 import org.globus.gsi.provider.SigningPolicyStore;
 import org.globus.gsi.provider.SigningPolicyStoreException;
 import org.globus.gsi.provider.SigningPolicyStoreParameters;
+import org.globus.gsi.util.CertificateIOUtil;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
+import org.globus.util.GlobusResource;
 
-import org.apache.commons.logging.LogFactory;
+import javax.security.auth.x500.X500Principal;
 
-import org.apache.commons.logging.Log;
-
-import java.io.IOException;
 import java.net.URI;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
-
-import javax.security.auth.x500.X500Principal;
-
-import org.globus.gsi.SigningPolicy;
-import org.globus.gsi.util.CertificateIOUtil;
-
-import org.globus.util.GlobusResource;
-import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 
 /**
  * FILL ME
@@ -52,7 +46,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     private Log logger = LogFactory.getLog(ResourceSigningPolicyStore.class.getCanonicalName());
     private final Map<String, Long> invalidPoliciesCache = new HashMap<String, Long>();
     private final Map<String, Long> validPoliciesCache = new HashMap<String, Long>();
-    private final static long CACHE_TIME_MILLIS = 3600*1000;
+    private static final long CACHE_TIME_MILLIS = 3600*1000;
     private long lastUpdate = 0;
     
     /**
@@ -170,15 +164,10 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
             GlobusResource policyResource, Map<String, SigningPolicy> policyMapToLoad,
             Map<URI, ResourceSigningPolicy> currentPolicyFileMap) throws SigningPolicyStoreException {
 
-        URI uri;
         if (!policyResource.isReadable()) {
             throw new SigningPolicyStoreException("Cannot read file");
         }
-        try {
-            uri = policyResource.getURI();
-        } catch (IOException e) {
-            throw new SigningPolicyStoreException(e);
-        }
+        URI uri = policyResource.getURI();
 
         ResourceSigningPolicy filePolicy = this.signingPolicyFileMap.get(uri);
         if (filePolicy == null) {

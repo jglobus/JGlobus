@@ -32,7 +32,7 @@ public class PerfMarker implements Marker {
 
     protected final String nl = System.getProperty("line.separator");
 
-    protected final static int UNDEFINED = -1;
+    protected static final int UNDEFINED = -1;
     // must have timeStamp
     protected boolean hasTimeStamp = false;
     protected double timeStamp = UNDEFINED;

@@ -205,8 +205,7 @@ public class RslAttributes {
      */
     public boolean removeVariable(String attribute, String varName) {
 	Bindings binds = rslTree.getBindings(attribute);
-        if (binds == null) return false;
-	return binds.removeVariable(varName);
+        return binds != null && binds.removeVariable(varName);
     }
 
     /**
@@ -229,8 +228,7 @@ public class RslAttributes {
      */
     public boolean remove(String attribute, String value) {
 	NameOpValue nv = rslTree.getParam(attribute);
-	if (nv == null || nv.getOperator() != NameOpValue.EQ) return false;
-	return nv.remove(new Value(value));
+        return nv != null && nv.getOperator() == NameOpValue.EQ && nv.remove(new Value(value));
     }
     
     /**

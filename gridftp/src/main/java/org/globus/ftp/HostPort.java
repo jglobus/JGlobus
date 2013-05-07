@@ -69,7 +69,7 @@ public class HostPort {
 	int i     = 0;
 	StringTokenizer tokens = new StringTokenizer(ipAddress, ".");
 	while(tokens.hasMoreTokens()) {
-	    datainfo[i] = Integer.parseInt( (String)tokens.nextToken() );
+	    datainfo[i] = Integer.parseInt(tokens.nextToken());
 	    i++;
 	}
 	

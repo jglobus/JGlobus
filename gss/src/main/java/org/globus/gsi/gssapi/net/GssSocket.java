@@ -89,10 +89,10 @@ public abstract class GssSocket extends WrappedSocket {
 	return this.context;
     }
     
-    abstract protected void writeToken(byte [] token)
+    protected abstract void writeToken(byte [] token)
 	throws IOException;
 
-    abstract protected byte[] readToken()
+    protected abstract byte[] readToken()
 	throws IOException;
     
     protected synchronized void authenticateClient() 

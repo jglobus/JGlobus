@@ -377,8 +377,8 @@ public class GridFTPClientTest extends TestCase {
                                    buffer.getLength());
                 }
                 public void close() 
-                    throws IOException{};
-             });
+                    throws IOException{}
+        });
 
         // transfer done. Data is in received2 stream.
 
@@ -396,8 +396,8 @@ public class GridFTPClientTest extends TestCase {
                                  " bytes of directory listing");
                 }
                 public void close() 
-                    throws IOException{};
-            });
+                    throws IOException{}
+        });
 
         GridFTPClient client = connect();
 
@@ -429,8 +429,8 @@ public class GridFTPClientTest extends TestCase {
                                  " bytes of directory listing");
                 }
                 public void close() 
-                    throws IOException{};
-            });
+                    throws IOException{}
+        });
 
         GridFTPClient client = connect();
 
@@ -460,8 +460,8 @@ public class GridFTPClientTest extends TestCase {
                                  " bytes of directory listing");
                 }
                 public void close() 
-                    throws IOException{};
-            });
+                    throws IOException{}
+        });
 
         GridFTPClient client = connect();
 

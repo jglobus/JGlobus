@@ -15,25 +15,23 @@
  */
 package org.globus.io.streams;
 
-import java.io.IOException;
-import java.net.Socket;
-
 import org.globus.common.ChainedIOException;
-import org.globus.io.gass.client.GassException;
 import org.globus.gsi.GSIConstants;
 import org.globus.gsi.gssapi.GSSConstants;
-import org.globus.gsi.gssapi.net.GssSocket;
-import org.globus.gsi.gssapi.net.GssSocketFactory;
 import org.globus.gsi.gssapi.auth.Authorization;
 import org.globus.gsi.gssapi.auth.SelfAuthorization;
-
-import org.gridforum.jgss.ExtendedGSSManager;
+import org.globus.gsi.gssapi.net.GssSocket;
+import org.globus.gsi.gssapi.net.GssSocketFactory;
+import org.globus.io.gass.client.GassException;
 import org.gridforum.jgss.ExtendedGSSContext;
-
-import org.ietf.jgss.GSSManager;
+import org.gridforum.jgss.ExtendedGSSManager;
+import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
-import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSManager;
+
+import java.io.IOException;
+import java.net.Socket;
 
 public class GassInputStream extends HTTPInputStream {
 
@@ -70,7 +68,7 @@ public class GassInputStream extends HTTPInputStream {
 			   String host,
 			   int port,
 			   String file) 
-	throws GassException, GSSException, IOException {
+	throws GassException, IOException {
 	super();
 	this.cred = cred;
 	this.auth = auth;

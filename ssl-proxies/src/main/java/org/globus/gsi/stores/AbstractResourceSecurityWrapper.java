@@ -15,16 +15,14 @@
 
 package org.globus.gsi.stores;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
+import org.globus.util.GlobusResource;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import org.globus.util.GlobusResource;
-import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 
 /**
  * // JGLOBUS-91 : add javadoc
@@ -108,12 +106,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 
 
 	public File getFile() {
-		try {
-			return globusResource.getFile();
-		} catch (IOException e) {
-			logger.debug("Resource is not a file", e);
-			return null;
-		}
+            return globusResource.getFile();
 	}
 
 	public void refresh() throws ResourceStoreException {

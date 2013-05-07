@@ -21,8 +21,8 @@ public class PEMUtils {
     
     static final int LINE_LENGTH = 64;
     
-    public final static String lineSep;
-    public final static byte[] lineSepBytes;
+    public static final String lineSep;
+    public static final byte[] lineSepBytes;
     
     static {
 	lineSep = System.getProperty("line.separator");
@@ -64,7 +64,7 @@ public class PEMUtils {
      * @param b a byte array
      * @return String containing the hexadecimal representation
      */
-    public final static String toHex(byte [] b) {
+    public static final String toHex(byte [] b) {
 	char[] buf = new char[b.length * 2];
 	int i, j, k;
 	

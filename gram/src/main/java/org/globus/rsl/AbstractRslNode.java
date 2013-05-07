@@ -79,8 +79,7 @@ public abstract class AbstractRslNode {
      *         otherwise.
      */
     public boolean removeSpecification(AbstractRslNode node) {
-        if (_specifications == null || node == null) return false;
-        return _specifications.remove(node);
+        return _specifications != null && node != null && _specifications.remove(node);
     }
 
     /**

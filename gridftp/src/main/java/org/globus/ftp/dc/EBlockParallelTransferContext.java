@@ -48,19 +48,19 @@ public class EBlockParallelTransferContext
     protected int eodsTotal = UNDEFINED;
 
 	
-    synchronized public void eodTransferred() {
+    public synchronized void eodTransferred() {
 	eodsTransferred ++;
     }
 
-    synchronized public int getEodsTransferred() {
+    public synchronized int getEodsTransferred() {
 	return eodsTransferred;
     }
 
-    synchronized public void setEodsTotal(int total) {
+    public synchronized void setEodsTotal(int total) {
 	eodsTotal = total;
     }
 
-    synchronized public int getEodsTotal() {
+    public synchronized int getEodsTotal() {
 	return eodsTotal;
     }
 
@@ -69,7 +69,7 @@ public class EBlockParallelTransferContext
        received), and the token has not been released yet.
        So this method will return non-null only one in the instance's lifetime.
      **/
-    synchronized public Object getQuitToken() {
+    public synchronized Object getQuitToken() {
 	logger.debug("checking if ready to quit");
 	logger.debug("eodsTotal = " + eodsTotal + "; eodsTransferred = " + eodsTransferred);
 	if (eodsTotal != UNDEFINED &&
@@ -85,11 +85,11 @@ public class EBlockParallelTransferContext
 		}		
     }
 
-    synchronized public void setSocketPool(SocketPool sp) {
+    public synchronized void setSocketPool(SocketPool sp) {
 	this.socketPool = sp;
     }
 
-    synchronized public SocketPool getSocketPool() {
+    public synchronized SocketPool getSocketPool() {
 	return this.socketPool;
     }
 

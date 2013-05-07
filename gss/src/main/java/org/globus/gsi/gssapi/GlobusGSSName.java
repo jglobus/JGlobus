@@ -14,27 +14,30 @@
  */
 package org.globus.gsi.gssapi;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import org.globus.common.CoGProperties;
 import org.globus.gsi.util.CertificateUtil;
-import org.ietf.jgss.GSSName;
 import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSName;
 import org.ietf.jgss.Oid;
 
 import javax.security.auth.x500.X500Principal;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.*;
-import java.util.regex.Pattern;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * An implementation of <code>GSSName</code>.
@@ -53,7 +56,7 @@ public class GlobusGSSName implements GSSName, Serializable {
         }
         
         // Use TreeMap to avoid clustering in any case
-        final protected Map<String, MapEntry> cache = new TreeMap<String, MapEntry>();        
+        protected final Map<String, MapEntry> cache = new TreeMap<String, MapEntry>();
         final long duration;
         final ExecutorService threads = Executors.newCachedThreadPool(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
@@ -117,7 +120,7 @@ public class GlobusGSSName implements GSSName, Serializable {
         return InetAddress.getByName(i.getHostAddress()).getHostName();
     }
     
-    final static ReverseDNSCache reverseDNSCache = new ReverseDNSCache(CoGProperties.getDefault().getReveseDNSCacheLifetime());
+    static final ReverseDNSCache reverseDNSCache = new ReverseDNSCache(CoGProperties.getDefault().getReveseDNSCacheLifetime());
     
     protected Oid nameType;
     protected X500Principal name;
