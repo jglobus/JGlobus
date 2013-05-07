@@ -361,7 +361,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     }
 */
 
-    private static KeyStore getTrustStore(String caCertsLocation) throws  GeneralSecurityException, IOException
+    private static synchronized KeyStore getTrustStore(String caCertsLocation) throws  GeneralSecurityException, IOException
     {
         if(GlobusGSSContextImpl.ms_trustStore != null)
             return GlobusGSSContextImpl.ms_trustStore;
@@ -375,7 +375,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         return keyStore;
     }
     
-    private static CertStore getCRLStore(String caCertsLocation) throws GeneralSecurityException, NoSuchAlgorithmException
+    private static synchronized CertStore getCRLStore(String caCertsLocation) throws GeneralSecurityException, NoSuchAlgorithmException
     {
         if(GlobusGSSContextImpl.ms_crlStore != null)
             return GlobusGSSContextImpl.ms_crlStore;
@@ -388,7 +388,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         return crlStore;
     }
     
-    private static ResourceSigningPolicyStore getSigPolStore(String caCertsLocation) throws GeneralSecurityException
+    private static synchronized ResourceSigningPolicyStore getSigPolStore(String caCertsLocation) throws GeneralSecurityException
     {
         if(GlobusGSSContextImpl.ms_sigPolStore != null)
             return GlobusGSSContextImpl.ms_sigPolStore;

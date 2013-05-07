@@ -103,7 +103,7 @@ public final class CertificateIOUtil {
         }
     }
 
-    private static String hash(byte[] data) {
+    private static synchronized String hash(byte[] data) {
         init();
         if (md5 == null) {
             return null;
