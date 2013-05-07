@@ -36,7 +36,6 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -240,9 +239,6 @@ public class TrustedCertificates implements Serializable {
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
                 for (Certificate caCert : caCerts) {
                     X509Certificate cert = (X509Certificate) caCert;
-                    if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString())) {
-                        ;
-                    }
                     newCertSubjectDNMap.put(cert.getSubjectDN().toString(), cert);
                 }
             } catch (Exception e) {
