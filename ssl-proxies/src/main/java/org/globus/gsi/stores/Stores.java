@@ -123,11 +123,11 @@ public class Stores {
 	}
 
 	public static void setDefaultCAFilesPattern(String defaultCAFilesPattern) {
-		if(defaultCAFilesPattern == null || Stores.defaultCAFilesPattern.equals(defaultCAFilesPattern)){
-			return;
-		}
 		synchronized (TRUST_STORES) {
 			synchronized (CA_CERT_STORES) {
+                                if (defaultCAFilesPattern == null || Stores.defaultCAFilesPattern.equals(defaultCAFilesPattern)){
+                                    return;
+                                }
 				Stores.defaultCAFilesPattern = defaultCAFilesPattern;
 				//Clear if we change the default pattern to prevent potential memory issue;
 				TRUST_STORES.clear();
@@ -141,10 +141,10 @@ public class Stores {
 	}
 
 	public static void setDefaultCRLFilesPattern(String defaultCRLFilesPattern) {
-		if(defaultCRLFilesPattern == null || Stores.defaultCRLFilesPattern.equals(defaultCRLFilesPattern)){
-			return;
-		}
 		synchronized (CRL_STORES) {
+                        if(defaultCRLFilesPattern == null || Stores.defaultCRLFilesPattern.equals(defaultCRLFilesPattern)){
+                            return;
+                        }
 			Stores.defaultCRLFilesPattern = defaultCRLFilesPattern;
 			//Clear if we change the default pattern to prevent potential memory issue;
 			CRL_STORES.clear();
@@ -156,10 +156,10 @@ public class Stores {
 	}
 
 	public static void setDefaultSigningPolicyFilesPattern(String defaultSigningPolicyFilesPattern) {
-		if(defaultSigningPolicyFilesPattern == null || Stores.defaultSigningPolicyFilesPattern.equals(defaultSigningPolicyFilesPattern)){
-			return;
-		}
 		synchronized (SIGNING_POLICY_STORES) {
+                        if(defaultSigningPolicyFilesPattern == null || Stores.defaultSigningPolicyFilesPattern.equals(defaultSigningPolicyFilesPattern)){
+                            return;
+                        }
 			Stores.defaultSigningPolicyFilesPattern = defaultSigningPolicyFilesPattern;
 			//Clear if we change the default pattern to prevent potential memory issue;
 			SIGNING_POLICY_STORES.clear();
