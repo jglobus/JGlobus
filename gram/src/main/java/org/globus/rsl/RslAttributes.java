@@ -317,9 +317,9 @@ public class RslAttributes {
 	NameOpValue nv = getRelation(attribute);
 	nv.clear();
 	List list = new LinkedList();
-	for (int i=0;i<values.length;i++) {
-	    list.add(new Value(values[i]));
-	}
+        for (String value : values) {
+            list.add(new Value(value));
+        }
 	nv.add(list);
     }
 
@@ -334,9 +334,9 @@ public class RslAttributes {
 	NameOpValue nv = getRelation(attribute);
 	
 	List list = new LinkedList();
-	for (int i=0;i<values.length;i++) {
-	    list.add(new Value(values[i]));
-	}
+        for (String value : values) {
+            list.add(new Value(value));
+        }
 	nv.add(list);
     }    
     

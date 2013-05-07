@@ -14,19 +14,20 @@
  */
 package org.globus.gsi.filestore;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import org.globus.gsi.SigningPolicy;
+import org.globus.gsi.provider.GlobusProvider;
+import org.globus.gsi.provider.SigningPolicyStore;
+import org.globus.gsi.provider.SigningPolicyStoreParameters;
 import org.globus.gsi.stores.ResourceCertStoreParameters;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
 import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
 import org.globus.gsi.testutils.DirSetupUtil;
-import org.globus.gsi.provider.GlobusProvider;
-import org.globus.gsi.provider.SigningPolicyStore;
-import org.globus.gsi.provider.SigningPolicyStoreParameters;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import javax.security.auth.x500.X500Principal;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.security.Security;
@@ -39,12 +40,9 @@ import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-import javax.security.auth.x500.X500Principal;
-
-import org.globus.gsi.SigningPolicy;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * FILL ME
@@ -212,12 +210,12 @@ public class TestFileBasedTrustStore {
 	public static boolean deleteDir(File dir) { 
 		if (dir.isDirectory()) { 
 			String[] dirContent = dir.list(); 
-			for (int i=0; i<dirContent.length; i++){ 
-				boolean success = deleteDir(new File(dir, dirContent[i])); 
-				if (!success) { 
-					return false; 
-				} 
-			} 
+                    for (String file : dirContent) {
+                        boolean success = deleteDir(new File(dir, file));
+                        if (!success) {
+                            return false;
+                        }
+                    }
 		} // The directory is now empty so delete it 
 		return dir.delete(); 
 	}

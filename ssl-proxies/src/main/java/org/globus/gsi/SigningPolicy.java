@@ -104,8 +104,7 @@ public class SigningPolicy {
         }
 
         int size = this.allowedDNs.size();
-        for (int i = 0; i < size; i++) {
-            Pattern pattern = allowedDNs.get(i);
+        for (Pattern pattern : this.allowedDNs) {
             Matcher matcher = pattern.matcher(subjectDN);
             boolean valid = matcher.matches();
             if (valid) {

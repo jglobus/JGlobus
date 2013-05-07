@@ -188,7 +188,7 @@ public class GassServer extends BaseServer {
     }
   
     public String toString() {
-	StringBuffer buf = new StringBuffer("GassServer: ");
+	StringBuilder buf = new StringBuilder("GassServer: ");
 	try {
 	    buf.append(getURL());
 	} catch(Exception e) {}
@@ -501,7 +501,7 @@ class GassClientHandler implements Runnable {
 	throws IOException {
 	 
 	if (((options & GassServer.CLIENT_SHUTDOWN_ENABLE) != 0) &&
-	    path.indexOf(GassServer.SHUTDOWN_STR) != -1) {
+                path.contains(GassServer.SHUTDOWN_STR)) {
 	    server.shutdown();
 	    return;
 	}
@@ -626,7 +626,7 @@ class GassClientHandler implements Runnable {
    * as a String.  Assumes lines end in CRLF.
    */
   private String readLine(InputStream in) throws IOException {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     int c, length = 0;
     
     while(true) {

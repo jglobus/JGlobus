@@ -41,7 +41,7 @@ public abstract class Authorization {
 	throws AuthorizationException {
 
 	String lineSep = System.getProperty("line.separator");
-	StringBuffer msg = new StringBuffer();
+	StringBuilder msg = new StringBuilder();
 	msg.append("Mutual authentication failed").append(lineSep)
 	    .append("  Expected target subject name=\"")
 	    .append(expected.toString()).append("\"")

@@ -67,7 +67,6 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -246,19 +245,19 @@ public class MyProxy  {
         search:
             while (hostIdx < hosts.length) {
                 InetAddress addrs[] = InetAddress.getAllByName(hosts[hostIdx]);
-                for (int addrIdx = 0; addrIdx < addrs.length; addrIdx++) {
+                for (InetAddress addr : addrs) {
                     exception = null;
                     try {
                         if (logger.isDebugEnabled()) {
                             logger.debug("getSocket(): Trying " + 
-                                addrs[addrIdx].toString());
+                                    addr.toString());
                         }
                         socket = new Socket();
                         socket.connect(
-                            new InetSocketAddress(addrs[addrIdx],port), 
-                            socketTimeout); 
+                                new InetSocketAddress(addr, port),
+                                socketTimeout);
 
-                        goodAddr = addrs[addrIdx].toString();
+                        goodAddr = addr.toString();
                         if (logger.isDebugEnabled()) {
                             logger.debug("             Succeeded.");
                         }
@@ -384,7 +383,7 @@ public class MyProxy  {
 
             // read in the cert request from socket and
             // generate a certificate to be sent back to the server
-            X509Certificate cert = 
+            X509Certificate newCert =
                 certFactory.createCertificate(in,
                                               certs[0],
                                               pkiCred.getPrivateKey(),
@@ -400,14 +399,14 @@ public class MyProxy  {
             buffer.write( (byte)(certs.length+1) );
                 
             // write signed ceritifcate
-            buffer.write(cert.getEncoded());
+            buffer.write(newCert.getEncoded());
                 
-            for (int i=0;i<certs.length;i++) {
-                buffer.write( certs[i].getEncoded() );
+            for (X509Certificate cert : certs) {
+                buffer.write(cert.getEncoded());
                     
                 // DEBUG: print out subject name of sent certificate
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Sent cert: " + certs[i].getSubjectDN());
+                    logger.debug("Sent cert: " + cert.getSubjectDN());
                 }
                     
             }
@@ -765,9 +764,7 @@ public class MyProxy  {
 
             if (credMap.size() > 0) {
                 int i = 1;
-                Iterator<Map.Entry<Object,CredentialInfo>> iter = credMap.entrySet().iterator();
-                while(iter.hasNext()) {
-                    Map.Entry<Object, CredentialInfo> entry = iter.next();
+                for (Map.Entry<Object, CredentialInfo> entry : credMap.entrySet()) {
                     creds[i++] = entry.getValue();
                 }
             }
@@ -1101,29 +1098,25 @@ public class MyProxy  {
             if (acceptedIssuers == null) {
                 throw new MyProxyException("Failed to determine MyProxy server trust roots in bootstrapTrust.");
             }
-            for (int idx = 0; idx < acceptedIssuers.length; idx++)
-            {
-                File x509Dir = new File(org.globus.myproxy.MyProxy.getTrustRootPath());
-                if (!x509Dir.exists())
-                {
-                    StringBuffer newSubject = new StringBuffer();
-                    String[] subjArr = acceptedIssuers[idx].getSubjectDN().getName().split(", ");
-                    for(int i = (subjArr.length - 1); i > -1; i--)
-                    {
+            for (X509Certificate acceptedIssuer : acceptedIssuers) {
+                File x509Dir = new File(MyProxy.getTrustRootPath());
+                if (!x509Dir.exists()) {
+                    StringBuilder newSubject = new StringBuilder();
+                    String[] subjArr = acceptedIssuer.getSubjectDN().getName().split(", ");
+                    for (int i = (subjArr.length - 1); i > -1; i--) {
                         newSubject.append("/");
                         newSubject.append(subjArr[i]);
                     }
                     String subject = newSubject.toString();
 
                     File tmpDir = new File(getTrustRootPath() + "-" +
-                                           System.currentTimeMillis());
-                    if (tmpDir.mkdir())
-                    {
-                        String hash = opensslHash(acceptedIssuers[idx]);
+                            System.currentTimeMillis());
+                    if (tmpDir.mkdir()) {
+                        String hash = opensslHash(acceptedIssuer);
                         String filename = tmpDir.getPath() + File.separator + hash + ".0";
 
                         FileOutputStream os = new FileOutputStream(new File(filename));
-                        CertUtil.writeCertificate(os, acceptedIssuers[idx]);
+                        CertUtil.writeCertificate(os, acceptedIssuer);
 
                         os.close();
                         if (logger.isDebugEnabled()) {
@@ -1146,22 +1139,19 @@ public class MyProxy  {
                         }
 
                         // success.  commit the bootstrapped directory.
-                        if (tmpDir.renameTo(x509Dir))
-                        {
+                        if (tmpDir.renameTo(x509Dir)) {
                             if (logger.isDebugEnabled()) {
                                 logger.debug("renamed " + tmpDir.getPath() + " to " +
-                                             x509Dir.getPath());
+                                        x509Dir.getPath());
                             }
+                        } else {
+                            throw new MyProxyException("Unable to rename " + tmpDir
+                                    .getPath() + " to " +
+                                    x509Dir.getPath());
                         }
-                        else
-                        {
-                            throw new MyProxyException("Unable to rename " + tmpDir.getPath() + " to " +
-                                                x509Dir.getPath());
-                        }
-                    }
-                    else
-                    {
-                        throw new MyProxyException("Cannot create temporary directory: " + tmpDir.getName());
+                    } else {
+                        throw new MyProxyException("Cannot create temporary directory: " + tmpDir
+                                .getName());
                     }
                 }
             }
@@ -1227,7 +1217,7 @@ public class MyProxy  {
         boolean authzchallenge = tmp.charAt(RESPONSE.length()) == '2';
 
         if (error) {
-            StringBuffer errorStr = new StringBuffer();
+            StringBuilder errorStr = new StringBuilder();
             while( (tmp = readLine(in)) != null ) {
                 if (tmp.startsWith(ERROR)) {
                     if (errorStr.length() > 0) errorStr.append(' ');
@@ -1280,8 +1270,8 @@ public class MyProxy  {
                     buffer.write(sigbytes.length);
                     buffer.write(sigbytes);
                     buffer.write((byte)certs.length);
-                    for (int i=0; i<certs.length; i++) {
-                        buffer.write(certs[i].getEncoded());
+                    for (X509Certificate cert : certs) {
+                        buffer.write(cert.getEncoded());
                     }
                     out.write(buffer.toByteArray());
                     out.flush();

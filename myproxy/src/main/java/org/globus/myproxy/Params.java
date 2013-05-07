@@ -92,7 +92,7 @@ public abstract class Params
      * this function.
      */
     protected String makeRequest(boolean includePassword) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(VERSION).append(CRLF);
         buf.append(COMMAND).append(String.valueOf(command)).append(CRLF);
         buf.append(USERNAME).append(this.username).append(CRLF);

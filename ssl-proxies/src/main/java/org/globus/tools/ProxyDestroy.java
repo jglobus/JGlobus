@@ -53,21 +53,21 @@ public class ProxyDestroy {
       boolean debug       = false;
       File file           = null;
       
-      for (int i = 0; i < args.length; i++) {
-	  if (args[i].equalsIgnoreCase("-dryrun")) {
-	      dryrun = true;
-	  } else if (args[i].equalsIgnoreCase("-help") ||
-		     args[i].equalsIgnoreCase("-usage")) {
-	      System.err.println(message);
-	      System.exit(1);
-	  } else {
-	      file = new File(args[i]);
-	      if (dryrun) {
-		  System.out.println("Would remove " + file.getAbsolutePath());
-		  continue;
-	      }
-	      Util.destroy(file);
-	  }
+      for (String arg : args) {
+          if (arg.equalsIgnoreCase("-dryrun")) {
+              dryrun = true;
+          } else if (arg.equalsIgnoreCase("-help") ||
+                  arg.equalsIgnoreCase("-usage")) {
+              System.err.println(message);
+              System.exit(1);
+          } else {
+              file = new File(arg);
+              if (dryrun) {
+                  System.out.println("Would remove " + file.getAbsolutePath());
+                  continue;
+              }
+              Util.destroy(file);
+          }
       }
       
       String fn = CoGProperties.getDefault().getProxyFile();

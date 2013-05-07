@@ -96,18 +96,19 @@ public class TrustedCertificates implements Serializable {
 
         // JGLOBUS-91 
         this.certSubjectDNMap = new HashMap<String, X509Certificate>();
-        for (int i=0;i<certs.length;i++) {
-            if (certs[i] != null) {
-                String dn = certs[i].getSubjectDN().toString();
-                this.certSubjectDNMap.put(dn,certs[i]);
+        for (X509Certificate cert : certs) {
+            if (cert != null) {
+                String dn = cert.getSubjectDN().toString();
+                this.certSubjectDNMap.put(dn, cert);
             }
         }
         
         if (policies != null) {
             this.policyDNMap = new HashMap<String, SigningPolicy>();
-            for (int i=0; i<policies.length; i++) {
-                if (policies[i] != null) {
-                    this.policyDNMap.put(CertificateUtil.toGlobusID(policies[i].getCASubjectDN()), policies[i]);
+            for (SigningPolicy policy : policies) {
+                if (policy != null) {
+                    this.policyDNMap
+                            .put(CertificateUtil.toGlobusID(policy.getCASubjectDN()), policy);
                 }
             }
         }
@@ -237,11 +238,12 @@ public class TrustedCertificates implements Serializable {
                 ms_trustStore = Stores.getTrustStore(caCertLocation + "/" + Stores.getDefaultCAFilesPattern());
                 
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
-                Iterator<? extends Certificate> iter = caCerts.iterator();
-                while (iter.hasNext()) {
-                    X509Certificate cert = (X509Certificate) iter.next();
-                    if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString()));
-                        newCertSubjectDNMap.put(cert.getSubjectDN().toString(), cert);
+                for (Certificate caCert : caCerts) {
+                    X509Certificate cert = (X509Certificate) caCert;
+                    if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString())) {
+                        ;
+                    }
+                    newCertSubjectDNMap.put(cert.getSubjectDN().toString(), cert);
                 }
             } catch (Exception e) {
                 logger.warn("Failed to create trust store",e);
@@ -256,9 +258,8 @@ public class TrustedCertificates implements Serializable {
             try {
             	ms_sigPolStore = Stores.getSigningPolicyStore(caCertLocation+ "/" + Stores.getDefaultSigningPolicyFilesPattern());
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
-                Iterator<? extends Certificate> iter = caCerts.iterator();
-                while (iter.hasNext()) {
-                    X509Certificate cert = (X509Certificate) iter.next();
+                for (Certificate caCert : caCerts) {
+                    X509Certificate cert = (X509Certificate) caCert;
                     X500Principal principal = cert.getSubjectX500Principal();
                     if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString())) {
                         continue;
@@ -269,13 +270,14 @@ public class TrustedCertificates implements Serializable {
                     } catch (Exception e) {
                         if (!invalidPolicies.contains(principal)) {
                             logger.warn("Invalid signing policy for CA certificate; skipping");
-                            logger.debug("Invalid signing policy for CA certificate; skipping",e);
+                            logger.debug("Invalid signing policy for CA certificate; skipping", e);
                             invalidPolicies.add(principal);
                         }
                         continue;
                     }
                     if (policy != null) {
-                        newSigningDNMap.put(CertificateUtil.toGlobusID(policy.getCASubjectDN()), policy);
+                        newSigningDNMap
+                                .put(CertificateUtil.toGlobusID(policy.getCASubjectDN()), policy);
                     } else {
                         if (!invalidPolicies.contains(principal)) {
                             logger.warn("no signing policy for ca cert " + cert.getSubjectDN());

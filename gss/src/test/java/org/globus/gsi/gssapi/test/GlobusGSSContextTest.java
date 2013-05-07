@@ -891,51 +891,52 @@ public class GlobusGSSContextTest extends TestCase {
 	
 	int [] msgSize = {10, 100, 1000, 10000, 16384, 100000};
 
-	for (int i=0;i<msgSize.length;i++) {
+        for (int aMsgSize : msgSize) {
 
-	    ByteArrayOutputStream out = new ByteArrayOutputStream();
-	    DataOutputStream dout = new DataOutputStream(out);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            DataOutputStream dout = new DataOutputStream(out);
 
-	    while ( dout.size() < msgSize[i] ) { 
-		dout.writeLong(System.currentTimeMillis());
-	    }
+            while (dout.size() < aMsgSize) {
+                dout.writeLong(System.currentTimeMillis());
+            }
 	    
-	    byte [] msg = out.toByteArray();
+            byte[] msg = out.toByteArray();
 
-	    MessageProp wProp = new MessageProp(qop, reqConf);
+            MessageProp wProp = new MessageProp(qop, reqConf);
 
-	    byte [] wToken = clientContext.wrap(msg, 0, msg.length, wProp);
+            byte[] wToken = clientContext.wrap(msg, 0, msg.length, wProp);
 
-	    assertEquals(privacy, wProp.getPrivacy());
-	    assertEquals(qop, wProp.getQOP());
+            assertEquals(privacy, wProp.getPrivacy());
+            assertEquals(qop, wProp.getQOP());
 
-	    MessageProp uwProp = new MessageProp(reqConf);
+            MessageProp uwProp = new MessageProp(reqConf);
 
-            logger.debug("UNWRAPING HALF (" + (wToken.length/2) +
-                         " BYTES) OF TOKEN OF LENGTH: " + wToken.length);
-	    byte [] uwToken1 = serverContext.unwrap(wToken, 0, wToken.length/2, uwProp);
+            logger.debug("UNWRAPING HALF (" + (wToken.length / 2) +
+                    " BYTES) OF TOKEN OF LENGTH: " + wToken.length);
+            byte[] uwToken1 = serverContext.unwrap(wToken, 0, wToken.length / 2, uwProp);
 
-	    byte [] uwToken2 = serverContext.unwrap(wToken, wToken.length/2, wToken.length - (wToken.length/2), uwProp);
+            byte[] uwToken2 = serverContext
+                    .unwrap(wToken, wToken.length / 2, wToken.length - (wToken.length / 2), uwProp);
             if (uwToken2 == null) {
                 fail("unwrap of token unsuccessful; length: " + wToken.length);
             }
 
-	    assertEquals(privacy, uwProp.getPrivacy());
-	    assertEquals(qop, uwProp.getQOP());
+            assertEquals(privacy, uwProp.getPrivacy());
+            assertEquals(qop, uwProp.getQOP());
 
-	    assertEquals(msg.length, ((uwToken1 != null)?uwToken1.length:0) + uwToken2.length);
+            assertEquals(msg.length, ((uwToken1 != null) ? uwToken1.length : 0) + uwToken2.length);
 	    
             if (uwToken1 != null) {
-	        for (int j=0;j<uwToken1.length;j++) {
-	       	    assertEquals(msg[j], uwToken1[j]);
-	        }
+                for (int j = 0; j < uwToken1.length; j++) {
+                    assertEquals(msg[j], uwToken1[j]);
+                }
             }
-	    for (int j=0;j<uwToken2.length;j++) {
-		assertEquals(msg[((uwToken1 != null)?uwToken1.length:0) + j],
-                                          uwToken2[j]);
-	    }
+            for (int j = 0; j < uwToken2.length; j++) {
+                assertEquals(msg[((uwToken1 != null) ? uwToken1.length : 0) + j],
+                        uwToken2[j]);
+            }
 	    
-	}
+        }
     }    
 
     public void testBadUnwrap1() throws Exception {

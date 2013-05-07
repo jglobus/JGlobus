@@ -149,7 +149,7 @@ public class HostPort6 extends HostPort {
      *         representation.
      */
     public String toFtpCmdArgument() {
-	StringBuffer msg = new StringBuffer();
+	StringBuilder msg = new StringBuilder();
         msg.append("|");
         if (this.version != null) {
             msg.append(this.version);

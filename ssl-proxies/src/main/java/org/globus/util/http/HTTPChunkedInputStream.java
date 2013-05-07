@@ -82,7 +82,7 @@ public class HTTPChunkedInputStream extends InputStream {
      * as a String.  Assumes lines end in CRLF.
      */
     private String readLine(InputStream in) throws IOException {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	int c, length = 0;
     
 	while(true) {

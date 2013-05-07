@@ -14,21 +14,15 @@
 */
 package org.globus.gsi.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import org.globus.gsi.X509Credential;
+import org.globus.gsi.stores.PEMKeyStore;
 import org.globus.gsi.testutils.DirSetupUtil;
 import org.globus.gsi.testutils.FileSetupUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
-
-import org.globus.gsi.stores.PEMKeyStore;
-//import org.globus.gsi.stores.PEMKeyStoreParameters;
-
-import org.globus.gsi.X509Credential;
+import org.globus.util.GlobusResource;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,11 +31,11 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyStore;
+import java.security.KeyStore.LoadStoreParameter;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
-import java.security.KeyStore.LoadStoreParameter;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
@@ -51,10 +45,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.globus.util.GlobusResource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
+
+//import org.globus.gsi.stores.PEMKeyStoreParameters;
 
 /**
 * FILL ME
@@ -416,12 +409,12 @@ public class TestPEMFileBasedKeyStore {
     public static boolean deleteDir(File dir) { 
 		if (dir.isDirectory()) { 
 			String[] dirContent = dir.list(); 
-			for (int i=0; i<dirContent.length; i++){ 
-				boolean success = deleteDir(new File(dir, dirContent[i])); 
-				if (!success) { 
-					return false; 
-				} 
-			} 
+                    for (String file : dirContent) {
+                        boolean success = deleteDir(new File(dir, file));
+                        if (!success) {
+                            return false;
+                        }
+                    }
 		} // The directory is now empty so delete it 
 		return dir.delete(); 
 	} 

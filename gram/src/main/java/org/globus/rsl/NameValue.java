@@ -127,10 +127,7 @@ public abstract class NameValue {
 	
 	if (values == null) values = new LinkedList();
 	
-	Iterator iter = nvValues.iterator();
-	while( iter.hasNext() ) {
-	    values.add( iter.next() );
-	}
+        values.addAll(nvValues);
 	
 	return true;
     }

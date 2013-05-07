@@ -42,7 +42,7 @@ public class QuotedStringTokenizer implements Enumeration {
 
 	if (start == limit) return null;
 
-	StringBuffer buf = new StringBuffer(limit-start);
+	StringBuilder buf = new StringBuilder(limit-start);
 	char ch;
 	char quote = str.charAt(start);
 	if (quote == '"' || quote == '\'') {

@@ -177,7 +177,7 @@ public class GridFTPClientTest extends TestCase {
         Reply r = client.site("help"); 
         
         assertTrue(Reply.isPositiveCompletion(r));
-        assertTrue(r.getMessage().indexOf("PASV") != -1);
+        assertTrue(r.getMessage().contains("PASV"));
 
         client.close();
     }
@@ -349,7 +349,7 @@ public class GridFTPClientTest extends TestCase {
         client.changeDir(TestEnv.serverADir);
         Vector<FileInfo> v = client.list(null, null);
         logger.debug("list received");
-        StringBuffer output1Buffer = new StringBuffer();
+        StringBuilder output1Buffer = new StringBuilder();
         while (! v.isEmpty()) {
             FileInfo f = v.remove(0);
             output1Buffer.append(f.toString()).append("\n");

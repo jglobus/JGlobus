@@ -133,7 +133,7 @@ public class Reply
 		logger.debug("lenght of line.separator on this OS: " + 
 			     lineSeparator.length()); 
 	    }
-	    StringBuffer buf = new StringBuffer(message);
+	    StringBuilder buf = new StringBuilder(message);
 	    for (;;) {
 		logger.debug( "read line");
 		line = input.readLine();

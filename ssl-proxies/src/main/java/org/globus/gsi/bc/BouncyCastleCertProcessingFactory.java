@@ -459,11 +459,10 @@ public class BouncyCastleCertProcessingFactory {
 
         // add specified extensions
         if (extSet != null) {
-            Iterator<String> iter = extSet.oidSet().iterator();
-            while (iter.hasNext()) {
-                String oid = iter.next();
+            for (String oid : extSet.oidSet()) {
                 // skip ProxyCertInfo extension
-                if (oid.equals(ProxyCertInfo.OID.getId()) || oid.equals(ProxyCertInfo.OLD_OID.getId())) {
+                if (oid.equals(ProxyCertInfo.OID.getId()) || oid
+                        .equals(ProxyCertInfo.OLD_OID.getId())) {
                     continue;
                 }
                 x509Ext = extSet.get(oid);
@@ -863,11 +862,10 @@ public class BouncyCastleCertProcessingFactory {
 
         // add specified extensions
         if (extSet != null) {
-            Iterator<String> iter = extSet.oidSet().iterator();
-            while (iter.hasNext()) {
-                String oid = iter.next();
+            for (String oid : extSet.oidSet()) {
                 // skip ProxyCertInfo extension
-                if (oid.equals(ProxyCertInfo.OID.getId()) || oid.equals(ProxyCertInfo.OLD_OID.getId())) {
+                if (oid.equals(ProxyCertInfo.OID.getId()) || oid
+                        .equals(ProxyCertInfo.OLD_OID.getId())) {
                     continue;
                 }
                 x509Ext = extSet.get(oid);

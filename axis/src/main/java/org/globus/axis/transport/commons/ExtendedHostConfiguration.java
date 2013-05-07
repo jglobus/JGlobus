@@ -39,9 +39,9 @@ public final class ExtendedHostConfiguration extends HostConfiguration {
             // check params if any
             if (this.paramList != null) {
                 ExtendedHostConfiguration other = (ExtendedHostConfiguration)o;
-                for (int i=0;i<this.paramList.length;i++) {
-                    Object o1 = getParameter(this.paramList[i]);
-                    Object o2 = other.getParameter(this.paramList[i]);
+                for (String key : this.paramList) {
+                    Object o1 = getParameter(key);
+                    Object o2 = other.getParameter(key);
                     if (o1 == null) {
                         if (o2 == null) {
                             // they are the same - continue
@@ -69,10 +69,10 @@ public final class ExtendedHostConfiguration extends HostConfiguration {
         if (this.paramList == null) {
             return hash;
         } else {
-            for (int i=0;i<this.paramList.length;i++) {
-                Object value = getParameter(this.paramList[i]);
+            for (String key : this.paramList) {
+                Object value = getParameter(key);
                 if (value != null) {
-                    hash += (this.paramList[i].hashCode() ^ value.hashCode());
+                    hash += (key.hashCode() ^ value.hashCode());
                 }
             }
             return hash;
@@ -84,12 +84,12 @@ public final class ExtendedHostConfiguration extends HostConfiguration {
         if (this.paramList == null) {
             return hp;
         } else {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             buf.append(hp).append("\r\n");
-            for (int i=0;i<this.paramList.length;i++) {
-                Object value = getParameter(this.paramList[i]);
+            for (String key : this.paramList) {
+                Object value = getParameter(key);
                 if (value != null) {
-                    buf.append(this.paramList[i]).append('=');
+                    buf.append(key).append('=');
                     buf.append(value).append(' ');
                 }
             }

@@ -79,7 +79,7 @@ public class GatekeeperReply extends HttpResponse {
     }
 
     public String toString() {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 
 	buf.append(super.toString());
 	

@@ -45,7 +45,7 @@ public class SimpleTarTransfer {
     }
 
     static String createDownloadTarSiteCommand(String sourceParentDir, String sourceDir, String tarAlias) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("SETDISKSTACK popen:argv=#");
         sb.append(tarAlias);
         sb.append("#cf#-#-C#");

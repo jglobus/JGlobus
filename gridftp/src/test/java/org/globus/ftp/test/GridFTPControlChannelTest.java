@@ -585,7 +585,7 @@ public class GridFTPControlChannelTest extends TestCase{
 		    fail("Server does not support PARALLEL");
 		String thisLine=featMsg.substring(thisLineStarts, thisLineEnds);
 		//logger.debug("feat line -> " + thisLine + "<-");
-		if (thisLine.indexOf("PARALLEL") != -1) {
+		if (thisLine.contains("PARALLEL")) {
 		    //PARALLEL found 
 		    logger.debug("Server does support parallel (feat reply line " 
 				+ line + " )");

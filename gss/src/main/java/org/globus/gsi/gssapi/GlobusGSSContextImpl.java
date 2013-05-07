@@ -2453,8 +2453,8 @@ done:      do {
                 out = new ByteArrayOutputStream();
 
                 out.write(cert.getEncoded());
-                for (int i=0;i<chain.length;i++) {
-                    out.write(chain[i].getEncoded());
+                for (X509Certificate aChain : chain) {
+                    out.write(aChain.getEncoded());
                 }
 
                 token = out.toByteArray();

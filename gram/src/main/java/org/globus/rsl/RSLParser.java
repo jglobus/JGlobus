@@ -77,7 +77,7 @@ public class RSLParser implements RSLParserConstants {
       char curChar;
       char nextChar;
       int size = str.length();
-      StringBuffer buf = new StringBuffer(size-2);
+      StringBuilder buf = new StringBuilder(size-2);
 
       for (int i=1;i<size-1;i++) {
         curChar = str.charAt(i);

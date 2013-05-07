@@ -102,9 +102,7 @@ public class ConnectionPool {
     }
 
     public synchronized void shutdown() {
-        Iterator<Map.Entry<Object,ConnectionEntry>> iter = this.freeConnections.entrySet().iterator();
-        while(iter.hasNext()) {
-            Map.Entry<Object, ConnectionEntry> entry = iter.next();
+        for (Map.Entry<Object, ConnectionEntry> entry : this.freeConnections.entrySet()) {
             ConnectionEntry connectionEntry = 
                     entry.getValue();
             connectionEntry.getConnection().close();

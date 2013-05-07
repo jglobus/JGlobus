@@ -97,7 +97,7 @@ public class FTPClientListTest extends TestCase {
 	src.changeDir(TestEnv.serverFDir);
 	Vector<FileInfo> v = src.list();
 	logger.debug("list received");
-	StringBuffer output1Buffer = new StringBuffer();
+	StringBuilder output1Buffer = new StringBuilder();
 	while (! v.isEmpty()) {
 	    FileInfo f = v.remove(0);
 	    output1Buffer.append(f.toString()).append("\n");

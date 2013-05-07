@@ -48,7 +48,7 @@ public class HttpResponse {
      * as a String.  Assumes lines end in CRLF.
      */
     protected String readLine(InputStream in) throws IOException {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	int c, length = 0;
 	
 	while(true) {
@@ -136,7 +136,7 @@ public class HttpResponse {
      * @return <code>String</code> a string representation of the http header
      */
     public String toString() {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	
 	buf.append("Http    : ").append(httpType).append("\n");
 	buf.append("Message : ").append(httpMsg).append("\n");

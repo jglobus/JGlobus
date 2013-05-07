@@ -443,8 +443,8 @@ public class GridMap implements Serializable {
             if (userID == null) {
                 return false;
             }
-            for (int i=0;i<userIDs.length;i++) {
-                if (userIDs[i].equalsIgnoreCase(userID)) {
+            for (String id : userIDs) {
+                if (id.equalsIgnoreCase(userID)) {
                     return true;
                 }
             }
@@ -460,8 +460,8 @@ public class GridMap implements Serializable {
         }
         
         public void addUserIDs(String [] userIDs) {
-            for (int i=0;i<userIDs.length;i++) {
-                addUserID(userIDs[i]);
+            for (String userID : userIDs) {
+                addUserID(userID);
             }
         }
 
@@ -493,7 +493,7 @@ public class GridMap implements Serializable {
         globusID = globusID.toLowerCase();
         char[] globusIdChars = globusID.toCharArray();
         
-        StringBuffer normalizedDN = new StringBuffer();
+        StringBuilder normalizedDN = new StringBuilder();
         
         int i=0;
 

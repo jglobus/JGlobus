@@ -445,16 +445,14 @@ public class UrlCopy implements Runnable {
             copy();
         } catch(Exception e) {
             if (listeners != null) {
-                Iterator<UrlCopyListener> iter = listeners.iterator();
-                while(iter.hasNext()) {
-                    (iter.next()).transferError(e);
+                for (UrlCopyListener listener : listeners) {
+                    (listener).transferError(e);
                 }
             }
         } finally {
             if (listeners != null) {
-                Iterator<UrlCopyListener> iter = listeners.iterator();
-                while(iter.hasNext()) {
-                    (iter.next()).transferCompleted();
+                for (UrlCopyListener listener : listeners) {
+                    (listener).transferCompleted();
                 }
             }
         }
@@ -696,10 +694,9 @@ public class UrlCopy implements Runnable {
     
     private void fireUrlTransferProgressEvent(long totalBytes, 
                                               long transferedBytes) {
-        Iterator<UrlCopyListener> iter = listeners.iterator();
-        while(iter.hasNext()) {
-            (iter.next()).transfer(transferedBytes,
-                                                    totalBytes);
+        for (UrlCopyListener listener : listeners) {
+            (listener).transfer(transferedBytes,
+                    totalBytes);
         }
     }
     

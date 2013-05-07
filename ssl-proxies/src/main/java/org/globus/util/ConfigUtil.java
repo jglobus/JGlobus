@@ -130,12 +130,12 @@ public class ConfigUtil {
         String osname = System.getProperty("os.name");
         if (osname != null) {
             osname = osname.toLowerCase();
-            if ((osname.indexOf("solaris") != -1) ||
-                (osname.indexOf("sunos") != -1)) {
+            if ((osname.contains("solaris")) ||
+                (osname.contains("sunos"))) {
                 if ((new File(SOLARIS_ID_EXEC).exists())) {
                     exec = SOLARIS_ID_EXEC;
                 }
-            } else if (osname.indexOf("windows") != -1) {
+            } else if (osname.contains("windows")) {
                 throw new IOException("Unable to determine the user id");
             }
         }
@@ -144,7 +144,7 @@ public class ConfigUtil {
         Process process = null;
         BufferedReader buffInReader = null;
         String s = null;
-        StringBuffer output = new StringBuffer();
+        StringBuilder output = new StringBuilder();
         int exitValue = -1;
 
         try {
@@ -219,21 +219,21 @@ public class ConfigUtil {
         String osname = System.getProperty("os.name");
         if (osname != null) {
             osname = osname.toLowerCase();
-            if (osname.indexOf("windows") != -1) {
+            if (osname.contains("windows")) {
                 osType = WINDOWS_OS;
-            } else if ( (osname.indexOf("solaris") != -1) ||
-                        (osname.indexOf("sunos") != -1) ||
-                        (osname.indexOf("linux") != -1) ||
-                        (osname.indexOf("aix") != -1) ||
-                        (osname.indexOf("hp-ux") != -1) ||
-                        (osname.indexOf("compaq's digital unix") != -1) ||
-                        (osname.indexOf("osf1") != -1) ||
-                        (osname.indexOf("mac os x") != -1) ||
-                        (osname.indexOf("netbsd") != -1) ||
-                        (osname.indexOf("freebsd") != -1) ||
-                        (osname.indexOf("irix") != -1) ) {
+            } else if ( (osname.contains("solaris")) ||
+                        (osname.contains("sunos")) ||
+                        (osname.contains("linux")) ||
+                        (osname.contains("aix")) ||
+                        (osname.contains("hp-ux")) ||
+                        (osname.contains("compaq's digital unix")) ||
+                        (osname.contains("osf1")) ||
+                        (osname.contains("mac os x")) ||
+                        (osname.contains("netbsd")) ||
+                        (osname.contains("freebsd")) ||
+                        (osname.contains("irix")) ) {
                 osType = UNIX_OS;
-            } else if (osname.indexOf("mac") != -1) {
+            } else if (osname.contains("mac")) {
                 osType = MAC_OS;
             } else {
                 osType = OTHER_OS;

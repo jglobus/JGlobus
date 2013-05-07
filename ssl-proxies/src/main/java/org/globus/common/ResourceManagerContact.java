@@ -129,7 +129,7 @@ public class ResourceManagerContact {
 	if (globusDN == null) return null;
 	
 	StringTokenizer tokens = new StringTokenizer(globusDN, "/");
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	while( tokens.hasMoreTokens() ) {
 	    buf.insert(0, tokens.nextToken());
 	    if (tokens.hasMoreTokens())
@@ -172,7 +172,7 @@ public class ResourceManagerContact {
     }
     
     public String toString() {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	
 	buf.append("Host name   : ").append(hostName).append("\n");
 	buf.append("Port number : ").append(getPortNumber()).append("\n");

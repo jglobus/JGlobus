@@ -99,7 +99,7 @@ public class HostPortList {
      */
     public String toFtpCmdArgument() {
         if (this.sporCommandParam == null && this.vector != null) {
-            StringBuffer cmd = new StringBuffer();
+            StringBuilder cmd = new StringBuilder();
             for (int i = 0; i < this.vector.size(); i ++) {
                 HostPort hp = this.vector.get(i);
                 if (i != 0) {

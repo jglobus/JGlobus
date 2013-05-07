@@ -96,7 +96,7 @@ public class CredentialInfo {
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (this.name != null) {
             buf.append(this.name).append(" ");
         }

@@ -398,11 +398,11 @@ public class TestProxyPathValidator {
                             .engineValidate(chain, parameters
                             );
         } catch (IllegalArgumentException e) {
-            if (e.getMessage().indexOf(error) != -1) {
+            if (e.getMessage().contains(error)) {
                 exception = true;
             }
         } catch (CertPathValidatorException e) {
-            if (e.getMessage().indexOf(error) != -1) {
+            if (e.getMessage().contains(error)) {
 
                 exception = true;
             }
@@ -431,11 +431,11 @@ public class TestProxyPathValidator {
                             .engineValidate(chain, parameters
                             );
         } catch (IllegalArgumentException e) {
-            if (e.getMessage().indexOf(error) != -1) {
+            if (e.getMessage().contains(error)) {
                 exception = true;
             }
         } catch (CertPathValidatorException e) {
-            if (e.getMessage().indexOf(error) != -1) {
+            if (e.getMessage().contains(error)) {
 
                 exception = true;
             }
@@ -561,7 +561,7 @@ public class TestProxyPathValidator {
                     (X509ProxyCertPathValidatorResult) validator.engineValidate(certPath, parameters);
 
         } catch (CertPathValidatorException exp) {
-            if ((exp.getMessage().indexOf("Limited") != -1)) {
+            if ((exp.getMessage().contains("Limited"))) {
                 expected = true;
             }
         }

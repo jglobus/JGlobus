@@ -85,7 +85,7 @@ public class FTPException extends Exception {
 
     //overwriting inherited
     public String getMessage() {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	if (code != UNSPECIFIED) {
 	    buf.append(getCodeExplanation(code));
 	}

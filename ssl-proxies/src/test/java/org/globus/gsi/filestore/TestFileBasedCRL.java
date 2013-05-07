@@ -14,16 +14,18 @@
  */
 package org.globus.gsi.filestore;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.globus.gsi.stores.ResourceCRL;
 import org.globus.gsi.testutils.FileSetupUtil;
-import java.io.File;
-import java.security.cert.X509CRL;
 import org.globus.util.GlobusResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+import java.security.cert.X509CRL;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * FILL ME
@@ -106,12 +108,12 @@ public class TestFileBasedCRL {
     public static boolean deleteDir(File dir) { 
 		if (dir.isDirectory()) { 
 			String[] dirContent = dir.list(); 
-			for (int i=0; i<dirContent.length; i++){ 
-				boolean success = deleteDir(new File(dir, dirContent[i])); 
-				if (!success) { 
-					return false; 
-				} 
-			} 
+                    for (String file : dirContent) {
+                        boolean success = deleteDir(new File(dir, file));
+                        if (!success) {
+                            return false;
+                        }
+                    }
 		} // The directory is now empty so delete it 
 		return dir.delete(); 
 	}

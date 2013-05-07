@@ -52,7 +52,7 @@ public class LineReader extends FilterInputStream {
      */
     protected String readLine(InputStream in) 
 	throws IOException {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	int c, length = 0;
 	
 	while(true) {

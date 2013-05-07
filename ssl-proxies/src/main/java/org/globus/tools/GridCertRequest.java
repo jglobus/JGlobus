@@ -517,7 +517,7 @@ public final class GridCertRequest {
 	System.out.println("The component name can be one of: " + X509Name.DefaultLookUp.keySet());
 	System.out.println("-----");
 
-	StringBuffer orgName = new StringBuffer();
+	StringBuilder orgName = new StringBuilder();
 	String component = null;
 	while ( (component = getComponent()) != null ) {
 	    if (orgName.length() != 0) {

@@ -314,7 +314,7 @@ public class GlobusURL {
     }
 
     public String toString() {
-	StringBuffer info = new StringBuffer();
+	StringBuilder info = new StringBuilder();
 	info.append("Protocol    : ").append(protocol).append("\n");
 	info.append("Host name   : ").append(host).append("\n");
 	info.append("Port number : ").append(port).append("\n");

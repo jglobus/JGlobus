@@ -101,8 +101,7 @@ public class GetParams
         if (values == null) {
             return;
         }
-        for (Iterator<String> itr = values.iterator(); itr.hasNext(); ) {
-            String value = itr.next();
+        for (String value : values) {
             add(buf, prefix, value);
         }
     }

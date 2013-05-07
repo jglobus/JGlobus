@@ -139,9 +139,9 @@ public class NameOpValue extends NameValue {
     public void add(String [] strValues) {
 	if (strValues == null) return;
 	if (values == null) values = new LinkedList();
-	for (int i=0;i<strValues.length;i++) {
-	    values.add( new Value(strValues[i]) );
-	}
+        for (String strValue : strValues) {
+            values.add(new Value(strValue));
+        }
     }
 
     /**

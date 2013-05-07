@@ -139,7 +139,7 @@ public class MlsxEntry {
     }
     
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         Enumeration<String> e = facts.keys();
         
         while (e.hasMoreElements()) {

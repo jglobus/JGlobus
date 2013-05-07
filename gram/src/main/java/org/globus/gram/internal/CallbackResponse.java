@@ -52,7 +52,7 @@ public class CallbackResponse extends GatekeeperReply {
     }
     
     public String toString() {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	
 	buf.append("HttpMethod : ").append(httpMethod).append("\n");
 	buf.append("URL        : ").append(callbackURL).append("\n");

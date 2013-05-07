@@ -13,21 +13,6 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 package org.globus.gsi.bc;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.Security;
-import java.security.cert.CertStore;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509CertSelector;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-
-import javax.naming.InvalidNameException;
-import javax.naming.ldap.LdapName;
-import javax.security.auth.x500.X500Principal;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -53,6 +38,21 @@ import org.globus.gsi.proxy.ext.ProxyCertInfo;
 import org.globus.gsi.proxy.ext.ProxyPolicy;
 import org.globus.gsi.util.ProxyCertificateUtil;
 import org.globus.util.I18n;
+
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.security.auth.x500.X500Principal;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.Security;
+import java.security.cert.CertStore;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509CertSelector;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 
 // COMMENT: BCB: removed methods createCertificateType(...) that took a TBSCertificateStructure as parameter
 /**
@@ -512,12 +512,12 @@ public class BouncyCastleUtil {
 	    throw new IllegalArgumentException(i18n.getMessage("certChainNull"));
 	}
 	GSIConstants.CertificateType certType;
-	for (int i=0;i<chain.length;i++) {
-	    certType = getCertificateType(chain[i]);
-	    if (!ProxyCertificateUtil.isImpersonationProxy(certType)) {
-		return chain[i];
-	    }
-	}
+        for (X509Certificate certificate : chain) {
+            certType = getCertificateType(certificate);
+            if (!ProxyCertificateUtil.isImpersonationProxy(certType)) {
+                return certificate;
+            }
+        }
 	return null;
     }
 

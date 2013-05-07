@@ -275,7 +275,7 @@ public class ProxyInfo {
     }
 
     private static String formatTimeSecGlobus(long time) {
-	StringBuffer str = new StringBuffer();
+	StringBuilder str = new StringBuilder();
 	long tt;
 	
 	tt = (time / 3600);

@@ -202,27 +202,27 @@ public final class CertificateLoadUtil {
     public static X509Certificate readCertificate(BufferedReader reader)
             throws IOException, GeneralSecurityException {
         String line;
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         boolean isCert = false;
         boolean isKey = false;
         boolean notNull = false;
         while ((line = reader.readLine()) != null) {
             // Skip key info, if any
-            if (line.indexOf("BEGIN RSA PRIVATE KEY") != -1 ||
-                 line.indexOf("BEGIN PRIVATE KEY") != -1) {
+            if (line.contains("BEGIN RSA PRIVATE KEY") ||
+                    line.contains("BEGIN PRIVATE KEY")) {
                 isKey = true;
                 continue;
-            } else if (isKey && (line.indexOf("END RSA PRIVATE KEY") != -1 ||
-                                 line.indexOf("END PRIVATE KEY") != -1)) {
+            } else if (isKey && (line.contains("END RSA PRIVATE KEY") ||
+                    line.contains("END PRIVATE KEY"))) {
                 isKey = false;
                 continue;
             } else if (isKey)
                 continue;
 
             notNull = true;
-            if (line.indexOf("BEGIN CERTIFICATE") != -1) {
+            if (line.contains("BEGIN CERTIFICATE")) {
                 isCert = true;
-            } else if (isCert && line.indexOf("END CERTIFICATE") != -1) {
+            } else if (isCert && line.contains("END CERTIFICATE")) {
                 byte[] data = Base64.decode(buff.toString().getBytes());
                 return loadCertificate(new ByteArrayInputStream(data));
             } else if (isCert) {
@@ -252,15 +252,15 @@ public final class CertificateLoadUtil {
         BufferedReader reader;
 
         String line;
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
 
         reader = new BufferedReader(new FileReader(file));
 
         try {
             while ((line = reader.readLine()) != null) {
-                if (line.indexOf("BEGIN X509 CRL") != -1) {
+                if (line.contains("BEGIN X509 CRL")) {
                     isCrl = true;
-                } else if (isCrl && line.indexOf("END X509 CRL") != -1) {
+                } else if (isCrl && line.contains("END X509 CRL")) {
                     byte[] data = Base64.decode(buff.toString().getBytes());
                     crl = loadCrl(new ByteArrayInputStream(data));
                 } else if (isCrl) {

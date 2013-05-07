@@ -89,7 +89,7 @@ public class TestTrustManager extends TestProxyPathValidator {
         } catch (CertificateException e) {
             Throwable cause = e.getCause();
             if (cause instanceof CertPathValidatorException) {
-                if (cause.getMessage().indexOf("Limited") != -1) {
+                if (cause.getMessage().contains("Limited")) {
                     exception = true;
                 }
             }
@@ -102,7 +102,7 @@ public class TestTrustManager extends TestProxyPathValidator {
         } catch (CertificateException e) {
             Throwable cause = e.getCause();
             if (cause instanceof CertPathValidatorException) {
-                if (cause.getMessage().indexOf("Limited") != -1) {
+                if (cause.getMessage().contains("Limited")) {
                     exception = true;
                 }
             }

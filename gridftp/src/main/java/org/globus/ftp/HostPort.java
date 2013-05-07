@@ -110,7 +110,7 @@ public class HostPort {
      *         representation.
      */
     public String toFtpCmdArgument() {
-	StringBuffer msg = new StringBuffer();
+	StringBuilder msg = new StringBuilder();
 	for (int i=0;i<datainfo.length;i++) {
 	    msg.append( String.valueOf(datainfo[i]) );
 	    if (i+1 != datainfo.length) msg.append( "," );

@@ -100,18 +100,18 @@ public class ParseException extends Exception {
     }
     String expected = "";
     int maxSize = 0;
-    for (int i = 0; i < expectedTokenSequences.length; i++) {
-      if (maxSize < expectedTokenSequences[i].length) {
-        maxSize = expectedTokenSequences[i].length;
+      for (int[] expectedTokenSequence : expectedTokenSequences) {
+          if (maxSize < expectedTokenSequence.length) {
+              maxSize = expectedTokenSequence.length;
+          }
+          for (int i : expectedTokenSequence) {
+              expected += tokenImage[i] + " ";
+          }
+          if (expectedTokenSequence[expectedTokenSequence.length - 1] != 0) {
+              expected += "...";
+          }
+          expected += eol + "    ";
       }
-      for (int j = 0; j < expectedTokenSequences[i].length; j++) {
-        expected += tokenImage[expectedTokenSequences[i][j]] + " ";
-      }
-      if (expectedTokenSequences[i][expectedTokenSequences[i].length - 1] != 0) {
-        expected += "...";
-      }
-      expected += eol + "    ";
-    }
     String retval = "Encountered \"";
     Token tok = currentToken.next;
     for (int i = 0; i < maxSize; i++) {
@@ -144,7 +144,7 @@ public class ParseException extends Exception {
    * string literal.
    */
   protected String add_escapes(String str) {
-      StringBuffer retval = new StringBuffer();
+      StringBuilder retval = new StringBuilder();
       char ch;
       for (int i = 0; i < str.length(); i++) {
         switch (str.charAt(i))

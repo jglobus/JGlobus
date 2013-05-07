@@ -236,7 +236,7 @@ public class Util {
      */
     public static String quote(String str) {
         int len = str.length();
-        StringBuffer buf = new StringBuffer(len+2);
+        StringBuilder buf = new StringBuilder(len+2);
         buf.append("\"");
         char c;
         for (int i=0;i<len;i++) {
@@ -261,7 +261,7 @@ public class Util {
     public static String unquote(String str)
         throws Exception {
         int len = str.length();
-        StringBuffer buf = new StringBuffer(len);
+        StringBuilder buf = new StringBuilder(len);
         boolean inQuotes = false;
         char c;
         int i = 0;
@@ -309,7 +309,7 @@ public class Util {
      * </ul>
      */
     public static String decode(String s) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for(int i=0; i<s.length(); i++) {
             char c = s.charAt(i);
             switch (c) {
@@ -346,7 +346,7 @@ public class Util {
      */
     public static String formatTimeSec(long time) {
 
-        StringBuffer str = new StringBuffer();
+        StringBuilder str = new StringBuilder();
     
         if (time < 60) {
             str.append(time).append(" sec");

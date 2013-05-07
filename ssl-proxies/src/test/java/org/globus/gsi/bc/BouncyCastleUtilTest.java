@@ -49,15 +49,16 @@ public class BouncyCastleUtilTest extends TestCase {
     }
 
     public void testGetCertificateType2() throws Exception {
-	for (int i=0;i<badCerts.length;i++) {
-	    X509Certificate cert = CertificateLoadUtil.loadCertificate(new ByteArrayInputStream(badCerts[i].getBytes()));
-	    try {
-		BouncyCastleUtil.getCertificateType(cert);
-		fail("proxy verification did not fail as expected");
-	    } catch (CertificateException e) {
-		// ignore
-	    }
-	}
+        for (String badCert : badCerts) {
+            X509Certificate cert = CertificateLoadUtil
+                    .loadCertificate(new ByteArrayInputStream(badCert.getBytes()));
+            try {
+                BouncyCastleUtil.getCertificateType(cert);
+                fail("proxy verification did not fail as expected");
+            } catch (CertificateException e) {
+                // ignore
+            }
+        }
      }
 
     public void testGetCertificateType3() throws Exception {

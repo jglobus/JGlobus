@@ -112,7 +112,7 @@ public class CallbackHandler extends BaseServer {
 
     public String getURL() {
         if (url == null) {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             buf.append(getProtocol()).
                 append("://").
                 append(getHost()).

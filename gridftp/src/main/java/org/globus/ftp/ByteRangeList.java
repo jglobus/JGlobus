@@ -191,7 +191,7 @@ public class ByteRangeList implements RestartData {
     public String toFtpCmdArgument() {
 	char comma = ',';
 	boolean first = true;
-	StringBuffer result = new StringBuffer();
+	StringBuilder result = new StringBuilder();
 	for (int i = 0; i < vector.size(); i++) {
 
 	    if (first) {

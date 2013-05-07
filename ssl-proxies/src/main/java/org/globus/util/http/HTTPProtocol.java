@@ -38,7 +38,7 @@ public class HTTPProtocol {
 					     String application,
 					     StringBuffer msg) {
 	
-	StringBuffer head = new StringBuffer();
+	StringBuilder head = new StringBuilder();
 	head.append("POST ").append(service).append(" ").append(HTTP_VERSION).append(CRLF);
 	head.append(HOST).append(hostname).append(CRLF);
 	head.append(CONTENT_TYPE).append(application).append(CRLF);
@@ -54,7 +54,7 @@ public class HTTPProtocol {
 					 String host,
 					 String user_agent) {
 	
-	StringBuffer head = new StringBuffer();
+	StringBuilder head = new StringBuilder();
 	head.append("GET ").append(path).append(" ").append(HTTP_VERSION).append(CRLF);
 	head.append(HOST).append(host).append(CRLF);
 	head.append(CONNECTION_CLOSE);
@@ -72,7 +72,7 @@ public class HTTPProtocol {
 					 long length, 
 					 boolean append) {
 	
-	StringBuffer head = new StringBuffer();
+	StringBuilder head = new StringBuilder();
 	
 	if (append) {
 	    head.append("POST ");
@@ -106,7 +106,7 @@ public class HTTPProtocol {
     }
 
     public static String getErrorReply(int error, String message) {
-	StringBuffer head = new StringBuffer();
+	StringBuilder head = new StringBuilder();
 	
 	head.append(HTTP_VERSION)
 	    .append(" ")
@@ -141,7 +141,7 @@ public class HTTPProtocol {
     }
 
     public static String getOKReply(String application, String msg) {
-	StringBuffer head = new StringBuffer();
+	StringBuilder head = new StringBuilder();
 	
 	head.append(HTTP_VERSION)
 	    .append(" 200 OK")

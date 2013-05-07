@@ -171,7 +171,7 @@ public class CertificateUtilTest {
             } catch (GeneralSecurityException e) {
                 String err = e.getMessage();
                 if (err != null &&
-                        err.indexOf("BEGIN CERTIFICATE") != -1) {
+                        err.contains("BEGIN CERTIFICATE")) {
                     worked = true;
                 }
             }

@@ -254,8 +254,8 @@ public class SigningPolicyParser {
                 }
                 String [] components = caDN.split("/");
                 boolean hasE = false;
-                for (int i=0; i<components.length; i++) {
-                    String attribute = components[i].split("=")[0];
+                for (String component : components) {
+                    String attribute = component.split("=")[0];
                     if (attribute.equals("E")) {
                         hasE = true;
                         break;
@@ -407,7 +407,7 @@ public class SigningPolicyParser {
 
             startIndex = 0;
             endIndex = value.length();
-            if (value.indexOf("\"") == -1) {
+            if (!value.contains("\"")) {
                 vector.add(getPattern(value));
             } else {
                 while (startIndex < endIndex) {

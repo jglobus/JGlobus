@@ -14,32 +14,26 @@
  */
 package org.globus.gsi;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.util.encoders.Base64;
+import org.globus.common.CoGProperties;
+import org.globus.gsi.bc.BouncyCastleOpenSSLKey;
+import org.globus.gsi.bc.BouncyCastleUtil;
+import org.globus.gsi.stores.ResourceSigningPolicyStore;
+import org.globus.gsi.stores.Stores;
+import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
 import org.globus.gsi.util.CertificateIOUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
 import org.globus.gsi.util.CertificateUtil;
 import org.globus.gsi.util.ProxyCertificateUtil;
 
-import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
-
-import org.globus.gsi.stores.ResourceSigningPolicyStore;
-
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.commons.logging.Log;
-
-
-import java.security.cert.CertStore;
-import java.security.KeyStore;
-import org.globus.common.CoGProperties;
-import java.io.FileNotFoundException;
-import java.io.FileInputStream;
-import java.security.cert.CertificateException;
-import org.globus.gsi.bc.BouncyCastleUtil;
-import java.security.interfaces.RSAPrivateKey;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,19 +41,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.cert.CertStore;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateKey;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
-
-
-
-import org.bouncycastle.util.encoders.Base64;
-
-import org.globus.gsi.stores.Stores;
-import org.globus.gsi.bc.BouncyCastleOpenSSLKey;
 
 /**
  * FILL ME
@@ -177,9 +168,9 @@ public class X509Credential implements Serializable {
      */
     private static byte[] getDecodedPEMObject(BufferedReader reader) throws IOException {
         String line;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         while ((line = reader.readLine()) != null) {
-            if (line.indexOf("--END") != -1) { // found end
+            if (line.contains("--END")) { // found end
                 return Base64.decode(buf.toString().getBytes());
             } else {
                 buf.append(line);
@@ -352,8 +343,8 @@ public class X509Credential implements Serializable {
      */
     public long getTimeLeft() {
         Date earliestTime = null;
-        for (int i = 0; i < this.certChain.length; i++) {
-            Date time = this.certChain[i].getNotAfter();
+        for (X509Certificate certificate : this.certChain) {
+            Date time = certificate.getNotAfter();
             if (earliestTime == null || time.before(earliestTime)) {
                 earliestTime = time;
             }
@@ -405,8 +396,8 @@ public class X509Credential implements Serializable {
 
         int pathLength = Integer.MAX_VALUE;
         try {
-            for (int i=0; i<this.certChain.length; i++) {
-                int length = BouncyCastleUtil.getProxyPathConstraint(this.certChain[i]);
+            for (X509Certificate certificate : this.certChain) {
+                int length = BouncyCastleUtil.getProxyPathConstraint(certificate);
                 // if length is one, then no proxy cert extension exists, so
                 // path length is -1
                 if (length == -1) {
@@ -496,7 +487,7 @@ public class X509Credential implements Serializable {
     // encrypted key: put in -1 as strength
     public String toString() {
         String lineSep = System.getProperty("line.separator");
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("subject    : ").append(getSubject()).append(lineSep);
         buf.append("issuer     : ").append(getIssuer()).append(lineSep);
         int strength = -1;
@@ -524,11 +515,11 @@ public class X509Credential implements Serializable {
             reader = new BufferedReader(new InputStreamReader(input));
             while ((line = reader.readLine()) != null) {
 
-                if (line.indexOf("BEGIN CERTIFICATE") != -1) {
+                if (line.contains("BEGIN CERTIFICATE")) {
                     byte[] data = getDecodedPEMObject(reader);
                     cert = CertificateLoadUtil.loadCertificate(new ByteArrayInputStream(data));
                     chain.addElement(cert);
-                } else if (line.indexOf("BEGIN RSA PRIVATE KEY") != -1) {
+                } else if (line.contains("BEGIN RSA PRIVATE KEY")) {
                     byte[] data = getDecodedPEMObject(reader);
                     this.opensslKey = new BouncyCastleOpenSSLKey("RSA", data);
                 }
@@ -578,7 +569,7 @@ public class X509Credential implements Serializable {
 
             while ((line = reader.readLine()) != null) {
 
-                if (line.indexOf("BEGIN CERTIFICATE") != -1) {
+                if (line.contains("BEGIN CERTIFICATE")) {
                     byte[] data = getDecodedPEMObject(reader);
                     cert = CertificateLoadUtil.loadCertificate(new ByteArrayInputStream(data));
                     chain.addElement(cert);

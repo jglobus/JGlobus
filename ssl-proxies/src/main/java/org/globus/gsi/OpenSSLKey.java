@@ -210,7 +210,7 @@ public abstract class OpenSSLKey implements Serializable {
     private void parseKeyAlgorithm(BufferedReader in) throws IOException, InvalidKeyException {
         String next = in.readLine();
         while (next != null) {
-            if (next.indexOf("PRIVATE KEY") != -1) {
+            if (next.contains("PRIVATE KEY")) {
                 keyAlg = getKeyAlgorithm(next);
                 break;
             }
@@ -533,7 +533,7 @@ public abstract class OpenSSLKey implements Serializable {
         String header = HEADER;
 
         if (isEncrypted()) {
-            StringBuffer buf = new StringBuffer(header);
+            StringBuilder buf = new StringBuilder(header);
             buf.append(PEMUtil.LINE_SEP);
             buf.append("Proc-Type: 4,ENCRYPTED");
             buf.append(PEMUtil.LINE_SEP);

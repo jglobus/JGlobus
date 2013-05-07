@@ -146,7 +146,7 @@ public class VarRef extends Value {
      *         value.
      */
     public String getCompleteValue() {
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	buf.append("$(");
 	buf.append(value);
 	buf.append(")");

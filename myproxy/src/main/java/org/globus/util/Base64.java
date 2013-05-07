@@ -68,8 +68,8 @@ public final class  Base64
             // return false;
             return true;
         }
-        for (int i=0; i < length; i++) {
-            if ( !Base64.isBase64(arrayOctect[i]) ) {
+        for (byte b : arrayOctect) {
+            if (!Base64.isBase64(b)) {
                 return false;
             }
         }

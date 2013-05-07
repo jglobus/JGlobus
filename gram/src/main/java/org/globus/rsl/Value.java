@@ -130,7 +130,7 @@ public class Value {
 	if (concatValue == null) {
 	    return value;
 	} else {
-	    StringBuffer buf = new StringBuffer(value);
+	    StringBuilder buf = new StringBuilder(value);
 	    buf.append(concatValue.evaluate(symbolTable));
 	    return buf.toString();
 	}
@@ -153,7 +153,7 @@ public class Value {
         char curChar;
         char quoteChar = '"';
         int size = str.length();
-        StringBuffer buf = new StringBuffer(size+2);
+        StringBuilder buf = new StringBuilder(size+2);
 	
         buf.append(quoteChar);
 	
@@ -205,7 +205,7 @@ public class Value {
 	if (concatValue == null) {
 	    return value;
 	} else {
-	    StringBuffer buf = new StringBuffer(value);
+	    StringBuilder buf = new StringBuilder(value);
 	    buf.append(concatValue.getCompleteValue());
 	    return buf.toString();
 	}

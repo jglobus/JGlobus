@@ -69,7 +69,7 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 			this.wrapperMap = newWrapperMap;
 			return;
 		}
-		if (locationPattern.indexOf(",") >= 0) {
+		if (locationPattern.contains(",")) {
 			String[] locationPatterns = locationPattern.split(",");
 			boolean tmpChanged = false;
 			for (String lp : locationPatterns) {

@@ -192,7 +192,7 @@ public class MlsxTest extends TestCase {
 
 	Vector<MlsxEntry> v = src.mlsd(TestEnv.serverADir);
 	logger.debug("mlsd received");
-	StringBuffer output1Buffer = new StringBuffer();
+	StringBuilder output1Buffer = new StringBuilder();
 	while (!v.isEmpty()) {
 	    MlsxEntry f = v.remove(0);
 	    output1Buffer.append(f.toString()).append("\n");
@@ -209,7 +209,7 @@ public class MlsxTest extends TestCase {
 	src.changeDir(TestEnv.serverADir);
 	v = src.mlsd();
 	logger.debug("mlsd received");
-	StringBuffer output2Buffer = new StringBuffer();
+	StringBuilder output2Buffer = new StringBuilder();
 	while (!v.isEmpty()) {
 	    MlsxEntry f = v.remove(0);
 	    output2Buffer.append(f.toString()).append("\n");

@@ -151,7 +151,7 @@ public class X509NameHelper {
         }
 
         Enumeration e = seq.getObjects();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         while (e.hasMoreElements()) {
             ASN1Set set = (ASN1Set)e.nextElement();
             Enumeration ee = set.getObjects();

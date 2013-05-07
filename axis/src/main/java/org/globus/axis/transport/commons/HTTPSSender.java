@@ -15,21 +15,17 @@
  */
 package org.globus.axis.transport.commons;
 
-import java.net.URL;
-
 import org.apache.axis.MessageContext;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.protocol.Protocol;
-
-import org.globus.gsi.GSIConstants;
-import org.globus.axis.transport.GSIHTTPTransport;
-
 import org.apache.axis.components.net.CommonsHTTPClientProperties;
 import org.apache.axis.components.net.CommonsHTTPClientPropertiesFactory;
-
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.globus.axis.transport.GSIHTTPTransport;
 import org.globus.axis.transport.HTTPUtils;
+import org.globus.gsi.GSIConstants;
+
+import java.net.URL;
 
 /**
  * Overwrites the Axis sender to use a global connection manager
@@ -83,10 +79,10 @@ public class HTTPSSender
             client.getParams().setParameter(HTTPUtils.DISABLE_CHUNKING, prop);
         }
 
-        for (int i=0;i<PARAMS.length;i++) {
-            Object value = context.getProperty(PARAMS[i]);
+        for (String param : PARAMS) {
+            Object value = context.getProperty(param);
             if (value != null) {
-                config.getParams().setParameter(PARAMS[i], value);
+                config.getParams().setParameter(param, value);
             }
         }
 

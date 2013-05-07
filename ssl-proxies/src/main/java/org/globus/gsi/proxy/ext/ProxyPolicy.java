@@ -183,7 +183,7 @@ public class ProxyPolicy implements DEREncodable {
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("ProxyPolicy: ");
         buf.append(this.policyLanguage.getId());
         if (this.policy != null) {

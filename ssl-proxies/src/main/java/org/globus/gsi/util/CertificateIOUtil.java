@@ -165,7 +165,7 @@ public final class CertificateIOUtil {
         int length = LINE_LENGTH;
         int offset = 0;
 
-        final StringBuffer buf = new StringBuffer(2048);
+        final StringBuilder buf = new StringBuilder(2048);
 
         if (isKey) {
             buf.append(KEY_HEADER);

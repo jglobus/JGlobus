@@ -119,8 +119,7 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
         
         if (this.hostConfigurationParams != null) {
             HostParams hostParams = hostConfiguration.getParams();
-            for (int i=0;i<this.hostConfigurationParams.length;i++) {
-                String key = this.hostConfigurationParams[i];
+            for (String key : this.hostConfigurationParams) {
                 Object value = hostParams.getParameter(key);
                 if (value != null) {
                     connectionParams.setParameter(key, value);
@@ -183,9 +182,7 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
     public void closeIdleConnections(long idleTimeout) {
         logger.debug("checking for idle connections");
         synchronized(this.hostPoolMap) {
-            Iterator<Map.Entry<HostConfiguration,ConnectionPool>> iter = this.hostPoolMap.entrySet().iterator();
-            while(iter.hasNext()) {
-                Map.Entry<HostConfiguration, ConnectionPool> entry = iter.next();
+            for (Map.Entry<HostConfiguration, ConnectionPool> entry : this.hostPoolMap.entrySet()) {
                 (entry.getValue()).closeIdleConnections();
             }
         }
@@ -195,9 +192,7 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
     public void shutdown() {
         logger.debug("shutting down connections");
         synchronized(this.hostPoolMap) {
-            Iterator<Map.Entry<HostConfiguration,ConnectionPool>> iter = this.hostPoolMap.entrySet().iterator();
-            while(iter.hasNext()) {
-                Map.Entry<HostConfiguration, ConnectionPool> entry = iter.next();
+            for (Map.Entry<HostConfiguration, ConnectionPool> entry : this.hostPoolMap.entrySet()) {
                 (entry.getValue()).shutdown();
             }
         }

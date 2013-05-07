@@ -246,7 +246,7 @@ public abstract class AbstractRslNode {
 	if (str == null) return null;
 	int length = str.length();
 	char ch;
-	StringBuffer buf = new StringBuffer(length);
+	StringBuilder buf = new StringBuilder(length);
 	for (int i=0;i<length;i++) {
 	    ch = str.charAt(i);
 	    if (ch == '_') continue;

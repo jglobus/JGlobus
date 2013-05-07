@@ -501,11 +501,11 @@ public final class CertificateUtil {
 
         String[] tokens = dn.split(",");
         if (noreverse) {
-            for (int i = 0; i < tokens.length; i++) {
-                String token = tokens[i].trim();
+            for (String s : tokens) {
+                String token = s.trim();
                 if (!token.isEmpty()) {
                     buf.append("/");
-                    buf.append(token.trim());
+                    buf.append(token);
                 }
             }
         } else {
@@ -513,7 +513,7 @@ public final class CertificateUtil {
                 String token = tokens[i].trim();
                 if (!token.isEmpty()) {
                     buf.append("/");
-                    buf.append(token.trim());
+                    buf.append(token);
                 }
             }
         }
