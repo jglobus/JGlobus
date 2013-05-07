@@ -2210,8 +2210,6 @@ public class  FTPClient {
             throw new ServerException(ServerException.SERVER_REFUSED,
                     cksumReply.getMessage());
         }
-
-        return;
     }
 
 } //FTPClient

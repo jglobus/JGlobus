@@ -17,12 +17,12 @@ package org.globus.gsi;
 
 import org.globus.gsi.util.CertificateUtil;
 
+import javax.security.auth.x500.X500Principal;
+
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.security.auth.x500.X500Principal;
-import org.globus.gsi.SigningPolicyParser;
 
 /**
  * Represents a signing policy associated with a particular CA. The signing policy defines a list of distinguished
@@ -134,12 +134,7 @@ public class SigningPolicy {
      * element, true is returned. Else the method returns false.
      */
     public boolean isPolicyAvailable() {
-        
-        if ((this.allowedDNs == null) || 
-            (this.allowedDNs.size() < 1)) {
-            return false;
-        }
-        return true;
+        return this.allowedDNs != null && !this.allowedDNs.isEmpty();
     }
 
 }

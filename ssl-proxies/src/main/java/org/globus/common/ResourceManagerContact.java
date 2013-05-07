@@ -69,8 +69,7 @@ public class ResourceManagerContact {
 
 	    if (c == ':') {
 		globusDN = contact.substring(j+1);
-		return;
-	    } else if (c == '/') {
+            } else if (c == '/') {
 		parseService(contact, j);
 	    }
 	}

@@ -1,9 +1,9 @@
 package org.globus.gsi.filestore;
 
-import java.security.KeyStore;
-
 import org.globus.gsi.provider.GlobusProvider;
 import org.junit.Test;
+
+import java.security.KeyStore;
 
 public class TestFileBasedKeyStore {
 	@Test
@@ -16,6 +16,6 @@ public class TestFileBasedKeyStore {
 		}catch(Exception e){
 			//Error...
 		}
-		assert (worked == true);
+		assert worked;
 	}
 }

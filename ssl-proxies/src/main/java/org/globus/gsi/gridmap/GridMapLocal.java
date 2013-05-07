@@ -40,7 +40,7 @@ public class GridMapLocal extends GridMap {
         
         if (!result && this.map == null) {
             String user = getLocalUsername();
-            return (user == null) ? false : user.equalsIgnoreCase(userID);
+            return (user != null) && user.equalsIgnoreCase(userID);
         }
         
         return result;

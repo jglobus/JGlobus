@@ -15,28 +15,23 @@
 
 package org.globus.gsi.util;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.util.encoders.Base64;
 
-import java.io.FileOutputStream;
+import javax.security.auth.x500.X500Principal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-
-
-
-import javax.security.auth.x500.X500Principal;
-
-import org.bouncycastle.util.encoders.Base64;
-import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.x509.X509Name;
 
 /**
  * Fill Me
@@ -111,7 +106,7 @@ public final class CertificateIOUtil {
         return bout.toByteArray();
     }
 
-    private synchronized static String hash(byte[] data) {
+    private static synchronized String hash(byte[] data) {
         init();
         if (md5 == null) {
             return null;

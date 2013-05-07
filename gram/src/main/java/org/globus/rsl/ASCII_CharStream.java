@@ -112,7 +112,6 @@ public final class ASCII_CharStream
         }
         else
            maxNextCharInd += i;
-        return;
      }
      catch(java.io.IOException e) {
         --bufpos;

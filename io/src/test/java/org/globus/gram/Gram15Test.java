@@ -28,14 +28,13 @@ import org.ietf.jgss.GSSException;
 public class Gram15Test {
 
     private static GramJobListener getListener(final String label) {
-	GramJobListener l = ( new GramJobListener() {
-                public void statusChanged(GramJob job) {
-                    System.out.println(label + " status change \n" +
-                                       "    ID     : "+ job.getIDAsString() + "\n" +
-                                       "    Status : "+ job.getStatusAsString());
-                }
-            });
-	return l;
+        return new GramJobListener() {
+            public void statusChanged(GramJob job) {
+                System.out.println(label + " status change \n" +
+                        "    ID     : "+ job.getIDAsString() + "\n" +
+                        "    Status : "+ job.getStatusAsString());
+            }
+        };
     }
 
     public static boolean test1(String contact, boolean cancelCall) {

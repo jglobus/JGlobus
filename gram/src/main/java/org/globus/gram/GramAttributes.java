@@ -18,12 +18,12 @@
  */
 package org.globus.gram;
 
-import java.util.List;
-import java.util.Map;
-
+import org.globus.rsl.ParseException;
 import org.globus.rsl.RslAttributes;
 import org.globus.rsl.RslNode;
-import org.globus.rsl.ParseException;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A convienience class for operating on GRAM-specific RSL attributes.
@@ -187,8 +187,7 @@ public class GramAttributes extends RslAttributes {
     public boolean isDryRun() {
 	String run = getSingle("dryrun");
 	if (run == null) return false;
-	if (run.equalsIgnoreCase("yes")) return true;
-	return false;
+        return run.equalsIgnoreCase("yes");
     }
 
     /**

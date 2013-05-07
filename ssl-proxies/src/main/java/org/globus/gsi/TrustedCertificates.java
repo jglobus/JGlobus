@@ -14,39 +14,33 @@
  */
 package org.globus.gsi;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.common.CoGProperties;
+import org.globus.gsi.stores.ResourceSigningPolicyStore;
+import org.globus.gsi.stores.Stores;
 import org.globus.gsi.util.CertificateUtil;
 import org.globus.gsi.util.KeyStoreUtil;
 
-import org.globus.gsi.stores.ResourceSigningPolicyStore;
-import org.globus.gsi.stores.ResourceSigningPolicyStoreParameters;
-import org.globus.gsi.stores.Stores;
-
-import org.globus.gsi.provider.GlobusProvider;
-import org.globus.gsi.provider.KeyStoreParametersFactory;
-
 import javax.security.auth.x500.X500Principal;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.Serializable;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509CertSelector;
-import java.security.KeyStore;
-import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.StringTokenizer;
-import java.util.Collection;
 import java.util.Iterator;
-import java.io.File;
-import java.io.FilenameFilter;
-import org.globus.common.CoGProperties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import java.io.Serializable;
-import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 // COMMENT: What is the replacement for this?
 // COMMENT: We lost the refresh functionality: Currently an entirely new store is loaded upon load()
@@ -205,11 +199,10 @@ public class TrustedCertificates implements Serializable {
     public static class CertFilter implements FilenameFilter {
         public boolean accept(File dir, String file) {
             int length = file.length();
-            if (length > 2 && 
-                file.charAt(length-2) == '.' &&
-                file.charAt(length-1) >= '0' && 
-                file.charAt(length-1) <= '9') return true;
-            return false;
+            return length > 2 &&
+                    file.charAt(length - 2) == '.' &&
+                    file.charAt(length - 1) >= '0' &&
+                    file.charAt(length - 1) <= '9';
         }
     }
 

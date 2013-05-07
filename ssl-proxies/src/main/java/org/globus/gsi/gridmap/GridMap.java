@@ -313,7 +313,7 @@ public class GridMap implements Serializable {
         }
 
         GridMapEntry entry = (GridMapEntry)this.map.get(normalizeDN(globusID));
-        return (entry == null) ? false : entry.containsUserID(userID);
+        return (entry != null) && entry.containsUserID(userID);
     }
 
     /**

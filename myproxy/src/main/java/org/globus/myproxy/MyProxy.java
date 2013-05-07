@@ -15,74 +15,60 @@
  */
 package org.globus.myproxy;
 
-import java.nio.charset.Charset;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.Writer;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.IOException;
-import java.io.EOFException;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.net.Socket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-
-import java.security.KeyPair;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.cert.X509Certificate;
-import java.security.MessageDigest;
-import java.security.GeneralSecurityException;
-
-import java.security.Signature;
-
-import javax.security.auth.x500.X500Principal;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.asn1.x509.X509Name;
+import org.globus.common.CoGProperties;
+import org.globus.gsi.CertUtil;
+import org.globus.gsi.GSIConstants;
+import org.globus.gsi.OpenSSLKey;
+import org.globus.gsi.X509Credential;
+import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
+import org.globus.gsi.gssapi.GSSConstants;
+import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
+import org.globus.gsi.gssapi.auth.Authorization;
+import org.globus.gsi.gssapi.auth.IdentityAuthorization;
+import org.globus.gsi.gssapi.net.GssSocket;
+import org.globus.gsi.gssapi.net.GssSocketFactory;
+import org.globus.gsi.util.CertificateUtil;
+import org.globus.util.Base64;
+import org.gridforum.jgss.ExtendedGSSManager;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.GSSName;
+import org.ietf.jgss.Oid;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.x509.X509Name;
-
-import org.globus.common.CoGProperties;
-
-import org.globus.util.Base64;
-
-import org.globus.gsi.GlobusCredential;
-import org.globus.gsi.GSIConstants;
-import org.globus.gsi.CertUtil;
-import org.globus.gsi.OpenSSLKey;
-import org.globus.gsi.gssapi.net.GssSocket;
-import org.globus.gsi.gssapi.net.GssSocketFactory;
-import org.globus.gsi.gssapi.auth.Authorization;
-import org.globus.gsi.gssapi.auth.IdentityAuthorization;
-import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
-import org.globus.gsi.gssapi.GSSConstants;
-import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
-
-import org.gridforum.jgss.ExtendedGSSManager;
-
-import org.ietf.jgss.GSSCredential;
-import org.ietf.jgss.GSSContext;
-import org.ietf.jgss.GSSManager;
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.GSSName;
-import org.ietf.jgss.Oid;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.globus.gsi.X509Credential;
-import org.globus.gsi.util.CertificateUtil;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.nio.charset.Charset;
+import java.security.KeyPair;
+import java.security.MessageDigest;
+import java.security.Signature;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 /**
@@ -1131,7 +1117,7 @@ public class MyProxy  {
 
                     File tmpDir = new File(getTrustRootPath() + "-" +
                                            System.currentTimeMillis());
-                    if (tmpDir.mkdir() == true)
+                    if (tmpDir.mkdir())
                     {
                         String hash = opensslHash(acceptedIssuers[idx]);
                         String filename = tmpDir.getPath() + File.separator + hash + ".0";
@@ -1160,7 +1146,7 @@ public class MyProxy  {
                         }
 
                         // success.  commit the bootstrapped directory.
-                        if (tmpDir.renameTo(x509Dir) == true)
+                        if (tmpDir.renameTo(x509Dir))
                         {
                             if (logger.isDebugEnabled()) {
                                 logger.debug("renamed " + tmpDir.getPath() + " to " +
@@ -1308,7 +1294,7 @@ public class MyProxy  {
             }
         }
 
-        if (wantTrustroots == true) {
+        if (wantTrustroots) {
             while ((tmp = readLine(in)) != null) {
                 if (tmp.startsWith(TRUSTROOTS)) {
                     String filenameList = tmp.substring(TRUSTROOTS.length());
@@ -1338,9 +1324,7 @@ public class MyProxy  {
         byte [] b = new byte[avail];
         if (avail > 0) in.read(b);
 
-        ByteArrayInputStream inn = new ByteArrayInputStream(b);
-
-        return inn;
+        return new ByteArrayInputStream(b);
     }
 
     private static void close(OutputStream out, 

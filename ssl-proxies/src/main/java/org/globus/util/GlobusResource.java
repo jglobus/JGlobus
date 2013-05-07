@@ -73,8 +73,7 @@ public class GlobusResource {
      * @throws IOException
      */
     public File getFile() {
-        File duplicateFile = new File(this.resourceFile.getAbsolutePath());
-        return duplicateFile;
+        return new File(this.resourceFile.getAbsolutePath());
     }
 
     /**
@@ -105,8 +104,7 @@ public class GlobusResource {
      * @throws IOException
      */
     public InputStream getInputStream() throws FileNotFoundException, IOException {
-        InputStream fileInputStream = new FileInputStream(this.getFile());
-        return fileInputStream;
+        return new FileInputStream(this.getFile());
     }
 
     /**

@@ -214,10 +214,7 @@ public class MockKeyStore extends KeyStoreSpi {
      * @return true if the alias exists, false otherwise
      */
     public boolean engineContainsAlias(String alias) {
-        if (this.certificateMap.containsKey(alias)) {
-            return true;
-        }
-        return false;
+        return this.certificateMap.containsKey(alias);
     }
 
     /**
