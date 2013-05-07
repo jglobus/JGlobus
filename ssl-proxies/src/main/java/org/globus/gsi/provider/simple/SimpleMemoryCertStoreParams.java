@@ -9,7 +9,7 @@ import java.security.cert.CertStoreParameters;
 /**
  * @deprecated
  */
-public class SimpleMemoryCertStoreParams implements CertStoreParameters {
+public final class SimpleMemoryCertStoreParams implements CertStoreParameters {
 
     private X509Certificate[] certs;
     private X509CRL[] crls;

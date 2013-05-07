@@ -83,8 +83,7 @@ public abstract class NameValue {
      *         from the list of values. False, otherwise.
      */
     public boolean remove(Object value) {
-        if (values == null) return false;
-        return values.remove(value);
+        return values != null && values.remove(value);
     }
     
     /**

@@ -391,7 +391,7 @@ public final class GridCertRequest {
     /**
      * Generates a encrypted private key and certificate request.
      */
-    static public void genCertificateRequest(String dname,
+    public static void genCertificateRequest(String dname,
                                              String emailAddressOfCA,
                                              String password,
                                              File keyFile,

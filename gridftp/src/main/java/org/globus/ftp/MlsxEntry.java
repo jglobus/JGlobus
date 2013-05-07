@@ -15,6 +15,10 @@
  */
 package org.globus.ftp;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.ftp.exception.FTPException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,10 +26,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.globus.ftp.exception.FTPException;
 
 /**
  * 
@@ -75,7 +75,7 @@ public class MlsxEntry {
      * @param mlsxEntry
      * @throws FTPException
      */
-    public MlsxEntry(String mlsxEntry) throws FTPException {
+    public MlsxEntry(String mlsxEntry) {
         this.parse(mlsxEntry);
     }
     

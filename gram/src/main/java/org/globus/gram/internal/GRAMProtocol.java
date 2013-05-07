@@ -116,7 +116,7 @@ public class GRAMProtocol extends HTTPProtocol {
 			 CANCEL);
     }    
     
-    private static final String JMREQUEST(String jobmanager_url,
+    private static String JMREQUEST(String jobmanager_url,
 					  String hostname, 
 					  String request) {
         StringBuffer msg = new StringBuffer();

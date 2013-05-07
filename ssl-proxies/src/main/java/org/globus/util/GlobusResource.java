@@ -1,15 +1,13 @@
 package org.globus.util;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
-
-import org.apache.commons.io.IOExceptionWithCause;
+import java.net.URL;
 
 /**
  * This class provides a way of managing file system resources
@@ -58,7 +56,7 @@ public class GlobusResource {
      * @return The resource's URI(java.Net.URI)
      * @throws IOException
      */
-    public URI getURI() throws IOException {
+    public URI getURI() {
         return resourceFile.toURI();
     }
 
@@ -74,9 +72,8 @@ public class GlobusResource {
      * @return A new java.io.File object referencing the resource's resourcePath
      * @throws IOException
      */
-    public File getFile() throws IOException {
-        File duplicateFile = new File(this.resourceFile.getAbsolutePath());
-        return duplicateFile;
+    public File getFile() {
+        return new File(this.resourceFile.getAbsolutePath());
     }
 
     /**
@@ -107,8 +104,7 @@ public class GlobusResource {
      * @throws IOException
      */
     public InputStream getInputStream() throws FileNotFoundException, IOException {
-        InputStream fileInputStream = new FileInputStream(this.getFile());
-        return fileInputStream;
+        return new FileInputStream(this.getFile());
     }
 
     /**

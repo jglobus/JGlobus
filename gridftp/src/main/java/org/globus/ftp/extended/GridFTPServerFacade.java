@@ -15,51 +15,48 @@
  */
 package org.globus.ftp.extended;
 
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.io.IOException;
-import java.io.DataOutputStream;
-
-import org.globus.util.Util;
-import org.globus.net.ServerSocketFactory;
-import org.globus.gsi.gssapi.net.GssSocket;
-import org.globus.gsi.gssapi.net.GssSocketFactory;
-import org.globus.gsi.gssapi.auth.SelfAuthorization;
-import org.globus.gsi.gssapi.auth.IdentityAuthorization;
-import org.globus.gsi.gssapi.GSSConstants;
-import org.globus.gsi.GSIConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.ftp.DataChannelAuthentication;
+import org.globus.ftp.DataSink;
+import org.globus.ftp.DataSource;
 import org.globus.ftp.GridFTPSession;
 import org.globus.ftp.HostPort;
 import org.globus.ftp.HostPort6;
 import org.globus.ftp.HostPortList;
-import org.globus.ftp.RetrieveOptions;
-import org.globus.ftp.DataSink;
-import org.globus.ftp.DataSource;
-import org.globus.ftp.DataChannelAuthentication;
 import org.globus.ftp.Options;
+import org.globus.ftp.RetrieveOptions;
 import org.globus.ftp.Session;
+import org.globus.ftp.dc.EBlockImageDCWriter;
 import org.globus.ftp.dc.EBlockParallelTransferContext;
 import org.globus.ftp.dc.ManagedSocketBox;
 import org.globus.ftp.dc.SocketBox;
 import org.globus.ftp.dc.SocketOperator;
 import org.globus.ftp.dc.SocketPool;
-import org.globus.ftp.dc.TransferContext;
 import org.globus.ftp.dc.StripeContextManager;
-import org.globus.ftp.dc.EBlockImageDCWriter;
+import org.globus.ftp.dc.TransferContext;
 import org.globus.ftp.dc.TransferThreadManager;
-import org.globus.ftp.exception.DataChannelException;
 import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.DataChannelException;
 import org.globus.ftp.vanilla.FTPServerFacade;
-
-import org.gridforum.jgss.ExtendedGSSManager;
+import org.globus.gsi.GSIConstants;
+import org.globus.gsi.gssapi.GSSConstants;
+import org.globus.gsi.gssapi.auth.IdentityAuthorization;
+import org.globus.gsi.gssapi.auth.SelfAuthorization;
+import org.globus.gsi.gssapi.net.GssSocket;
+import org.globus.gsi.gssapi.net.GssSocketFactory;
+import org.globus.net.ServerSocketFactory;
+import org.globus.util.Util;
 import org.gridforum.jgss.ExtendedGSSContext;
-
-import org.ietf.jgss.GSSCredential;
+import org.gridforum.jgss.ExtendedGSSManager;
 import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSManager;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class GridFTPServerFacade extends FTPServerFacade {
 
@@ -268,7 +265,7 @@ public class GridFTPServerFacade extends FTPServerFacade {
         gSession.serverAddressList.add(hp);
         
         logger.debug("started single striped passive server at port " +
-                     ((HostPort) gSession.serverAddressList.get(0)).getPort());
+                     gSession.serverAddressList.get(0).getPort());
         
         return gSession.serverAddressList;
     }
@@ -392,9 +389,6 @@ public class GridFTPServerFacade extends FTPServerFacade {
                                                         1,
                                                         ManagedSocketBox.NON_REUSABLE);
                 }
-                
-                return;
-                
             } else if (session.serverMode == Session.SERVER_ACTIVE) {
                 
                 //
@@ -472,7 +466,7 @@ public class GridFTPServerFacade extends FTPServerFacade {
         } catch (Exception e) {
             exceptionToControlChannel(e, "ocurred during retrieve()");
         }
-    };
+    }
     
     //override
     public void abort() throws IOException {

@@ -14,16 +14,15 @@
  */
 package org.globus.gsi.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.globus.common.CoGProperties;
-
-import org.globus.gsi.util.CertificateLoadUtil;
-
 import org.globus.gsi.CertificateRevocationLists;
-
+import org.globus.gsi.SigningPolicy;
+import org.globus.gsi.SigningPolicyParser;
+import org.globus.gsi.X509ProxyCertPathParameters;
+import org.globus.gsi.X509ProxyCertPathValidatorResult;
+import org.globus.gsi.proxy.ProxyPolicyHandler;
+import org.globus.gsi.proxy.ext.ProxyCertInfo;
+import org.globus.gsi.proxy.ext.ProxyPolicy;
 import org.globus.gsi.trustmanager.CRLChecker;
 import org.globus.gsi.trustmanager.CertificateChecker;
 import org.globus.gsi.trustmanager.DateValidityChecker;
@@ -31,12 +30,11 @@ import org.globus.gsi.trustmanager.IdentityChecker;
 import org.globus.gsi.trustmanager.SigningPolicyChecker;
 import org.globus.gsi.trustmanager.UnsupportedCriticalExtensionChecker;
 import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
+import org.globus.gsi.util.CertificateLoadUtil;
+import org.junit.Before;
+import org.junit.Test;
 
-import org.globus.gsi.X509ProxyCertPathParameters;
-import org.globus.gsi.X509ProxyCertPathValidatorResult;
-
-import org.globus.gsi.provider.SigningPolicyStore;
-import org.globus.gsi.provider.SigningPolicyStoreException;
+import javax.security.auth.x500.X500Principal;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -60,16 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.security.auth.x500.X500Principal;
-
-import org.globus.gsi.proxy.ext.ProxyCertInfo;
-import org.globus.gsi.proxy.ext.ProxyPolicy;
-import org.globus.gsi.proxy.ProxyPolicyHandler;
-
-import org.globus.gsi.SigningPolicy;
-import org.globus.gsi.SigningPolicyParser;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TestProxyPathValidator {
 
@@ -1058,7 +1047,7 @@ public class TestProxyPathValidator {
         }
     }
 
-    public class TestCertParameters implements CertStoreParameters {
+    public final class TestCertParameters implements CertStoreParameters {
 
         X509Certificate[] certificates;
         X509CRL[] crls;

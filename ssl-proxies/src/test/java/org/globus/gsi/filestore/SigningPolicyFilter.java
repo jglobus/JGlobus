@@ -19,11 +19,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Dec 30, 2009
  * Time: 11:28:38 AM
- * To change this template use File | Settings | File Templates.
  */
 public class SigningPolicyFilter implements FilenameFilter {
 

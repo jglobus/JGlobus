@@ -15,46 +15,43 @@
  */
 package org.globus.gram;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.MalformedURLException;
-
-import org.globus.util.http.HttpResponse;
-import org.globus.util.deactivator.Deactivator;
-import org.globus.util.deactivator.DeactivationHandler;
-import org.globus.util.GlobusURL;
-import org.globus.common.ResourceManagerContact;
-import org.globus.gram.internal.GRAMProtocol;
-import org.globus.gram.internal.GRAMConstants;
-import org.globus.gram.internal.GatekeeperReply;
-import org.globus.gsi.GSIConstants;
-import org.globus.gsi.gssapi.SSLUtil;
-import org.globus.gsi.gssapi.GSSConstants;
-import org.globus.gsi.gssapi.net.GssSocket;
-import org.globus.gsi.gssapi.net.GssSocketFactory;
-import org.globus.gsi.gssapi.net.impl.GSIGssOutputStream;
-import org.globus.gsi.gssapi.net.impl.GSIGssInputStream;
-import org.globus.gsi.gssapi.auth.GSSAuthorization;
-import org.globus.gsi.gssapi.auth.IdentityAuthorization;
-import org.globus.gsi.gssapi.auth.HostAuthorization;
-import org.globus.gsi.gssapi.auth.SelfAuthorization;
-import org.globus.gsi.gssapi.auth.NoAuthorization;
-
-import org.gridforum.jgss.ExtendedGSSManager;
-import org.gridforum.jgss.ExtendedGSSContext;
-
-import org.ietf.jgss.GSSManager;
-import org.ietf.jgss.GSSCredential;
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.GSSContext;
-import org.ietf.jgss.GSSName;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.common.ResourceManagerContact;
+import org.globus.gram.internal.GRAMConstants;
+import org.globus.gram.internal.GRAMProtocol;
+import org.globus.gram.internal.GatekeeperReply;
+import org.globus.gsi.GSIConstants;
+import org.globus.gsi.gssapi.GSSConstants;
+import org.globus.gsi.gssapi.SSLUtil;
+import org.globus.gsi.gssapi.auth.GSSAuthorization;
+import org.globus.gsi.gssapi.auth.HostAuthorization;
+import org.globus.gsi.gssapi.auth.IdentityAuthorization;
+import org.globus.gsi.gssapi.auth.NoAuthorization;
+import org.globus.gsi.gssapi.auth.SelfAuthorization;
+import org.globus.gsi.gssapi.net.GssSocket;
+import org.globus.gsi.gssapi.net.GssSocketFactory;
+import org.globus.gsi.gssapi.net.impl.GSIGssInputStream;
+import org.globus.gsi.gssapi.net.impl.GSIGssOutputStream;
+import org.globus.util.GlobusURL;
+import org.globus.util.deactivator.DeactivationHandler;
+import org.globus.util.deactivator.Deactivator;
+import org.globus.util.http.HttpResponse;
+import org.gridforum.jgss.ExtendedGSSContext;
+import org.gridforum.jgss.ExtendedGSSManager;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.GSSName;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /** 
  * This is the main class for using the Globus GRAM API
@@ -505,8 +502,7 @@ public class Gram  {
                 input = consumeRenewToken(context, in.readHandshakeToken());
             }
         } while (!context.isDelegationFinished());
-        GatekeeperReply reply = new GatekeeperReply(in);
-        return reply;
+        return new GatekeeperReply(in);
     }
 
     /**

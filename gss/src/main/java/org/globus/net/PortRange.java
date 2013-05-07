@@ -14,9 +14,9 @@
  */
 package org.globus.net;
 
-import java.io.IOException;
-
 import org.globus.common.CoGProperties;
+
+import java.io.IOException;
 
 /**
  * This class manages the port ranges. It keeps track of which
@@ -154,11 +154,8 @@ public class PortRange {
      */
     public boolean isInRange(int portNumber) {
 
-        if ((minPort <= portNumber) && (maxPort >= portNumber)) {
-            return true;
-        }
+        return (minPort <= portNumber) && (maxPort >= portNumber);
         
-        return false;
     }
 
     private synchronized void setPort(int portNumber, byte type) {

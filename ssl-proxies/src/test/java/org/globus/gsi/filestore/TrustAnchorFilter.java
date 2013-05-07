@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Dec 30, 2009
  * Time: 10:46:27 AM
- * To change this template use File | Settings | File Templates.
  */
 public class TrustAnchorFilter implements FilenameFilter {
 

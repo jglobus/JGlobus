@@ -15,6 +15,7 @@
  */
 package org.globus.gram;
 
+import org.globus.gram.internal.GRAMConstants;
 import org.globus.io.gass.server.GassServer;
 import org.globus.util.deactivator.Deactivator;
 
@@ -27,14 +28,13 @@ import org.ietf.jgss.GSSException;
 public class Gram15Test {
 
     private static GramJobListener getListener(final String label) {
-	GramJobListener l = ( new GramJobListener() {
-                public void statusChanged(GramJob job) {
-                    System.out.println(label + " status change \n" +
-                                       "    ID     : "+ job.getIDAsString() + "\n" +
-                                       "    Status : "+ job.getStatusAsString());
-                }
-            });
-	return l;
+        return new GramJobListener() {
+            public void statusChanged(GramJob job) {
+                System.out.println(label + " status change \n" +
+                        "    ID     : "+ job.getIDAsString() + "\n" +
+                        "    Status : "+ job.getStatusAsString());
+            }
+        };
     }
 
     public static boolean test1(String contact, boolean cancelCall) {
@@ -128,10 +128,10 @@ public class Gram15Test {
 	} catch(Exception e) {
 	}
 
-	if (job.getStatus() == job.STATUS_FAILED) {
+	if (job.getStatus() == GRAMConstants.STATUS_FAILED) {
 	    System.out.println("Error: Timeout expired!");
 	    return false;
-	} else if (job.getStatus() == job.STATUS_UNSUBMITTED) {
+	} else if (job.getStatus() == GRAMConstants.STATUS_UNSUBMITTED) {
 	    return true;
 	}
 

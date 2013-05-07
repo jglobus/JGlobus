@@ -91,7 +91,7 @@ public class GetParams
 	add(buf, CRED_NAME, credentialName);
         add(buf, VONAME, this.voname);
         add(buf, VOMSES, this.vomses);
-        if (this.wantTrustroots == true) {
+        if (this.wantTrustroots) {
             add(buf, TRUSTROOTS, "1");
         }
 	return buf.toString();

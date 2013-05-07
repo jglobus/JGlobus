@@ -94,7 +94,7 @@ public class BouncyCastleCertProcessingFactory {
     public X509Certificate createCertificate(InputStream certRequestInputStream, X509Certificate cert,
         PrivateKey privateKey, int lifetime, int delegationMode) throws IOException, GeneralSecurityException {
         return createCertificate(certRequestInputStream, cert, privateKey, lifetime, delegationMode,
-            (X509ExtensionSet) null, null);
+                null, null);
     }
 
     /**
@@ -172,7 +172,7 @@ public class BouncyCastleCertProcessingFactory {
      */
     public GlobusCredential createCredential(X509Certificate[] certs, PrivateKey privateKey, int bits, int lifetime,
         int delegationMode) throws GeneralSecurityException {
-        return createCredential(certs, privateKey, bits, lifetime, delegationMode, (X509ExtensionSet) null, null);
+        return createCredential(certs, privateKey, bits, lifetime, delegationMode, null, null);
     }
 
     /**
@@ -466,7 +466,7 @@ public class BouncyCastleCertProcessingFactory {
                 if (oid.equals(ProxyCertInfo.OID.getId()) || oid.equals(ProxyCertInfo.OLD_OID.getId())) {
                     continue;
                 }
-                x509Ext = (org.globus.gsi.X509Extension) extSet.get(oid);
+                x509Ext = extSet.get(oid);
                 certGen.addExtension(x509Ext.getOid(), x509Ext.isCritical(), x509Ext.getValue());
             }
         }
@@ -518,7 +518,7 @@ public class BouncyCastleCertProcessingFactory {
     public X509Certificate createCertificate(InputStream certRequestInputStream, X509Certificate cert,
         PrivateKey privateKey, int lifetime, GSIConstants.CertificateType certType) throws IOException,
         GeneralSecurityException {
-        return createCertificate(certRequestInputStream, cert, privateKey, lifetime, certType, (X509ExtensionSet) null,
+        return createCertificate(certRequestInputStream, cert, privateKey, lifetime, certType, null,
             null);
     }
 
@@ -593,7 +593,7 @@ public class BouncyCastleCertProcessingFactory {
      */
     public X509Credential createCredential(X509Certificate[] certs, PrivateKey privateKey, int bits, int lifetime,
         GSIConstants.CertificateType certType) throws GeneralSecurityException {
-        return createCredential(certs, privateKey, bits, lifetime, certType, (X509ExtensionSet) null, null);
+        return createCredential(certs, privateKey, bits, lifetime, certType, null, null);
     }
 
     /**
@@ -670,7 +670,7 @@ public class BouncyCastleCertProcessingFactory {
      */
     public X509Credential createCredential(X509Certificate[] certs, PrivateKey privateKey, int bits, int lifetime,
         GSIConstants.DelegationType delegType) throws GeneralSecurityException {
-        return createCredential(certs, privateKey, bits, lifetime, delegType, (X509ExtensionSet) null, null);
+        return createCredential(certs, privateKey, bits, lifetime, delegType, null, null);
     }
 
     /**
@@ -870,7 +870,7 @@ public class BouncyCastleCertProcessingFactory {
                 if (oid.equals(ProxyCertInfo.OID.getId()) || oid.equals(ProxyCertInfo.OLD_OID.getId())) {
                     continue;
                 }
-                x509Ext = (org.globus.gsi.X509Extension) extSet.get(oid);
+                x509Ext = extSet.get(oid);
                 certGen.addExtension(x509Ext.getOid(), x509Ext.isCritical(), x509Ext.getValue());
             }
         }

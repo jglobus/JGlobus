@@ -49,7 +49,7 @@ public class Handler extends URLStreamHandler {
             initConstructor();
         }
         try {
-            return (URLConnection)constructor.newInstance(new Object[] {u});
+            return (URLConnection)constructor.newInstance(u);
         } catch (Exception e) {
             throw new RuntimeException("Unable to instantiate url handler: " +
                                        e.getMessage());

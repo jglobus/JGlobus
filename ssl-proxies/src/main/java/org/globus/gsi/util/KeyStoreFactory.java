@@ -16,11 +16,9 @@
 package org.globus.gsi.util;
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Jan 21, 2010
  * Time: 12:43:13 PM
- * To change this template use File | Settings | File Templates.
  */
 public interface KeyStoreFactory<T> {
     T createKeyStore();

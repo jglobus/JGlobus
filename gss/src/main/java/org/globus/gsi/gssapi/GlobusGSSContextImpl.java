@@ -642,7 +642,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 		Certificate[] chain = this.sslEngine.getSession().getPeerCertificates();
                 int chainLen = chain.length;
                 X509Certificate [] newChain = new X509Certificate[chainLen + 1];
-                newChain[0] = bcConvert((X509Certificate)certificate);
+                newChain[0] = bcConvert(certificate);
                 for (int i=0;i<chainLen;i++) {
 /*DEL
                     newChain[i+1] = PureTLSUtil.convertCert((X509Cert)chain.elementAt(chainLen - 1 - i));
@@ -2277,9 +2277,9 @@ done:      do {
         }
         this.tc = (TrustedCertificates) value;
         //TODO: set this in SSLConfigurator before creating SSLContext and engine?
-        sslConfigurator.setTrustAnchorStore(((TrustedCertificates)value).getTrustStore());
-        sslConfigurator.setCrlStore(((TrustedCertificates)value).getcrlStore());
-        sslConfigurator.setPolicyStore(((TrustedCertificates)value).getsigPolStore());
+        sslConfigurator.setTrustAnchorStore(TrustedCertificates.getTrustStore());
+        sslConfigurator.setCrlStore(TrustedCertificates.getcrlStore());
+        sslConfigurator.setPolicyStore(TrustedCertificates.getsigPolStore());
     }
 
     
@@ -2687,7 +2687,7 @@ done:      do {
 /*DEL
                         return PureTLSUtil.certificateChainToArray(peerCerts);
 */
-                        return (X509Certificate[])peerCerts;
+                        return peerCerts;
                     } else {
                         return null;
                     }

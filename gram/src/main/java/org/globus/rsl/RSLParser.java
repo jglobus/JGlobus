@@ -132,7 +132,7 @@ public class RSLParser implements RSLParserConstants {
         }
   }
 
-  final public AbstractRslNode parse() throws ParseException {
+  public final AbstractRslNode parse() throws ParseException {
   AbstractRslNode tree;
     tree = subSpecification();
     jj_consume_token(0);
@@ -140,7 +140,7 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public void specification(AbstractRslNode parentNode) throws ParseException {
+  public final void specification(AbstractRslNode parentNode) throws ParseException {
   AbstractRslNode node;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case VARIABLES:
@@ -165,7 +165,7 @@ public class RSLParser implements RSLParserConstants {
     }
   }
 
-  final public AbstractRslNode subSpecification() throws ParseException {
+  public final AbstractRslNode subSpecification() throws ParseException {
   AbstractRslNode node = null;
   try {
     node = (AbstractRslNode)nodeClass.newInstance();
@@ -199,7 +199,7 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public void relation(AbstractRslNode node) throws ParseException {
+  public final void relation(AbstractRslNode node) throws ParseException {
   String attribute;
   int op;
   LinkedList values;
@@ -247,7 +247,7 @@ public class RSLParser implements RSLParserConstants {
     }
   }
 
-  final public void specList(AbstractRslNode node) throws ParseException {
+  public final void specList(AbstractRslNode node) throws ParseException {
     label_1:
     while (true) {
       jj_consume_token(RPAREN);
@@ -255,8 +255,7 @@ public class RSLParser implements RSLParserConstants {
       jj_consume_token(LPAREN);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case RPAREN:
-        ;
-        break;
+          break;
       default:
         jj_la1[3] = jj_gen;
         break label_1;
@@ -265,7 +264,7 @@ public class RSLParser implements RSLParserConstants {
 
   }
 
-  final public int op() throws ParseException {
+  public final int op() throws ParseException {
   Token tok;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case EQUAL:
@@ -300,14 +299,14 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public String attribute() throws ParseException {
+  public final String attribute() throws ParseException {
   String name;
     name = stringLiteral();
       {if (true) return name;}
     throw new Error("Missing return statement in function");
   }
 
-  final public LinkedList valueSequence() throws ParseException {
+  public final LinkedList valueSequence() throws ParseException {
   LinkedList list = new LinkedList();
   LinkedList tokenList = new LinkedList();
     label_2:
@@ -319,8 +318,7 @@ public class RSLParser implements RSLParserConstants {
       case UNQUOTED_LITERAL:
       case DOUBLE_QUOTED_LITERAL:
       case SINGLE_QUOTED_LITERAL:
-        ;
-        break;
+          break;
       default:
         jj_la1[5] = jj_gen;
         break label_2;
@@ -333,15 +331,14 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public LinkedList bindingSequence() throws ParseException {
+  public final LinkedList bindingSequence() throws ParseException {
   LinkedList list = new LinkedList();
     label_3:
     while (true) {
       binding(list);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case RPAREN:
-        ;
-        break;
+          break;
       default:
         jj_la1[6] = jj_gen;
         break label_3;
@@ -351,7 +348,7 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public void binding(LinkedList list) throws ParseException {
+  public final void binding(LinkedList list) throws ParseException {
  Value value;
  String name;
     jj_consume_token(RPAREN);
@@ -362,7 +359,7 @@ public class RSLParser implements RSLParserConstants {
         list.add(db);
   }
 
-  final public void value(LinkedList list, LinkedList tokenList) throws ParseException {
+  public final void value(LinkedList list, LinkedList tokenList) throws ParseException {
  Object value = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case RPAREN:
@@ -385,7 +382,7 @@ public class RSLParser implements RSLParserConstants {
     }
   }
 
-  final public Value SimpleValue(LinkedList valueList, LinkedList tokenList) throws ParseException {
+  public final Value SimpleValue(LinkedList valueList, LinkedList tokenList) throws ParseException {
  Token t1 = null;
  Value v1 = null;
  Value v2 = null;
@@ -419,7 +416,7 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public Value variableReference(LinkedList valueList, LinkedList tokenList) throws ParseException {
+  public final Value variableReference(LinkedList valueList, LinkedList tokenList) throws ParseException {
  String name = null;
  Value value = null;
  Token t1;
@@ -434,7 +431,6 @@ public class RSLParser implements RSLParserConstants {
       break;
     default:
       jj_la1[9] = jj_gen;
-      ;
     }
     jj_consume_token(LPAREN);
                 updateValueList(t1, valueList, tokenList);
@@ -445,7 +441,7 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public Value explicitConcat(LinkedList valueList, LinkedList tokenList) throws ParseException {
+  public final Value explicitConcat(LinkedList valueList, LinkedList tokenList) throws ParseException {
   Object v1 = null;
   Value v2 = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -469,7 +465,6 @@ public class RSLParser implements RSLParserConstants {
       break;
     default:
       jj_la1[11] = jj_gen;
-      ;
     }
                 Value v = null;
                 if (v1 instanceof String) {
@@ -484,7 +479,7 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public Token stringToken() throws ParseException {
+  public final Token stringToken() throws ParseException {
   Token tok;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case UNQUOTED_LITERAL:
@@ -507,7 +502,7 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public String stringLiteral() throws ParseException {
+  public final String stringLiteral() throws ParseException {
   Token tok;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case UNQUOTED_LITERAL:
@@ -531,7 +526,7 @@ public class RSLParser implements RSLParserConstants {
   }
 
 // -----------------------------------------------------
-  final public Value concatSimpleValue() throws ParseException {
+public final Value concatSimpleValue() throws ParseException {
   LinkedList list = new LinkedList();
   LinkedList tokenList = new LinkedList();
     label_4:
@@ -542,8 +537,7 @@ public class RSLParser implements RSLParserConstants {
       case UNQUOTED_LITERAL:
       case DOUBLE_QUOTED_LITERAL:
       case SINGLE_QUOTED_LITERAL:
-        ;
-        break;
+          break;
       default:
         jj_la1[14] = jj_gen;
         break label_4;
@@ -560,7 +554,7 @@ public class RSLParser implements RSLParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public void concatSimpleValueSub(LinkedList list, LinkedList tokenList) throws ParseException {
+  public final void concatSimpleValueSub(LinkedList list, LinkedList tokenList) throws ParseException {
  Object value = null;
     value = SimpleValue(list, tokenList);
         tokenList.add(value);
@@ -571,8 +565,8 @@ public class RSLParser implements RSLParserConstants {
   public Token token, jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[15];
-  final private int[] jj_la1_0 = {0x71c7000,0x7000,0x71c0000,0x8000,0xfc0,0x7028000,0x8000,0x7028000,0x7020000,0x7020000,0x7020000,0x8000000,0x7000000,0x7000000,0x7020000,};
+  private final int[] jj_la1 = new int[15];
+  private final int[] jj_la1_0 = {0x71c7000,0x7000,0x71c0000,0x8000,0xfc0,0x7028000,0x8000,0x7028000,0x7020000,0x7020000,0x7020000,0x8000000,0x7000000,0x7000000,0x7020000,};
 
   public RSLParser(java.io.InputStream stream) {
     jj_input_stream = new ASCII_CharStream(stream, 1, 1);
@@ -626,7 +620,7 @@ public class RSLParser implements RSLParserConstants {
     for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
-  final private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -640,7 +634,7 @@ public class RSLParser implements RSLParserConstants {
     throw generateParseException();
   }
 
-  final public Token getNextToken() {
+  public final Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -648,7 +642,7 @@ public class RSLParser implements RSLParserConstants {
     return token;
   }
 
-  final public Token getToken(int index) {
+  public final Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -657,7 +651,7 @@ public class RSLParser implements RSLParserConstants {
     return t;
   }
 
-  final private int jj_ntk() {
+  private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
@@ -668,7 +662,7 @@ public class RSLParser implements RSLParserConstants {
   private int[] jj_expentry;
   private int jj_kind = -1;
 
-  final public ParseException generateParseException() {
+  public final ParseException generateParseException() {
     jj_expentries.removeAllElements();
     boolean[] la1tokens = new boolean[28];
     for (int i = 0; i < 28; i++) {
@@ -701,10 +695,10 @@ public class RSLParser implements RSLParserConstants {
     return new ParseException(token, exptokseq, tokenImage);
   }
 
-  final public void enable_tracing() {
+  public final void enable_tracing() {
   }
 
-  final public void disable_tracing() {
+  public final void disable_tracing() {
   }
 
 }

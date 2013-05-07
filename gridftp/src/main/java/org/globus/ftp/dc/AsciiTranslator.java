@@ -15,9 +15,9 @@
  */
 package org.globus.ftp.dc;
 
-import java.io.ByteArrayOutputStream;
-
 import org.globus.ftp.Buffer;
+
+import java.io.ByteArrayOutputStream;
 
 public class AsciiTranslator { 
 
@@ -32,7 +32,7 @@ public class AsciiTranslator {
     
     protected byte[] lineSep;
 
-    protected final static byte[] systemLineSep;
+    protected static final byte[] systemLineSep;
 
     static {
 	systemLineSep = System.getProperty("line.separator").getBytes();

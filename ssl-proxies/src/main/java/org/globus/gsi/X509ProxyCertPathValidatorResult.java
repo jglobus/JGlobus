@@ -22,7 +22,7 @@ import java.security.cert.X509Certificate;
  *
  * @author ranantha@mcs.anl.gov
  */
-public class X509ProxyCertPathValidatorResult implements CertPathValidatorResult {
+public final class X509ProxyCertPathValidatorResult implements CertPathValidatorResult {
 
     private X509Certificate idenX509Certificate;
     private boolean limited;

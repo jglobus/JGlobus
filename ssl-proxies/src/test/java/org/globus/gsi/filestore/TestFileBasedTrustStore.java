@@ -110,14 +110,14 @@ public class TestFileBasedTrustStore {
 
 	@Test
 	public void testEngineGetCertificatesDirectory() throws Exception {
-		File tempDir = this.dir.getTempDirectory();
+		File tempDir = dir.getTempDirectory();
 		// number of CA files
 		// String[] caFiles = tempDir.list(new TrustAnchorFilter());
-		this.certStore = CertStore.getInstance("PEMFilebasedCertStore", directoryParameters);
+		certStore = CertStore.getInstance("PEMFilebasedCertStore", directoryParameters);
 
 		assert certStore != null;
 
-		this.trustAnchors = certStore.getCertificates(new X509CertSelector());
+		trustAnchors = certStore.getCertificates(new X509CertSelector());
 
 		assert trustAnchors != null;
 

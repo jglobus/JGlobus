@@ -14,26 +14,24 @@
  */
 package org.globus.gsi.gridmap;
 
-import java.util.Map;
-import java.util.Vector;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.io.IOException;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.Serializable;
-
-import org.globus.util.I18n;
-
-import org.globus.util.QuotedStringTokenizer;
-import org.globus.util.ConfigUtil;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.util.ConfigUtil;
+import org.globus.util.I18n;
+import org.globus.util.QuotedStringTokenizer;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class GridMap implements Serializable {
 
@@ -163,12 +161,7 @@ public class GridMap implements Serializable {
      */
     public boolean refresh() 
         throws IOException {
-        if (this.file != null &&
-            this.file.lastModified() != this.lastModified) {
-            return load(this.file);
-        } else {
-            return true;
-        }
+        return this.file == null || this.file.lastModified() == this.lastModified || load(this.file);
     }
     
     /**
@@ -320,7 +313,7 @@ public class GridMap implements Serializable {
         }
 
         GridMapEntry entry = (GridMapEntry)this.map.get(normalizeDN(globusID));
-        return (entry == null) ? false : entry.containsUserID(userID);
+        return (entry != null) && entry.containsUserID(userID);
     }
 
     /**

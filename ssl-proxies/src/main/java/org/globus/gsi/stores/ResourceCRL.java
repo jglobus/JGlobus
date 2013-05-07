@@ -16,21 +16,17 @@
 package org.globus.gsi.stores;
 
 import org.globus.gsi.util.CertificateLoadUtil;
+import org.globus.util.GlobusResource;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 
-
-import org.globus.util.GlobusResource;
-
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Dec 29, 2009
  * Time: 12:41:39 PM
- * To change this template use File | Settings | File Templates.
  */
 public class ResourceCRL extends AbstractResourceSecurityWrapper<X509CRL> {
 

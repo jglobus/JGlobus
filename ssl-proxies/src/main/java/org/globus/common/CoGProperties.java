@@ -14,20 +14,19 @@
  */
 package org.globus.common;
 
-import java.util.Properties;
-import java.util.Enumeration;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import org.globus.util.ConfigUtil;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.util.ConfigUtil;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /** Responsible for managing the properties file 
  * "~/.globus/cog.properties", which holds information about various properties
@@ -66,11 +65,11 @@ public class CoGProperties extends Properties {
     public static final String MDSPORT = "2135";
     public static final String BASEDN  = "Mds-Vo-name=local, o=Grid";
 
-    final static String SOCKET_TIMEOUT = "org.globus.socket.timeout";
+    static final String SOCKET_TIMEOUT = "org.globus.socket.timeout";
     private static final String REVERSE_DNS_CACHETYPE = "org.globus.gsi.gssapi.cache.type";
     private static final String REVERSE_DNS_CACHE_LIFETIME = "org.globus.gsi.gssapi.cache.lifetime";
-    final static public String NO_CACHE = "NoCache";
-    final static public String THREADED_CACHE = "ThreadedCache";
+    public static final String NO_CACHE = "NoCache";
+    public static final String THREADED_CACHE = "ThreadedCache";
 
     /** the configuration file properties are read from -- 
      * located in ~/.globus" */
@@ -90,7 +89,7 @@ public class CoGProperties extends Properties {
 	load(file);
     }
 
-    public synchronized static CoGProperties getDefault() {
+    public static synchronized CoGProperties getDefault() {
 	if (defaultProps != null) {
 	    return defaultProps;
 	}
@@ -692,7 +691,7 @@ public class CoGProperties extends Properties {
 	return (isNullOrEmpty(tmp)) ? defValue : Integer.parseInt(tmp);
     }
     
-    protected final static boolean isNullOrEmpty(String tmp) {
+    protected static final boolean isNullOrEmpty(String tmp) {
 	return (tmp == null || (tmp != null && tmp.length() == 0));
     }
     

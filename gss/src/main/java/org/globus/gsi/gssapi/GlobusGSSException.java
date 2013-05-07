@@ -14,15 +14,15 @@
  */
 package org.globus.gsi.gssapi;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
-
 import org.ietf.jgss.GSSException;
 
 import javax.net.ssl.SSLException;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public class GlobusGSSException extends GSSException {
 
@@ -222,12 +222,9 @@ public class GlobusGSSException extends GSSException {
         }
         
         // SSLEngine can return a message with no meaning, therefore boring.
-        if (t instanceof SSLException &&
-                t.getMessage().equals("General SSLEngine problem")) {
-            return true;
-        }
+        return t instanceof SSLException &&
+                t.getMessage().equals("General SSLEngine problem");
 
-        return false;
     }
 
     private String getLocalMessage() {

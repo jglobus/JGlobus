@@ -15,15 +15,14 @@
  */
 package org.globus.ftp.dc;
 
-import org.globus.ftp.Buffer;
-import org.globus.ftp.DataSink;
-import org.globus.ftp.vanilla.FTPServerFacade;
-import org.globus.ftp.vanilla.BasicServerControlChannel;
-
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.ftp.Buffer;
+import org.globus.ftp.DataSink;
+import org.globus.ftp.vanilla.BasicServerControlChannel;
+import org.globus.ftp.vanilla.FTPServerFacade;
+
+import java.io.IOException;
 
 /**
    Implements incoming transfer.
@@ -94,7 +93,7 @@ public class TransferSinkThread extends TransferThread {
 	}
     }
     
-    protected void startup() throws Exception {
+    protected void startup() {
 	//send initial reply only if nothing has yet been sent
 	synchronized(localControlChannel) {
 	    if (localControlChannel.getReplyCount() == 0) {

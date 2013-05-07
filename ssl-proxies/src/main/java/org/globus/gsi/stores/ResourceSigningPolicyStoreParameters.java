@@ -21,7 +21,7 @@ import org.globus.gsi.provider.SigningPolicyStoreParameters;
  *
  * @author ranantha@mcs.anl.gov
  */
-public class ResourceSigningPolicyStoreParameters implements SigningPolicyStoreParameters {
+public final class ResourceSigningPolicyStoreParameters implements SigningPolicyStoreParameters {
 
     private String locations;
     

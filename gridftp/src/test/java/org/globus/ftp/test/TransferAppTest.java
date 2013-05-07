@@ -193,6 +193,6 @@ public class TransferAppTest extends TestCase {
 	} catch (Exception e) {
 	    failed = true;
 	}
-	assertTrue(failed == true);
+	assertTrue(failed);
     }
 }

@@ -106,7 +106,7 @@ public class SSLContextHelper {
 
         if (anon) {
             GSSName name = manager.createName((String)null,
-                                              (Oid)null);
+                    null);
             cred = manager.createCredential(
                 name,
                 GSSCredential.DEFAULT_LIFETIME,

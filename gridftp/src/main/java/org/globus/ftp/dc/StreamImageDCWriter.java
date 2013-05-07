@@ -33,7 +33,7 @@ public class StreamImageDCWriter implements DataChannelWriter {
 	output.write(buf.getBuffer(), 0, buf.getLength());
     }
 
-    public void endOfData() throws IOException {};
+    public void endOfData() throws IOException {}
     
     public void close() 
 	throws IOException {

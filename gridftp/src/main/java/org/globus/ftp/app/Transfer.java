@@ -114,8 +114,8 @@ public class Transfer {
 	throws IOException, 
 	       ServerException,
 	       ClientException {
-	this(sourceServer, sourcePort, (String)null, sourceDir, sourceFile,
-	     destServer, destPort, (String)null, destDir, destFile,
+	this(sourceServer, sourcePort, null, sourceDir, sourceFile,
+	     destServer, destPort, null, destDir, destFile,
 	     params);
     }
 

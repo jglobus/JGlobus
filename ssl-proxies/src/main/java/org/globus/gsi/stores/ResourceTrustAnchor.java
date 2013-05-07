@@ -17,6 +17,7 @@ package org.globus.gsi.stores;
 
 import org.globus.gsi.util.CertificateIOUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
+import org.globus.util.GlobusResource;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -24,15 +25,11 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 
-import org.globus.util.GlobusResource;
-
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Dec 29, 2009
  * Time: 11:37:52 AM
- * To change this template use File | Settings | File Templates.
  */
 public class ResourceTrustAnchor extends AbstractResourceSecurityWrapper<TrustAnchor> {
 

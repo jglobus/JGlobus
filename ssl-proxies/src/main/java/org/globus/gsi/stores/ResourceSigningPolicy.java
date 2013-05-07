@@ -15,33 +15,26 @@
 
 package org.globus.gsi.stores;
 
-import org.globus.gsi.SigningPolicyException;
-
-import org.globus.gsi.provider.SigningPolicyStoreException;
-
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.logging.Log;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Map;
-
+import org.apache.commons.logging.LogFactory;
+import org.globus.gsi.SigningPolicy;
+import org.globus.gsi.SigningPolicyException;
+import org.globus.gsi.SigningPolicyParser;
+import org.globus.gsi.provider.SigningPolicyStoreException;
+import org.globus.util.GlobusResource;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.globus.gsi.SigningPolicy;
-import org.globus.gsi.SigningPolicyParser;
-import org.globus.util.GlobusResource;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Collection;
+import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Dec 28, 2009
  * Time: 2:57:09 PM
- * To change this template use File | Settings | File Templates.
  */
 public class ResourceSigningPolicy {
     protected GlobusResource globusResource;
@@ -66,8 +59,7 @@ public class ResourceSigningPolicy {
         }
     }
 
-    protected void init(GlobusResource initResource, Map<X500Principal, SigningPolicy> initSigningPolicy)
-            throws ResourceStoreException {
+    protected void init(GlobusResource initResource, Map<X500Principal, SigningPolicy> initSigningPolicy) {
         if (initSigningPolicy == null) {
             // JGLOBUS-88 : better exception?
             throw new IllegalArgumentException("Object cannot be null");

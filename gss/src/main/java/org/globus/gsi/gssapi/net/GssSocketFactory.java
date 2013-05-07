@@ -23,7 +23,7 @@ public abstract class GssSocketFactory {
   
     private static GssSocketFactory factory = null;
 
-    public synchronized static GssSocketFactory getDefault() {
+    public static synchronized GssSocketFactory getDefault() {
 	if (factory == null) {
 	    String className = System.getProperty("org.globus.gsi.gssapi.net.provider");
 	    if (className == null) {

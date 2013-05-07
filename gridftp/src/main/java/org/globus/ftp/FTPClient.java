@@ -15,40 +15,39 @@
  */
 package org.globus.ftp;
 
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.io.File;
-import java.util.Date;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.TimeZone;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.globus.ftp.exception.ClientException;
-import org.globus.ftp.exception.ServerException;
-import org.globus.ftp.exception.FTPReplyParseException;
-import org.globus.ftp.exception.UnexpectedReplyCodeException;
 import org.globus.ftp.exception.FTPException;
-import org.globus.ftp.vanilla.FTPControlChannel;
-import org.globus.ftp.vanilla.FTPServerFacade;
+import org.globus.ftp.exception.FTPReplyParseException;
+import org.globus.ftp.exception.ServerException;
+import org.globus.ftp.exception.UnexpectedReplyCodeException;
 import org.globus.ftp.vanilla.BasicClientControlChannel;
 import org.globus.ftp.vanilla.Command;
+import org.globus.ftp.vanilla.FTPControlChannel;
+import org.globus.ftp.vanilla.FTPServerFacade;
 import org.globus.ftp.vanilla.Reply;
 import org.globus.ftp.vanilla.TransferMonitor;
 import org.globus.ftp.vanilla.TransferState;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is the main user interface for FTP operations.
@@ -701,28 +700,12 @@ public class  FTPClient {
             new BufferedReader(new StringReader(received.toString()));
 
         Vector fileList = new Vector();
-        MlsxEntry entry = null;
-        String line = null;
-
+        String line;
         while ((line = reader.readLine()) != null) {
-
             if (logger.isDebugEnabled()) {
                 logger.debug("line ->" + line);
             }
-
-            try {
-                entry = new MlsxEntry(line);
-            } catch (FTPException e) {
-                ClientException ce =
-                    new ClientException(
-                                        ClientException.UNSPECIFIED,
-                                        "Could not create MlsxEntry");
-                ce.setRootCause(e);
-                throw ce;
-            }
-
-            fileList.addElement(entry);
-            
+            fileList.addElement(new MlsxEntry(line));
         }
         return fileList;
     }
@@ -1987,7 +1970,7 @@ public class  FTPClient {
      * @param mListener     marker listener.
      *                      Can be set to null.
      */
-    static public void transfer(FTPClient source,
+    public static void transfer(FTPClient source,
                                 String remoteSrcFile,
                                 FTPClient destination,
                                 String remoteDstFile,
@@ -2005,7 +1988,7 @@ public class  FTPClient {
             if (destination.isFeatureSupported(FeatureList.GETPUT)) {
                 destination.issueGETPUT("PUT", true, null,
                                         mode, remoteDstFile);
-                hp = ((GridFTPClient)destination).get127Reply();
+                hp = destination.get127Reply();
             } else {
                 if (mode > 0) {
                     destination.setMode(mode);
@@ -2227,8 +2210,6 @@ public class  FTPClient {
             throw new ServerException(ServerException.SERVER_REFUSED,
                     cksumReply.getMessage());
         }
-
-        return;
     }
 
 } //FTPClient

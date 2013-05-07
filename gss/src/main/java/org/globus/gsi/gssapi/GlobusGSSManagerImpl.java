@@ -14,32 +14,28 @@
  */
 package org.globus.gsi.gssapi;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.gsi.CredentialException;
+import org.globus.gsi.X509Credential;
 import org.globus.gsi.gssapi.jaas.JaasSubject;
-
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.Provider;
-import java.util.Set;
-import java.util.Iterator;
+import org.gridforum.jgss.ExtendedGSSCredential;
+import org.gridforum.jgss.ExtendedGSSManager;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSName;
+import org.ietf.jgss.Oid;
 
 import javax.security.auth.Subject;
 
-import org.ietf.jgss.GSSName;
-import org.ietf.jgss.GSSCredential;
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.GSSContext;
-import org.ietf.jgss.Oid;
-
-import org.gridforum.jgss.ExtendedGSSManager;
-import org.gridforum.jgss.ExtendedGSSCredential;
-
-import org.globus.gsi.X509Credential;
-import org.globus.gsi.CredentialException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.Provider;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * An implementation of <code>GlobusGSSManager</code>.
@@ -283,8 +279,7 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
 	    throw new GSSException(GSSException.NO_CRED);
 	}
 	// XXX: don't know about the first argument
-	GSSContext ctx = new GlobusGSSContextImpl(null,  globusCred);
-	return ctx;
+        return new GlobusGSSContextImpl(null,  globusCred);
     }
     
     public Oid[] getMechs() {

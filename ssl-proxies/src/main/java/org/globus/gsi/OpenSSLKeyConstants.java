@@ -16,11 +16,9 @@
 package org.globus.gsi;
 
 /**
- * Created by IntelliJ IDEA.
  * User: turtlebender
  * Date: Jan 21, 2010
  * Time: 10:32:19 AM
- * To change this template use File | Settings | File Templates.
  */
 public final class OpenSSLKeyConstants {
     public static final int DES_EDE3_CBC_KEY_LENGTH = 24;

@@ -14,10 +14,17 @@
  */
 package org.globus.gsi.proxy;
 
+import junit.framework.TestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.common.CoGProperties;
-
-import org.globus.gsi.util.CertificateLoadUtil;
-
+import org.globus.gsi.CertificateRevocationLists;
+import org.globus.gsi.GSIConstants;
+import org.globus.gsi.SigningPolicy;
+import org.globus.gsi.SigningPolicyParser;
+import org.globus.gsi.TrustedCertificates;
+import org.globus.gsi.proxy.ext.ProxyCertInfo;
+import org.globus.gsi.proxy.ext.ProxyPolicy;
 import org.globus.gsi.trustmanager.CRLChecker;
 import org.globus.gsi.trustmanager.CertificateChecker;
 import org.globus.gsi.trustmanager.DateValidityChecker;
@@ -25,34 +32,20 @@ import org.globus.gsi.trustmanager.IdentityChecker;
 import org.globus.gsi.trustmanager.SigningPolicyChecker;
 import org.globus.gsi.trustmanager.UnsupportedCriticalExtensionChecker;
 import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
+import org.globus.gsi.util.CertificateLoadUtil;
 
-import org.globus.gsi.X509Credential;
-
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import java.util.Map;
 import javax.security.auth.x500.X500Principal;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertPath;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.security.cert.X509Certificate;
+import java.security.cert.CertPath;
+import java.security.cert.CertPathValidatorException;
 import java.security.cert.X509CRL;
-import org.globus.gsi.GSIConstants;
-import org.globus.gsi.TrustedCertificates;
-import org.globus.gsi.SigningPolicy;
-import org.globus.gsi.SigningPolicyParser;
-import org.globus.gsi.CertificateRevocationLists;
-import org.globus.gsi.proxy.ProxyPolicyHandler;
-import org.globus.gsi.proxy.ProxyPathValidator;
-import org.globus.gsi.proxy.ProxyPathValidatorException;
-import org.globus.gsi.proxy.ext.ProxyCertInfo;
-import org.globus.gsi.proxy.ext.ProxyPolicy;
-
-import junit.framework.TestCase;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ProxyPathValidatorTest extends TestCase {
 
@@ -666,7 +659,7 @@ public class ProxyPathValidatorTest extends TestCase {
         assertEquals(expectedIdentity, v.getIdentityCertificate());
     }
 
-    private void validateError(X509Certificate[] chain, X509Certificate[] trustedCerts, int expectedErrorCode) throws Exception {
+    private void validateError(X509Certificate[] chain, X509Certificate[] trustedCerts, int expectedErrorCode) {
         TestProxyPathValidator v = new TestProxyPathValidator();
         try {
             v.validate(chain);
