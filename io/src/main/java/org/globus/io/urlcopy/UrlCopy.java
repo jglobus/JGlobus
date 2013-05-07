@@ -76,7 +76,7 @@ public class UrlCopy implements Runnable {
     protected GlobusURL dstUrl         = null;
     protected boolean canceled         = false;
     protected boolean thirdParty       = true;
-    protected List listeners           = null;
+    protected List<UrlCopyListener> listeners           = null;
     
     protected long sourceOffset      = 0;
     protected long destinationOffset = 0;
@@ -194,7 +194,7 @@ public class UrlCopy implements Runnable {
      * @param listener url copy listener
      */
     public void addUrlCopyListener(UrlCopyListener listener) {
-        if (listeners == null) listeners = new LinkedList();
+        if (listeners == null) listeners = new LinkedList<UrlCopyListener>();
         listeners.add(listener);
     }
     
@@ -445,16 +445,16 @@ public class UrlCopy implements Runnable {
             copy();
         } catch(Exception e) {
             if (listeners != null) {
-                Iterator iter = listeners.iterator();
+                Iterator<UrlCopyListener> iter = listeners.iterator();
                 while(iter.hasNext()) {
-                    ((UrlCopyListener)iter.next()).transferError(e);
+                    (iter.next()).transferError(e);
                 }
             }
         } finally {
             if (listeners != null) {
-                Iterator iter = listeners.iterator();
+                Iterator<UrlCopyListener> iter = listeners.iterator();
                 while(iter.hasNext()) {
-                    ((UrlCopyListener)iter.next()).transferCompleted();
+                    (iter.next()).transferCompleted();
                 }
             }
         }
@@ -696,9 +696,9 @@ public class UrlCopy implements Runnable {
     
     private void fireUrlTransferProgressEvent(long totalBytes, 
                                               long transferedBytes) {
-        Iterator iter = listeners.iterator();
+        Iterator<UrlCopyListener> iter = listeners.iterator();
         while(iter.hasNext()) {
-            ((UrlCopyListener)iter.next()).transfer(transferedBytes,
+            (iter.next()).transfer(transferedBytes,
                                                     totalBytes);
         }
     }

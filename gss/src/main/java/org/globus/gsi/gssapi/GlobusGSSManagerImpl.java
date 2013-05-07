@@ -100,13 +100,13 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
 	Subject subject = JaasSubject.getCurrentSubject();
 	if (subject != null) {
 	    logger.debug("Getting credential from context");
-	    Set gssCreds = 
+	    Set<GlobusGSSCredentialImpl> gssCreds =
 		subject.getPrivateCredentials(GlobusGSSCredentialImpl.class);
 	    if (gssCreds != null) {
-		Iterator iter = gssCreds.iterator();
+		Iterator<GlobusGSSCredentialImpl> iter = gssCreds.iterator();
 		if (iter.hasNext()) {
 		    GlobusGSSCredentialImpl credImpl = 
-			(GlobusGSSCredentialImpl)iter.next();
+                            iter.next();
 		    cred = credImpl.getX509Credential();
 		}
 	    }

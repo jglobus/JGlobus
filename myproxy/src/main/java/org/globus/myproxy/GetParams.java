@@ -29,8 +29,8 @@ public class GetParams
     private boolean wantTrustroots = false;
     private String credentialName;
     private GSSCredential authzcreds;
-    private List voname;
-    private List vomses;
+    private List<String> voname;
+    private List<String> vomses;
 
     public GetParams() {
 	super(MyProxy.GET_PROXY);
@@ -56,19 +56,19 @@ public class GetParams
         return this.wantTrustroots;
     }
 
-    public void setVoname(List voname) {
+    public void setVoname(List<String> voname) {
         this.voname = voname;
     }
 
-    public List getVoname() {
+    public List<String> getVoname() {
         return this.voname;
     }
 
-    public void setVomses(List vomses) {
+    public void setVomses(List<String> vomses) {
         this.vomses = vomses;
     }
 
-    public List getVomses() {
+    public List<String> getVomses() {
         return this.vomses;
     }
 
@@ -97,12 +97,12 @@ public class GetParams
 	return buf.toString();
     }
 
-    private void add(StringBuffer buf, String prefix, List values) {
+    private void add(StringBuffer buf, String prefix, List<String> values) {
         if (values == null) {
             return;
         }
-        for (Iterator itr = values.iterator(); itr.hasNext(); ) {
-            String value = (String)itr.next();
+        for (Iterator<String> itr = values.iterator(); itr.hasNext(); ) {
+            String value = itr.next();
             add(buf, prefix, value);
         }
     }

@@ -55,7 +55,7 @@ public class KeyPairCache {
      * is significant, since we rely on access to the table being
      * synchronized.
      */
-    private final Map entries = new Hashtable();
+    private final Map<Integer, KeyPairCacheEntry> entries = new Hashtable<Integer, KeyPairCacheEntry>();
 
     /**
      * Creates a KeyPairCache object for the specified algorithm, as
@@ -124,7 +124,7 @@ public class KeyPairCache {
 
         long st = System.currentTimeMillis();
         Integer keysize = bits;
-        KeyPairCacheEntry entry = (KeyPairCacheEntry)entries.get(keysize);
+        KeyPairCacheEntry entry = entries.get(keysize);
         if (entry == null || st - entry.getCreatedAt() >= lifetime) {
             logger.debug("Creating " + bits + " bits keypair");
 

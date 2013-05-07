@@ -31,9 +31,9 @@ public class SocketPool {
 
     private static Log logger = LogFactory.getLog(SocketPool.class.getName());
 
-    protected Hashtable allSockets = new Hashtable();
-    protected Hashtable freeSockets = new Hashtable();
-    protected Hashtable busySockets = new Hashtable();
+    protected Hashtable<SocketBox, SocketBox> allSockets = new Hashtable<SocketBox, SocketBox>();
+    protected Hashtable<SocketBox, SocketBox> freeSockets = new Hashtable<SocketBox, SocketBox>();
+    protected Hashtable<SocketBox, SocketBox> busySockets = new Hashtable<SocketBox, SocketBox>();
 
     /**
      * Constructor for SocketPool.
@@ -98,10 +98,10 @@ public class SocketPool {
      * Before calling this method, the socket needs to be first add()ed to the pool.
      * */
     public synchronized SocketBox checkOut() {
-        Enumeration e = freeSockets.keys();
+        Enumeration<SocketBox> e = freeSockets.keys();
 
         if (e.hasMoreElements()) {
-            SocketBox sb = (SocketBox)e.nextElement();
+            SocketBox sb = e.nextElement();
 
             if (busySockets.containsKey(sb)) {
                 throw new IllegalArgumentException("This socket is marked free, but already exists in the pool of busy sockets.");
@@ -167,9 +167,9 @@ public class SocketPool {
     
     /** Apply the suplied callback to all socketBoxes.*/
     public synchronized void applyToAll(SocketOperator op) throws Exception {
-        Enumeration keys = allSockets.keys();
+        Enumeration<SocketBox> keys = allSockets.keys();
         while (keys.hasMoreElements()) {
-            SocketBox myBox = (SocketBox) keys.nextElement();
+            SocketBox myBox = keys.nextElement();
             op.operate(myBox);
         }
     }
@@ -179,10 +179,10 @@ public class SocketPool {
      * */
     public synchronized void flush() throws IOException {
         
-        Enumeration keys = allSockets.keys();
+        Enumeration<SocketBox> keys = allSockets.keys();
         // close all sockets before removing them
         while (keys.hasMoreElements()) {
-            SocketBox myBox = (SocketBox) keys.nextElement();
+            SocketBox myBox = keys.nextElement();
             if (myBox != null) {
                 myBox.setSocket(null);
             }

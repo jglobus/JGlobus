@@ -27,9 +27,9 @@ public class Handler extends URLStreamHandler {
     private static final Class[] PARAMS = 
         new Class[] { URL.class };
         
-    private static Constructor constructor = null;
+    private static Constructor<URLConnection> constructor = null;
 
-    private static synchronized Constructor initConstructor() {
+    private static synchronized Constructor<URLConnection> initConstructor() {
         if (constructor == null) {
             ClassLoader loader = 
                 Thread.currentThread().getContextClassLoader();
@@ -49,7 +49,7 @@ public class Handler extends URLStreamHandler {
             initConstructor();
         }
         try {
-            return (URLConnection)constructor.newInstance(u);
+            return constructor.newInstance(u);
         } catch (Exception e) {
             throw new RuntimeException("Unable to instantiate url handler: " +
                                        e.getMessage());

@@ -139,10 +139,10 @@ public class MlsxTest extends TestCase {
 	src.setType(Session.TYPE_ASCII);
 	src.changeDir(TestEnv.serverADir);
 	
-	Vector v = src.mlsd();
+	Vector<MlsxEntry> v = src.mlsd();
 	logger.debug("mlsd received");
 	while (!v.isEmpty()) {
-	    MlsxEntry f = (MlsxEntry) v.remove(0);
+	    MlsxEntry f = v.remove(0);
 	    logger.info(f.toString());
 	}
 	
@@ -167,10 +167,10 @@ public class MlsxTest extends TestCase {
 
 	src.changeDir(TestEnv.serverADir);
 
-	Vector v = src.mlsd();
+	Vector<MlsxEntry> v = src.mlsd();
 	logger.debug("mlsd received");
 	while (!v.isEmpty()) {
-	    MlsxEntry f = (MlsxEntry) v.remove(0);
+	    MlsxEntry f = v.remove(0);
 	    logger.debug(f.toString());
 	}
 	
@@ -190,11 +190,11 @@ public class MlsxTest extends TestCase {
 	
 	// using mlsd()
 
-	Vector v = src.mlsd(TestEnv.serverADir);
+	Vector<MlsxEntry> v = src.mlsd(TestEnv.serverADir);
 	logger.debug("mlsd received");
 	StringBuffer output1Buffer = new StringBuffer();
 	while (!v.isEmpty()) {
-	    MlsxEntry f = (MlsxEntry) v.remove(0);
+	    MlsxEntry f = v.remove(0);
 	    output1Buffer.append(f.toString()).append("\n");
 	    
 	}
@@ -211,7 +211,7 @@ public class MlsxTest extends TestCase {
 	logger.debug("mlsd received");
 	StringBuffer output2Buffer = new StringBuffer();
 	while (!v.isEmpty()) {
-	    MlsxEntry f = (MlsxEntry) v.remove(0);
+	    MlsxEntry f = v.remove(0);
 	    output2Buffer.append(f.toString()).append("\n");
 	    
 	}

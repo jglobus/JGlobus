@@ -62,7 +62,7 @@ public class GramAttributesTest extends TestCase {
 	assertEquals("stdout",
 		     null, attribs.getStdout());
 
-	List args = attribs.getArguments();
+	List<String> args = attribs.getArguments();
 	
 	assertEquals("arg size",
 		     4, args.size());
@@ -79,7 +79,7 @@ public class GramAttributesTest extends TestCase {
 	assertEquals("arg 4",
 		     "'arg4 in quotes'", args.get(3));
 
-	Map envs = attribs.getEnvironment();
+	Map<String, String> envs = attribs.getEnvironment();
 	
 	assertEquals("env size",
 		     3, envs.size());
@@ -120,7 +120,7 @@ public class GramAttributesTest extends TestCase {
 
 	// check arg list
 
-	List args = attribs.getArguments();
+	List<String> args = attribs.getArguments();
 	
 	assertEquals("arg size",
 		     4, args.size());
@@ -150,7 +150,7 @@ public class GramAttributesTest extends TestCase {
 
 	// check env
 
-	Map envs = attribs.getEnvironment();
+	Map<String, String> envs = attribs.getEnvironment();
 	
 	assertEquals("env size",
 		     3, envs.size());

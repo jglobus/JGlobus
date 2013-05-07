@@ -56,7 +56,7 @@ public class GridMap implements Serializable {
     private static final String EMAIL_KEYWORD = "emailaddress=";
     private static final String USERID_KEYWORD = "userid=";
 
-    protected Map map;
+    protected Map<Object, GridMapEntry> map;
 
     // the file the grim map was loaded from
     private File file;
@@ -183,7 +183,7 @@ public class GridMap implements Serializable {
         BufferedReader reader = 
             new BufferedReader(new InputStreamReader(input));
 
-        Map localMap = new HashMap();
+        Map<Object, GridMapEntry> localMap = new HashMap<Object, GridMapEntry>();
         GridMapEntry entry;
         QuotedStringTokenizer tokenizer;
         StringTokenizer idTokenizer;
@@ -234,7 +234,7 @@ public class GridMap implements Serializable {
             }
             
             String normalizedDN = normalizeDN(globusID);
-            entry = (GridMapEntry)localMap.get(normalizedDN);
+            entry = localMap.get(normalizedDN);
             if (entry == null) {
                 entry = new GridMapEntry();
                 entry.setGlobusID(globusID);
@@ -287,7 +287,7 @@ public class GridMap implements Serializable {
             return null;
         }
             
-        GridMapEntry entry = (GridMapEntry)this.map.get(normalizeDN(globusID));
+        GridMapEntry entry = this.map.get(normalizeDN(globusID));
         return (entry == null) ? null : entry.getUserIDs();
     }
 
@@ -312,7 +312,7 @@ public class GridMap implements Serializable {
             return false;
         }
 
-        GridMapEntry entry = (GridMapEntry)this.map.get(normalizeDN(globusID));
+        GridMapEntry entry = this.map.get(normalizeDN(globusID));
         return (entry != null) && entry.containsUserID(userID);
     }
 
@@ -333,12 +333,12 @@ public class GridMap implements Serializable {
             return null;
         }
 
-        Iterator iter = this.map.entrySet().iterator();
-        Map.Entry mapEntry;
+        Iterator<Map.Entry<Object,GridMapEntry>> iter = this.map.entrySet().iterator();
+        Map.Entry<Object, GridMapEntry> mapEntry;
         GridMapEntry entry;
         while(iter.hasNext()) {
-            mapEntry = (Map.Entry)iter.next();
-            entry = (GridMapEntry)mapEntry.getValue();
+            mapEntry = iter.next();
+            entry = mapEntry.getValue();
             if (entry.containsUserID(userID)) {
                 return entry.getGlobusID();
             }
@@ -363,14 +363,14 @@ public class GridMap implements Serializable {
             return null;
         }
 
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
 
-        Iterator iter = this.map.entrySet().iterator();
-        Map.Entry mapEntry;
+        Iterator<Map.Entry<Object,GridMapEntry>> iter = this.map.entrySet().iterator();
+        Map.Entry<Object, GridMapEntry> mapEntry;
         GridMapEntry entry;
         while(iter.hasNext()) {
-            mapEntry = (Map.Entry)iter.next();
-            entry = (GridMapEntry)mapEntry.getValue();
+            mapEntry = iter.next();
+            entry = mapEntry.getValue();
             if (entry.containsUserID(userID)) {
                 v.add(entry.getGlobusID());
            }
@@ -383,7 +383,7 @@ public class GridMap implements Serializable {
 
         String idS[] = new String[v.size()];
         for(int ctr = 0; ctr < v.size(); ctr++) {
-            idS[ctr] = (String) v.elementAt(ctr);
+            idS[ctr] = v.elementAt(ctr);
         }
 
         return idS;
@@ -399,12 +399,12 @@ public class GridMap implements Serializable {
         }
         
         if (this.map == null) {
-            this.map = new HashMap();
+            this.map = new HashMap<Object, GridMapEntry>();
         }
         
         String normalizedDN = normalizeDN(globusID);
 
-        GridMapEntry entry = (GridMapEntry)this.map.get(normalizedDN);
+        GridMapEntry entry = this.map.get(normalizedDN);
         if (entry == null) {
             entry = new GridMapEntry();
             entry.setGlobusID(globusID);

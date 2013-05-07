@@ -435,12 +435,12 @@ public class FTPServerFacade {
         implements BasicServerControlChannel{
 
         // FIFO queue of Replies
-        private LinkedList replies = null;
+        private LinkedList<Reply> replies = null;
         // how many replies have been pushed so far
         private int replyCount = 0;
 
         public LocalControlChannel() {
-            replies = new LinkedList();
+            replies = new LinkedList<Reply>();
         }
 
         protected synchronized void push(Reply newReply) {
@@ -454,7 +454,7 @@ public class FTPServerFacade {
             while (replies.isEmpty()) {
                 wait();
             }
-            return (Reply)replies.removeFirst();
+            return replies.removeFirst();
         }
 
         //non blocking; check if queue is ready for pop

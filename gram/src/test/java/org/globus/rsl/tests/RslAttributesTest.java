@@ -18,10 +18,8 @@ package org.globus.rsl.tests;
 import org.globus.rsl.*;
 
 import java.util.*;
-import java.io.*;
 
 import junit.framework.*;
-import junit.extensions.*;
 
 public class RslAttributesTest extends TestCase {
 
@@ -64,7 +62,7 @@ public class RslAttributesTest extends TestCase {
 		     assertEquals("stdout",
 				  null, attribs.getSingle("stdout"));
 
-	List args = attribs.getMulti("arguments");
+	List<String> args = attribs.getMulti("arguments");
 	
 	assertEquals("arg size",
 		     4, args.size());
@@ -81,7 +79,7 @@ public class RslAttributesTest extends TestCase {
 	assertEquals("arg 4",
 		     "'arg4 in quotes'", args.get(3));
 
-	Map envs = attribs.getMap("environment");
+	Map<String, String> envs = attribs.getMap("environment");
 	
 	assertEquals("env size",
 		     3, envs.size());
@@ -95,7 +93,7 @@ public class RslAttributesTest extends TestCase {
 	assertEquals("env3",
 		     "$(HOME)/data/bin", envs.get("v3"));
 
-	Map vars = attribs.getVariables("rsl_substitution");
+	Map<String, String> vars = attribs.getVariables("rsl_substitution");
 
 	assertEquals("var name 1",
 		     true, vars.containsKey("HOME"));
@@ -142,7 +140,7 @@ public class RslAttributesTest extends TestCase {
 
 	// check arg list
 
-	List args = attribs.getMulti("arguments");
+	List<String> args = attribs.getMulti("arguments");
 
 	assertEquals("arg size",
 		     4, args.size());
@@ -171,7 +169,7 @@ public class RslAttributesTest extends TestCase {
 	
 	// check env
 
-	Map envs = attribs.getMap("environment");
+	Map<String, String> envs = attribs.getMap("environment");
 	
 	assertEquals("env size",
 		     3, envs.size());
@@ -199,7 +197,7 @@ public class RslAttributesTest extends TestCase {
 
 	// check variables 
 
-        Map vars = attribs.getVariables("rsl_substitution");
+        Map<String, String> vars = attribs.getVariables("rsl_substitution");
 
         assertEquals("var name 1",
                      true, vars.containsKey("HOME"));

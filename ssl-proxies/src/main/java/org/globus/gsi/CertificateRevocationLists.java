@@ -62,8 +62,8 @@ public class CertificateRevocationLists {
         if (this.crlIssuerDNMap == null) {
             return null;
         }
-        Collection crls = this.crlIssuerDNMap.values();
-        return (X509CRL[]) crls.toArray(new X509CRL[crls.size()]);
+        Collection<X509CRL> crls = this.crlIssuerDNMap.values();
+        return crls.toArray(new X509CRL[crls.size()]);
     }
 
     public Collection<X509CRL> getCRLs(X509CRLSelector selector) {
@@ -187,7 +187,7 @@ public class CertificateRevocationLists {
                 } else {
                     StringTokenizer tokens = new StringTokenizer(caCertLocations, ",");
                     File crlFile = null;
-                    LinkedList crlDirs = new LinkedList();
+                    LinkedList<String> crlDirs = new LinkedList<String>();
                     while(tokens.hasMoreTokens()) {
                         String crlFileName =
                                 tokens.nextToken().trim();
@@ -209,11 +209,11 @@ public class CertificateRevocationLists {
                         }
                     }
 
-                    ListIterator iterator = crlDirs.listIterator(0);
+                    ListIterator<String> iterator = crlDirs.listIterator(0);
                     String locations = null;
                     while (iterator.hasNext()) {
                         if (locations == null) {
-                            locations = (String)iterator.next();
+                            locations = iterator.next();
                         } else {
                             locations = locations + ","
                                 + iterator.next();

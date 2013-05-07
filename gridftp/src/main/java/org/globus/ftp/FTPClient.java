@@ -419,7 +419,7 @@ public class  FTPClient {
      *         remote files
      * @see #mlsd()
      */
-    public Vector list() throws ServerException, ClientException, IOException {
+    public Vector<FileInfo> list() throws ServerException, ClientException, IOException {
         return list("*");
     }
 
@@ -443,7 +443,7 @@ public class  FTPClient {
      *         remote files
      * @see #mlsd(String)
      */
-    public Vector list(String filter)
+    public Vector<FileInfo> list(String filter)
         throws ServerException, ClientException, IOException {
         return list(filter, "-d");
     }
@@ -471,7 +471,7 @@ public class  FTPClient {
      *         remote files
      * @see #mlsd(String)
      */
-    public Vector list(String filter, String modifier)
+    public Vector<FileInfo> list(String filter, String modifier)
         throws ServerException, ClientException, IOException {
 
         ByteArrayDataSink sink = new ByteArrayDataSink();
@@ -486,7 +486,7 @@ public class  FTPClient {
         BufferedReader reader =
             new BufferedReader(new StringReader(received.toString()));
         
-        Vector fileList = new Vector();
+        Vector<FileInfo> fileList = new Vector<FileInfo>();
         FileInfo fileInfo = null;
         String line = null;
 
@@ -557,7 +557,7 @@ public class  FTPClient {
      * @return Vector list of {@link FileInfo FileInfo} objects, representing
      *         remote files
      */
-    public Vector nlist()
+    public Vector<FileInfo> nlist()
         throws ServerException, ClientException, IOException {
         return nlist(null);
     }
@@ -571,7 +571,7 @@ public class  FTPClient {
      * @return Vector list of {@link FileInfo FileInfo} objects, representing
      *         remote files
      */
-    public Vector nlist(String path) 
+    public Vector<FileInfo> nlist(String path)
         throws ServerException, ClientException, IOException {
 
         ByteArrayDataSink sink = new ByteArrayDataSink();
@@ -586,7 +586,7 @@ public class  FTPClient {
         BufferedReader reader =
             new BufferedReader(new StringReader(received.toString()));
         
-        Vector fileList = new Vector();
+        Vector<FileInfo> fileList = new Vector<FileInfo>();
         FileInfo fileInfo = null;
         String line = null;
         
@@ -670,7 +670,7 @@ public class  FTPClient {
      * @return Vector list of {@link MlsxEntry MlsxEntry} objects, representing
      *         remote files
      */
-    public Vector mlsd() 
+    public Vector<MlsxEntry> mlsd()
         throws ServerException, ClientException, IOException {
         return mlsd(null);
     }
@@ -684,7 +684,7 @@ public class  FTPClient {
      * @return Vector list of {@link MlsxEntry MlsxEntry} objects, representing
      *         remote files
      */
-    public Vector mlsd(String path)
+    public Vector<MlsxEntry> mlsd(String path)
         throws ServerException, ClientException, IOException {
 
         ByteArrayDataSink sink = new ByteArrayDataSink();
@@ -699,7 +699,7 @@ public class  FTPClient {
         BufferedReader reader =
             new BufferedReader(new StringReader(received.toString()));
 
-        Vector fileList = new Vector();
+        Vector<MlsxEntry> fileList = new Vector<MlsxEntry>();
         String line;
         while ((line = reader.readLine()) != null) {
             if (logger.isDebugEnabled()) {
@@ -2071,7 +2071,7 @@ public class  FTPClient {
             return algorithms;
         }
 
-        algorithms = new ArrayList();
+        algorithms = new ArrayList<String>();
         for(FeatureList.Feature feature:cksumFeature) {
             String[] parms = feature.getParms().split(",");
             Collections.addAll(algorithms, parms);

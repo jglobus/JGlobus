@@ -96,11 +96,11 @@ public class RslAttributes {
      *         attribute or the attribute/values relation is not
      *         an equality relation.
      */
-    public List getMulti(String attribute) {
+    public List<String> getMulti(String attribute) {
 	NameOpValue nv = rslTree.getParam(attribute);
 	if (nv == null || nv.getOperator() != NameOpValue.EQ) return null;
 	List values = nv.getValues();
-	List list = new LinkedList();
+	List<String> list = new LinkedList<String>();
 	Iterator iter = values.iterator();
 	Object obj;
 	while( iter.hasNext() ) {
@@ -122,11 +122,11 @@ public class RslAttributes {
      *         attribute defined or if the attribute/value relation is not
      *         an equality relation.
      */
-    public Map getMap(String attribute) {
+    public Map<String, String> getMap(String attribute) {
 	NameOpValue nv = rslTree.getParam(attribute);
 	if (nv == null || nv.getOperator() != NameOpValue.EQ) return null;
 	List values = nv.getValues();
-	Map map = new HashMap();
+	Map<String, String> map = new HashMap<String, String>();
 	Iterator iter = values.iterator();
 	Object obj;
 	while( iter.hasNext() ) {
@@ -163,11 +163,11 @@ public class RslAttributes {
      *          definitions for a specified attribute.
      *
      */    
-    public Map getVariables(String attribute) {
+    public Map<String, String> getVariables(String attribute) {
 	Bindings binds = rslTree.getBindings(attribute);
 	if (binds == null) return null;
         List values = binds.getValues();
-        Map map = new HashMap();
+        Map<String, String> map = new HashMap<String, String>();
         Iterator iter = values.iterator();
 	Binding binding;
         while( iter.hasNext() ) {
@@ -358,7 +358,7 @@ public class RslAttributes {
      * @return the list of values.
      * @deprecated use getMulti() instead.
      */
-    public List get(String attribute) {
+    public List<String> get(String attribute) {
         return getMulti(attribute);
     }
 

@@ -20,8 +20,6 @@ import org.globus.gsi.GlobusCredential;
 import org.globus.gsi.GSIConstants;
 import org.globus.gsi.X509ExtensionSet;
 import org.globus.gsi.X509Extension;
-import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
-import org.globus.gsi.bc.BouncyCastleX509Extension;
 import org.globus.gsi.proxy.ext.ProxyPolicy;
 import org.globus.gsi.proxy.ext.ProxyCertInfo;
 import org.globus.gsi.proxy.ext.ProxyCertInfoExtension;
@@ -171,7 +169,7 @@ public class BouncyCastleCertProcessingFactoryTest extends TestCase {
     assertTrue(realValue != null && realValue.length > 0);
     assertEquals(expectedValue, new String(realValue));
 
-    Set exts = null;
+    Set<String> exts = null;
     if (critical) {
         exts = cert.getCriticalExtensionOIDs();
     } else {

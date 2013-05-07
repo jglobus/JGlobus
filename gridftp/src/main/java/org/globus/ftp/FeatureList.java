@@ -130,7 +130,7 @@ public class FeatureList {
     public static final String GETPUT = "GETPUT";
     public static final String CKSUM =  "CKSUM";
 
-    protected final List<Feature> features = new ArrayList();
+    protected final List<Feature> features = new ArrayList<Feature>();
 
     public FeatureList(String featReplyMsg) {
 
@@ -212,7 +212,7 @@ public class FeatureList {
 	}
 
     label = label.toUpperCase();
-    List<Feature> foundFeatures = new ArrayList();
+    List<Feature> foundFeatures = new ArrayList<Feature>();
     for( Feature feature:features ) {
         if(feature.getLabel().equals(label)) {
             foundFeatures.add(feature);

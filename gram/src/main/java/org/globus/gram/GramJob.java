@@ -40,7 +40,7 @@ public class GramJob implements GRAMConstants {
     protected int status;
     protected int error;
     protected int exitCode;
-    private Vector listeners;
+    private Vector<GramJobListener> listeners;
 
     /**
      * Creates a gram job with specified rsl with
@@ -78,7 +78,7 @@ public class GramJob implements GRAMConstants {
      * @see org.globus.gram.GramJobListener
      */
     public void addListener(GramJobListener listener) {
-	if (listeners == null) listeners = new Vector();
+	if (listeners == null) listeners = new Vector<GramJobListener>();
 	listeners.addElement(listener);
     }
     
@@ -177,7 +177,7 @@ public class GramJob implements GRAMConstants {
 	if (listeners == null) return;
 	int size = listeners.size();
 	for(int i=0;i<size;i++) {
-	    GramJobListener listener = (GramJobListener)listeners.elementAt(i);
+	    GramJobListener listener = listeners.elementAt(i);
 	    listener.statusChanged(this);
 	}
     }

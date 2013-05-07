@@ -95,8 +95,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
                     "Certificate path cannot be null");
         }
 
-		List list = certPath.getCertificates();
-        if (list.size() < 1) {
+        if (certPath.getCertificates().size() < 1) {
             throw new IllegalArgumentException(
                     "Certificate path cannot be empty");
         }

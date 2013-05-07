@@ -24,6 +24,7 @@ import org.globus.gsi.X509Credential;
 import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
 import org.globus.gsi.bc.BouncyCastleUtil;
 import org.globus.gsi.jsse.SSLConfigurator;
+import org.globus.gsi.proxy.ProxyPolicyHandler;
 import org.globus.gsi.stores.ResourceSigningPolicyStore;
 import org.globus.gsi.stores.Stores;
 import org.globus.gsi.util.CertificateLoadUtil;
@@ -246,7 +247,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
     protected TrustedCertificates tc;
     
-    protected Map proxyPolicyHandlers;
+    protected Map<String, ProxyPolicyHandler> proxyPolicyHandlers;
 
     /** Limited peer credentials */
     protected Boolean peerLimited = null;
@@ -1302,7 +1303,7 @@ done:      do {
                     "; ENABLED PROTOCOLS: " +
                     Arrays.toString(this.sslEngine.getEnabledProtocols()));
 
-        ArrayList<String> cs = new ArrayList();
+        ArrayList<String> cs = new ArrayList<String>();
         if (this.encryption) {
             if (this.forceSSLv3AndConstrainCipherSuitesForGram)
                 Collections.addAll(cs, GRAM_ENCRYPTION_CIPHER_SUITES);
@@ -2254,7 +2255,7 @@ done:      do {
                                         new Object[] {"Proxy policy handlers", 
                                                       Map.class});
         }
-        this.proxyPolicyHandlers = (Map)value;
+        this.proxyPolicyHandlers = (Map<String,ProxyPolicyHandler>)value;
     }
 
     protected void setTrustedCertificates(Object value) 
@@ -2579,7 +2580,7 @@ done:      do {
 
             ByteArrayInputStream in = null;
             X509Certificate [] chain = null;
-            LinkedList certList = new LinkedList();
+            LinkedList<X509Certificate> certList = new LinkedList<X509Certificate>();
             X509Certificate cert = null;
             try {
             	in = new ByteArrayInputStream(buf, off, len);
@@ -2589,7 +2590,7 @@ done:      do {
                 }
 
                 chain = new X509Certificate[certList.size()];
-                chain = (X509Certificate[])certList.toArray(chain);
+                chain = certList.toArray(chain);
 
                 verifyDelegatedCert(chain[0]);
 

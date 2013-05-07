@@ -85,7 +85,7 @@ public class SigningPolicyParserTest {
 
         // test isValidDN methods
         // Add patern2, wildcards in middle
-        Vector<Pattern> allowed = new Vector();
+        Vector<Pattern> allowed = new Vector<Pattern>();
         allowed.add(pattern2);
         X500Principal fooPrincipal = new X500Principal("CN=foo");
         SigningPolicy policy = new SigningPolicy(fooPrincipal, allowed);
@@ -204,7 +204,7 @@ public class SigningPolicyParserTest {
         assertTrue(allowedDN != null);
         assertTrue(allowedDN.size() == 2);
 
-        List<String> patterns = new Vector(2);
+        List<String> patterns = new Vector<String>(2);
         patterns.add((allowedDN.get(0)).pattern());
         patterns.add((allowedDN.get(1)).pattern());
 
@@ -244,7 +244,7 @@ public class SigningPolicyParserTest {
         assertTrue(allowedDN != null);
         assertTrue(allowedDN.size() == 1);
 
-        patterns = new Vector(1);
+        patterns = new Vector<String>(1);
         patterns.add(allowedDN.get(0).pattern());
 
         p1 = SigningPolicyParser
@@ -278,7 +278,7 @@ public class SigningPolicyParserTest {
         assertTrue(allowedDN != null);
         assertTrue(allowedDN.size() == 2);
 
-        Vector patterns = new Vector(2);
+        Vector<String> patterns = new Vector<String>(2);
         patterns.add(allowedDN.get(0).pattern());
         patterns.add(allowedDN.get(1).pattern());
 

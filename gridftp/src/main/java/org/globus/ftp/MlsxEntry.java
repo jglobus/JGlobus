@@ -68,7 +68,7 @@ public class MlsxEntry {
     public static final String ERROR_INVALIDLINK = "InvalidLink";
     
     private String fileName = null;
-    private Hashtable facts = new Hashtable();
+    private Hashtable<String, String> facts = new Hashtable<String, String>();
 
     /**
      * Constructor for MlsxEntry.
@@ -123,14 +123,14 @@ public class MlsxEntry {
     }
 
     public String get(String factName) {
-        return (String) facts.get(factName);
+        return facts.get(factName);
     }
 
     public Date getDate(String factName) {
     	Date d = null;
         synchronized (dateFormatter) {
             try {
-                d = dateFormatter.parse((String)facts.get(factName));
+                d = dateFormatter.parse(facts.get(factName));
             } catch (ParseException e) {
                 d = null;
             }
@@ -140,11 +140,11 @@ public class MlsxEntry {
     
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        Enumeration e = facts.keys();
+        Enumeration<String> e = facts.keys();
         
         while (e.hasMoreElements()) {
-            String key = (String) e.nextElement();
-            String value = (String)facts.get(key);
+            String key = e.nextElement();
+            String value = facts.get(key);
             buf.append(key).append("=").append(value).append(";");
         }
         

@@ -42,7 +42,7 @@ public class GridFTPRestartMarker implements Marker {
     private static Log logger = 
         LogFactory.getLog(GridFTPRestartMarker.class.getName());
 
-    Vector vector;
+    Vector<ByteRange> vector;
 
 
     /**
@@ -56,7 +56,7 @@ public class GridFTPRestartMarker implements Marker {
 
 	// expecting msg like "Range Marker 0-29,30-89"
 
-	vector = new Vector();
+	vector = new Vector<ByteRange>();
 	StringTokenizer tokens = new StringTokenizer(msg);
 	
 	if (! tokens.hasMoreTokens()) {
@@ -121,7 +121,7 @@ public class GridFTPRestartMarker implements Marker {
       the same Vector object.
       @return Vector representation of this object.
     **/
-    public Vector toVector() {
+    public Vector<ByteRange> toVector() {
 	return vector;
     }
     

@@ -19,6 +19,7 @@ package org.globus.rsl;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Vector;
 
 /**
  * Parser for the <A HREF="http://www-fp.globus.org/gram/rsl_spec1.html">
@@ -658,7 +659,7 @@ public final Value concatSimpleValue() throws ParseException {
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.Vector jj_expentries = new java.util.Vector();
+  private Vector<int[]> jj_expentries = new java.util.Vector<int[]>();
   private int[] jj_expentry;
   private int jj_kind = -1;
 
@@ -690,7 +691,7 @@ public final Value concatSimpleValue() throws ParseException {
     }
     int[][] exptokseq = new int[jj_expentries.size()][];
     for (int i = 0; i < jj_expentries.size(); i++) {
-      exptokseq[i] = (int[])jj_expentries.elementAt(i);
+      exptokseq[i] = jj_expentries.elementAt(i);
     }
     return new ParseException(token, exptokseq, tokenImage);
   }

@@ -51,7 +51,7 @@ public abstract class JaasSubject {
 		className = "org.globus.gsi.gssapi.jaas.GlobusSubject";
 	    }
 	    try {
-		Class clazz = Class.forName(className);
+		Class<?> clazz = Class.forName(className);
 		if (!JaasSubject.class.isAssignableFrom(clazz)) {
 		    throw new RuntimeException(i18n.getMessage("invalidJaasSubject",
                                                        className));

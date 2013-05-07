@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.apache.commons.io.FileUtils;
 import org.globus.gsi.testutils.DirSetupUtil;
 import org.globus.gsi.testutils.FileSetupUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
@@ -30,9 +29,6 @@ import org.globus.gsi.stores.PEMKeyStore;
 //import org.globus.gsi.stores.PEMKeyStoreParameters;
 
 import org.globus.gsi.X509Credential;
-
-import org.globus.gsi.provider.GlobusProvider;
-import org.globus.gsi.provider.KeyStoreParametersFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -227,7 +223,7 @@ public class TestPEMFileBasedKeyStore {
     }
 
     private void testLoadedStore(PEMKeyStore store) throws KeyStoreException {
-        Enumeration aliases = store.engineAliases();
+        Enumeration<String> aliases = store.engineAliases();
         assertTrue(aliases.hasMoreElements());
 
         // alias to certificate test to be added.
@@ -276,7 +272,7 @@ public class TestPEMFileBasedKeyStore {
             }
         }
 
-        Enumeration aliases = store.engineAliases();
+        Enumeration<String> aliases = store.engineAliases();
         assert (aliases.hasMoreElements());
         // proxy file 1
         String proxyId1 = new GlobusResource(this.proxyFile1.getTempFile().getAbsolutePath()).getFile().toString();//getURL().toExternalForm();
@@ -345,9 +341,9 @@ public class TestPEMFileBasedKeyStore {
                 ins.close();
             }
         }
-        Enumeration aliases = store.engineAliases();
+        Enumeration<String> aliases = store.engineAliases();
         assertTrue(aliases.hasMoreElements());
-        String alias = (String) aliases.nextElement();
+        String alias = aliases.nextElement();
         Key key = store.engineGetKey(alias, null);
         assertNotNull(key);
         assertTrue(key instanceof PrivateKey);
@@ -383,7 +379,7 @@ public class TestPEMFileBasedKeyStore {
         }
         aliases = store.engineAliases();
         assert (aliases.hasMoreElements());
-        alias = (String) aliases.nextElement();
+        alias = aliases.nextElement();
 
         try {
             store.engineGetKey(alias, null);

@@ -412,7 +412,7 @@ public class GramAttributes extends RslAttributes {
      *
      * @return list of arguments.
      */
-    public List getArguments() {
+    public List<String> getArguments() {
 	return getMulti("arguments");
     }
     
@@ -445,7 +445,7 @@ public class GramAttributes extends RslAttributes {
      * @return the association list of environment 
      *         variables.
      */
-    public Map getEnvironment() {
+    public Map<String, String> getEnvironment() {
 	return getMap("environment");
     }
     

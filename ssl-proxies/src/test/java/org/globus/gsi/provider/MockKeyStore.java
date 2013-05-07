@@ -36,7 +36,7 @@ import java.util.Hashtable;
  */
 public class MockKeyStore extends KeyStoreSpi {
 
-    private Hashtable<String, X509Certificate> certificateMap = new Hashtable();
+    private Hashtable<String, X509Certificate> certificateMap = new Hashtable<String, X509Certificate>();
 
     /**
      * Returns the key associated with the given alias, using the given password

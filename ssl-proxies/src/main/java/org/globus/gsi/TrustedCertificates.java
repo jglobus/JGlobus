@@ -62,10 +62,10 @@ public class TrustedCertificates implements Serializable {
     private static TrustedCertificates trustedCertificates = null;
 
     // DN is in the format in certificates
-    private Map certSubjectDNMap;
+    private Map<String, X509Certificate> certSubjectDNMap;
 
     // DN is in Globus format here, without any reversal.
-    private Map policyDNMap;
+    private Map<String, SigningPolicy> policyDNMap;
 
     // Vector of X.509 Certificate objects
     private Vector certList;
@@ -95,7 +95,7 @@ public class TrustedCertificates implements Serializable {
                                SigningPolicy[] policies) {
 
         // JGLOBUS-91 
-        this.certSubjectDNMap = new HashMap();
+        this.certSubjectDNMap = new HashMap<String, X509Certificate>();
         for (int i=0;i<certs.length;i++) {
             if (certs[i] != null) {
                 String dn = certs[i].getSubjectDN().toString();
@@ -104,7 +104,7 @@ public class TrustedCertificates implements Serializable {
         }
         
         if (policies != null) {
-            this.policyDNMap = new HashMap();        
+            this.policyDNMap = new HashMap<String, SigningPolicy>();
             for (int i=0; i<policies.length; i++) {
                 if (policies[i] != null) {
                     this.policyDNMap.put(CertificateUtil.toGlobusID(policies[i].getCASubjectDN()), policies[i]);
@@ -120,15 +120,15 @@ public class TrustedCertificates implements Serializable {
         if (this.certSubjectDNMap == null) {
             return null;
         }
-        Collection certs = this.certSubjectDNMap.values();
-        return (X509Certificate[]) certs.toArray(new X509Certificate[certs.size()]);
+        Collection<X509Certificate> certs = this.certSubjectDNMap.values();
+        return certs.toArray(new X509Certificate[certs.size()]);
     }
     
     public X509Certificate getCertificate(String subject) {
         if (this.certSubjectDNMap == null) {
             return null;
         }
-        return (X509Certificate)this.certSubjectDNMap.get(subject);
+        return this.certSubjectDNMap.get(subject);
     }
 
     /**
@@ -138,8 +138,8 @@ public class TrustedCertificates implements Serializable {
         if (this.policyDNMap == null) {
             return null;
         }
-        Collection values = this.policyDNMap.values();
-        return (SigningPolicy[]) this.policyDNMap.values().toArray(new SigningPolicy[values.size()]);
+        Collection<SigningPolicy> values = this.policyDNMap.values();
+        return this.policyDNMap.values().toArray(new SigningPolicy[values.size()]);
     }
 
     /**
@@ -160,7 +160,7 @@ public class TrustedCertificates implements Serializable {
         if (this.policyDNMap == null) {
             return null;
         }
-        return (SigningPolicy) this.policyDNMap.get(subject);
+        return this.policyDNMap.get(subject);
     }
 
     /** 
@@ -216,8 +216,8 @@ public class TrustedCertificates implements Serializable {
         StringTokenizer tokens = new StringTokenizer(locations, ",");
         File caDir            = null;
 
-        Map newCertSubjectDNMap = new HashMap();
-        Map newSigningDNMap = new HashMap();
+        Map<String, X509Certificate> newCertSubjectDNMap = new HashMap<String, X509Certificate>();
+        Map<String, SigningPolicy> newSigningDNMap = new HashMap<String, SigningPolicy>();
 
         while(tokens.hasMoreTokens()) {
             caDir = new File(tokens.nextToken().trim());
@@ -237,7 +237,7 @@ public class TrustedCertificates implements Serializable {
                 ms_trustStore = Stores.getTrustStore(caCertLocation + "/" + Stores.getDefaultCAFilesPattern());
                 
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
-                Iterator iter = caCerts.iterator();
+                Iterator<? extends Certificate> iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
                     if (!newCertSubjectDNMap.containsKey(cert.getSubjectDN().toString()));
@@ -256,7 +256,7 @@ public class TrustedCertificates implements Serializable {
             try {
             	ms_sigPolStore = Stores.getSigningPolicyStore(caCertLocation+ "/" + Stores.getDefaultSigningPolicyFilesPattern());
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
-                Iterator iter = caCerts.iterator();
+                Iterator<? extends Certificate> iter = caCerts.iterator();
                 while (iter.hasNext()) {
                     X509Certificate cert = (X509Certificate) iter.next();
                     X500Principal principal = cert.getSubjectX500Principal();

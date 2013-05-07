@@ -106,13 +106,13 @@ public class JaasGssUtil {
 	if (subject == null) {
 	    return null;
 	}
-	Set gssCreds = subject.getPrivateCredentials(GSSCredential.class);
+	Set<GSSCredential> gssCreds = subject.getPrivateCredentials(GSSCredential.class);
 	if (gssCreds == null) {
 	    return null;
 	}
-	Iterator iter = gssCreds.iterator();
+	Iterator<GSSCredential> iter = gssCreds.iterator();
 	return (iter.hasNext()) ?
-	    (GSSCredential)iter.next() :
+                iter.next() :
 	    null;
     }
     

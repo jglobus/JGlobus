@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
 public class CallbackHandler extends BaseServer {
 
     /** Registered jobs */
-    private Hashtable _jobs;
+    private Hashtable<String, GramJob> _jobs;
 
     /**
      * Construct a GRAM callback handler with default user
@@ -75,7 +75,7 @@ public class CallbackHandler extends BaseServer {
     }
 
     private void init() {
-	_jobs = new Hashtable();
+	_jobs = new Hashtable<String, GramJob>();
 	super.initialize();
 	setAuthorization(SelfAuthorization.getInstance());
     }
@@ -99,7 +99,7 @@ public class CallbackHandler extends BaseServer {
     }
 
     protected GramJob getJob(String url) {
-	return (GramJob)_jobs.get(url);
+	return _jobs.get(url);
     }
   
     /**

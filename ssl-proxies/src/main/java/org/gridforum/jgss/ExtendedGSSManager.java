@@ -71,7 +71,7 @@ public abstract class ExtendedGSSManager extends GSSManager {
 		className = "org.globus.gsi.gssapi.GlobusGSSManagerImpl";
 	    }
 	    try {
-		Class clazz = Class.forName(className);
+		Class<?> clazz = Class.forName(className);
 		if (!ExtendedGSSManager.class.isAssignableFrom(clazz)) {
 		    throw new RuntimeException("Invalid ExtendedGSSManager provider class: '" + 
 					       className + "'");

@@ -69,7 +69,7 @@ public class ProxyPathValidator {
     private boolean rejectLimitedProxyCheck = false;
     private boolean limited = false;
     private X509Certificate identityCert = null;
-    private Hashtable proxyPolicyHandlers = null;
+    private Hashtable<String, ProxyPolicyHandler> proxyPolicyHandlers = null;
 
     /**
      * Returns if the validated proxy path is limited. A proxy path
@@ -114,7 +114,7 @@ public class ProxyPathValidator {
      */
     public ProxyPolicyHandler removeProxyPolicyHandler(String id) {
     return (id != null && this.proxyPolicyHandlers != null) ?
-        (ProxyPolicyHandler)this.proxyPolicyHandlers.remove(id) :
+            this.proxyPolicyHandlers.remove(id) :
         null;
     }
 
@@ -136,9 +136,9 @@ public class ProxyPathValidator {
                 getMessage("proxyPolicyHandler"));
     }
     if (this.proxyPolicyHandlers == null) {
-        this.proxyPolicyHandlers = new Hashtable();
+        this.proxyPolicyHandlers = new Hashtable<String, ProxyPolicyHandler>();
     }
-    return (ProxyPolicyHandler)this.proxyPolicyHandlers.put(id, handler);
+    return this.proxyPolicyHandlers.put(id, handler);
     }
 
     /**
@@ -151,7 +151,7 @@ public class ProxyPathValidator {
      */
     public ProxyPolicyHandler getProxyPolicyHandler(String id) {
     return (id != null && this.proxyPolicyHandlers != null) ?
-        (ProxyPolicyHandler)this.proxyPolicyHandlers.get(id) :
+            this.proxyPolicyHandlers.get(id) :
         null;
     }
 

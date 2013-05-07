@@ -45,7 +45,7 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
         LogFactory.getLog(CommonsHttpConnectionManager.class);
 
     private String [] hostConfigurationParams;
-    private HashMap hostPoolMap;
+    private HashMap<HostConfiguration, ConnectionPool> hostPoolMap;
     private long idleTime = 1000 * 60 * 2; 
     private boolean staleChecking = true;
     
@@ -54,7 +54,7 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
 
     public CommonsHttpConnectionManager(String [] hostConfigurationParams) {
         this.hostConfigurationParams = hostConfigurationParams;
-        this.hostPoolMap = new HashMap();
+        this.hostPoolMap = new HashMap<HostConfiguration, ConnectionPool>();
         IDLE_THREAD.addConnectionManager(this);
     }
     
@@ -139,7 +139,7 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
                           HostConfiguration hostConfiguration) {
         ConnectionPool pool = null;
         synchronized(this.hostPoolMap) {
-            pool = (ConnectionPool)this.hostPoolMap.get(hostConfiguration);
+            pool = this.hostPoolMap.get(hostConfiguration);
             if (pool == null) {
                 pool = new ConnectionPool();
                 pool.setIdleTime(this.idleTime);
@@ -183,10 +183,10 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
     public void closeIdleConnections(long idleTimeout) {
         logger.debug("checking for idle connections");
         synchronized(this.hostPoolMap) {
-            Iterator iter = this.hostPoolMap.entrySet().iterator();
+            Iterator<Map.Entry<HostConfiguration,ConnectionPool>> iter = this.hostPoolMap.entrySet().iterator();
             while(iter.hasNext()) {
-                Map.Entry entry = (Map.Entry)iter.next();
-                ((ConnectionPool)entry.getValue()).closeIdleConnections();
+                Map.Entry<HostConfiguration, ConnectionPool> entry = iter.next();
+                (entry.getValue()).closeIdleConnections();
             }
         }
         logger.debug("done checking for idle connections");
@@ -195,10 +195,10 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
     public void shutdown() {
         logger.debug("shutting down connections");
         synchronized(this.hostPoolMap) {
-            Iterator iter = this.hostPoolMap.entrySet().iterator();
+            Iterator<Map.Entry<HostConfiguration,ConnectionPool>> iter = this.hostPoolMap.entrySet().iterator();
             while(iter.hasNext()) {
-                Map.Entry entry = (Map.Entry)iter.next();
-                ((ConnectionPool)entry.getValue()).shutdown();
+                Map.Entry<HostConfiguration, ConnectionPool> entry = iter.next();
+                (entry.getValue()).shutdown();
             }
         }
         this.hostPoolMap.clear();

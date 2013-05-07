@@ -47,10 +47,10 @@ public class ByteRangeList implements RestartData {
        nor have a common subset.
        They are unordered, however.
      **/
-    protected Vector vector;
+    protected Vector<ByteRange> vector;
 
     public ByteRangeList() {
-	vector = new Vector();
+	vector = new Vector<ByteRange>();
     }
     
     /**
@@ -115,7 +115,7 @@ public class ByteRangeList implements RestartData {
 	
 	for (int i = 0; i < oldSize; i++) {
 
-	    int result = newRange.merge((ByteRange)vector.elementAt(index));
+	    int result = newRange.merge(vector.elementAt(index));
 
 	    switch (result) {
 	    case ByteRange.THIS_ABOVE :
@@ -153,9 +153,9 @@ public class ByteRangeList implements RestartData {
        in the given vector using merge(ByteRange).
        @param other the Vector of ByteRange objects
      **/
-    public void merge(final Vector other) {
+    public void merge(final Vector<ByteRange> other) {
 	for(int i =0; i<other.size(); i++) {
-	    this.merge((ByteRange)other.elementAt(i));
+	    this.merge(other.elementAt(i));
 	}
     }
 
@@ -177,7 +177,7 @@ public class ByteRangeList implements RestartData {
        Subsequent calls of this method will return
        the same Vector object.
      **/
-    public Vector toVector() {
+    public Vector<ByteRange> toVector() {
 	return vector;
     }
 

@@ -36,8 +36,8 @@ import java.util.Vector;
  */
 public class MockCertStore extends CertStoreSpi {
 
-    private Vector<X509Certificate> certificate = new Vector();
-    private Vector<X509CRL> crl = new Vector();
+    private Vector<X509Certificate> certificate = new Vector<X509Certificate>();
+    private Vector<X509CRL> crl = new Vector<X509CRL>();
 
     public MockCertStore(CertStoreParameters param)
             throws InvalidAlgorithmParameterException {

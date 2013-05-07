@@ -155,14 +155,14 @@ public class NameOpValue extends NameValue {
 	values.add(list);
     }
     
-    public List getValuesAsStrings(boolean includeNested) {
+    public List<Object> getValuesAsStrings(boolean includeNested) {
 	return getValuesAsString( getValues(), includeNested );
     }
     
-    public static List getValuesAsString(List values, 
-					 boolean includeNested) {
+    public static List<Object> getValuesAsString(List values,
+                                                 boolean includeNested) {
 	if (values == null) return null;
-	List list = new LinkedList();
+	List<Object> list = new LinkedList<Object>();
 	Iterator iter = values.iterator();
 	Object obj;
 	while(iter.hasNext()) {

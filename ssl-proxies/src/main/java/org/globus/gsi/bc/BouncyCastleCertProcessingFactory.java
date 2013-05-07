@@ -459,9 +459,9 @@ public class BouncyCastleCertProcessingFactory {
 
         // add specified extensions
         if (extSet != null) {
-            Iterator iter = extSet.oidSet().iterator();
+            Iterator<String> iter = extSet.oidSet().iterator();
             while (iter.hasNext()) {
-                String oid = (String) iter.next();
+                String oid = iter.next();
                 // skip ProxyCertInfo extension
                 if (oid.equals(ProxyCertInfo.OID.getId()) || oid.equals(ProxyCertInfo.OLD_OID.getId())) {
                     continue;
@@ -863,9 +863,9 @@ public class BouncyCastleCertProcessingFactory {
 
         // add specified extensions
         if (extSet != null) {
-            Iterator iter = extSet.oidSet().iterator();
+            Iterator<String> iter = extSet.oidSet().iterator();
             while (iter.hasNext()) {
-                String oid = (String) iter.next();
+                String oid = iter.next();
                 // skip ProxyCertInfo extension
                 if (oid.equals(ProxyCertInfo.OID.getId()) || oid.equals(ProxyCertInfo.OLD_OID.getId())) {
                     continue;

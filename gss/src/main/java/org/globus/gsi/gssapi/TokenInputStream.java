@@ -29,14 +29,14 @@ public class TokenInputStream extends InputStream {
     private static Log logger = 
 	LogFactory.getLog(TokenInputStream.class.getName());
 
-    private LinkedList tokens; // list of buffers 
+    private LinkedList<byte[]> tokens; // list of buffers
     private byte [] buff; // current buffer
     private int index; // position within current buffer
 
     private boolean closed;
 
     public TokenInputStream() {
-	this.tokens = new LinkedList();
+	this.tokens = new LinkedList<byte[]>();
 	this.index = 0;
 	this.closed = false;
     }
@@ -125,7 +125,7 @@ public class TokenInputStream extends InputStream {
 	    if (tokens.isEmpty()) {
 		return false;
 	    } else {
-		this.buff  = (byte[])tokens.removeFirst();
+		this.buff  = tokens.removeFirst();
 		this.index = 0;
 		return true;
 	    }

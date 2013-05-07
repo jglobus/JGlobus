@@ -143,7 +143,7 @@ public class GridFTPClient extends FTPClient {
      * Unlike in vanilla FTP, here IMAGE mode is allowed. 
      * For more documentation, look at FTPClient.
      */
-    public Vector list(String filter, String modifier)
+    public Vector<FileInfo> list(String filter, String modifier)
         throws ServerException, ClientException, IOException {
         if (gSession.parallel > 1) {
             throw new ClientException(
@@ -163,7 +163,7 @@ public class GridFTPClient extends FTPClient {
      * Unlike in vanilla FTP, here IMAGE mode is allowed. 
      * For more documentation, look at FTPClient.
      */
-    public Vector nlist(String path) 
+    public Vector<FileInfo> nlist(String path)
         throws ServerException, ClientException, IOException {
         if (gSession.parallel > 1) {
             throw new ClientException(
@@ -183,7 +183,7 @@ public class GridFTPClient extends FTPClient {
      * Unlike in vanilla FTP, here IMAGE mode is allowed. 
      * For more documentation, look at FTPClient.
      */
-    public Vector mlsd(String filter)
+    public Vector<MlsxEntry> mlsd(String filter)
         throws ServerException, ClientException, IOException {
         if (gSession.parallel > 1) {
             throw new ClientException(

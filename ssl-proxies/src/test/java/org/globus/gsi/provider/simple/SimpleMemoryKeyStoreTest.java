@@ -1,8 +1,5 @@
 package org.globus.gsi.provider.simple;
 
-import org.globus.gsi.provider.simple.SimpleMemoryKeyStore;
-import org.globus.gsi.provider.simple.SimpleMemoryKeyStoreLoadStoreParameter;
-
 import org.junit.Before;
 
 import java.util.Enumeration;
@@ -10,7 +7,7 @@ import java.util.Enumeration;
 import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 
 import java.security.cert.CertificateFactory;
-import org.junit.AfterClass;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.security.Security;
 import org.junit.BeforeClass;
@@ -50,7 +47,7 @@ public class SimpleMemoryKeyStoreTest {
     public void testEngineAliases() throws Exception {
         assertFalse(store.engineAliases().hasMoreElements());
         store.engineSetCertificateEntry(cert.getSubjectDN().getName(), cert);
-        Enumeration e = store.engineAliases();
+        Enumeration<String> e = store.engineAliases();
         assertEquals(cert.getSubjectDN().getName(), e.nextElement());
         assertFalse(e.hasMoreElements());
     }

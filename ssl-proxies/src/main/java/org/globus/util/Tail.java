@@ -24,7 +24,6 @@ import java.io.RandomAccessFile;
 import java.io.File;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class Tail implements Runnable {
 
@@ -32,14 +31,14 @@ public class Tail implements Runnable {
 
     private byte [] buffer;
     private boolean _stop = false;
-    private List list = null;
+    private List<FileWatcher> list = null;
     private Thread _thread;
 
     private Log _logger;
     
     public Tail() {
 	buffer = new byte[CHUNK_SIZE];
-	list = Collections.synchronizedList(new LinkedList());
+	list = Collections.synchronizedList(new LinkedList<FileWatcher>());
     }
     
     public void setLog(Log logger) {
@@ -112,13 +111,13 @@ public class Tail implements Runnable {
 	long len;
 	int size;
 	
-	Iterator iter = null;
+	Iterator<FileWatcher> iter = null;
 	FileWatcher watcher = null;
 
 	try {
 	    iter = list.iterator();
 	    while(iter.hasNext()) {
-		watcher = (FileWatcher)iter.next();
+		watcher = iter.next();
 		watcher.init();
 	    }
 
@@ -131,7 +130,7 @@ public class Tail implements Runnable {
 
 		iter = list.iterator();
 		while(iter.hasNext()) {
-		    watcher = (FileWatcher)iter.next();
+		    watcher = iter.next();
 
 		    len = watcher.getDiff();
 		    if (len <= 0) continue;
@@ -155,12 +154,12 @@ public class Tail implements Runnable {
     private boolean isDone() 
 	throws IOException {
 	if (!_stop) return false;
-	Iterator iter = null;
+	Iterator<FileWatcher> iter = null;
         FileWatcher watcher = null;
 	
 	iter = list.iterator();
 	while(iter.hasNext()) {
-	    watcher = (FileWatcher)iter.next();
+	    watcher = iter.next();
 	    if (watcher.getDiff() > 0) return false;
 	}
 	
@@ -168,11 +167,11 @@ public class Tail implements Runnable {
     }
     
     private void close() {
-        Iterator iter = null;
+        Iterator<FileWatcher> iter = null;
         FileWatcher watcher = null;
         iter = list.iterator();
         while(iter.hasNext()) {
-            watcher = (FileWatcher)iter.next();
+            watcher = iter.next();
             watcher.close();
         }
     }

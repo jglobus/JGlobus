@@ -712,7 +712,7 @@ public class MyProxy  {
             InputStream reply = handleReply(in);
             String line = null;
             String value = null;
-            Map credMap = new HashMap();
+            Map<Object, CredentialInfo> credMap = new HashMap<Object, CredentialInfo>();
             CredentialInfo info = new CredentialInfo();
             while( (line = readLine(reply)) != null ) {
                 if (line.startsWith(CRED_START_TIME)) {
@@ -765,10 +765,10 @@ public class MyProxy  {
 
             if (credMap.size() > 0) {
                 int i = 1;
-                Iterator iter = credMap.entrySet().iterator();
+                Iterator<Map.Entry<Object,CredentialInfo>> iter = credMap.entrySet().iterator();
                 while(iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry)iter.next();
-                    creds[i++] = (CredentialInfo)entry.getValue();
+                    Map.Entry<Object, CredentialInfo> entry = iter.next();
+                    creds[i++] = entry.getValue();
                 }
             }
 
@@ -793,8 +793,8 @@ public class MyProxy  {
         return line.substring(CRED.length(), pos-arg.length());
     }
         
-    private CredentialInfo getCredentialInfo(Map map, String name) {
-        CredentialInfo info = (CredentialInfo)map.get(name);
+    private CredentialInfo getCredentialInfo(Map<Object, CredentialInfo> map, String name) {
+        CredentialInfo info = map.get(name);
         if (info == null) {
             info = new CredentialInfo();
             info.setName(name);

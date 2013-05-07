@@ -65,7 +65,7 @@ public class GassServer extends BaseServer {
   
     public static final String SHUTDOWN_STR = "/dev/globus_gass_client_shutdown";
 
-    private Hashtable jobOutputs = null;
+    private Hashtable<String, OutputStream> jobOutputs = null;
     private int options          = 0;
     
     /**
@@ -119,7 +119,7 @@ public class GassServer extends BaseServer {
     }
   
     private void init() {
-	jobOutputs = new Hashtable();
+	jobOutputs = new Hashtable<String, OutputStream>();
 	options = READ_ENABLE | WRITE_ENABLE | STDOUT_ENABLE | STDERR_ENABLE;
 	super.initialize();
 	setAuthorization(SelfAuthorization.getInstance());
@@ -178,7 +178,7 @@ public class GassServer extends BaseServer {
     }
     
     protected OutputStream getJobOutputStream(String id) {
-	return (OutputStream)jobOutputs.get(id);
+	return jobOutputs.get(id);
     }
     
     protected void handleConnection(Socket socket) {

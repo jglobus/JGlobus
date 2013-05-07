@@ -155,9 +155,9 @@ public class Gram  {
      */
     public static int getActiveJobs() {
 	int jobs = 0;
-	Enumeration e = callbackHandlers.elements();
+	Enumeration<CallbackHandler> e = callbackHandlers.elements();
 	while(e.hasMoreElements()) {
-	    CallbackHandler handler = (CallbackHandler)e.nextElement();
+	    CallbackHandler handler = e.nextElement();
 	    jobs += handler.getRegisteredJobsSize();
 	}
 	return jobs;
@@ -172,7 +172,7 @@ public class Gram  {
 	if (cred == null) {
 	    throw new IllegalArgumentException("cred == null");
 	}
-	CallbackHandler handler = (CallbackHandler)callbackHandlers.get(cred);
+	CallbackHandler handler = callbackHandlers.get(cred);
 	return (handler == null) ? 0 : handler.getRegisteredJobsSize();
     }
     
@@ -805,9 +805,9 @@ public class Gram  {
      */
     public static void deactivateAllCallbackHandlers() {
 	synchronized(callbackHandlers) {
-	    Enumeration e = callbackHandlers.elements();
+	    Enumeration<CallbackHandler> e = callbackHandlers.elements();
 	    while(e.hasMoreElements()) {
-		CallbackHandler handler = (CallbackHandler)e.nextElement();
+		CallbackHandler handler = e.nextElement();
 		handler.shutdown();
 	    }
 	    callbackHandlers.clear();
@@ -826,7 +826,7 @@ public class Gram  {
 	    return null;
 	}
 	CallbackHandler handler = 
-	    (CallbackHandler)callbackHandlers.remove(cred);
+                callbackHandlers.remove(cred);
 	if (handler == null) {
 	    return null;
 	}
@@ -837,7 +837,7 @@ public class Gram  {
     // -------- INTERNAL CALLBACK STUFF -----------------------
   
     /**    */
-    protected static Hashtable callbackHandlers = new Hashtable();
+    protected static Hashtable<GSSCredential, CallbackHandler> callbackHandlers = new Hashtable<GSSCredential, CallbackHandler>();
     
     static {
 	Deactivator.registerDeactivation(new DeactivationHandler() {
@@ -854,7 +854,7 @@ public class Gram  {
 	    throw new IllegalArgumentException("cred == null");
 	}
 
-	CallbackHandler handler = (CallbackHandler)callbackHandlers.get(cred);
+	CallbackHandler handler = callbackHandlers.get(cred);
 	
 	if (handler == null) {
 	    try {

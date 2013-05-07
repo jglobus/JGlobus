@@ -18,13 +18,13 @@ import java.util.*;
 
 public class Deactivator {
 
-    private static Hashtable modules = new Hashtable();
+    private static Hashtable<DeactivationHandler, String> modules = new Hashtable<DeactivationHandler, String>();
 
     public static void deactivateAll() {
 	DeactivationHandler handler = null;
-	Enumeration e = modules.keys();
+	Enumeration<DeactivationHandler> e = modules.keys();
 	while(e.hasMoreElements()) {
-	    handler = (DeactivationHandler)e.nextElement();
+	    handler = e.nextElement();
 	    handler.deactivate();
 	}
 	modules.clear();

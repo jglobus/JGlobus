@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
  */
 public class I18n {
     
-    private static Map mapping = new HashMap();
+    private static Map<String, I18n> mapping = new HashMap<String, I18n>();
     
     private ResourceBundle messages = null;
 
@@ -51,7 +51,7 @@ public class I18n {
      *        ResourceBundle#getBundle(String) ResourceBundle.getBundle()}
      */
     public static synchronized I18n getI18n(String resource) {
-        I18n instance = (I18n)mapping.get(resource);
+        I18n instance = mapping.get(resource);
         if (instance == null) {
             instance = new I18n(ResourceBundle.getBundle(resource, 
                                                          Locale.getDefault(),
@@ -73,7 +73,7 @@ public class I18n {
      */
     public static synchronized I18n getI18n(String resource,
                                             ClassLoader loader) {
-        I18n instance = (I18n)mapping.get(resource);
+        I18n instance = mapping.get(resource);
         if (instance == null) {
             if (loader == null) {
                 loader = getClassLoader();

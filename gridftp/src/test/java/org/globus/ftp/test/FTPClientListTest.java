@@ -67,10 +67,10 @@ public class FTPClientListTest extends TestCase {
         src.setPassiveMode(passive);
 
         boolean foundit = false;
-	Vector v = src.list();
+	Vector<FileInfo> v = src.list();
 	logger.debug("list received");
 	while (! v.isEmpty()) {
-	    FileInfo f = (FileInfo)v.remove(0); 
+	    FileInfo f = v.remove(0);
 	    logger.info(f.toString());
             if (f.getName().equals(TestEnv.serverFFile)) {
                 foundit = true;
@@ -95,11 +95,11 @@ public class FTPClientListTest extends TestCase {
 	// using list()
 
 	src.changeDir(TestEnv.serverFDir);
-	Vector v = src.list();
+	Vector<FileInfo> v = src.list();
 	logger.debug("list received");
 	StringBuffer output1Buffer = new StringBuffer();
 	while (! v.isEmpty()) {
-	    FileInfo f = (FileInfo)v.remove(0); 
+	    FileInfo f = v.remove(0);
 	    output1Buffer.append(f.toString()).append("\n");
 
 	}

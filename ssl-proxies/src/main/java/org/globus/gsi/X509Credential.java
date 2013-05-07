@@ -516,7 +516,7 @@ public class X509Credential implements Serializable {
         }
 
         X509Certificate cert = null;
-        Vector chain = new Vector(3);
+        Vector<X509Certificate> chain = new Vector<X509Certificate>(3);
         String line;
         BufferedReader reader = null;
 

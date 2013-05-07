@@ -275,10 +275,10 @@ public class GridFTPClientTest extends TestCase {
         client.setType(type);
         client.setMode(mode);
         client.changeDir(TestEnv.serverADir);
-        Vector v = client.list(null, null);
+        Vector<FileInfo> v = client.list(null, null);
         logger.debug("list received");
         while (! v.isEmpty()) {
-            FileInfo f = (FileInfo)v.remove(0); 
+            FileInfo f = v.remove(0);
             logger.info(f.toString());
         }
         client.close();
@@ -301,10 +301,10 @@ public class GridFTPClientTest extends TestCase {
         client.setType(type);
         client.setMode(mode);
         client.changeDir(TestEnv.serverADir);
-        Vector v = client.nlist();
+        Vector<FileInfo> v = client.nlist();
         logger.debug("list received");
         while (! v.isEmpty()) {
-            FileInfo f = (FileInfo)v.remove(0); 
+            FileInfo f = v.remove(0);
             logger.info(f.toString());
         }
         client.close();
@@ -327,10 +327,10 @@ public class GridFTPClientTest extends TestCase {
         client.setType(type);
         client.setMode(mode);
         client.changeDir(TestEnv.serverADir);
-        Vector v = client.mlsd(null);
+        Vector<MlsxEntry> v = client.mlsd(null);
         logger.debug("list received");
         while (! v.isEmpty()) {
-            MlsxEntry f = (MlsxEntry)v.remove(0); 
+            MlsxEntry f = v.remove(0);
             logger.info(f.toString());
         }
         client.close();
@@ -347,11 +347,11 @@ public class GridFTPClientTest extends TestCase {
         // using list()
 
         client.changeDir(TestEnv.serverADir);
-        Vector v = client.list(null, null);
+        Vector<FileInfo> v = client.list(null, null);
         logger.debug("list received");
         StringBuffer output1Buffer = new StringBuffer();
         while (! v.isEmpty()) {
-            FileInfo f = (FileInfo)v.remove(0); 
+            FileInfo f = v.remove(0);
             output1Buffer.append(f.toString()).append("\n");
 
         }

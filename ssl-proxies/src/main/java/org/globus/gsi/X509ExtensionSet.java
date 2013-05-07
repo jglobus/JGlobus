@@ -28,13 +28,13 @@ public class X509ExtensionSet {
         I18n.getI18n("org.globus.gsi.errors",
                      X509ExtensionSet.class.getClassLoader());
    
-    private Hashtable extensions;
+    private Hashtable<String, X509Extension> extensions;
 
     /**
      * Creates an empty X509ExtensionSet object.
      */
     public X509ExtensionSet() {
-	this.extensions = new Hashtable();
+	this.extensions = new Hashtable<String, X509Extension>();
     }
 
     /**
@@ -49,7 +49,7 @@ public class X509ExtensionSet {
 	    throw new IllegalArgumentException(i18n
                                                .getMessage("extensionNull"));
 	}
-	return (X509Extension)this.extensions.put(extension.getOid(),
+	return this.extensions.put(extension.getOid(),
 						  extension);
     }
     
@@ -64,7 +64,7 @@ public class X509ExtensionSet {
 	if (oid == null) {
 	    throw new IllegalArgumentException(i18n.getMessage("oidNull"));
 	}
-	return (X509Extension)this.extensions.get(oid);
+	return this.extensions.get(oid);
     }
 
     /**
@@ -78,7 +78,7 @@ public class X509ExtensionSet {
 	if (oid == null) {
 	    throw new IllegalArgumentException(i18n.getMessage("oidNull"));
 	}
-	return (X509Extension)this.extensions.remove(oid);
+	return this.extensions.remove(oid);
     }
     
     /**
@@ -112,7 +112,7 @@ public class X509ExtensionSet {
      *
      * @return the set with oids.
      */
-    public Set oidSet() {
+    public Set<String> oidSet() {
 	return this.extensions.keySet();
     }
     

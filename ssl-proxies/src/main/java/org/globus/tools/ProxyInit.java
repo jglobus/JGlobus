@@ -14,52 +14,48 @@
  */
 package org.globus.tools;
 
+import org.globus.common.CoGProperties;
+import org.globus.common.Version;
+import org.globus.gsi.CertUtil;
+import org.globus.gsi.GSIConstants;
+import org.globus.gsi.GlobusCredential;
+import org.globus.gsi.OpenSSLKey;
+import org.globus.gsi.X509ExtensionSet;
+import org.globus.gsi.X509ProxyCertPathParameters;
+import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
+import org.globus.gsi.bc.BouncyCastleOpenSSLKey;
+import org.globus.gsi.provider.GlobusProvider;
+import org.globus.gsi.proxy.ProxyPolicyHandler;
+import org.globus.gsi.proxy.ext.GlobusProxyCertInfoExtension;
+import org.globus.gsi.proxy.ext.ProxyCertInfo;
+import org.globus.gsi.proxy.ext.ProxyCertInfoExtension;
+import org.globus.gsi.proxy.ext.ProxyPolicy;
+import org.globus.gsi.stores.ResourceSigningPolicyStore;
+import org.globus.gsi.stores.Stores;
+import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
 import org.globus.gsi.util.CertificateLoadUtil;
 import org.globus.gsi.util.CertificateUtil;
 import org.globus.gsi.util.ProxyCertificateUtil;
+import org.globus.util.Util;
 
-import org.globus.gsi.trustmanager.X509ProxyCertPathValidator;
-
-import org.globus.gsi.stores.ResourceSigningPolicyStore;
-import org.globus.gsi.stores.Stores;
-
-import org.globus.gsi.X509ProxyCertPathParameters;
-
-import org.globus.gsi.provider.GlobusProvider;
-
-import java.security.Security;
-import java.util.HashMap;
-import java.util.Map;
-import java.security.cert.CertStore;
-import java.security.KeyStore;
-import org.globus.gsi.X509ExtensionSet;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertPath;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.CertPath;
+import java.security.cert.CertPathValidatorException;
+import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.EOFException;
-import java.io.File;
-import org.globus.common.CoGProperties;
-import org.globus.common.Version;
-import org.globus.gsi.OpenSSLKey;
-import org.globus.gsi.CertUtil;
-import org.globus.gsi.GlobusCredential;
-import org.globus.gsi.GSIConstants;
-import org.globus.gsi.bc.BouncyCastleOpenSSLKey;
-import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
-import org.globus.gsi.proxy.ext.ProxyPolicy;
-import org.globus.gsi.proxy.ext.ProxyCertInfo;
-import org.globus.gsi.proxy.ext.ProxyCertInfoExtension;
-import org.globus.gsi.proxy.ext.GlobusProxyCertInfoExtension;
-import org.globus.gsi.proxy.ProxyPolicyHandler;
-import org.globus.util.Util;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /* ###########################################################################

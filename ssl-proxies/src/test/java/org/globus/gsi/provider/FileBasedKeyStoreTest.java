@@ -47,7 +47,7 @@ public class FileBasedKeyStoreTest {
         props.store(baos, "sample");
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         keystore.engineLoad(bais, null);
-        Enumeration en = keystore.engineAliases();
+        Enumeration<String> en = keystore.engineAliases();
         while (en.hasMoreElements()) {
             logger.debug("en.nextElement().toString() = " + en.nextElement().toString());
         }

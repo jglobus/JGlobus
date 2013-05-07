@@ -32,10 +32,10 @@ public class ConnectionPool {
     // 2 min default idle time
     private long idleTime = 1000 * 60 * 2; 
     
-    private HashMap freeConnections;
+    private HashMap<Object, ConnectionEntry> freeConnections;
     
     public ConnectionPool() {
-        this.freeConnections = new HashMap();
+        this.freeConnections = new HashMap<Object, ConnectionEntry>();
     }
     
     public void setIdleTime(long time) {
@@ -48,13 +48,13 @@ public class ConnectionPool {
         }
         
         long idleTimeout = System.currentTimeMillis() - this.idleTime;
-        Iterator iter = this.freeConnections.entrySet().iterator();
+        Iterator<Map.Entry<Object,ConnectionEntry>> iter = this.freeConnections.entrySet().iterator();
         while(iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
+            Map.Entry<Object, ConnectionEntry> entry = iter.next();
             // either it's good or expired 
             iter.remove();
             ConnectionEntry connectionEntry = 
-                (ConnectionEntry)entry.getValue();
+                    entry.getValue();
             ExtendedHttpConnection connection = 
                 connectionEntry.getConnection();
             if (connectionEntry.getTimeAdded() <= idleTimeout) {
@@ -84,11 +84,11 @@ public class ConnectionPool {
     
     public synchronized void closeIdleConnections() {
         long idleTimeout = System.currentTimeMillis() - this.idleTime;
-        Iterator iter = this.freeConnections.entrySet().iterator();
+        Iterator<Map.Entry<Object,ConnectionEntry>> iter = this.freeConnections.entrySet().iterator();
         while(iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
+            Map.Entry<Object, ConnectionEntry> entry = iter.next();
             ConnectionEntry connectionEntry = 
-                (ConnectionEntry)entry.getValue();
+                    entry.getValue();
             if (connectionEntry.getTimeAdded() <= idleTimeout) {
                 // it's expired - remove & close it
                 iter.remove();
@@ -102,11 +102,11 @@ public class ConnectionPool {
     }
 
     public synchronized void shutdown() {
-        Iterator iter = this.freeConnections.entrySet().iterator();
+        Iterator<Map.Entry<Object,ConnectionEntry>> iter = this.freeConnections.entrySet().iterator();
         while(iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
+            Map.Entry<Object, ConnectionEntry> entry = iter.next();
             ConnectionEntry connectionEntry = 
-                (ConnectionEntry)entry.getValue();
+                    entry.getValue();
             connectionEntry.getConnection().close();
         }
         this.freeConnections.clear();

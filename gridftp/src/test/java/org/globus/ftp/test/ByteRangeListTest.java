@@ -53,7 +53,7 @@ public class ByteRangeListTest extends TestCase {
        Assure that merge() does not modify parameter objects.
      **/
     public void test1() {
-	Vector v = new Vector();
+	Vector<ByteRange> v = new Vector<ByteRange>();
 	v.add(new ByteRange(12, 17));
 	v.add(new ByteRange(24, 26));
 	v.add(new ByteRange(31, 31));
@@ -122,7 +122,7 @@ public class ByteRangeListTest extends TestCase {
     	real case (taken from transfer of 500 MB)
      **/
     public void test2() {
-	Vector v = new Vector();
+	Vector<ByteRange> v = new Vector<ByteRange>();
 	v.add(new ByteRange(0, 134545408));
 	v.add(new ByteRange(134545408, 298778624));
 	assertMerge1(v, 298778624, 466747392, "0-466747392");
@@ -134,70 +134,70 @@ public class ByteRangeListTest extends TestCase {
      **/
     public void test3() {
 	//merge 2 -> 1
-	Vector v = new Vector();
+	Vector<ByteRange> v = new Vector<ByteRange>();
 
         v.add(new ByteRange(1,3));
 	v.add(new ByteRange(4,6));	    
 	assertMerge(v,"1-6");
 
 	//merge 3 -> 1, 2, or 3
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(1,3));
 	v.add(new ByteRange(5,19));
 	v.add(new ByteRange(4,6));
 	assertMerge(v, "1-19");
 
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(1,3));
 	v.add(new ByteRange(9,19));
 	v.add(new ByteRange(4,6));
 	assertMerge(v, "1-6,9-19");
 	      
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(1,3));
 	v.add(new ByteRange(9,19));
 	v.add(new ByteRange(6,12));
 	assertMerge(v, "1-3,6-19");
 		    
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(1,3));
 	v.add(new ByteRange(9,19));
 	v.add(new ByteRange(6,12));
 	assertMerge(v, "1-3,6-19");			     
 				
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(1,3));
 	v.add(new ByteRange(9,19));
 	v.add(new ByteRange(0,2));
 	assertMerge(v, "0-3,9-19");
 
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(1,3));
 	v.add(new ByteRange(9,19));
 	v.add(new ByteRange(0,12));
 	assertMerge(v, "0-19");
 
 	//large number first
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(50,64));
 	v.add(new ByteRange(9,19));
 	v.add(new ByteRange(6,12));
 	assertMerge(v, "6-19,50-64");			     
 
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(50,64));
 	v.add(new ByteRange(9,19));
 	v.add(new ByteRange(6,7));
 	assertMerge(v, "6-7,9-19,50-64");			     
 
 	//2 identical
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(6,7));
 	v.add(new ByteRange(9,19));
 	v.add(new ByteRange(6,7));
 	assertMerge(v, "6-7,9-19");			     
 		
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(30,40));
 	v.add(new ByteRange(6,7));
 	v.add(new ByteRange(30,40));
@@ -205,14 +205,14 @@ public class ByteRangeListTest extends TestCase {
 	assertMerge(v, "6-7,30-40");			     
 
 	//1 superset
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(30,40));
 	v.add(new ByteRange(6,7));
 	v.add(new ByteRange(35,50));
 	v.add(new ByteRange(3,100));
 	assertMerge(v, "3-100");			     
 
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(3,100));
 	v.add(new ByteRange(6,7));
 	v.add(new ByteRange(35,50));
@@ -220,14 +220,14 @@ public class ByteRangeListTest extends TestCase {
 	assertMerge(v, "3-100");			     
 
 	//singletons
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(3,3));
 	v.add(new ByteRange(6,7));
 	v.add(new ByteRange(1,1));
 	v.add(new ByteRange(8,8));
 	assertMerge(v, "1-1,3-3,6-8");	  			     
 
-	v = new Vector();
+	v = new Vector<ByteRange>();
 	v.add(new ByteRange(3,3));
 	v.add(new ByteRange(4,4));
 	v.add(new ByteRange(1,1));
@@ -242,7 +242,7 @@ public class ByteRangeListTest extends TestCase {
        and that original vector and range did not change.
        Test merge(Vector), merge(ByteRange), toFtpCmdArgument() and
      **/
-    private void assertMerge1(Vector v,
+    private void assertMerge1(Vector<ByteRange> v,
 			      int from,
 			      int to,
 			      String expectedResult) {
@@ -279,13 +279,13 @@ public class ByteRangeListTest extends TestCase {
        Merge vector into a new ByteRangeList.
        Test merge(ByteRange), merge(Vector), toFtpCmdArgument().
      **/
-    private void assertMerge(Vector v, String result) {
+    private void assertMerge(Vector<ByteRange> v, String result) {
 	
 	logger.info("merging vector of ranges: " + result);
 
 	ByteRangeList list1 = new ByteRangeList();
 	for (int i=0; i<v.size(); i++) {
-	    list1.merge((ByteRange)v.elementAt(i));
+	    list1.merge(v.elementAt(i));
 	}
 	logger.debug("    -> " + list1.toFtpCmdArgument());
 	assertTrue(list1.toFtpCmdArgument().equals(result));
@@ -293,7 +293,7 @@ public class ByteRangeListTest extends TestCase {
  	logger.debug("merging one by one again..");
 	ByteRangeList list3 = new ByteRangeList();
 	for (int i=0; i<v.size(); i++) {
-	    list3.merge((ByteRange)v.elementAt(i));
+	    list3.merge(v.elementAt(i));
 	}
 	logger.debug(" .. -> " + list3.toFtpCmdArgument());
 	assertTrue(list3.toFtpCmdArgument().equals(result));

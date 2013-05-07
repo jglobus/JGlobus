@@ -43,7 +43,7 @@ public class HostPortList {
     
     //internal string, in form of parameters to SPOR command
     private String sporCommandParam;
-    private Vector vector = null;
+    private Vector<HostPort> vector = null;
 
     /**
      * Parses host-port from the reply to SPAS command.
@@ -69,7 +69,7 @@ public class HostPortList {
      **/
     public void add(HostPort hp) {
         if (this.vector == null) {
-            this.vector = new Vector();
+            this.vector = new Vector<HostPort>();
         }
         this.vector.add(hp);
         this.sporCommandParam = null;
@@ -87,7 +87,7 @@ public class HostPortList {
      **/
     public HostPort get(int index) {
         return (this.vector == null) ? 
-            null : (HostPort)this.vector.elementAt(index);
+            null : this.vector.elementAt(index);
     }
 
     /**
@@ -101,7 +101,7 @@ public class HostPortList {
         if (this.sporCommandParam == null && this.vector != null) {
             StringBuffer cmd = new StringBuffer();
             for (int i = 0; i < this.vector.size(); i ++) {
-                HostPort hp = (HostPort)this.vector.get(i);
+                HostPort hp = this.vector.get(i);
                 if (i != 0) {
                     cmd.append(' ');
                 }
@@ -133,7 +133,7 @@ public class HostPortList {
                 break;
             }
             if (this.vector == null) {
-                this.vector = new Vector();
+                this.vector = new Vector<HostPort>();
             }
             if (ipv6) {
                 this.vector.add(new HostPort6(line));
