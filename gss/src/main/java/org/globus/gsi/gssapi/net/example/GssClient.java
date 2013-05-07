@@ -148,7 +148,7 @@ public class GssClient {
 	    }
 
 	    context.setOption(GSSConstants.REJECT_LIMITED_PROXY,
-			      new Boolean(opts.rejectLimitedProxy));
+                    opts.rejectLimitedProxy);
 
 	    s = GssSocketFactory.getDefault().createSocket(host, port, context);
 	    ((GssSocket)s).setWrapMode(opts.wrapMode);

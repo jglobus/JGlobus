@@ -138,24 +138,24 @@ public class HttpResponse {
     public String toString() {
 	StringBuffer buf = new StringBuffer();
 	
-	buf.append("Http    : " + httpType + "\n");
-	buf.append("Message : " + httpMsg + "\n");
-	buf.append("Code    : " + httpCode + "\n");
+	buf.append("Http    : ").append(httpType).append("\n");
+	buf.append("Message : ").append(httpMsg).append("\n");
+	buf.append("Code    : ").append(httpCode).append("\n");
 
 	if (server != null) {
-	    buf.append("Server  : " + server + "\n");
+	    buf.append("Server  : ").append(server).append("\n");
 	}
 
-	buf.append("Length  : " + contentLength + "\n");
-	buf.append("Chunked : " + chunked + "\n");
-	buf.append("Type    : " + contentType + "\n");
+	buf.append("Length  : ").append(contentLength).append("\n");
+	buf.append("Chunked : ").append(chunked).append("\n");
+	buf.append("Type    : ").append(contentType).append("\n");
 	
 	if (connection != null) {
-	    buf.append("Connection   : " + connection + "\n");
+	    buf.append("Connection   : ").append(connection).append("\n");
 	}
 
 	if (location != null) {
-	    buf.append("Location     : " + location + "\n");
+	    buf.append("Location     : ").append(location).append("\n");
 	}
 	
 	return buf.toString();

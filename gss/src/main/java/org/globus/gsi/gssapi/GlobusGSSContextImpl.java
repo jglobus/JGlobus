@@ -14,64 +14,61 @@
  */
 package org.globus.gsi.gssapi;
 
-import org.globus.gsi.util.CertificateUtil;
-import org.globus.gsi.util.ProxyCertificateUtil;
-
-
-import org.ietf.jgss.GSSCredential;
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.GSSContext;
-import org.ietf.jgss.GSSManager;
-import org.ietf.jgss.GSSName;
-import org.ietf.jgss.Oid;
-import org.ietf.jgss.MessageProp;
-import org.ietf.jgss.ChannelBinding;
-
-import org.gridforum.jgss.ExtendedGSSContext;
-import org.gridforum.jgss.ExtendedGSSCredential;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Date;
-import java.util.Calendar;
-import java.util.Map;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.security.KeyPair;
-import java.security.GeneralSecurityException;
-import java.security.interfaces.RSAPublicKey;
-import java.security.interfaces.RSAPrivateKey;
-
-import org.globus.gsi.ProviderLoader;
-import org.globus.gsi.stores.ResourceSigningPolicyStore;
-
-import java.security.cert.CertStore;
-import java.security.cert.CertificateFactory;
-import java.security.KeyStore;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.globus.gsi.GSIConstants;
+import org.globus.gsi.ProviderLoader;
 import org.globus.gsi.TrustedCertificates;
 import org.globus.gsi.X509Credential;
-import org.globus.gsi.util.CertificateLoadUtil;
-import org.globus.gsi.bc.BouncyCastleUtil;
 import org.globus.gsi.bc.BouncyCastleCertProcessingFactory;
+import org.globus.gsi.bc.BouncyCastleUtil;
+import org.globus.gsi.jsse.SSLConfigurator;
+import org.globus.gsi.stores.ResourceSigningPolicyStore;
+import org.globus.gsi.stores.Stores;
+import org.globus.gsi.util.CertificateLoadUtil;
+import org.globus.gsi.util.CertificateUtil;
+import org.globus.gsi.util.ProxyCertificateUtil;
 import org.globus.util.I18n;
+import org.gridforum.jgss.ExtendedGSSContext;
+import org.gridforum.jgss.ExtendedGSSCredential;
+import org.ietf.jgss.ChannelBinding;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.GSSName;
+import org.ietf.jgss.MessageProp;
+import org.ietf.jgss.Oid;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLPeerUnverifiedException;
-import org.globus.gsi.jsse.SSLConfigurator;
 
-import org.bouncycastle.jce.provider.X509CertificateObject;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Map;
 
 /*
 import COM.claymoresystems.ptls.SSLConn;
@@ -85,11 +82,6 @@ import COM.claymoresystems.sslg.CertVerifyPolicyInt;
 import COM.claymoresystems.cert.X509Cert;
 import COM.claymoresystems.util.Util;
 */
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.globus.gsi.stores.Stores;
 
 /**
  * Implementation of SSL/GSI mechanism for Java GSS-API. The implementation
@@ -523,7 +515,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
                         String identity = BouncyCastleUtil.getIdentity(bcConvert(BouncyCastleUtil.getIdentityCertificate((X509Certificate [])chain)));
                         this.sourceName = new GlobusGSSName(CertificateUtil.toGlobusID(identity, false));
-			this.peerLimited = Boolean.valueOf(ProxyCertificateUtil.isLimitedProxy(BouncyCastleUtil.getCertificateType((X509Certificate)chain[0])));
+			this.peerLimited = ProxyCertificateUtil.isLimitedProxy(BouncyCastleUtil
+                                .getCertificateType((X509Certificate) chain[0]));
 
 			logger.debug("Peer Identity is: " + identity
 				 + " Target name is: " + this.targetName +
@@ -1050,7 +1043,8 @@ done:      do {
                     String identity = BouncyCastleUtil.getIdentity(bcConvert(BouncyCastleUtil.getIdentityCertificate((X509Certificate [])chain)));
                     this.targetName = new GlobusGSSName(CertificateUtil.toGlobusID(identity, false));
 
-                    this.peerLimited = Boolean.valueOf(ProxyCertificateUtil.isLimitedProxy(BouncyCastleUtil.getCertificateType((X509Certificate)chain[0])));
+                    this.peerLimited = ProxyCertificateUtil.isLimitedProxy(BouncyCastleUtil
+                            .getCertificateType((X509Certificate) chain[0]));
 
 		    logger.debug("Peer Identity is: " + identity +
 			 " Target name is: " + this.targetName +
@@ -1299,7 +1293,7 @@ done:      do {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
 
-	if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
+	if (this.forceSSLv3AndConstrainCipherSuitesForGram)
            this.sslEngine.setEnabledProtocols(GRAM_PROTOCOLS);
         else
            this.sslEngine.setEnabledProtocols(ENABLED_PROTOCOLS);
@@ -1310,18 +1304,15 @@ done:      do {
 
         ArrayList<String> cs = new ArrayList();
         if (this.encryption) {
-            if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
-                for (String cipherSuite : GRAM_ENCRYPTION_CIPHER_SUITES)
-                    cs.add(cipherSuite);
+            if (this.forceSSLv3AndConstrainCipherSuitesForGram)
+                Collections.addAll(cs, GRAM_ENCRYPTION_CIPHER_SUITES);
             else // Simply retain the default-enabled Cipher Suites
                cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
         } else {
-            if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
-                for (String cipherSuite : GRAM_NO_ENCRYPTION_CIPHER_SUITES)
-                    cs.add(cipherSuite);
+            if (this.forceSSLv3AndConstrainCipherSuitesForGram)
+                Collections.addAll(cs, GRAM_NO_ENCRYPTION_CIPHER_SUITES);
             else {
-               for (String cipherSuite : NO_ENCRYPTION)
-                   cs.add(cipherSuite);
+                Collections.addAll(cs, NO_ENCRYPTION);
                cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
             }
         }
@@ -1335,9 +1326,9 @@ done:      do {
 	// NOTE: requireClientAuth Vs. acceptNoClientCerts
 	// which one takes precedence? for now err on the side of security
 	 if (this.requireClientAuth.booleanValue() == Boolean.TRUE) {
-             this.sslEngine.setNeedClientAuth(this.requireClientAuth.booleanValue());
+             this.sslEngine.setNeedClientAuth(this.requireClientAuth);
 	 } else
-             this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts.booleanValue());
+             this.sslEngine.setWantClientAuth(!this.acceptNoClientCerts);
 
         this.sslEngine.setUseClientMode(how == INITIATE);
 
@@ -2054,7 +2045,7 @@ done:      do {
             throw new GSSException(GSSException.NO_CONTEXT);
         }
         
-        if (this.checkContextExpiration.booleanValue() && getLifetime() <= 0) {
+        if (this.checkContextExpiration && getLifetime() <= 0) {
             throw new GSSException(GSSException.CONTEXT_EXPIRED);
         }
     }
@@ -2149,7 +2140,7 @@ done:      do {
         if (value instanceof GSIConstants.DelegationType)
             v = (GSIConstants.DelegationType) value;
         else if (value instanceof Integer)
-            v = GSIConstants.DelegationType.get(((Integer) value).intValue());
+            v = GSIConstants.DelegationType.get((Integer) value);
         else {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION_TYPE,
@@ -2551,7 +2542,7 @@ done:      do {
                 throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.DELEGATION_ERROR,
                                              "delegError00",
-                                             new Object[] {new Character((char)buf[off])});
+                                             new Object[] {(char) buf[off]});
             }
             
             try {

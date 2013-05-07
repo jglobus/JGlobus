@@ -315,12 +315,12 @@ public class GlobusURL {
 
     public String toString() {
 	StringBuffer info = new StringBuffer();
-	info.append("Protocol    : " + protocol + "\n");
-	info.append("Host name   : " + host + "\n");
-	info.append("Port number : " + port + "\n");
-	info.append("Url path    : " + urlPath + "\n");
-	info.append("User        : " + user + "\n");
-	info.append("Pwd         : " + pwd + "\n");
+	info.append("Protocol    : ").append(protocol).append("\n");
+	info.append("Host name   : ").append(host).append("\n");
+	info.append("Port number : ").append(port).append("\n");
+	info.append("Url path    : ").append(urlPath).append("\n");
+	info.append("User        : ").append(user).append("\n");
+	info.append("Pwd         : ").append(pwd).append("\n");
 	return info.toString();
     }
     

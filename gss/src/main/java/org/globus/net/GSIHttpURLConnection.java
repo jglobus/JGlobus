@@ -98,7 +98,7 @@ public class GSIHttpURLConnection extends GSIURLConnection {
             default:
                 context.requestCredDeleg(true);
                 context.setOption(GSSConstants.DELEGATION_TYPE,
-                                  new Integer(this.delegationType));
+                        this.delegationType);
                 
             }
             

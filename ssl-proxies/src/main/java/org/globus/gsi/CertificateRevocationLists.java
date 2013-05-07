@@ -14,26 +14,24 @@
  */
 package org.globus.gsi;
 
-import org.globus.gsi.stores.ResourceCertStoreParameters;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.common.CoGProperties;
 import org.globus.gsi.stores.Stores;
 
-import org.globus.gsi.provider.GlobusProvider;
-
 import javax.security.auth.x500.X500Principal;
-import java.security.cert.X509CRLSelector;
+
+import java.io.File;
 import java.security.cert.CertStore;
 import java.security.cert.X509CRL;
-import java.util.Map;
-import java.util.Collection;
+import java.security.cert.X509CRLSelector;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.StringTokenizer;
-import java.io.File;
-import org.globus.common.CoGProperties;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 // COMMENT: what should be used instead? Probably a cert-store. but that doesn't have a refresh or such
 // COMMENT: We lost the functionality that stuff is only loaded when it didnt' exist or changed
@@ -110,7 +108,7 @@ public class CertificateRevocationLists {
         while(tokens.hasMoreTokens()) {
 
             try {
-              String location = tokens.nextToken().toString().trim();
+              String location = tokens.nextToken().trim();
               CertStore tmp = Stores.getCRLStore("file:" + location + "/*.r*");
               Collection<X509CRL> coll = (Collection<X509CRL>) tmp.getCRLs(new X509CRLSelector());
               for (X509CRL crl : coll) {
@@ -192,7 +190,7 @@ public class CertificateRevocationLists {
                     LinkedList crlDirs = new LinkedList();
                     while(tokens.hasMoreTokens()) {
                         String crlFileName =
-                            tokens.nextToken().toString().trim();
+                                tokens.nextToken().trim();
                         crlFile = new File(crlFileName);
                         if (crlFile.isDirectory()) {
                             // all all directories

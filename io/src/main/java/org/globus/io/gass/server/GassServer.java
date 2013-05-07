@@ -15,39 +15,36 @@
  */
 package org.globus.io.gass.server;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.Socket;
-import java.net.URLDecoder;
-import java.util.Hashtable;
-
-import org.globus.util.GlobusURL;
-import org.globus.util.http.HttpResponse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.gsi.GSIConstants;
+import org.globus.gsi.gssapi.GSSConstants;
+import org.globus.gsi.gssapi.auth.AuthorizationException;
+import org.globus.gsi.gssapi.auth.SelfAuthorization;
+import org.globus.gsi.gssapi.net.GssSocket;
+import org.globus.gsi.gssapi.net.GssSocketFactory;
 import org.globus.io.gass.client.internal.GASSProtocol;
 import org.globus.net.BaseServer;
 import org.globus.net.SocketFactory;
-import org.globus.gsi.GSIConstants;
-import org.globus.gsi.gssapi.auth.SelfAuthorization;
-import org.globus.gsi.gssapi.auth.AuthorizationException;
-import org.globus.gsi.gssapi.GSSConstants;
-import org.globus.gsi.gssapi.net.GssSocket;
-import org.globus.gsi.gssapi.net.GssSocketFactory;
-
-import org.gridforum.jgss.ExtendedGSSManager;
+import org.globus.util.GlobusURL;
+import org.globus.util.http.HttpResponse;
 import org.gridforum.jgss.ExtendedGSSContext;
-
-import org.ietf.jgss.GSSManager;
+import org.gridforum.jgss.ExtendedGSSManager;
+import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
-import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSManager;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.URLDecoder;
+import java.util.Hashtable;
 
 /**
  * The <code>GassServer</code> class acts as a basic multi-threaded HTTPS
@@ -197,15 +194,15 @@ public class GassServer extends BaseServer {
 	} catch(Exception e) {}
 	buf.append(" options (");
 	boolean op = ((options & READ_ENABLE) != 0);
-	buf.append("r:" + ( (op) ? "+" : "-" ));
+	buf.append("r:").append((op) ? "+" : "-");
 	op = ((options & WRITE_ENABLE) != 0);
-	buf.append(" w:" + ( (op) ? "+" : "-" ));
+	buf.append(" w:").append((op) ? "+" : "-");
 	op = ((options & STDOUT_ENABLE) != 0);
-	buf.append(" so:" + ( (op) ? "+" : "-"));
+	buf.append(" so:").append((op) ? "+" : "-");
 	op = ((options & STDERR_ENABLE) != 0);
-	buf.append(" se:" + ( (op) ? "+" : "-"));
+	buf.append(" se:").append((op) ? "+" : "-");
 	op = ((options & CLIENT_SHUTDOWN_ENABLE) != 0);
-	buf.append(" rc:" + ( (op) ? "+" : "-"));
+	buf.append(" rc:").append((op) ? "+" : "-");
 	buf.append(")");
 	return buf.toString();
     }
@@ -410,15 +407,10 @@ class GassClientHandler implements Runnable {
 	    } catch (FileNotFoundException ex) {
 		logger.debug("FileNotFoundException occured: " + ex.getMessage(), ex);
 		
-		StringBuffer buf = new StringBuffer(HEADER404)
-		    .append(CONNECTION_CLOSE)
-		    .append(SERVER)
-		    .append(CONTENT_HTML)
-		    .append(CONTENT_LENGTH).append(" ").append(MSG404.length())
-		    .append(CRLF).append(CRLF)
-		    .append(MSG404);
+		String buf = HEADER404 + CONNECTION_CLOSE + SERVER + CONTENT_HTML + CONTENT_LENGTH + " " + MSG404
+                        .length() + CRLF + CRLF + MSG404;
 		
-		out.write(buf.toString().getBytes());
+		out.write(buf.getBytes());
 		out.flush();
 	    } catch (AuthorizationException ex) {
 		logger.debug("Exception occured: Authorization failed");
@@ -461,14 +453,8 @@ class GassClientHandler implements Runnable {
 
         long length = f.length();
 
-        StringBuffer buf = new StringBuffer(OKHEADER)
-            .append(CONNECTION_CLOSE)
-            .append(SERVER)
-            .append(CONTENT_BINARY)
-            .append(CONTENT_LENGTH).append(" ").append(length)
-            .append(CRLF).append(CRLF);
-
-        os.write(buf.toString().getBytes());
+        String buf = OKHEADER + CONNECTION_CLOSE + SERVER + CONTENT_BINARY + CONTENT_LENGTH + " " + length + CRLF + CRLF;
+        os.write(buf.getBytes());
         os.flush();
 	
 	byte [] buffer = new byte[BUFFER_SIZE];

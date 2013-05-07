@@ -174,10 +174,10 @@ public class ResourceManagerContact {
     public String toString() {
 	StringBuffer buf = new StringBuffer();
 	
-	buf.append("Host name   : " + hostName + "\n");
-	buf.append("Port number : " + getPortNumber() + "\n");
-	buf.append("Service     : " + getServiceName() + "\n");
-	buf.append("DN          : " + getGlobusDN() + "\n");
+	buf.append("Host name   : ").append(hostName).append("\n");
+	buf.append("Port number : ").append(getPortNumber()).append("\n");
+	buf.append("Service     : ").append(getServiceName()).append("\n");
+	buf.append("DN          : ").append(getGlobusDN()).append("\n");
 	
 	return buf.toString();
     }

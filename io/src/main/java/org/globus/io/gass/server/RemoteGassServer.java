@@ -295,7 +295,7 @@ public class RemoteGassServer {
 	    buf.append("(environment=(LD_LIBRARY_PATH $(GLOBUS_LOCATION)/lib))");
 	}
 	
-	buf.append("(rsl_substitution=(GLOBUSRUN_GASS_URL " + gassURL + "))");
+	buf.append("(rsl_substitution=(GLOBUSRUN_GASS_URL ").append(gassURL).append("))");
 	buf.append("(stderr=$(GLOBUSRUN_GASS_URL)/dev/stderr-rgs)");
 	buf.append("(stdout=$(GLOBUSRUN_GASS_URL)/dev/stdout-rgs)");
 	
@@ -308,7 +308,7 @@ public class RemoteGassServer {
 	buf.append("(arguments=\"-c\"");
 	
 	if (port != 0) {
-	    buf.append(" \"-p\" \"" + port + "\"");
+	    buf.append(" \"-p\" \"").append(port).append("\"");
 	}
 	
 	if (!secure) {

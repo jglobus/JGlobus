@@ -258,7 +258,7 @@ public class ProxyPathValidatorTest extends TestCase {
     }
 
     public static X509Certificate[] initCerts() throws Exception {
-        CoGProperties.getDefault().setProperty(CoGProperties.getDefault().CRL_CACHE_LIFETIME, "1");
+        CoGProperties.getDefault().setProperty(CoGProperties.CRL_CACHE_LIFETIME, "1");
 
         X509Certificate[] goodCertsArr = new X509Certificate[certs.length];
         ClassLoader loader = ProxyPathValidatorTest.class.getClassLoader();

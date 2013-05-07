@@ -116,10 +116,10 @@ class Client extends Thread {
 			      GSIConstants.MODE_SSL);
 	    
 	    context.setOption(GSSConstants.REJECT_LIMITED_PROXY,
-			      new Boolean(opts.rejectLimitedProxy));
+                    opts.rejectLimitedProxy);
 	    
 	    context.setOption(GSSConstants.REQUIRE_CLIENT_AUTH,
-			      new Boolean(!opts.anonymity));
+                    !opts.anonymity);
 	    
 	    s = GssSocketFactory.getDefault().createSocket(s, null, 0, context);
 	    

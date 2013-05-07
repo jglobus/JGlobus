@@ -504,7 +504,7 @@ public class X509Credential implements Serializable {
             strength = this.getStrength();
         } catch(Exception e) {}
         buf.append("strength   : ").append(strength).append(lineSep);
-        buf.append("timeleft   : ").append(getTimeLeft() + " sec").append(lineSep);
+        buf.append("timeleft   : ").append(getTimeLeft()).append(" sec").append(lineSep);
         buf.append("proxy type : ").append(ProxyCertificateUtil.getProxyTypeAsString(getProxyType()));
         return buf.toString();
     }

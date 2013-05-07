@@ -123,7 +123,7 @@ public class KeyPairCache {
         }
 
         long st = System.currentTimeMillis();
-        Integer keysize = new Integer(bits);
+        Integer keysize = bits;
         KeyPairCacheEntry entry = (KeyPairCacheEntry)entries.get(keysize);
         if (entry == null || st - entry.getCreatedAt() >= lifetime) {
             logger.debug("Creating " + bits + " bits keypair");

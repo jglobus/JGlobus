@@ -110,7 +110,7 @@ public class GssClient {
 	    }
 
 	    context.setOption(GSSConstants.REJECT_LIMITED_PROXY,
-			      new Boolean(opts.rejectLimitedProxy));
+                    opts.rejectLimitedProxy);
 
 	    // Loop while there still is a token to be processed
 	    while (!context.isEstablished()) {

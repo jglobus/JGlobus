@@ -2074,9 +2074,7 @@ public class  FTPClient {
         algorithms = new ArrayList();
         for(FeatureList.Feature feature:cksumFeature) {
             String[] parms = feature.getParms().split(",");
-            for (String parm: parms) {
-                algorithms.add(parm);
-            }
+            Collections.addAll(algorithms, parms);
         }
         return algorithms;
     }

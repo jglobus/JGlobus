@@ -208,7 +208,7 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 	    throw new GlobusGSSException(GSSException.FAILURE, 
 					 GlobusGSSException.BAD_ARGUMENT,
 					 "unknownOption",
-					 new Object[] {new Integer(option)});
+					 new Object[] {option});
 	}
     }
 

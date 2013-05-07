@@ -83,19 +83,19 @@ public class GatekeeperReply extends HttpResponse {
 
 	buf.append(super.toString());
 	
-	buf.append("Protocol-version : " + protocolVersion + "\n");
-	buf.append("Status           : " + status);
+	buf.append("Protocol-version : ").append(protocolVersion).append("\n");
+	buf.append("Status           : ").append(status);
 	if (jobManagerUrl != null) {
-	    buf.append("\nJob-manager-url  : " + jobManagerUrl);
+	    buf.append("\nJob-manager-url  : ").append(jobManagerUrl);
 	}
 	if (failureCode >= 0) {
-	    buf.append("\nFailure-code     : " + failureCode);
+	    buf.append("\nFailure-code     : ").append(failureCode);
 	}
 	if (jobFailureCode >= 0) {
-            buf.append("\nJob failure code     : " + jobFailureCode);
+            buf.append("\nJob failure code     : ").append(jobFailureCode);
         }
         if (exitCode != Integer.MIN_VALUE) {
-    	    buf.append("\nExit code        : " + exitCode);
+    	    buf.append("\nExit code        : ").append(exitCode);
         }
 	
 	return buf.toString();

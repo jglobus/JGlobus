@@ -47,19 +47,19 @@ public interface GSIConstants {
 
     /** Indicates GSI mode (allows for delegation during authentication). 
      */
-    public static final Integer MODE_GSI = new Integer(1);
+    public static final Integer MODE_GSI = 1;
     
     /** Indicates SSL compatibility mode (does not allow for delegation 
      * during authentication). */
-    public static final Integer MODE_SSL = new Integer(2);
+    public static final Integer MODE_SSL = 2;
     
     /** Indicates full delegation. */
     public static final Integer DELEGATION_TYPE_FULL 
-    = new Integer(GSIConstants.DELEGATION_FULL);
+    = GSIConstants.DELEGATION_FULL;
     
     /** Indicates limited delegation. */
     public static final Integer DELEGATION_TYPE_LIMITED 
-    = new Integer(GSIConstants.DELEGATION_LIMITED);
+    = GSIConstants.DELEGATION_LIMITED;
     
     /** Indicates End-Entity Certificate, e.g. user certificate
      * @deprecated Use CertificateType.EEC instead
@@ -147,15 +147,15 @@ public interface GSIConstants {
 
     /** integrity message protection method. */
     public static final Integer SIGNATURE
-        = new Integer(1);
+        = 1;
 
     /** privacy message protection method. */
     public static final Integer ENCRYPTION
-        = new Integer(2);
+        = 2;
 
     /** none message protection method. */
     public static final Integer NONE =
-        new Integer(Integer.MAX_VALUE);
+            Integer.MAX_VALUE;
 
     /**
      * It is used to set a list of trusted certificates

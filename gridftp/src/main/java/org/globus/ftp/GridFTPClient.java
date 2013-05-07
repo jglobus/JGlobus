@@ -98,9 +98,8 @@ public class GridFTPClient extends FTPClient {
         String                          appName,
         String                          appVer)
     {
-        usageString = new String(
-                "CLIENTINFO appname=" + appName +";appver=" + appVer +
-                ";schema=gsiftp;");
+        usageString = "CLIENTINFO appname=" + appName + ";appver=" + appVer +
+                ";schema=gsiftp;";
     }
 
     /**

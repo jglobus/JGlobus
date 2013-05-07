@@ -374,10 +374,10 @@ public class FileInfo {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("FileInfo: ");
-        buf.append(getName() + " ");
-        buf.append(getSize() + " ");
-        buf.append(getDate() + " ");
-        buf.append(getTime() + " ");
+        buf.append(getName()).append(" ");
+        buf.append(getSize()).append(" ");
+        buf.append(getDate()).append(" ");
+        buf.append(getTime()).append(" ");
         
         switch( fileType  ) {
         case DIRECTORY_TYPE:
@@ -392,7 +392,7 @@ public class FileInfo {
         default:
             buf.append("unknown type");
         }
-        buf.append(" "+getModeAsString());
+        buf.append(" ").append(getModeAsString());
         
         return buf.toString();
     }

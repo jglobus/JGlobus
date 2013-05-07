@@ -1,13 +1,11 @@
 package org.globus.util;
 
-import org.apache.commons.codec.net.URLCodec;
-
 import java.io.File;
-import java.util.Vector;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Provides methods to resolve locationPatterns and return GlobusResource
@@ -92,7 +90,8 @@ public class GlobusPathMatchingResourcePatternResolver {
             parseDirectoryStructure(new File(mainPath));
         }
 
-        return pathsMatchingLocationPattern.toArray(new GlobusResource[0]);
+        return pathsMatchingLocationPattern
+                .toArray(new GlobusResource[pathsMatchingLocationPattern.size()]);
     }
 
     /**

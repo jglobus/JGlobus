@@ -145,10 +145,10 @@ public class MlsxEntry {
         while (e.hasMoreElements()) {
             String key = (String) e.nextElement();
             String value = (String)facts.get(key);
-            buf.append( key + "=" + value +";");
+            buf.append(key).append("=").append(value).append(";");
         }
         
-        buf.append( " " + fileName);
+        buf.append(" ").append(fileName);
         
         return buf.toString();		
     }

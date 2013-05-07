@@ -227,7 +227,7 @@ public class GlobusGSSManagerImpl extends ExtendedGSSManager {
 	    throw new GlobusGSSException(GSSException.FAILURE, 
 					 GlobusGSSException.BAD_ARGUMENT,
 					 "unknownOption",
-					 new Object[] {new Integer(option)});
+					 new Object[] {option});
 	}
 
 	X509Credential cred = null;

@@ -220,7 +220,7 @@ public class TrustedCertificates implements Serializable {
         Map newSigningDNMap = new HashMap();
 
         while(tokens.hasMoreTokens()) {
-            caDir = new File(tokens.nextToken().toString().trim());
+            caDir = new File(tokens.nextToken().trim());
 
             if (!caDir.canRead()) {
                 logger.debug("Cannot read: " + caDir.getAbsolutePath());

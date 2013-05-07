@@ -349,14 +349,14 @@ public class Util {
         StringBuffer str = new StringBuffer();
     
         if (time < 60) {
-            str.append(time + " sec");
+            str.append(time).append(" sec");
             return str.toString();
         } 
     
         int days = (int) time / 86400;
     
         if (days != 0) {
-            str.append(days + " days");
+            str.append(days).append(" days");
             time -= days * 86400;
         }
     
@@ -364,7 +364,7 @@ public class Util {
     
         if (hours != 0) {
             if (str.length() != 0) str.append(", ");
-            str.append(hours + " h");
+            str.append(hours).append(" h");
             time -= hours * 3600;
         }
     
@@ -372,7 +372,7 @@ public class Util {
     
         if (mins != 0) {
             if (str.length() != 0) str.append(", ");
-            str.append(mins + " min");
+            str.append(mins).append(" min");
             time -= mins * 60;
         }
     
@@ -380,7 +380,7 @@ public class Util {
     
         if (sec != 0) {
             if (str.length() != 0) str.append(", ");
-            str.append(sec + " sec");
+            str.append(sec).append(" sec");
         }
     
         return str.toString();

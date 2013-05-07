@@ -55,10 +55,10 @@ public class HTTPProtocol {
 					 String user_agent) {
 	
 	StringBuffer head = new StringBuffer();
-	head.append("GET " + path + " " + HTTP_VERSION + CRLF);
-	head.append(HOST + host + CRLF);
+	head.append("GET ").append(path).append(" ").append(HTTP_VERSION).append(CRLF);
+	head.append(HOST).append(host).append(CRLF);
 	head.append(CONNECTION_CLOSE);
-	head.append(USER_AGENT + user_agent + CRLF);
+	head.append(USER_AGENT).append(user_agent).append(CRLF);
 	head.append(CRLF);
 	
 	return head.toString();
@@ -80,17 +80,17 @@ public class HTTPProtocol {
 	    head.append("PUT ");
 	}
 
-	head.append(path + " " + HTTP_VERSION + CRLF);
+	head.append(path).append(" ").append(HTTP_VERSION).append(CRLF);
 
-	head.append(HOST + host + CRLF);
+	head.append(HOST).append(host).append(CRLF);
 	head.append(CONNECTION_CLOSE);
-	head.append(USER_AGENT + user_agent + CRLF);
-	head.append(CONTENT_TYPE + type + CRLF);
+	head.append(USER_AGENT).append(user_agent).append(CRLF);
+	head.append(CONTENT_TYPE).append(type).append(CRLF);
 
 	if (length == -1) {
 	    head.append(CHUNKING);
 	} else {
-	    head.append(CONTENT_LENGTH + length + CRLF); 
+	    head.append(CONTENT_LENGTH).append(length).append(CRLF);
 	}
 	
 	head.append(CRLF);

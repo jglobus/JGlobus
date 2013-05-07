@@ -25,6 +25,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -49,15 +50,11 @@ public class MockCertStore extends CertStoreSpi {
                 X509Certificate[] certs = parameters.getCertificates();
                 if (certs != null) {
 
-                    for (int i = 0; i < certs.length; i++) {
-                        this.certificate.add(certs[i]);
-                    }
+                    Collections.addAll(this.certificate, certs);
                 }
                 X509CRL[] crls = parameters.getCRLs();
                 if (crls != null) {
-                    for (int i = 0; i < crls.length; i++) {
-                        this.crl.add(crls[i]);
-                    }
+                    Collections.addAll(this.crl, crls);
                 }
             }
         }

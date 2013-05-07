@@ -54,8 +54,8 @@ public class CallbackResponse extends GatekeeperReply {
     public String toString() {
 	StringBuffer buf = new StringBuffer();
 	
-	buf.append("HttpMethod : " + httpMethod + "\n");
-	buf.append("URL        : " + callbackURL + "\n");
+	buf.append("HttpMethod : ").append(httpMethod).append("\n");
+	buf.append("URL        : ").append(callbackURL).append("\n");
 	buf.append(super.toString());
 	
 	return buf.toString();
