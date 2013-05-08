@@ -129,9 +129,9 @@ public class BouncyCastleCertProcessingFactory {
      *            the type of proxy credential to create
      * @param extSet
      *            a set of X.509 extensions to be included in the new proxy certificate. Can be null. If
-     *            delegation mode is {@link GSIConstants#GSI_3_RESTRICTED_PROXY
-     *            GSIConstants.GSI_3_RESTRICTED_PROXY} or {@link GSIConstants#GSI_4_RESTRICTED_PROXY
-     *            GSIConstants.GSI_4_RESTRICTED_PROXY} then
+     *            delegation mode is {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY
+     *            GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} or {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_RESTRICTED_PROXY
+     *            GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY} then
      *            {@link org.globus.gsi.proxy.ext.ProxyCertInfoExtension ProxyCertInfoExtension} must be
      *            present in the extension set.
      * @param cnValue
@@ -209,9 +209,9 @@ public class BouncyCastleCertProcessingFactory {
      *            the type of proxy credential to create
      * @param extSet
      *            a set of X.509 extensions to be included in the new proxy certificate. Can be null. If
-     *            delegation mode is {@link GSIConstants#GSI_3_RESTRICTED_PROXY
-     *            GSIConstants.GSI_3_RESTRICTED_PROXY} or {@link GSIConstants#GSI_4_RESTRICTED_PROXY
-     *            GSIConstants.GSI_4_RESTRICTED_PROXY} then
+     *            delegation mode is {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY
+     *            GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} or {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_RESTRICTED_PROXY
+     *            GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY} then
      *            {@link org.globus.gsi.proxy.ext.ProxyCertInfoExtension ProxyCertInfoExtension} must be
      *            present in the extension set.
      * @param cnValue
@@ -255,7 +255,7 @@ public class BouncyCastleCertProcessingFactory {
      * 
      * The methods defaults to creating GSI 4 proxy
      * 
-     * @param issuerCert
+     * @param issuerCert_
      *            the issuing certificate
      * @param issuerKey
      *            private key matching the public key of issuer certificate. The new proxy certificate will be
@@ -553,8 +553,8 @@ public class BouncyCastleCertProcessingFactory {
      *            the type of proxy credential to create
      * @param extSet
      *            a set of X.509 extensions to be included in the new proxy certificate. Can be null. If
-     *            delegation mode is {@link GSIConstants#CertificateType#GSI_3_RESTRICTED_PROXY
-     *            GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} or {@link GSIConstants#CertificateType#GSI_4_RESTRICTED_PROXY
+     *            delegation mode is {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY
+     *            GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} or {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_RESTRICTED_PROXY
      *            GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY} then
      *            {@link org.globus.gsi.proxy.ext.ProxyCertInfoExtension ProxyCertInfoExtension} must be
      *            present in the extension set.
@@ -629,8 +629,8 @@ public class BouncyCastleCertProcessingFactory {
      *            the type of proxy credential to create
      * @param extSet
      *            a set of X.509 extensions to be included in the new proxy certificate. Can be null. If
-     *            delegation mode is {@link GSIConstants#CertificateType#GSI_3_RESTRICTED_PROXY
-     *            GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} or {@link GSIConstants#CertificateType#GSI_4_RESTRICTED_PROXY
+     *            delegation mode is {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY
+     *            GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} or {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_RESTRICTED_PROXY
      *            GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY} then
      *            {@link org.globus.gsi.proxy.ext.ProxyCertInfoExtension ProxyCertInfoExtension} must be
      *            present in the extension set.
@@ -711,7 +711,7 @@ public class BouncyCastleCertProcessingFactory {
      * 
      * The methods defaults to creating GSI 4 proxy
      * 
-     * @param issuerCert
+     * @param issuerCert_
      *            the issuing certificate
      * @param issuerKey
      *            private key matching the public key of issuer certificate. The new proxy certificate will be
@@ -722,36 +722,22 @@ public class BouncyCastleCertProcessingFactory {
      *            lifetime of the new certificate in seconds. If 0 (or less then) the new certificate will
      *            have the same lifetime as the issuing certificate.
      * @param certType
-     *            can be one of {@link GSIConstants#CertificateType#DELEGATION_LIMITED GSIConstants.CertificateTypeDELEGATION_LIMITED},
-     *            {@link GSIConstants#CertificateType#DELEGATION_FULL GSIConstants.CertificateTypeDELEGATION_FULL},
-     * 
-     *            {@link GSIConstants#CertificateType#GSI_2_LIMITED_PROXY GSIConstants.CertificateType.GSI_2_LIMITED_PROXY},
-     *            {@link GSIConstants#CertificateType#GSI_2_PROXY GSIConstants.CertificateType.GSI_2_PROXY},
-     *            {@link GSIConstants#CertificateType#GSI_3_IMPERSONATION_PROXY GSIConstants.CertificateType.GSI_3_IMPERSONATION_PROXY},
-     *            {@link GSIConstants#CertificateType#GSI_3_LIMITED_PROXY GSIConstants.CertificateType.GSI_3_LIMITED_PROXY},
-     *            {@link GSIConstants#CertificateType#GSI_3_INDEPENDENT_PROXY GSIConstants.CertificateType.GSI_3_INDEPENDENT_PROXY},
-     *            {@link GSIConstants#CertificateType#GSI_3_RESTRICTED_PROXY GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY}.
-     *            {@link GSIConstants#CertificateType#GSI_4_IMPERSONATION_PROXY GSIConstants.CertificateType.GSI_4_IMPERSONATION_PROXY},
-     *            {@link GSIConstants#CertificateType#GSI_4_LIMITED_PROXY GSIConstants.CertificateType.GSI_3_LIMITED_PROXY},
-     *            {@link GSIConstants#CertificateType#GSI_4_INDEPENDENT_PROXY GSIConstants.CertificateType.GSI_4_INDEPENDENT_PROXY},
-     *            {@link GSIConstants#CertificateType#GSI_4_RESTRICTED_PROXY GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY}.
-     * 
-     *            If {@link GSIConstants#CertificateType#DELEGATION_LIMITED GSIConstants.CertificateTypeDELEGATION_LIMITED} and if
-     *            {@link VersionUtil#isGsi2Enabled() CertUtil.isGsi2Enabled} returns true then a GSI-2 limited
-     *            proxy will be created. Else if {@link VersionUtil#isGsi3Enabled() CertUtil.isGsi3Enabled}
-     *            returns true then a GSI-3 limited proxy will be created. If not, a GSI-4 limited proxy will
-     *            be created.
-     * 
-     *            If {@link GSIConstants#CertificateType#DELEGATION_FULL GSIConstants.CertificateTypeDELEGATION_FULL} and if
-     *            {@link VersionUtil#isGsi2Enabled() CertUtil.isGsi2Enabled} returns true then a GSI-2 full proxy
-     *            will be created. Else if {@link VersionUtil#isGsi3Enabled() CertUtil.isGsi3Enabled} returns
-     *            true then a GSI-3 full proxy will be created. If not, a GSI-4 full proxy will be created.
+     *            can be one of {@link org.globus.gsi.GSIConstants.CertificateType#GSI_2_LIMITED_PROXY GSIConstants.CertificateType.GSI_2_LIMITED_PROXY},
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_2_PROXY GSIConstants.CertificateType.GSI_2_PROXY},
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_IMPERSONATION_PROXY GSIConstants.CertificateType.GSI_3_IMPERSONATION_PROXY},
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_LIMITED_PROXY GSIConstants.CertificateType.GSI_3_LIMITED_PROXY},
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_INDEPENDENT_PROXY GSIConstants.CertificateType.GSI_3_INDEPENDENT_PROXY},
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY}.
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_IMPERSONATION_PROXY GSIConstants.CertificateType.GSI_4_IMPERSONATION_PROXY},
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_LIMITED_PROXY GSIConstants.CertificateType.GSI_3_LIMITED_PROXY},
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_INDEPENDENT_PROXY GSIConstants.CertificateType.GSI_4_INDEPENDENT_PROXY},
+     *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_RESTRICTED_PROXY GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY}.
      * 
      * @param extSet
      *            a set of X.509 extensions to be included in the new proxy certificate. Can be null. If
-     *            delegation mode is {@link GSIConstants#CertificateType#GSI_3_RESTRICTED_PROXY
-     *            GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} or {@link GSIConstants#CertificateType#GSI_4_RESTRICTED_PROXY
-     *            GSIConstants.GSI_4_RESTRICTED_PROXY} then
+     *            delegation mode is {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY
+     *            GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY} or {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_RESTRICTED_PROXY
+     *            GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY} then
      *            {@link org.globus.gsi.proxy.ext.ProxyCertInfoExtension ProxyCertInfoExtension} must be
      *            present in the extension set.
      * 
@@ -1009,8 +995,8 @@ public class BouncyCastleCertProcessingFactory {
      * @param issuerCert the issuing certificate of a prospective proxy
      * @param delegType the desired delegation mode
      * @return the appropriate certificate type for proxies or
-     * GSIConstants#CertificateType#UNDEFINED when
-     * GSIConstants#DelegationType#NONE was specified
+     * GSIConstants.CertificateType.UNDEFINED when
+     * GSIConstants.DelegationType.NONE was specified
      * @throws CertificateException when failing to get the certificate type
      * of the issuing certificate
      */

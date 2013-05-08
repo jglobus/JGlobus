@@ -72,6 +72,7 @@ public class GlobusGSSContextTest extends TestCase {
             serverContext = null;
         }
 
+        X509Credential.setDefaultCredential(null);
 
 	GSSManager manager = getGSSManager();
 
@@ -86,7 +87,6 @@ public class GlobusGSSContextTest extends TestCase {
 					      GSSConstants.MECH_OID,
 					      null, 
 					      GSSContext.DEFAULT_LIFETIME);
-
     }
 
     protected void tearDown() throws Exception {
@@ -1005,8 +1005,7 @@ public class GlobusGSSContextTest extends TestCase {
 	    fail("unwrap did not fail as excepted");
 	} catch (GSSException e) {
 	    if (e.getMajor() != GSSException.DEFECTIVE_TOKEN) {
-		e.printStackTrace();
-		fail("Unexpected GSSException");
+		fail("Unexpected GSSException: " + e.getMajor() + " : " + e.getMajorString());
 	    }
 	}
 

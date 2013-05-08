@@ -75,7 +75,7 @@ public class Session {
 
     public HostPort serverAddress = null;
 
-    public static final int DEFAULT_MAX_WAIT = 1000 * 30; // 30 secs
+    public static final int DEFAULT_MAX_WAIT = 1000 * 300; // 300 secs
 
     public static final int DEFAULT_WAIT_DELAY = 2000;
 

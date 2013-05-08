@@ -72,7 +72,6 @@ public class GlobusPathMatchingResourcePatternResolver {
             URL resourceURL = getClass().getClassLoader().getResource(pathUntilWildcard);
             this.mainClassPath = resourceURL.getPath();
             this.locationPattern = Pattern.compile(antToRegexConverter(locationPattern.replaceFirst("classpath:/", "").replaceFirst(pathUntilWildcard, "")));
-            System.err.println("Main classpath: " + this.mainClassPath);
             parseDirectoryStructure(new File(this.mainClassPath));
         } else if (locationPattern.startsWith("file:")) {
             if ((locationPattern.replaceFirst("file:", "").compareTo(getPathUntilWildcard(locationPattern.replaceFirst("file:", ""), true))) == 0) {//Check to see if the pattern is not a pattern

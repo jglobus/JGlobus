@@ -149,4 +149,10 @@ public interface ExtendedGSSContext extends GSSContext {
      *            <code>GSSException.FAILURE</code>
      */
     public Object inquireByOid(Oid oid) throws GSSException;
+
+    /**
+     * Specifies a list of ciphers that will not be used.
+     * @param ciphers The list of banned ciphers.
+     */
+    public void setBannedCiphers(String[] ciphers);
 }

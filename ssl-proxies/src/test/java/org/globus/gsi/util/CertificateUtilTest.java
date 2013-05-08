@@ -271,6 +271,25 @@ public class CertificateUtilTest {
             "CN=DOEGrids CA 1, OU=Certificate Authorities, DC=DOEGrids, DC=org")));
     }
 
+    @Test
+    public void testToPrincipalWithRdnUnknownToJre()
+    {
+        String dn = "/DC=org/DC=terena/DC=tcs/C=FI/PostalCode=02101/ST=Uusimaa/L=Espoo/STREET=P.O. Box " +
+            "405/O=CSC/OU=satellite.csc.fi/CN=liuske.csc.fi";
+        X500Principal principal = CertificateUtil.toPrincipal(dn);
+        String newDn = CertificateUtil.toGlobusID(principal);
+        assertThat(newDn, is(dn));
+    }
+
+    @Test
+    public void testToPrincipalWithUrl() {
+        String dn = "/C=US/ST=UT/L=Salt Lake City/O=The USERTRUST Network"
+                + "/OU=http://www.usertrust.com/CN=UTN-USERFirst-Client Authentication and Email";
+        X500Principal principal = CertificateUtil.toPrincipal(dn);
+        String newDn = CertificateUtil.toGlobusID(principal);
+        assertThat(newDn, is(dn));
+    }
+
     @After
     public void tearDown() {
 
