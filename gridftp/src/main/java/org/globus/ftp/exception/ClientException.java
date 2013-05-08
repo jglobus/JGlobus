@@ -67,6 +67,9 @@ public class ClientException extends FTPException {
 	else return "";
     }
 
+
+    protected int code = UNSPECIFIED;
+
     public ClientException(int code, String message) {
 	super(code, message);
     }

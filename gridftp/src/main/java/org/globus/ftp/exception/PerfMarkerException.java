@@ -39,6 +39,9 @@ public class PerfMarkerException extends FTPException {
 	else return "";
     }
 
+
+    protected int code = UNSPECIFIED;
+
     //this message is not just explanation of the code.
     //it is a custom message informing of particular 
     //conditions of the error.
