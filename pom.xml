@@ -27,8 +27,8 @@
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:git@github.com:jglobus/JGlobus.git</connection>
-		<url>scm:git:git@github.com:jglobus/JGlobus.git</url>
+		<connection>scm:git:git://git@github.com/jglobus/JGlobus.git</connection>
+		<url>scm:git:git://git@github.com/jglobus/JGlobus.git</url>
 		<tag>dev</tag>
 	</scm>
 	<pluginRepositories>
