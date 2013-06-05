@@ -25,8 +25,8 @@ import org.globus.gsi.gssapi.SSLUtil;
 import org.ietf.jgss.GSSContext;
 
 public class GSIGssInputStream extends GssInputStream {
-  
-    // 32Mb 
+
+    // 32Mb
     private static final int MAX_LEN = 32 * 1024 * 1024;
 
     protected byte [] header;
@@ -37,15 +37,17 @@ public class GSIGssInputStream extends GssInputStream {
         this.header = new byte[5];
         this.mode = -1;
     }
-  
+
     protected void readMsg()
         throws IOException {
-        byte [] token = readToken();
-        if (token == null) {
-            this.buff = null;
-        } else {
+        do {
+            byte [] token = readToken();
+            if (token == null) {
+                this.buff = null;
+                break;
+            }
             this.buff = unwrap(token);
-        }
+        } while (buff == null);
         this.index = 0;
     }
 
@@ -82,7 +84,7 @@ public class GSIGssInputStream extends GssInputStream {
             }
         } else if (SSLUtil.isSSLv2HelloPacket(this.header)) {
             this.mode = GssSocket.SSL_MODE;
-            // SSLv2 - assume 2-byte header 
+            // SSLv2 - assume 2-byte header
             // read extra 2 bytes so subtract it from total len
             int len = (((header[0] & 0x7f) << 8) | (header[1] & 0xff)) - 2;
             buf = new byte[this.header.length-1 + len];
