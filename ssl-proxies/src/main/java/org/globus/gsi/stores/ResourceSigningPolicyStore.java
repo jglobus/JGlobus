@@ -76,21 +76,23 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
         if (caPrincipal == null) {
             return null;
         }
-        String name = caPrincipal.getName();
+        String caPrincipalName = caPrincipal.getName();
         long now = System.currentTimeMillis();
         String hash = CertificateIOUtil.nameHash(caPrincipal);
-        Long validCacheTime = validPoliciesCache.get(hash);
-        Long invalidCacheTime = invalidPoliciesCache.get(hash);
+
+        Long validCacheTime = validPoliciesCache.get(caPrincipalName);
+        Long invalidCacheTime = invalidPoliciesCache.get(caPrincipalName);
+
         if ((invalidCacheTime != null) && (now - invalidCacheTime < 10*CACHE_TIME_MILLIS)) {
             return null;
         }
-        if ((validCacheTime == null) || (now - validCacheTime >= CACHE_TIME_MILLIS) || !this.policyMap.containsKey(name)) {
-            loadPolicy(hash);
+        if ((validCacheTime == null) || (now - validCacheTime >= CACHE_TIME_MILLIS) || !this.policyMap.containsKey(caPrincipalName)) {
+            loadPolicy(hash, caPrincipalName);
         }
-        return this.policyMap.get(name);
+        return this.policyMap.get(caPrincipalName);
     }
 
-    private synchronized void loadPolicy(String hash) throws SigningPolicyStoreException {
+    private synchronized void loadPolicy(String hash, String caPrincipalName) throws SigningPolicyStoreException {
 
         String locations = this.parameters.getTrustRootLocations();
         GlobusResource[] resources;
@@ -128,15 +130,15 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
                     logger.warn("Failed to load signing policy: " + filename);
                     logger.debug("Failed to load signing policy: " + filename, e);
                     invalidPoliciesCache.put(filename, now);
-                    invalidPoliciesCache.put(hash, now);
+                    invalidPoliciesCache.put(caPrincipalName, now);
                 }
                 continue;
             }
             found_policy = true;
         }
         if (found_policy) {
-            if (!validPoliciesCache.containsKey(hash)) {
-                invalidPoliciesCache.put(hash, now);
+            if (!validPoliciesCache.containsKey(caPrincipalName)) {
+                invalidPoliciesCache.put(caPrincipalName, now);
             }
             return;
         }
@@ -155,13 +157,13 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
                     logger.warn("Failed to load signing policy: " + filename);
                     logger.debug("Failed to load signing policy: " + filename, e);
                     invalidPoliciesCache.put(filename, now);
-                    invalidPoliciesCache.put(hash, now);
+                    invalidPoliciesCache.put(caPrincipalName, now);
                 }
                 continue;
             }
         }
-        if (!validPoliciesCache.containsKey(hash)) {
-            invalidPoliciesCache.put(hash, now);
+        if (!validPoliciesCache.containsKey(caPrincipalName)) {
+            invalidPoliciesCache.put(caPrincipalName, now);
         }
 
     }
@@ -196,8 +198,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
             for (SigningPolicy policy : policies) {
                 X500Principal caPrincipal = policy.getCASubjectDN();
                 policyMapToLoad.put(caPrincipal.getName(), policy);
-                String hash = CertificateIOUtil.nameHash(caPrincipal);
-                validPoliciesCache.put(hash, now);
+                validPoliciesCache.put(caPrincipal.getName(), now);
             }
         }
     }
