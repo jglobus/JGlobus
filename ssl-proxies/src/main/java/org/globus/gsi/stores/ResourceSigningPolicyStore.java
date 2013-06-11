@@ -53,8 +53,7 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     private final Map<String, Long> invalidPoliciesCache = new HashMap<String, Long>();
     private final Map<String, Long> validPoliciesCache = new HashMap<String, Long>();
     private final static long CACHE_TIME_MILLIS = 3600*1000;
-    private long lastUpdate = 0;
-    
+
     /**
      * Please use the {@link Stores} class to generate Key/Cert stores
      */
