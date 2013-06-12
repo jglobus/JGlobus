@@ -15,9 +15,7 @@
  */
 package org.globus.myproxy;
 
-import org.globus.common.ChainedException;
-
-public class MyProxyException extends ChainedException {
+public class MyProxyException extends Exception {
 
     public MyProxyException(String msg) {
         super(msg);
