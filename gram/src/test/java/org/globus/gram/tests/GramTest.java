@@ -37,6 +37,8 @@ public class GramTest extends TestCase {
 
     private static final int TIMEOUT = 1000*60*2;
 
+    private static boolean ENFORCE_GRAM_SSL_V3 = false;
+
     private static Log logger = 
 	LogFactory.getLog(GramTest.class.getName());
 
@@ -49,6 +51,9 @@ public class GramTest extends TestCase {
 	try {
 	    System.out.println("Current directory = "+ System.getProperty("user.dir"));
 		util = new TestUtil(CONFIG);
+
+        ENFORCE_GRAM_SSL_V3 = Boolean.parseBoolean(util.get("enforce.gram.ssl_v3"));
+
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    System.exit(-1);
@@ -78,21 +83,21 @@ public class GramTest extends TestCase {
     public void testActiveJobs() throws Exception {
 
         GramJob job1 = new GramJob(util.get("job.long"));
-	job1.request(util.get("job.long.contact"));
+        job1.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 
         GramJob job2 = new GramJob(util.get("job.long"));
-	job2.request(util.get("job.long.contact"));
+        job2.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 
         assertEquals(2, Gram.getActiveJobs());
 
         int i = 0;
-	while ( Gram.getActiveJobs() != 0 ) {
-            Thread.sleep(2000); 
+        while (Gram.getActiveJobs() != 0) {
+            Thread.sleep(2000);
             i++;
             if (i == 40) {
                 fail("getActiveJob() did not reported 0 jobs");
             }
-	}
+        }
     }
 
     public void testJobStatusPoll() throws Exception {
@@ -101,7 +106,7 @@ public class GramTest extends TestCase {
 	    GramJob(util.get("job.long"));
 	
 	logger.debug("submitting job in batch mode...");
-	job.request(util.get("job.long.contact"), true);
+	job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"), true);
 	logger.debug("job submitted: " + job.getIDAsString());
 
 	String status = null;
@@ -140,7 +145,7 @@ public class GramTest extends TestCase {
 	    GramJob(util.get("job.long"));
 	
 	logger.debug("submitting job in batch mode...");
-	job.request(util.get("job.long.contact"), true);
+	job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"), true);
 	logger.debug("job submitted: " + job.getIDAsString());
 
 	DoneStatusListener listener = new DoneStatusListener();
@@ -164,7 +169,7 @@ public class GramTest extends TestCase {
 	job.addListener(listener);
 	
 	logger.debug("submitting job in interactive mode...");
-	job.request(util.get("job.long.contact"));
+	job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 	logger.debug("job submitted: " + job.getIDAsString());
 
 	Thread.sleep(5000);
@@ -186,7 +191,7 @@ public class GramTest extends TestCase {
 	job.addListener(listener);
 	
 	logger.debug("submitting job in interactive mode...");
-	job.request(util.get("job.long.contact"));
+	job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 	logger.debug("job submitted: " + job.getIDAsString());
 	
 	if (!listener.waitFor(TIMEOUT)) {
@@ -208,7 +213,7 @@ public class GramTest extends TestCase {
     public void testBadParameter() throws Exception {
 	GramJob job = new GramJob("&(argument=12)");
 	try {
-	    job.request(util.get("job.long.contact"));
+	    job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 	} catch (GramException e) {
 	    if (e.getErrorCode() != GramException.PARAMETER_NOT_SUPPORTED) {
 		e.printStackTrace();
@@ -224,7 +229,7 @@ public class GramTest extends TestCase {
 	job.addListener(listener);
 
 	try {
-	    job.request(util.get("job.long.contact"));
+	    job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 	} catch (GramException e) {
 	    if (e.getErrorCode() != GramException.EXECUTABLE_NOT_FOUND) {
 		e.printStackTrace();
@@ -273,7 +278,7 @@ public class GramTest extends TestCase {
 
 	    GramJob job = new GramJob(rsl.toString());
 	    job.addListener(listener);
-	    job.request(util.get("job.long.contact"));
+	    job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 
 	    if (!listener.waitFor(TIMEOUT)) {
 		fail("Did not get DONE notification");
@@ -357,7 +362,7 @@ public class GramTest extends TestCase {
         GramJob job = new GramJob(util.get("job.long") + "(twoPhase=yes)");
 
         try {
-            job.request(util.get("job.long.contact"));
+            job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 
             fail("Did not throw expected exception");
 	} catch(WaitingForCommitException e) {
@@ -394,7 +399,7 @@ public class GramTest extends TestCase {
         GramJob job = new GramJob(util.get("job.long") + "(twoPhase=yes)");
         
         try {
-            job.request(util.get("job.long.contact"));
+            job.request(ENFORCE_GRAM_SSL_V3, util.get("job.long.contact"));
 	} catch(WaitingForCommitException e) {
             logger.debug("Two phase commit: sending COMMIT_EXTEND signal");
             

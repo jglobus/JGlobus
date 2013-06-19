@@ -227,6 +227,9 @@ public class GramJob implements GRAMConstants {
     /**
      * Submits a job to the specified gatekeeper as an
      * interactive job. Performs limited delegation.
+     * Communication with Gram will be performed using both
+     * "TLSv1", "SSLv3" protocols. i.e forceSSLV3ForGram is set to <code>false</code>.
+     * @see org.globus.gsi.gssapi.GlobusGSSContextImpl
      * 
      * @param contact the resource manager contact.
      * The contact can be specified in number of ways for 1.1.3 gatekeepers:
@@ -252,10 +255,48 @@ public class GramJob implements GRAMConstants {
 	throws GramException, GSSException {
 	Gram.request(contact, this, false);
     }
+
+    /**
+     * Submits a job to the specified gatekeeper as an
+     * interactive job. Performs limited delegation.
+     *
+     * @param forceSSLV3ForGram Communication with GRAM servers will currently only succeed with
+     *                          SSLv3 and a narrow set of cipher suites. So, applications attempting
+     *                          communication with GRAM must set this to true to force the GSSAPI layer to constrain
+     *                          JSSE to SSLv3 and SSL_RSA_WITH_3DES_EDE_CBC_SHA when confidentiality is requested via
+     *                          requestConf() and SSL_RSA_WITH_NULL_SHA otherwise.
+     *                          Also see gss/src/main/java/org/globus/gsi/gssapi/Java_GSI_GSSAPI.html.
+     * @param contact the resource manager contact.
+     * The contact can be specified in number of ways for 1.1.3 gatekeepers:
+     * <br>
+     * host <br>
+     * host:port <br>
+     * host:port/service <br>
+     * host/service <br>
+     * host:/service <br>
+     * host::subject <br>
+     * host:port:subject <br>
+     * host/service:subject <br>
+     * host:/service:subject <br>
+     * host:port/service:subject <br>
+     * For 1.1.2 gatekeepers full contact string must be specifed.
+     *
+     * @throws GramException
+     *         if error occurs during job submission.
+     * @throws GSSException
+     *         if user credentials are invalid.
+     */
+    public void request(boolean forceSSLV3ForGram, String contact)
+            throws GramException, GSSException {
+        Gram.request(contact, this, false, true, forceSSLV3ForGram);
+    }
     
     /**
      * Submits a job to the specified gatekeeper either as
      * an interactive or batch job. Performs limited delegation.
+     * Communication with Gram will be performed using both
+     * "TLSv1", "SSLv3" protocols. i.e forceSSLV3ForGram is set to <code>false</code>.
+     * @see org.globus.gsi.gssapi.GlobusGSSContextImpl
      * 
      * @param contact 
      *        the resource manager contact.
@@ -276,8 +317,39 @@ public class GramJob implements GRAMConstants {
 
     /**
      * Submits a job to the specified gatekeeper either as
+     * an interactive or batch job. Performs limited delegation.
+     *
+     * @param forceSSLV3ForGram Communication with GRAM servers will currently only succeed with
+     *                          SSLv3 and a narrow set of cipher suites. So, applications attempting
+     *                          communication with GRAM must set this to true to force the GSSAPI layer to constrain
+     *                          JSSE to SSLv3 and SSL_RSA_WITH_3DES_EDE_CBC_SHA when confidentiality is requested via
+     *                          requestConf() and SSL_RSA_WITH_NULL_SHA otherwise.
+     *                          Also see gss/src/main/java/org/globus/gsi/gssapi/Java_GSI_GSSAPI.html.
+     * @param contact
+     *        the resource manager contact.
+     * @param batch
+     *        specifies if the job should be submitted as
+     *        a batch job.
+     * @throws GramException
+     *         if error occurs during job submission.
+     * @throws GSSException
+     *         if user credentials are invalid.
+     * @see #request(String) for detailed resource manager
+     *       contact specification.
+     */
+    public void request(boolean forceSSLV3ForGram, String contact, boolean batch)
+            throws GramException, GSSException {
+        Gram.request(contact, this, batch, true, forceSSLV3ForGram);
+    }
+
+    /**
+     * Submits a job to the specified gatekeeper either as
      * an interactive or batch job. It can perform limited
      * or full delegation.
+     * Communication with Gram will be performed using both
+     * "TLSv1", "SSLv3" protocols. i.e forceSSLV3ForGram is set to <code>false</code>.
+     * @see org.globus.gsi.gssapi.GlobusGSSContextImpl
+     *
      *
      * @param contact
      *        the resource manager contact. 
@@ -299,6 +371,39 @@ public class GramJob implements GRAMConstants {
 			boolean limitedDelegation)
 	throws GramException, GSSException {
 	Gram.request(contact, this, batch, limitedDelegation);
+    }
+
+    /**
+     * Submits a job to the specified gatekeeper either as
+     * an interactive or batch job. It can perform limited
+     * or full delegation.
+     *
+     * @param forceSSLV3ForGram Communication with GRAM servers will currently only succeed with
+     *                          SSLv3 and a narrow set of cipher suites. So, applications attempting
+     *                          communication with GRAM must set this to true to force the GSSAPI layer to constrain
+     *                          JSSE to SSLv3 and SSL_RSA_WITH_3DES_EDE_CBC_SHA when confidentiality is requested via
+     *                          requestConf() and SSL_RSA_WITH_NULL_SHA otherwise.
+     *                          Also see gss/src/main/java/org/globus/gsi/gssapi/Java_GSI_GSSAPI.html.
+     * @param contact
+     *        the resource manager contact.
+     * @param batch
+     *        specifies if the job should be submitted as
+     *        a batch job.
+     * @param limitedDelegation
+     *        true for limited delegation, false for
+     *        full delegation.
+     * @throws GramException
+     *         if error occurs during job submission.
+     * @throws GSSException
+     *         if user credentials are invalid.
+     * @see #request(String) for detailed resource manager
+     *       contact specification.
+     */
+    public void request(boolean forceSSLV3ForGram, String contact,
+                        boolean batch,
+                        boolean limitedDelegation)
+            throws GramException, GSSException {
+        Gram.request(contact, this, batch, limitedDelegation, forceSSLV3ForGram);
     }
 
     /**
