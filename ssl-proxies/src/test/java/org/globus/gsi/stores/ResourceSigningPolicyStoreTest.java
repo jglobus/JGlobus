@@ -44,9 +44,6 @@ public class ResourceSigningPolicyStoreTest extends TestCase {
 
     private Log logger = LogFactory.getLog(getClass());
 
-    public ResourceSigningPolicyStoreTest() {
-    }
-
     public void setUp() throws Exception {
         String projectDirectory = System.getProperty("projectDirectory");
 
@@ -70,10 +67,6 @@ public class ResourceSigningPolicyStoreTest extends TestCase {
 
     }
 
-    public void tearDown() throws Exception {
-
-    }
-
     public void testGetSigningPolicyWithOutDNPrincipal() throws Exception {
 
         String sigPolPattern = caCertsLocation + "/*.signing_policy";
@@ -83,6 +76,7 @@ public class ResourceSigningPolicyStoreTest extends TestCase {
         String certPath1 = caCertsLocation + "/ffc3d59b.0";
 
         X509Certificate crt1 = readCertificate(certPath1);
+        Assert.assertNotNull("Unable to read certificate in " + certPath1 ,crt1);
 
         // According to https://github.com/jglobus/JGlobus/issues/102 the second attempt is failing.
         // Therefore we query twice.
@@ -105,6 +99,7 @@ public class ResourceSigningPolicyStoreTest extends TestCase {
         String certPath1 = caCertsLocation + "/e5cc84c2.0";
 
         X509Certificate crt1 = readCertificate(certPath1);
+        Assert.assertNotNull("Unable to read certificate in " + certPath1 ,crt1);
 
         SigningPolicy signingPolicy = sigPolStore.getSigningPolicy(crt1.getSubjectX500Principal());
 
