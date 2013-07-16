@@ -14,10 +14,10 @@
  */
 package org.globus.gsi.proxy.ext;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEREncodable;
-import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
@@ -27,7 +27,7 @@ import org.bouncycastle.asn1.DERTaggedObject;
  * Represents the policy part of the ProxyCertInfo extension. <BR> <PRE>
  * ProxyPolicy ::= SEQUENCE { policyLanguage    OBJECT IDENTIFIER, policy OCTET STRING OPTIONAL } </PRE>
  */
-public class ProxyPolicy implements DEREncodable {
+public class ProxyPolicy implements ASN1Encodable {
 
     /**
      * Impersonation proxy OID
@@ -58,7 +58,7 @@ public class ProxyPolicy implements DEREncodable {
         }
         this.policyLanguage = (DERObjectIdentifier) seq.getObjectAt(0);
         if (seq.size() > 1) {
-            DEREncodable obj = seq.getObjectAt(1);
+            ASN1Encodable obj = seq.getObjectAt(1);
             if (obj instanceof DERTaggedObject) {
                 obj = ((DERTaggedObject) obj).getObject();
             }
@@ -133,7 +133,7 @@ public class ProxyPolicy implements DEREncodable {
      * @return <code>DERObject</code> the encoded representation of the proxy
      *         policy.
      */
-    public DERObject getDERObject() {
+    public ASN1Primitive toASN1Primitive() {
 
         ASN1EncodableVector vec = new ASN1EncodableVector();
 

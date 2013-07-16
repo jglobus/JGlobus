@@ -21,11 +21,13 @@ import java.util.Enumeration;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.DERString;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.X509Name;
 
 /**
@@ -45,6 +47,21 @@ public class X509NameHelper {
     }
 
     /**
+     * Creates an instance using existing {@link X500Name X500Name} 
+     * object. 
+     * This behaves like a copy constructor.
+     *
+     * @param name existing <code>X500Name</code> 
+     */
+    public X509NameHelper(X500Name name) {
+        try {
+            this.seq = (ASN1Sequence)BouncyCastleUtil.duplicate(name.toASN1Primitive());
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /**
      * Creates an instance using existing {@link X509Name X509Name} 
      * object. 
      * This behaves like a copy constructor.
@@ -53,7 +70,7 @@ public class X509NameHelper {
      */
     public X509NameHelper(X509Name name) {
         try {
-            this.seq = (ASN1Sequence)BouncyCastleUtil.duplicate(name.getDERObject());
+            this.seq = (ASN1Sequence)BouncyCastleUtil.duplicate(name.toASN1Primitive());
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -72,8 +89,8 @@ public class X509NameHelper {
      * Appends the specified OID and value pair name component to the end of the
      * current name.
      *
-     * @param oid   the name component oid, e.g. {@link X509Name#CN
-     *              X509Name.CN}
+     * @param oid   the name component oid, e.g. {@link org.bouncycastle.asn1.x500.style.BCStyle#CN
+     *              BCStyle.CN}
      * @param value the value (e.g. "proxy")
      */
     public void add(
@@ -125,10 +142,10 @@ public class X509NameHelper {
      *
      * @return the last name component. Null if there is none.
      */
-    public static ASN1Set getLastNameEntry(X509Name name) {
-        ASN1Sequence seq = (ASN1Sequence) name.getDERObject();
-        int size = seq.size();
-        return (size > 0) ? (ASN1Set) seq.getObjectAt(size - 1) : null;
+    public static ASN1Set getLastNameEntry(X500Name name) {
+        RDN[] rdns = name.getRDNs();
+        int size = rdns.length;
+        return (size > 0) ? (ASN1Set) rdns[size - 1].toASN1Primitive() : null;
     }
 
     /**
@@ -142,7 +159,7 @@ public class X509NameHelper {
         if (name == null) {
             return null;
         }
-        return toString((ASN1Sequence)name.getDERObject());
+        return toString((ASN1Sequence)name.toASN1Primitive());
     }
 
     private static String toString(ASN1Sequence seq) {
@@ -159,14 +176,14 @@ public class X509NameHelper {
             while (ee.hasMoreElements()) {
                 ASN1Sequence s = (ASN1Sequence)ee.nextElement();
                 DERObjectIdentifier oid = (DERObjectIdentifier)s.getObjectAt(0);
-                String sym = (String)X509Name.OIDLookUp.get(oid);
+                String sym = (String)X509Name.DefaultSymbols.get(oid);
                 if (sym == null) {
                     buf.append(oid.getId());
                 } else {
                     buf.append(sym);
                 }
                 buf.append('=');
-                buf.append(((DERString)s.getObjectAt(1)).getString());
+                buf.append(((ASN1String)s.getObjectAt(1)).getString());
                 if (ee.hasMoreElements()) {
                     buf.append('+');
                 }

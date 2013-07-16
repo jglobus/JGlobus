@@ -14,6 +14,7 @@
  */
 package org.globus.gsi.bc;
 
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.globus.gsi.util.CertificateLoadUtil;
 import org.globus.gsi.util.ProxyCertificateUtil;
 
@@ -48,13 +49,13 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.KeyUsage;
@@ -149,7 +150,7 @@ public class BouncyCastleCertProcessingFactory {
         throws IOException, GeneralSecurityException {
 
         ASN1InputStream derin = new ASN1InputStream(certRequestInputStream);
-        DERObject reqInfo = derin.readObject();
+        ASN1Primitive reqInfo = derin.readObject();
         PKCS10CertificationRequest certReq = new PKCS10CertificationRequest((ASN1Sequence) reqInfo);
 
         boolean rs = certReq.verify();
@@ -413,11 +414,11 @@ public class BouncyCastleCertProcessingFactory {
                     X509Extension ext;
 
                     // handle key usage ext
-                    ext = extensions.getExtension(X509Extensions.KeyUsage);
+                    ext = extensions.getExtension(X509Extension.keyUsage);
                     if (ext != null) {
 
                         // TBD: handle this better
-                        if (extSet != null && (extSet.get(X509Extensions.KeyUsage.getId()) != null)) {
+                        if (extSet != null && (extSet.get(X509Extension.keyUsage.getId()) != null)) {
                             String err = i18n.getMessage("keyUsageExt");
                             throw new GeneralSecurityException(err);
                         }
@@ -437,7 +438,7 @@ public class BouncyCastleCertProcessingFactory {
 
                         bits = new DERBitString(bytes, bits.getPadBits());
 
-                        certGen.addExtension(X509Extensions.KeyUsage, ext.isCritical(), bits);
+                        certGen.addExtension(X509Extension.keyUsage, ext.isCritical(), bits);
                     }
                 }
 
@@ -481,7 +482,7 @@ public class BouncyCastleCertProcessingFactory {
         X509NameHelper issuer = new X509NameHelper(issuerDN);
 
         X509NameHelper subject = new X509NameHelper(issuerDN);
-        subject.add(X509Name.CN, (cnValue == null) ? delegDN : cnValue);
+        subject.add(BCStyle.CN, (cnValue == null) ? delegDN : cnValue);
 
         certGen.setSubjectDN(subject.getAsName());
         certGen.setIssuerDN(issuer.getAsName());
@@ -572,7 +573,7 @@ public class BouncyCastleCertProcessingFactory {
         String cnValue) throws IOException, GeneralSecurityException {
 
         ASN1InputStream derin = new ASN1InputStream(certRequestInputStream);
-        DERObject reqInfo = derin.readObject();
+        ASN1Primitive reqInfo = derin.readObject();
         PKCS10CertificationRequest certReq = new PKCS10CertificationRequest((ASN1Sequence) reqInfo);
 
         boolean rs = certReq.verify();
@@ -817,11 +818,11 @@ public class BouncyCastleCertProcessingFactory {
                     X509Extension ext;
 
                     // handle key usage ext
-                    ext = extensions.getExtension(X509Extensions.KeyUsage);
+                    ext = extensions.getExtension(X509Extension.keyUsage);
                     if (ext != null) {
 
                         // TBD: handle this better
-                        if (extSet != null && (extSet.get(X509Extensions.KeyUsage.getId()) != null)) {
+                        if (extSet != null && (extSet.get(X509Extension.keyUsage.getId()) != null)) {
                             String err = i18n.getMessage("keyUsageExt");
                             throw new GeneralSecurityException(err);
                         }
@@ -841,7 +842,7 @@ public class BouncyCastleCertProcessingFactory {
 
                         bits = new DERBitString(bytes, bits.getPadBits());
 
-                        certGen.addExtension(X509Extensions.KeyUsage, ext.isCritical(), bits);
+                        certGen.addExtension(X509Extension.keyUsage, ext.isCritical(), bits);
                     }
                 }
 
@@ -883,7 +884,7 @@ public class BouncyCastleCertProcessingFactory {
         }
         X509NameHelper issuer = new X509NameHelper(issuerDN);
         X509NameHelper subject = new X509NameHelper(issuerDN);
-        subject.add(X509Name.CN, (cnValue == null) ? delegDN : cnValue);
+        subject.add(BCStyle.CN, (cnValue == null) ? delegDN : cnValue);
 
         certGen.setSubjectDN(subject.getAsName());
         certGen.setIssuerDN(issuer.getAsName());
@@ -922,9 +923,9 @@ public class BouncyCastleCertProcessingFactory {
      */
     public X509Certificate loadCertificate(InputStream in) throws IOException, GeneralSecurityException {
         ASN1InputStream derin = new ASN1InputStream(in);
-        DERObject certInfo = derin.readObject();
+        ASN1Primitive certInfo = derin.readObject();
         ASN1Sequence seq = ASN1Sequence.getInstance(certInfo);
-        return new X509CertificateObject(new X509CertificateStructure(seq));
+        return new X509CertificateObject(Certificate.getInstance(seq));
     }
 
     /**

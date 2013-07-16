@@ -500,12 +500,12 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
             while (e.hasMoreElements()) {
                 oid = (DERObjectIdentifier) e.nextElement();
                 proxyExtension = extensions.getExtension(oid);
-                if (oid.equals(X509Extensions.SubjectAlternativeName)
-                        || oid.equals(X509Extensions.IssuerAlternativeName)) {
+                if (oid.equals(X509Extension.subjectAlternativeName)
+                        || oid.equals(X509Extension.issuerAlternativeName)) {
                     // No Alt name extensions - 3.2 & 3.5
                     throw new CertPathValidatorException(
                             "Proxy violation: no Subject or Issuer Alternative Name");
-                } else if (oid.equals(X509Extensions.BasicConstraints)) {
+                } else if (oid.equals(X509Extension.basicConstraints)) {
                     // Basic Constraint must not be true - 3.8
                     BasicConstraints basicExt =
                             CertificateUtil.getBasicConstraints(proxyExtension);
@@ -513,7 +513,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
                         throw new CertPathValidatorException(
                                 "Proxy violation: Basic Constraint CA is set to true");
                     }
-                } else if (oid.equals(X509Extensions.KeyUsage)) {
+                } else if (oid.equals(X509Extension.keyUsage)) {
                     proxyKeyUsage = proxyExtension;
 
                     checkKeyUsage(issuer, proxyExtension);
@@ -543,7 +543,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
     }
 
     private void checkExtension(DERObjectIdentifier oid, X509Extension proxyExtension, X509Extension proxyKeyUsage) throws CertPathValidatorException {
-        if (oid.equals(X509Extensions.KeyUsage)) {
+        if (oid.equals(X509Extension.keyUsage)) {
             // If issuer has it then proxy must have it also
             if (proxyKeyUsage == null) {
                 throw new CertPathValidatorException(
