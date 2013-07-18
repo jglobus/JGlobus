@@ -1,0 +1,287 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+  <head>
+
+    <title>GridShib SAML Tools: Developer Guide</title>
+
+    <!-- indexing information for search engines -->
+    <meta name="author" lang="en-us" content="Tom Scavo">
+    <meta name="copyright" lang="en-us" content="&copy; 2005&ndash;2008 University of Illinois">
+    <meta name="keywords" lang="en-us" content="GridShib, SAML, developer, guide">
+    <meta name="description" lang="en-us" content="Developer Guide for GridShib SAML Tools">
+
+    <!-- server response header entries -->
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+
+    <!-- global style sheets -->
+    <link rel="stylesheet" type="text/css" href="styles/main.css" media="all">
+    <link rel="stylesheet" type="text/css" href="styles/print.css" media="print">
+
+  </head>
+
+  <body>
+
+    <script type="text/javascript" src="scripts/navbar.js"></script>
+
+    <h1>
+      GridShib SAML Tools<br>
+    </h1>
+
+    <p>This is the developer guide for <strong>GridShib SAML Tools</strong>.  See the <a href="readme.html">readme</a> document for more information about GridShib, the GridShib SAML Tools, and other GridShib software components.</p>
+
+    <p><em>GridShib Common</em> is an API for Java developers, packaged as a JAR file and distributed with the GridShib SAML Tools.  GridShib Common includes the <em>GridShib Security Framework</em>, a Java API for producing and consuming X.509-bound SAML tokens.  This document gives a brief introduction to GridShib Common and the GridShib Security Framework.  For a detailed example of an application that leverages GridShib Common, the reader is referred to the <a href="http://viewcvs.globus.org/viewcvs.cgi/gridshib/gt/">GridShib for GT codebase in CVS</a>, which depends heavily on the GridShib Common development framework.</p>
+
+    <p>GridShib is licensed under the Apache License, Version&nbsp;2.0.  Please review the licensing terms of the <a href="LICENSE.txt">GridShib License</a> before developing this software.  Additional licensing information will be found on the <a href="http://gridshib.globus.org/download.html">GridShib Downloads</a> page.</p>
+
+    <p><strong>Contents</strong></p>
+
+    <ol>
+      <li>
+        <a href="#deploying-gridshib-common">Deploying GridShib Common</a>
+        <ol>
+          <li><a href="#deploy-example">A deployment example</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#configuring-gridshib-common">Configuring GridShib Common</a>
+        <ol>
+          <li><a href="#config-example">A configuration example</a></li>
+          <li><a href="#config-example2">Another configuration example</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#using-gridshib-common">Using GridShib Common</a>
+        <ol>
+          <li><a href="#GlobusSAMLCredential">Class GlobusSAMLCredential</a></li>
+          <li><a href="#GridShibSecurityTest">Unit test GridShibSecurityTest</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#using-ant">Using the Ant Build File</a>
+        <ol>
+          <li><a href="#create-api-docs">Creating API documentation</a></li>
+          <li><a href="#compile-java-source">Compiling Java source files</a></li>
+          <li><a href="#run-unit-tests">Running the unit tests</a></li>
+          <li><a href="#execute-java-classes">Executing Java class files</a></li>
+        </ol>
+      </li>
+    </ol>
+
+    <h2><a name="deploying-gridshib-common">Deploying GridShib Common</a></h2>
+
+    <p>To deploy GridShib Common, place <code>gridshib-common-X_X_X.jar</code> and <code>globus-opensaml-1.1.jar</code> in your Java classpath.  These JAR files appear in the <code>$GRIDSHIB_HOME/lib</code> directory as a result of running '<code>ant install</code>' on the default build file (see the <a href="install.html">Installation Notes</a> for details).  A number of other JAR files in the <code>lib</code> directory are required.  The following is a minimal set of JAR dependencies:</p>
+
+    <ul>
+      <li><code>JGlobus-Core-2.0.1.jar</code></li>
+      <li><code>commons-codec-1.3.jar</code></li>
+      <li><code>commons-logging.jar</code></li>
+      <li><code>jce-jdk13-145.jar</code></li>
+      <li><code>log4j-1.2.8.jar</code></li>
+      <li><code>xalan.jar</code></li>
+      <li><code>xercesImpl.jar</code></li>
+      <li><code>xml-apis.jar</code></li>
+      <li><code>xmlsec-1.2.1.jar</code></li>
+    </ul>
+
+    <p>In addition, the following three JAR files must be <em>endorsed</em>:</p>
+
+    <ul>
+      <li><code>xalan.jar</code></li>
+      <li><code>xercesImpl.jar</code></li>
+      <li><code>xml-apis.jar</code></li>
+    </ul>
+
+    <p>Endorsement of these JARs is an OpenSAML requirement, not a GridShib requirement.  Please refer to the <a href="http://www.opensaml.org/">OpenSAML web site</a> for instructions how to endorse these JAR files.</p>
+
+    <h3><a name="deploy-example">A deployment example</a></h3>
+
+    <p>For example, to deploy GridShib Common to a tomcat instance, copy all of the above JARs to the <code>WEB-INF/lib</code> directory of the target web application.  Alternatively, if you want GridShib Common to be available to multiple web applications, copy the JARs to tomcat's <code>common/lib</code> directory.  Please refer to your tomcat documentation for the exact location of common library files.</p>
+
+    <p>Likewise the three JAR files listed above must be endorsed in tomcat.  Exactly how that's done depends on the version of tomcat.  Again, refer to your tomcat documentation (or the OpenSAML documentation) for instructions how to endorse JAR files in a tomcat deployment.</p>
+
+    <h2><a name="configuring-gridshib-common">Configuring GridShib Common</a></h2>
+
+    <p>Developers will want to <a href="install.html#configuration">configure</a> a custom bootstrap properties file since no such file is included in the GridShib Common JAR file.  The bootstrap properties file is determined in one of three ways (in order of precedence):</p>
+
+    <ol>
+      <li>Set the system property <code>org.globus.gridshib.config</code> to the (system dependent) absolute path of a bootstrap properties file.</li>
+      <li>Create the file <code>$HOME/.globus/gridshib-bootstrap.properties</code> (or <code>%USERPROFILE%\.globus\gridshib-bootstrap.properties</code> on Windows systems).</li>
+      <li>Create the resource <code>/org/globus/gridshib/resource/gridshib-bootstrap.properties</code> on the classpath.</li>
+    </ol>
+
+    <p>The <code>org.globus.gridshib.config</code> system property may be set on the <code>ant</code> or <code>java</code> command line using the <code>-D</code> option.  Alternatively, you can use the <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/System.html#setProperty(java.lang.String,%20java.lang.String)">System.setProperty(String,String)</a> method to hardcode the <code>org.globus.gridshib.config</code> system property.  See the <a href="http://gridshib.globus.org/docs/gridshib-saml-tools-0.5.0/api/org/globus/gridshib/config/BootstrapConfigLoader.html">BootstrapConfigLoader</a> API doc for more information about bootstrap properties and the bootstrap properties file.</p>
+
+    <h3><a name="config-example">A configuration example</a></h3>
+
+    <p><a href="http://gridshib.globus.org/docs/gridshib-gt/readme.html">GridShib for GT</a> (GS4GT) depends heavily on the Java API in GridShib Common.  When GS4GT is deployed into Java WS Core, the following bootstrap properties file is created and stored as a resource (org/globus/gridshib/resource/gridshib-bootstrap.properties) on the GT classpath:</p>
+
+<pre>  gridshib.home=${GLOBUS_LOCATION}
+  gridshib.logConfigPath=share/gridshib-gt-core-0_6_2/gs4gt-log4j.properties
+  gridshib.identityAttributesPath=share/gridshib-gt-core-0_6_2/identity-attributes.txt
+  gridshib.SecurityContextImpl=org.globus.gridshib.gt.security.GS4GTSecurityContext</pre>
+
+    <p>In the case of GS4GT, the other bootstrap properties are not necessary.  In particular, the <code>gridshib.SAMLToolsConfigPath</code> bootstrap property is not necessary since the command-line tools are not part of GridShib Common.</p>
+
+    <p>Note that the above bootstrap properties file uses relative paths (which are always relative to <code>gridshib.home</code>).  This permits GS4GT to be installed from binaries, where the paths are precomputed and stored in binary GAR files.</p>
+
+    <h3><a name="config-example2">Another configuration example</a></h3>
+
+    <p>The <a href="http://gridshib.globus.org/docs/gridshib-saml-tools/readme.html">GridShib SAML Tools</a> (GS-ST) are bundled with GS4GT.  When GS4GT is deployed into Java WS Core, the GS-ST command-line tools are deployed into Java WS Core as well.  The following bootstrap properties file is created and stored as a file in the filesystem:</p>
+
+<pre>  gridshib.saml.basedir=etc/gridshib-saml-tools-X_X_X
+  gridshib.logConfigPath=${gridshib.saml.basedir}/log4j.properties
+  gridshib.SAMLToolsConfigPath=${gridshib.saml.basedir}/my-saml-issuer.properties
+  gridshib.certPath=${gridshib.saml.basedir}/meaningless-ca/eec.pem
+  gridshib.keyPath=${gridshib.saml.basedir}/meaningless-ca/eec-key.pem
+  gridshib.identityAttributesPath=${gridshib.saml.basedir}/identity-attributes.txt</pre>
+
+    <p>To use the GS-ST command-line tools deployed in Java WS Core, the following environment variables are required:</p>
+
+<pre>  UNIX:
+  $ <b>export GRIDSHIB_HOME=$GLOBUS_LOCATION</b>
+  $ <b>export GRIDSHIB_SAML_BASEDIR=$GRIDSHIB_HOME/etc/gridshib-saml-tools-X_X_X</b>
+  $ <b>export GRIDSHIB_CONFIG=$GRIDSHIB_SAML_BASEDIR/gridshib-bootstrap.properties</b></pre>
+
+<pre>  Windows:
+  &gt; <b>set GRIDSHIB_HOME=%GLOBUS_LOCATION%</b>
+  &gt; <b>set GRIDSHIB_SAML_BASEDIR=%GRIDSHIB_HOME%\etc\gridshib-saml-tools-X_X_X</b>
+  &gt; <b>set GRIDSHIB_CONFIG=%GRIDSHIB_SAML_BASEDIR%\gridshib-bootstrap.properties</b></pre>
+
+    <p>With this configuration, all of the GS-ST command-line tools are available without having to separately download and install GS-ST.</p>
+
+    <h2><a name="using-gridshib-common">Using GridShib Common</a></h2>
+
+    <p>The GridShib SAML Tools exposes a Java API for developers called <em>GridShib Common</em>.  Included in GridShib Common are the <em>GridShib Security Framework</em>, the <em>Globus SAML Library</em>, and other Java classes used across various GridShib software components.</p>
+
+    <p>The GridShib Security Framework is used by the SAML Tools to bind extensions to X.509 proxy certificates and to issue X.509-bound SAML assertions, and by GridShib for GT to consume these tokens.  Below we highlight some of the more important classes that make up the GridShib Security Framework.</p>
+
+    <h3><a name="GlobusSAMLCredential">Class GlobusSAMLCredential</a></h3>
+
+    <p>Perhaps the most important class in the GridShib Security Framework is the high-level class <a href="http://gridshib.globus.org/docs/gridshib-saml-tools-0.5.0/api/org/globus/gridshib/security/x509/GlobusSAMLCredential.html">GlobusSAMLCredential</a>.  Conceptually, a <em>Globus SAML Credential</em> is a special type of Globus Credential containing an X.509-bound SAML token.  A Globus SAML Credential can be used anywhere that an ordinary Globus Credential is used since the SAML token is bound to a non-critical X.509 extension.  If a particular relying party doesn't know how to process the SAML extension, it is simply ignored.</p>
+
+    <p>See the source of <a href="http://viewcvs.globus.org/viewcvs.cgi/gridshib/saml/common/java/tests/org/globus/gridshib/security/x509/GlobusSAMLCredentialTest.java?view=log">GlobusSAMLCredentialTest</a> for a detailed coding example.</p>
+
+    <h3><a name="GridShibSecurityTest">Unit test GridShibSecurityTest</a></h3>
+
+    <p><code>GridShibSecurityTest</code> is a low-level, end-to-end unit test that illustrates how to do the following:</p>
+
+    <ol>
+      <li>Produce an X.509-bound SAML token and bind it to a proxy certificate.</li>
+      <li>Initialize an entity mapping of trusted SAML issuers.</li>
+      <li>Consume the X.509-bound SAML token and populate a custom security context.</li>
+    </ol>
+
+    <p>The X.509-bound SAML token asserts a name identifier, an authentication context, and a couple of attributes.  The token is bound to an otherwise ordinary X.509 proxy certificate.</p>
+
+    <p>The entity mapping maps a trusted SAML issuer (<code>entityID</code>) to a certificate issuer (<code>DN</code>).  A simple boolean trust model is implemented; that is, either you trust the entity to issue and bind SAML tokens or you don't.</p>
+
+    <p>The X.509-bound SAML token is consumed if the token is self-issued (which it is) and if the issuer is a trusted issuer (i.e., if the <code>entityID</code> is in the entity mapping).  A custom security context (a subclass of <a href="http://viewcvs.globus.org/viewcvs.cgi/gridshib/saml/common/java/src/org/globus/gridshib/security/SAMLSecurityContext.java?view=log">SAMLSecurityContext</a>) is populated with the security information obtained from the SAML token.</p>
+
+    <p>See the source of <a href="http://viewcvs.globus.org/viewcvs.cgi/gridshib/saml/common/java/tests/org/globus/gridshib/security/GridShibSecurityTest.java?view=log">GridShibSecurityTest</a> for details.</p>
+
+    <h2><a name="using-ant">Using the Ant Build File</a></h2>
+
+    <p>Developers compile and run Java code using ant.  An ant build file with targets for developers is included with the distribution.  The more important targets are illustrated in the following subsections.</p>
+
+    <h3><a name="create-api-docs">Creating API documentation</a></h3>
+
+    <p>Documentation for the GridShib Common API is available online:</p>
+
+    <blockquote>
+      <div><a href="http://gridshib.globus.org/docs/gridshib-saml-tools-0.5.0/api/">http://gridshib.globus.org/docs/gridshib-saml-tools-0.5.0/api/</a></div>
+    </blockquote>
+
+    <p>To create offline javadoc documentation, run '<code>ant create-docs</code>' on the GridShib SAML Tools build file:</p>
+
+<pre>  UNIX:
+  $ <strong>cd $GRIDSHIB_HOME</strong>
+  $ <strong>ant create-docs</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>cd %GRIDSHIB_HOME%</strong>
+  &gt; <strong>ant create-docs</strong></pre>
+
+    <p>The resulting javadoc documentation will be found at location <code>file://<i>GRIDSHIB_HOME</i>/doc/api/</code> where <code>GRIDSHIB_HOME</code> refers to the absolute path of the GridShib installation directory.  For example:</p>
+
+<pre>  UNIX:
+  <strong>file:///usr/local/gridshib-saml-tools-X_X_X/doc/api/index.html</strong></pre>
+
+<pre>  Windows:
+  <strong>file:/C:/gridshib/gridshib-saml-tools-X_X_X/doc/api/index.html</strong></pre>
+
+    <p>The corresponding classes are contained in JAR file <code>gridshib-common-X_X_X.jar</code> in the lib directory.</p>
+
+    <h3><a name="compile-java-source">Compiling Java source files</a></h3>
+
+    <p>To compile the source code in the src directory, run '<code>ant compile</code>' on the build file:</p>
+
+<pre>  UNIX:
+  $ <strong>cd $GRIDSHIB_HOME</strong>
+  $ <strong>ant compile</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>cd %GRIDSHIB_HOME%</strong>
+  &gt; <strong>ant compile</strong></pre>
+
+    <p>To compile the source code in the tests directory, run '<code>ant compile-tests</code>' on the build file:</p>
+
+<pre>  UNIX:
+  $ <strong>cd $GRIDSHIB_HOME</strong>
+  $ <strong>ant compile-tests</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>cd %GRIDSHIB_HOME%</strong>
+  &gt; <strong>ant compile-tests</strong></pre>
+
+    <p>The <code>"compile-tests"</code> target depends on the <code>"compile"</code> target, so compiling the unit tests automatically compiles <strong>all</strong> of the GridShib SAML Tools source code.</p>
+
+    <h3><a name="run-unit-tests">Running the unit tests</a></h3>
+
+    <p>To compile and execute the GridShib SAML Tools unit tests, run '<code>ant run-tests</code>' on the build file:</p>
+
+<pre>  UNIX:
+  $ <strong>cd $GRIDSHIB_HOME</strong>
+  $ <strong>ant run-tests</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>cd %GRIDSHIB_HOME%</strong>
+  &gt; <strong>ant run-tests</strong></pre>
+
+    <p>Minimal test output will be written to <code>$GRIDSHIB_HOME</code> (or <code>%GRIDSHIB_HOME%</code> under Windows).  See the log file ($GRIDSHIB_HOME/logs/saml-tools.log) for detailed debug output.</p>
+
+    <h3><a name="execute-java-classes">Executing Java class files</a></h3>
+
+    <p>To execute an arbitrary Java class, run '<code>ant run</code>' on the build file.  For example, to run the SAML Assertion Issuer Tool, type</p>
+
+<pre>  UNIX:
+  $ <strong>cd $GRIDSHIB_HOME</strong>
+  $ <strong>ant -Dclassname=org.globus.gridshib.tool.saml.SAMLAssertionIssuerTool \
+      -Doptions="--debug --user trscavo --sender-vouches" run</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>cd %GRIDSHIB_HOME%</strong>
+  &gt; <strong>ant -Dclassname=org.globus.gridshib.tool.saml.SAMLAssertionIssuerTool
+      -Doptions="--debug --user trscavo --sender-vouches" run</strong></pre>
+
+    <p>See the GridShib SAML Tools build file for other, less frequently used execution targets.</p>
+
+    <hr>
+
+    <address>
+      The GridShib Project<br>
+      <a href="http://gridshib.globus.org/">http://gridshib.globus.org/</a>
+    </address>
+
+    <p>
+      <a href="http://validator.w3.org/check?uri=referer"><img
+         src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
+    </p>
+
+  </body>
+
+</html>

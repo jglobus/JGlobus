@@ -1,0 +1,394 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+  <head>
+
+    <title>GridShib SAML Tools: Install</title>
+
+    <!-- indexing information for search engines -->
+    <meta name="author" lang="en-us" content="Tom Scavo">
+    <meta name="copyright" lang="en-us" content="&copy; 2005&ndash;2008 University of Illinois">
+    <meta name="keywords" lang="en-us" content="GridShib, SAML, install">
+    <meta name="description" lang="en-us" content="Installation notes for GridShib SAML Tools">
+
+    <!-- server response header entries -->
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+
+    <!-- global style sheets -->
+    <link rel="stylesheet" type="text/css" href="styles/main.css" media="all">
+    <link rel="stylesheet" type="text/css" href="styles/print.css" media="print">
+
+  </head>
+
+  <body>
+
+    <script type="text/javascript" src="scripts/navbar.js"></script>
+
+    <h1>
+      GridShib SAML Tools<br>
+    </h1>
+
+    <p>This is the install document for <strong>GridShib SAML Tools</strong>.  See the <a href="readme.html">readme</a> document for more information about GridShib, the GridShib SAML Tools, and other GridShib software components.</p>
+
+    <p>GridShib SAML Tools is a standalone software package.  The only requirements for installation are Java&nbsp;1.4.2 (or later) and Ant&nbsp;1.6.2 (or later).  The popular tool openssl is useful (for inspecting the contents of certificates) but is not required.</p>
+
+    <p>GridShib is licensed under the Apache License, Version&nbsp;2.0.  Please review the licensing terms of the <a href="LICENSE.txt">GridShib License</a> before installing this software.  Additional licensing information will be found on the <a href="http://gridshib.globus.org/download.html">GridShib Downloads</a> page.</p>
+
+    <p><strong>Contents</strong></p>
+
+    <ol>
+      <li><a href="#getting_started">Getting Started</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#testing">Testing</a></li>
+      <li><a href="#logging_error_handling">Logging and Error Handling</a></li>
+      <li>
+        <a href="#configuration">Configuration</a>
+        <ol>
+          <li><a href="#boot_props">Bootstrap properties</a></li>
+          <li><a href="#boot_props_file">Bootstrap properties file</a></li>
+        </ol>
+      </li>
+    </ol>
+
+    <h2><a name="getting_started">Getting Started</a></h2>
+
+    <p>GridShib SAML Tools was previously available here:</p>
+
+    <ul>
+      <li><a href="http://gridshib.globus.org/download.html#saml-tools">http://gridshib.globus.org/download.html#saml-tools</a></li>
+    </ul>
+
+    <p>But the most recent version maintained for TeraGrid Science Gateway use is here:</p>
+
+    <ul>
+      <li><a href="https://sourceforge.net/projects/cilogon/files">https://sourceforge.net/projects/cilogon/files</a></li>
+    </ul>
+
+    <p>Choose your preferred download format (ZIP or GZIP), download the distribution file, and continue with the <a href="#installation">Installation</a> and <a href="#testing">Testing</a> sections.  As necessary, replace <code>X_X_X</code> in any examples with the version you're using.</p>
+
+    <h2><a name="installation">Installation</a></h2>
+
+    <blockquote><div style="font-style: italic"><strong>Note:</strong> When installing the GridShib SAML Tools, choose an installation directory that does <strong>not</strong> have any spaces in its path name; otherwise the commands below will fail.</div></blockquote>
+
+    <p>To install the GridShib SAML Tools, download the distribution file into a working directory (e.g., /tmp/gridshib-saml-tools-X_X_X-src.tar.gz) and perform the following two-step installation process:</p>
+
+    <ol>
+      <li>
+      <p>Unpack the GridShib SAML Tools distribution file.  For example, on UNIX systems type:</p>
+
+<pre>  UNIX:
+  $ <strong>cd /usr/local</strong>
+  $ <strong>gunzip /tmp/gridshib-saml-tools-X_X_X-src.tar.gz</strong>
+  $ <strong>tar xvf /tmp/gridshib-saml-tools-X_X_X-src.tar</strong></pre>
+
+      <p>In the case of Windows, simply double-click the ZIP archive to install the distribution.  In what follows, we assume the GridShib SAML Tools are installed in directory c:\gridshib on Windows systems.</p>
+      </li>
+
+      <li>
+      <p>Run '<code>ant install</code>' on the GridShib SAML Tools build file.  This ant target creates some JAR files and runs a test script.  For example, on UNIX or Windows systems (resp.) type:</p>
+
+<pre>  UNIX:
+  $ <strong>cd /usr/local/gridshib-saml-tools-X_X_X</strong>
+  $ <strong>ant install</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>cd c:\gridshib\gridshib-saml-tools-X_X_X</strong>
+  &gt; <strong>ant install</strong></pre>
+      </li>
+    </ol>
+
+    <p>As a result of step&nbsp;2 above, the following operations are performed by the install script:</p>
+
+    <ol style="list-style-type: lower-roman">
+      <li>A bootstrap properties file is written to the src/org/globus/gridshib/resource directory.</li>
+      <li>A log4j properties file is written to the etc directory.</li>
+      <li>Three JAR files (gridshib-saml-tools-X_X_X.jar, gridshib-common-X_X_X.jar, and globus-opensaml-1.1.jar) are created and written to the lib directory.</li>
+      <li>A logs directory is created and an empty log file (saml-tools.log) is created.</li>
+      <li>A test script is run and a default <code>holder-of-key</code> SAML assertion is written to the console (test&nbsp;#1).</li>
+      <li>A test script is run and an explicit (but identical) <code>holder-of-key</code> SAML assertion is written to the console (test&nbsp;#2).</li>
+      <li>A test script issues a <code>sender-vouches</code> SAML assertion, which is also written to the console (test&nbsp;#3).</li>
+      <li>The test script (test&nbsp;#4) issues another SAML assertion and writes it to file testassertion.xml in the home directory.</li>
+      <li>The test script (test&nbsp;#5) binds the SAML assertion issued at the previous step to an X.509 proxy certificate and writes the certificate to file testproxy.pem in the home directory.</li>
+      <li>The test script (test&nbsp;#6) issues another SAML assertion, encodes it as a DER-encoded ASN.1 structure and writes this structure to file testextension.der in the home directory.</li>
+      <li>The test script (test&nbsp;#7) binds the DER-encoded ASN.1 structure created at the previous step to an X.509 proxy certificate and writes the certificate to file testproxy2.pem in the home directory.</li>
+      <li>The test script (test&nbsp;#8) issues yet another SAML assertion, binds it to an X.509 proxy certificate, and writes the certificate to file testproxy3.pem in the home directory.</li>
+      <li>The test script (test&nbsp;#9) issues a SAML assertion similar to one issued by a TeraGrid Science Gateway.  The script binds the assertion to an X.509 proxy certificate and writes the certificate to file testgatewayproxy.pem in the home directory.</li>
+    </ol>
+
+    <p>Installation of the GridShib SAML Tools is now complete.</p>
+
+    <h2><a name="testing">Testing</a></h2>
+
+    <p>To use any of the command-line scripts, an environment variable is required:</p>
+
+<pre>  UNIX:
+  $ <strong>export GRIDSHIB_HOME=/usr/local/gridshib-saml-tools-X_X_X</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>set GRIDSHIB_HOME=c:\gridshib\gridshib-saml-tools-X_X_X</strong></pre>
+
+    <p>As you can see, the <code>GRIDSHIB_HOME</code> environment variable is set to the absolute path of the installation directory.</p>
+
+    <p>We are now ready to start testing.  As indicated in the previous section, the installer runs a test script that issues assertions and certificates.  Before proceeding, make sure the test files (testassertion.xml, testproxy.pem, testextension.der, testproxy2.pem, and testproxy3.pem) were actually created in the GridShib home directory.  The SAML assertion (testassertion.xml) is an ordinary text file that can be read with any text editor.  The proxy certificates can be viewed with openssl commands such as the following:</p>
+
+<pre>  UNIX:
+  $ <strong>openssl x509 -text -in $GRIDSHIB_HOME/testproxy.pem</strong>
+  $ <strong>openssl x509 -text -noout -in $GRIDSHIB_HOME/testproxy2.pem</strong>
+  $ <strong>openssl x509 -text -noout -certopt ext_parse -in $GRIDSHIB_HOME/testproxy3.pem</strong></pre>
+
+    <p>In addition to openssl, GridShib provides <a href="user-guide.html#using_saml_info_tool">a command-line tool that inspects Globus credentials for SAML content</a>.  Let's use this tool to inspect the test proxy certificates.  Depending on your platform, type one of the following commands:</p>
+
+<pre>  UNIX:
+  $ <strong>$GRIDSHIB_HOME/bin/gridshib-saml-info --verbose \
+      --infile $GRIDSHIB_HOME/testproxy3.pem</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>%GRIDSHIB_HOME%\bin\gridshib-saml-info --verbose
+      --infile %GRIDSHIB_HOME%\testproxy3.pem</strong></pre>
+
+<pre>  X509Certificate {
+    (output omitted)
+  }
+  X509Certificate {
+    (output omitted)
+  }
+  SAMLAssertion {
+    &lt;Assertion
+      xmlns="urn:oasis:names:tc:SAML:1.0:assertion"
+      xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion"
+      xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      AssertionID="_0da90d5af5898cbf979138bcef9110d9"
+      IssueInstant="2008-01-07T15:48:25.306Z"
+      Issuer="CN=gridshib.example.org,O=example.org,C=US"
+      MajorVersion="1" MinorVersion="1"&gt;
+      &lt;AuthenticationStatement
+        AuthenticationInstant="2008-01-07T15:48:24.845Z"
+        AuthenticationMethod="urn:oasis:names:tc:SAML:1.0:am:unspecified"&gt;
+        &lt;Subject&gt;
+          &lt;NameIdentifier
+            Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"&gt;
+            trscavo
+          &lt;/NameIdentifier&gt;
+          &lt;SubjectConfirmation&gt;
+            &lt;ConfirmationMethod&gt;
+              urn:oasis:names:tc:SAML:1.0:cm:sender-vouches
+            &lt;/ConfirmationMethod&gt;
+          &lt;/SubjectConfirmation&gt;
+        &lt;/Subject&gt;
+      &lt;/AuthenticationStatement&gt;
+      &lt;AttributeStatement&gt;
+        &lt;Subject&gt;
+          &lt;NameIdentifier
+            Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"&gt;
+            trscavo
+          &lt;/NameIdentifier&gt;
+          &lt;SubjectConfirmation&gt;
+            &lt;ConfirmationMethod&gt;
+              urn:oasis:names:tc:SAML:1.0:cm:sender-vouches
+            &lt;/ConfirmationMethod&gt;
+          &lt;/SubjectConfirmation&gt;
+        &lt;/Subject&gt;
+        &lt;Attribute
+          AttributeName="urn:oid:1.3.6.1.4.1.5923.1.5.1.1"
+          AttributeNamespace="urn:mace:shibboleth:1.0:attributeNamespace:uri"&gt;
+          &lt;AttributeValue xsi:type="xsd:string"&gt;
+            http://www.nanohub.org
+          &lt;/AttributeValue&gt;
+          &lt;AttributeValue xsi:type="xsd:string"&gt;
+            http://www.gisolve.org
+          &lt;/AttributeValue&gt;
+        &lt;/Attribute&gt;
+        &lt;Attribute
+          AttributeName="urn:oid:2.5.4.6"
+          AttributeNamespace="urn:mace:shibboleth:1.0:attributeNamespace:uri"&gt;
+          &lt;AttributeValue xsi:type="xsd:string"&gt;
+            US
+          &lt;/AttributeValue&gt;
+        &lt;/Attribute&gt;
+      &lt;/AttributeStatement&gt;
+    &lt;/Assertion&gt;
+  }
+  (untrusted) SAMLIdentity {
+    issuer='CN=gridshib.example.org,O=example.org,C=US'
+    nameID='&lt;NameIdentifier
+              xmlns="urn:oasis:names:tc:SAML:1.0:assertion"
+              Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"&gt;
+              trscavo
+            &lt;/NameIdentifier&gt;'
+  }
+  (untrusted) SAMLAuthnContext {
+    issuer='CN=gridshib.example.org,O=example.org,C=US'
+    authnMethod='urn:oasis:names:tc:SAML:1.0:am:unspecified'
+    authnInstant='2008-01-07T15:48:24Z'
+    ipAddress='null'
+    dnsName='null'
+  }
+  (untrusted) BasicAttribute {
+    issuer='CN=gridshib.example.org,O=example.org,C=US'
+    name='urn:oid:2.5.4.6'
+    nameFormat='urn:mace:shibboleth:1.0:attributeNamespace:uri'
+    value #1='US'
+  }
+  (untrusted) BasicAttribute {
+    issuer='CN=gridshib.example.org,O=example.org,C=US'
+    name='urn:oid:1.3.6.1.4.1.5923.1.5.1.1'
+    nameFormat='urn:mace:shibboleth:1.0:attributeNamespace:uri'
+    value #1='http://www.gisolve.org'
+    value #2='http://www.nanohub.org'
+  }</pre>
+
+    <p>The string representation of the X.509 proxy certificate chain has been omitted in the above output for brevity.  The other test credentials (testproxy.pem and testproxy2.pem) may be inspected similarly.</p>
+
+    <h2><a name="logging_error_handling">Logging and Error Handling</a></h2>
+
+    <p>By default, log output is written to file <code>saml-tools.log</code> in the <code>logs</code> directory:</p>
+
+<pre>  UNIX:
+  $ <strong>more $GRIDSHIB_HOME/logs/saml-tools.log</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>more < %GRIDSHIB_HOME%\logs\saml-tools.log</strong></pre>
+
+    <p>Also, the default log level is set to INFO in the log configuration file:</p>
+
+<pre>  UNIX:
+  $ <strong>more $GRIDSHIB_HOME/etc/log4j.properties</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>more < %GRIDSHIB_HOME%\etc\log4j.properties</strong></pre>
+
+    <p>You can change the log configuration by modifying the <code>log4j.properties</code> file.  For example, if the GridShib SAML Tools will be used by multiple users, you may want to log to individual home directories by setting the following property in the <code>log4j.properties</code> file:</p>
+
+<pre>  log4j.appender.R.File=${user.home}/logs/saml-tools.log</pre>
+
+    <p>Also, you can either change the log level in the configuration file or set the log level to DEBUG on-the-fly:</p>
+
+<pre>  UNIX:
+  $ <strong>$GRIDSHIB_HOME/bin/gridshib-saml-extract --debug \
+      --infile $GRIDSHIB_HOME/testproxy.pem</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>%GRIDSHIB_HOME%\bin\gridshib-saml-extract --debug
+      --infile %GRIDSHIB_HOME%\testproxy.pem</strong></pre>
+
+    <p>The <span class="command-line-option">--debug</span> command-line option may be added to any invocation of a GridShib tool or client.  Doing so affects the verbosity of error messages written to the log file.  If you set the log level to DEBUG in the log4j.properties file, the <span class="command-line-option">--debug</span> command-line option has no effect.</p>
+
+    <p>In addition to logging, the scripts write short error messages to the terminal (stderr) by default.  To run the script in quiet mode, add the <span class="command-line-option">--quiet</span> option to any command-line invocation.  In quiet mode, if the command fails, it will return a nonzero error code but it will not send any output to stderr.  Instead, all output will be written to the log file.</p>
+
+    <p>Normally, the order of options on the command line is irrelevant.  If there is a command-line parsing error, however, the parser stops parsing at the point the error occurs.  Therefore, it's a good habit to put important options (such as <span class="command-line-option">--debug</span> and <span class="command-line-option">--quiet</span>) <strong>first</strong>, otherwise they may be ignored in the event an error occurs.</p>
+
+    <h2><a name="configuration">Configuration</a></h2>
+
+    <p>This section shows how to configure the GridShib SAML Tools.  The configuration options outlined here affect the use of the command-line tools only.  Java API developers should consult the <a href="dev-guide.html#configuring-gridshib-common">Developer Guide</a> for configuration options.</p>
+
+    <blockquote><div style="font-style: italic"><strong>Note:</strong> We recommend moving on to the <a href="user-guide.html">User Guide</a> and trying the examples before modifying the default bootstrap properties. If you do alter the configuration, be sure to re-install the SAML Tools as shown previously.</div></blockquote>
+
+    <p>Users of the command-line tools have two levels of configuration.  The low-level bootstrap properties are discussed in this section, while the high-level configuration properties for the SAML Tools are covered in the <a href="user-guide.html#configuring_saml_tools">configuration section of the User Guide</a>.</p>
+
+    <h3><a name="boot_props">Bootstrap properties</a></h3>
+
+    <p>The build may be configured by modifying the build.properties file in the home directory.  In particular, the following <em>bootstrap properties</em> are configurable:</p>
+
+    <dl>
+      <dt><code>gridshib.logConfigPath</code> (<strong>required</strong>)</dt>
+      <dd>Path to the log configuration file (<strong>default:</strong> etc/log4j.properties)</dd>
+
+      <dt><code>gridshib.SAMLToolsConfigPath</code> (<strong>required</strong>)</dt>
+      <dd>Path to the configuration properties file for the GridShib SAML Tools (<strong>default:</strong> etc/gridshib-saml-tools-config.properties)</dd>
+
+      <dt><code>gridshib.certPath</code> (<strong>required</strong>)</dt>
+      <dd>Path to the certificate of the default issuing credential (<strong>default:</strong> etc/testcert.pem)</dd>
+
+      <dt><code>gridshib.keyPath</code> (<strong>required</strong>)</dt>
+      <dd>Path to the private key of the default issuing credential (<strong>default:</strong> etc/testkey.pem)</dd>
+
+      <dt><code>gridshib.identityAttributesPath</code> (<strong>required</strong>)</dt>
+      <dd>Path to a file list of identity attributes, that is, attributes whose values are globally unique principal names (<strong>default:</strong> etc/identity-attributes.txt)</dd>
+
+      <dt><code>gridshib.cogConfigPath</code> (<strong>required</strong>)</dt>
+      <dd>Path to the jglobus CoG configuration file (<strong>default:</strong> etc/cog.properties)</dd>
+
+      <dt><code>gridshib.SecurityContextImpl</code> (<strong>optional</strong>)</dt>
+      <dd>The fully qualified classname of a custom implementation of the <code>SecurityContext</code> interface (<strong>default:</strong> none)</dd>
+    </dl>
+
+    <p>You can modify any of the paths in the build.properties file and then re-install the SAML Tools to persist a new bootstrap properties file.  A path can be relative or absolute.  A relative path is relative to the GridShib home directory (<code>$GRIDSHIB_HOME</code> or <code>%GRIDSHIB_HOME%</code>).</p>
+
+    <h4><code>gridshib.logConfigPath</code></h4>
+
+    <p>The <code>gridshib.logConfigPath</code> bootstrap property points to a log configuration properties file.  To use some other log properties file, set the bootstrap property in the build.properties file.  For example:</p>
+
+<pre>  gridshib.logConfigPath=etc/log4j-syslog.properties</pre>
+
+    <p>A default log configuration properties file is hardcoded in the build file as $GRIDSHIB_HOME/etc/log4j.properties.  Regardless of the value of the <code>gridshib.logConfigPath</code> bootstrap property, this default log properties file is dynamically created at install time.</p>
+
+    <p>For more information on logging, see the section on <a href="#logging_error_handling">Logging and Error Handling</a>.</p>
+
+    <h4><code>gridshib.SAMLToolsConfigPath</code></h4>
+
+    <p>The <code>gridshib.SAMLToolsConfigPath</code> bootstrap property points to the <strong>default</strong> configuration file for the command-line tools.  See the User Guide for instructions how to <a href="user-guide.html#configuring_issuer_tool">override the default configuration file on the command line</a> and how to <a href="user-guide.html#configuring_saml_tools">write configuration files</a> for the SAML Tools.</p>
+
+    <h4><code>gridshib.certPath</code> and <code>gridshib.keyPath</code></h4>
+
+    <p>The <code>gridshib.certPath</code> and <code>gridshib.keyPath</code> bootstrap properties together give the path to the <strong>default</strong> issuing credential.  If no credential is configured in the configuration properties file (<code>gridshib.SAMLToolsConfigPath</code>), the software defaults to the credential in the bootstrap properties file, that is, the credential given by <code>gridshib.certPath</code> and <code>gridshib.keyPath</code>.</p>
+
+    <h4><code>gridshib.identityAttributesPath</code></h4>
+
+    <p>Attributes whose values are globally unique principal names are called <em>identity attributes</em>.  For example, an e-mail address (FriendlyName="mail") is an identity attribute.  Because identity attribute values are globally unique, they play a potentially important role in applications.  In <a href="http://gridshib.globus.org/docs/gridshib-gt/readme.html">GridShib for GT</a>, for instance, identity attribute values are <em>blacklistable</em>.</p>
+
+    <p>The <code>gridshib.identityAttributesPath</code> bootstrap property points to a file containing a list of identity attributes.  The list is comprehensive, so it's unlikely you'll ever need to modify this file, let alone provide a replacement.</p>
+
+    <h4><code>gridshib.cogConfigPath</code></h4>
+
+    <p>The <code>gridshib.cogConfigPath</code> bootstrap property points to an empty jglobus CoG configuration file.  This file exists mainly to avoid a nasty error message from appearing in the logs.  If you find a use for this configuration file, please send e-mail to the <code>gridshib-user</code> mailing list describing your use case.</p>
+
+    <h4><code>gridshib.SecurityContextImpl</code></h4>
+
+    <p>For command-line use, the <code>gridshib.SecurityContextImpl</code> property should be omitted (as is the case in the build.properties file).  This property is mainly of interest to developers.  See the <a href="dev-guide.html">Developer Guide</a> for more information.</p>
+
+    <h3><a name="boot_props_file">Bootstrap properties file</a></h3>
+
+    <p>The bootstrap properties defined in the build.properties file are written to an ordinary Java properties file at a well-known location on the classpath.</p>
+
+<pre>  UNIX:
+  $ <strong>jar -xvf $GRIDSHIB_HOME/lib/gridshib-saml-tools-X_X_X.jar \
+      org/globus/gridshib/resource/gridshib-bootstrap.properties</strong>
+  $ <strong>cat org/globus/gridshib/resource/gridshib-bootstrap.properties</strong></pre>
+
+<pre>  Windows:
+  &gt; <strong>jar -xvf %GRIDSHIB_HOME%\lib\gridshib-saml-tools-X_X_X.jar
+      org/globus/gridshib/resource/gridshib-bootstrap.properties</strong>
+  &gt; <strong>type org/globus/gridshib/resource/gridshib-bootstrap.properties</strong></pre>
+
+    <p>This default <em>bootstrap properties file</em> is automatically created when you install GridShib SAML Tools.  The command-line tools use this properties file by default.  Alternatively, you can specify a path to a separate bootstrap properties file that completely overrides the default bootstrap properties created by the install process.  This can be done by setting the absolute path to the alternate bootstrap properties file in one of two ways:</p>
+
+    <ol>
+      <li>Set the <code>GRIDSHIB_CONFIG</code> environment variable.</li>
+      <li>Specify the <code>org.globus.gridshib.config</code> system property on the <code>ant</code> command line using the <code>-D</code> option.</li>
+    </ol>
+
+    <p>The <code>org.globus.gridshib.config</code> system property takes precedence, so if both the environment variable and the system property are set, the latter takes effect.</p>
+
+    <blockquote><div style="font-style: italic"><strong>Note:</strong> As with <code>GRIDSHIB_HOME</code>, choose a path to the bootstrap properties file (<code>GRIDSHIB_CONFIG</code>) that does <strong>not</strong> have any spaces in the path name.</div></blockquote>
+
+    <hr>
+
+    <address>
+      The GridShib Project<br>
+      <a href="http://gridshib.globus.org/">http://gridshib.globus.org/</a>
+    </address>
+
+    <p>
+      <a href="http://validator.w3.org/check?uri=referer"><img
+         src="http://www.w3.org/Icons/valid-html401"
+         alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
+    </p>
+
+  </body>
+
+</html>

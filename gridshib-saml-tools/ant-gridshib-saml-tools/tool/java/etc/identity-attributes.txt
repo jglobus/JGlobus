@@ -1,0 +1,23 @@
+#####################################################################
+# Identity Attributes
+#
+# By definition, the value(s) of identity attributes are 
+# globally unique identifiers for the user.
+#
+# Since this implementation is restricted to string-valued
+# attributes, the value(s) of trusted identity attributes 
+# are globally unique SAML principal names.  The latter 
+# can be used to implement flat file-based whitelists or 
+# blacklists, for instance.  In GridShib for GT (GS4GT), 
+# for example, SAML principal names are used to implement 
+# a simple, flat file-based blacklisting framework.  In 
+# other words, in GS4GT the value(s) of trusted identity 
+# attributes are blacklistable.
+#####################################################################
+
+# FriendlyName="eduPersonPrincipalName"
+urn:oid:1.3.6.1.4.1.5923.1.1.1.6
+
+# FriendlyName="mail"
+urn:mace:dir:attribute-def:mail
+urn:oid:0.9.2342.19200300.100.1.3

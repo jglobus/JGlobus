@@ -1,0 +1,6 @@
+<saml:Subject
+  xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion">
+  <saml:SubjectConfirmation>
+    <saml:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:bearer</saml:ConfirmationMethod>
+  </saml:SubjectConfirmation>
+</saml:Subject>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema 
+  targetNamespace="urn:oasis:names:tc:SAML:metadata:extension"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+  xmlns:mdext="urn:oasis:names:tc:SAML:metadata:extension"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified"
+  blockDefault="substitution"
+  version="1.0">
+
+  <annotation>
+    <documentation>
+      Document title: SAML Metadata Extension Schema for Standalone Attribute Requester
+      Document identifier: saml-schema-metadata-ext.xsd
+      Location: http://www.oasis-open.org/committees/documents.php?wg_abbrev=security
+      Revision history: CD
+    </documentation>
+  </annotation>
+
+  <import namespace="urn:oasis:names:tc:SAML:2.0:metadata"
+    schemaLocation="saml-schema-metadata-2.0.xsd"/>
+
+  <complexType name="AttributeRequesterDescriptorType">
+    <complexContent>
+      <extension base="md:RoleDescriptorType">
+        <sequence>
+          <element ref="md:NameIDFormat" minOccurs="0" maxOccurs="unbounded"/>
+          <element ref="md:AttributeConsumingService" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="WantAssertionsSigned" type="boolean" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+
+</schema>
