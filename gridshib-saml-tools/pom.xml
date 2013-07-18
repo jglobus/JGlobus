@@ -64,6 +64,20 @@
 
         <executions>
           <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <configuration>
+
+              <target>
+                <ant dir="ant-gridshib-saml-tools" target="clean"/>
+              </target>
+
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
             <id>compile</id>
             <phase>compile</phase>
             <configuration>
@@ -100,7 +114,8 @@
               <target>
                 <ant dir="ant-gridshib-saml-tools" target="create-dist"/>
               </target>
-
+              <attachartifact file="ant-gridshib-saml-tools/dist/gridshib-saml-tools-2_0_0-src.zip" classifier="src" type="zip"/>
+              <attachartifact file="ant-gridshib-saml-tools/dist/gridshib-saml-tools-2_0_0-src.tar.gz" classifier="src" type="tar.gz"/>
             </configuration>
             <goals>
               <goal>run</goal>
