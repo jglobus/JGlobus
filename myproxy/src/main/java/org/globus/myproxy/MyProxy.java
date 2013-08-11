@@ -28,12 +28,14 @@ import java.io.IOException;
 import java.io.EOFException;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
@@ -56,11 +58,12 @@ import org.bouncycastle.asn1.x509.X509Name;
 
 import org.globus.common.CoGProperties;
 
-import org.globus.util.Base64;
+import org.bouncycastle.util.encoders.Base64;
 
-import org.globus.gsi.GlobusCredential;
+import org.globus.gsi.X509Credential;
 import org.globus.gsi.GSIConstants;
-import org.globus.gsi.CertUtil;
+import org.globus.gsi.util.CertificateIOUtil;
+import org.globus.gsi.util.CertificateUtil;
 import org.globus.gsi.OpenSSLKey;
 import org.globus.gsi.gssapi.net.GssSocket;
 import org.globus.gsi.gssapi.net.GssSocketFactory;
@@ -81,8 +84,6 @@ import org.ietf.jgss.Oid;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.globus.gsi.X509Credential;
-import org.globus.gsi.util.CertificateUtil;
 
 
 /**
@@ -94,11 +95,15 @@ import org.globus.gsi.util.CertificateUtil;
  * More information about MyProxy is available on the 
  * <a href="http://myproxy.ncsa.uiuc.edu/">MyProxy Home Page</a>.
  * <P>
+ *
+ * @version 2.0
  */
 public class MyProxy  {
 
     static Log logger = 
         LogFactory.getLog(MyProxy.class.getName());
+
+    public final static String version = "2.0";
 
     public static final int MIN_PASSWORD_LENGTH = 
         MyProxyConstants.MIN_PASSWORD_LENGTH;
@@ -151,7 +156,10 @@ public class MyProxy  {
     /** The integer command number for the MyProxy 'Get Trustroots' command (7). */
     public static final int GET_TRUSTROOTS = 7;
 
-    /** The hostname of the target MyProxy server. */
+    /** The hostname(s) of the target MyProxy server(s). Multiple host names
+        can be specified comma delimited with each hostname optionally followed
+        by a ':' and port number. The client will communicate with the first
+        server it has a successful network connection with. */
     protected String host;
     /** The port of the target MyProxy server (default 7512). */
     protected int port = DEFAULT_PORT;
@@ -177,9 +185,14 @@ public class MyProxy  {
      * host and port using the default authorization policy.
      *
      * @param host
-     *        The hostname of the MyProxy server.
+     *        The hostname(s) of the MyProxy server(s) with optional port
+     *        info. Multiple hostnames can be specified in a comma separated
+     *        list with each hostname optionally followed by a  ':' and port
+     *        number. The client will communicate with the first server it has
+     *        a successful network connection with.
      * @param port
-     *        The port number of the MyProxy server.
+     *        The port number of the MyProxy server to use if one is not
+     *        specified as part of the host string.
      */
     public MyProxy(String host, int port) {
         setHost(host);
@@ -190,7 +203,10 @@ public class MyProxy  {
     /**
      * Set MyProxy server hostname.
      * @param host
-     *        The hostname of the MyProxy server.
+     *        The hostname(s) of the MyProxy server(s). Multiple host names
+     *        are comma delimited with each hostname optionally followed by a
+     *       ':' and port number. The client will communicate with the first
+     *       server it has a successful network connection with.
      */
     public void setHost(String host) {
         this.host = host;
@@ -207,7 +223,9 @@ public class MyProxy  {
     /**
      * Set MyProxy server port.
      * @param port
-     *        The port number of the MyProxy server.
+     *        The port number of the MyProxy server to use if one is not
+     *        specified as part of the host string. Defaults to
+     *        MyProxy.DEFAULT_PORT.
      */
     public void setPort(int port) {
         this.port = port;
@@ -250,6 +268,9 @@ public class MyProxy  {
         // no delegation
         this.context.requestCredDeleg(false);
 
+        // Request confidentiality
+        this.context.requestConf(true);
+
         IOException exception = null;
         Socket socket = null;
         String goodAddr = "";
@@ -257,10 +278,29 @@ public class MyProxy  {
         String hosts[] = host.split(",");
         int socketTimeout = CoGProperties.getDefault().getSocketTimeout();
 
+            int currentPort = port;
         search:
             while (hostIdx < hosts.length) {
-                InetAddress addrs[] = InetAddress.getAllByName(hosts[hostIdx]);
-                for (int addrIdx = 0; addrIdx < addrs.length; addrIdx++) {
+                String hostPort[] = hosts[hostIdx].split(":");
+                hosts[hostIdx] = hostPort[0];
+                if (hostPort.length > 1 && hostPort[1] != null)
+                    // port number specified
+                    port = Integer.parseInt(hostPort[1].trim());
+                else
+                    port = currentPort;
+
+                InetAddress addrs[] = null;
+                try {
+                    addrs = InetAddress.getAllByName(hosts[hostIdx]);
+                } catch (UnknownHostException e) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("getSocket(): Skipping unknown host " + 
+                                hosts[hostIdx]);
+                    }
+                    exception = e;
+                }
+                for (int addrIdx = 0; addrs != null && addrIdx < addrs.length;
+                                                                  addrIdx++) {
                     exception = null;
                     try {
                         if (logger.isDebugEnabled()) {
@@ -270,7 +310,7 @@ public class MyProxy  {
                         socket = new Socket();
                         socket.connect(
                             new InetSocketAddress(addrs[addrIdx],port), 
-                            socketTimeout); 
+                            socketTimeout*1000); // seconds to milliseconds
 
                         goodAddr = addrs[addrIdx].toString();
                         if (logger.isDebugEnabled()) {
@@ -294,6 +334,8 @@ public class MyProxy  {
             }
             throw exception;
         }
+
+        setHost(hosts[hostIdx]); // host we have successfully connected to
         
         GssSocketFactory gssFactory = GssSocketFactory.getDefault();
 
@@ -378,6 +420,9 @@ public class MyProxy  {
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
             
+            if (!((GssSocket)gsiSocket).getContext().getConfState())
+                throw new Exception("Confidentiality requested but not available");
+
             // send message
             out.write(msg.getBytes());
             out.flush();
@@ -403,8 +448,9 @@ public class MyProxy  {
                                               certs[0],
                                               pkiCred.getPrivateKey(),
                                               -1,
-                                              GSIConstants.DELEGATION_FULL);
-           
+                     BouncyCastleCertProcessingFactory.decideProxyType(certs[0],
+                                             GSIConstants.DelegationType.FULL));
+
             // write the new cert we've generated to the socket to send it back
             // to the server
                 
@@ -493,6 +539,9 @@ public class MyProxy  {
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
             
+            if (!((GssSocket)gsiSocket).getContext().getConfState())
+                throw new Exception("Confidentiality requested but not available");
+            
             // send message
             out.write(msg.getBytes());
             out.flush();
@@ -503,13 +552,13 @@ public class MyProxy  {
            
             handleReply(in);
 
-            CertUtil.writeCertificate(out, certs[0]);
+            CertificateIOUtil.writeCertificate(out, certs[0]);
             key.writeTo(out);
             for (int i=1;i<certs.length;i++) {
                 // skip the self-signed certificates
                 if (certs[i].getSubjectDN().equals(certs[i].getIssuerDN()))
                     continue;
-                CertUtil.writeCertificate(out, certs[i]);
+                CertificateIOUtil.writeCertificate(out, certs[i]);
             }
             out.write('\0');
             out.flush();
@@ -580,6 +629,9 @@ public class MyProxy  {
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
             
+            if (!((GssSocket)gsiSocket).getContext().getConfState())
+                throw new Exception("Confidentiality requested but not available");
+            
             // send message
             out.write(msg.getBytes());
             out.flush();
@@ -632,6 +684,9 @@ public class MyProxy  {
             
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
+            
+            if (!((GssSocket)gsiSocket).getContext().getConfState())
+                throw new Exception("Confidentiality requested but not available");
             
             // send message
             out.write(msg.getBytes());
@@ -714,6 +769,9 @@ public class MyProxy  {
             
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
+            
+            if (!((GssSocket)gsiSocket).getContext().getConfState())
+                throw new Exception("Confidentiality requested but not available");
             
             // send message
             out.write(msg.getBytes());
@@ -920,6 +978,9 @@ public class MyProxy  {
 
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
+            
+            if (!((GssSocket)gsiSocket).getContext().getConfState())
+                throw new Exception("Confidentiality requested but not available");
 
             // send message
             out.write(msg.getBytes());
@@ -934,7 +995,8 @@ public class MyProxy  {
                         params.getWantTrustroots());
 
             // start delegation - generate key pair
-            KeyPair keyPair = CertificateUtil.generateKeyPair("RSA", DEFAULT_KEYBITS);
+            KeyPair keyPair = CertificateUtil.generateKeyPair("RSA",
+                    DEFAULT_KEYBITS);
 
             // According to the MyProxy protocol, the MyProxy server
             // will ignore the subject in the client's certificate
@@ -1013,14 +1075,12 @@ public class MyProxy  {
                 throw new MyProxyException("Private/Public key mismatch!");
             }
             
-//            GlobusCredential newCredential = null;
-//            
-//            newCredential = new GlobusCredential(keyPair.getPrivate(),
-//                                                 chain);
-//            
-            X509Credential cred = new X509Credential(keyPair.getPrivate(), chain);
+            X509Credential newCredential = null;
             
-            return new GlobusGSSCredentialImpl(cred,
+            newCredential = new X509Credential(keyPair.getPrivate(),
+                                                 chain);
+            
+            return new GlobusGSSCredentialImpl(newCredential,
                                                GSSCredential.INITIATE_AND_ACCEPT);
             
         } catch(Exception e) {
@@ -1073,6 +1133,9 @@ public class MyProxy  {
 
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
+            
+            if (!((GssSocket)gsiSocket).getContext().getConfState())
+                throw new Exception("Confidentiality requested but not available");
 
             // send message
             out.write(msg.getBytes());
@@ -1137,7 +1200,7 @@ public class MyProxy  {
                         String filename = tmpDir.getPath() + tmpDir.separator + hash + ".0";
 
                         FileOutputStream os = new FileOutputStream(new File(filename));
-                        CertUtil.writeCertificate(os, acceptedIssuers[idx]);
+                        CertificateIOUtil.writeCertificate(os, acceptedIssuers[idx]);
 
                         os.close();
                         if (logger.isDebugEnabled()) {
@@ -1271,41 +1334,45 @@ public class MyProxy  {
                         authzdata[1] =
                             tmp.substring(pos+1).trim();
                     }
-                }
-            }
-            if (authzdata == null) {
-                throw new MyProxyException("Unable to parse authorization challenge from server.");
-            }
-            if (authzdata[0].equals("X509_certificate")) {
-                GlobusGSSCredentialImpl pkiCred =
-                    (GlobusGSSCredentialImpl)authzcreds;
-                try {
-                    Signature sig = Signature.getInstance("SHA1withRSA");
-                    sig.initSign(pkiCred.getPrivateKey());
-                    sig.update(authzdata[1].getBytes());
-                    byte[] sigbytes = sig.sign();
-                    X509Certificate [] certs =
-                        pkiCred.getCertificateChain();
-                    ByteArrayOutputStream buffer =
-                        new ByteArrayOutputStream(2048);
-                    buffer.write(2); // AUTHORIZETYPE_CERT
-                    buffer.write(0); buffer.write(0); buffer.write(0); // pad
-                    buffer.write(0); buffer.write(0); buffer.write(0); // pad
-                    buffer.write(sigbytes.length);
-                    buffer.write(sigbytes);
-                    buffer.write((byte)certs.length);
-                    for (int i=0; i<certs.length; i++) {
-                        buffer.write(certs[i].getEncoded());
+                    if (authzdata == null) {
+                        throw new MyProxyException("Unable to parse authorization challenge from server.");
                     }
-                    out.write(buffer.toByteArray());
-                    out.flush();
-                } catch(Exception e) {
-                    throw new MyProxyException("Authz response failed.", e);
+                    if (authzdata[0].equals("X509_certificate")) {
+                        GlobusGSSCredentialImpl pkiCred =
+                            (GlobusGSSCredentialImpl)authzcreds;
+                        try {
+                            Signature sig = Signature.getInstance("SHA1withRSA");
+                            sig.initSign(pkiCred.getPrivateKey());
+                            sig.update(authzdata[1].getBytes());
+                            byte[] sigbytes = sig.sign();
+                            X509Certificate [] certs =
+                                pkiCred.getCertificateChain();
+                            ByteArrayOutputStream buffer =
+                                new ByteArrayOutputStream(2048);
+                            buffer.write(2); // AUTHORIZETYPE_CERT
+                            buffer.write(0); buffer.write(0); buffer.write(0); // pad
+                            DataOutputStream dos = new DataOutputStream(buffer);
+                            dos.writeInt(sigbytes.length);
+                            dos.flush();
+                            buffer.write(sigbytes);
+                            buffer.write((byte)certs.length);
+                            for (int i=0; i<certs.length; i++) {
+                                buffer.write(certs[i].getEncoded());
+                            }
+                            out.write(buffer.toByteArray());
+                            out.flush();
+                        } catch(Exception e) {
+                            throw new MyProxyException("Authz response failed.", e);
+                        }
+                    } else {
+                        authzdata = null;
+                        continue;
+                    }
                 }
-                return handleReply(in, out, authzcreds, wantTrustroots);
-            } else {
-                throw new MyProxyException("Unable to respond to server's authentication challenge. Unimplemented method: " + authzdata[0]);
             }
+ 
+            return handleReply(in, out, authzcreds, wantTrustroots);
+ 
         }
 
         if (wantTrustroots == true) {
@@ -1351,227 +1418,6 @@ public class MyProxy  {
             if (in  != null) in.close();
             if (sock != null) sock.close();
         } catch(IOException ee) {}
-    }
-
-    // --------------- OLD MYPROXY API -----------------------------
-
-    /**
-     * Stores credentials on MyProxy server.
-     *
-     * @param  host
-     *         The hostname of MyProxy server.
-     * @param  port
-     *         The port number of MyProxy server.
-     * @param  credential
-     *         The GSI credentials to use.
-     * @param  username
-     *         The username to store the credentials under.
-     * @param  passphrase
-     *         The passphrase to use to encrypt the stored 
-     *         credentials.
-     * @param  lifetime
-     *         The requested lifetime of the stored credentials (in seconds).
-     * @exception MyProxyException
-     *         If an error occurred during the put operation.
-     * @deprecated Use non-static methods instead.
-     */
-    public static void put(String host,
-                           int port,
-                           GSSCredential credential,
-                           String username,
-                           String passphrase,
-                           int lifetime)  
-        throws MyProxyException {
-        put(host, port, credential, username, passphrase, 
-            lifetime, null);
-    }
-    
-    /**
-     * Stores credentials on MyProxy server.
-     *
-     * @param  host
-     *         The hostname of MyProxy server.
-     * @param  port
-     *         The port number of MyProxy server.
-     * @param  credential
-     *         The GSI credentials to use.
-     * @param  username
-     *         The username to store the credentials under.
-     * @param  passphrase
-     *         The passphrase to use to encrypt the stored
-     *         credentials.
-     * @param  lifetime
-     *         The requested lifetime of the stored credentials (in seconds).
-     * @param  subjectDN
-     *         The expected subject name of MyProxy server. This
-     *         is used for security purposes. If null, host
-     *         authentication will be performed.
-     * @exception MyProxyException
-     *         If an error occurred during the put operation.
-     * @deprecated Use non-static methods instead.
-     */
-    public static void put(String host, 
-                           int port,
-                           GSSCredential credential,
-                           String username,
-                           String passphrase,
-                           int lifetime,
-                           String subjectDN) 
-        throws MyProxyException {
-
-        MyProxy myProxy = new MyProxy(host, port);
-        myProxy.setAuthorization(getAuthorization(subjectDN));
-        myProxy.put(credential,
-                    username,
-                    passphrase,
-                    lifetime);
-    }
-
-    /**
-     * Removes delegated credentials from the MyProxy server.
-     *
-     * @param  host
-     *         The hostname of MyProxy server.
-     * @param  port
-     *         The port number of MyProxy server.
-     * @param  credential
-     *         The GSI credentials to use.
-     * @param  username
-     *         The username of the credentials to remove.
-     * @param  passphrase
-     *         The passphrase of the credentials to remove.
-     *         Right now it is ignored by the MyProxy sever.
-     * @throws MyProxyException
-     *         If an error occurred during the operation.
-     * @deprecated Use non-static methods instead.
-     */
-    public static void destroy(String host,
-                               int port,
-                               GSSCredential credential,
-                               String username,
-                               String passphrase)
-        throws MyProxyException {
-        destroy(host, port, credential, 
-                username, passphrase, null);
-    }
-
-    /**
-     * Removes delegated credentials from MyProxy server.
-     *
-     * @param  host
-     *         The hostname of MyProxy server.
-     * @param  port
-     *         The port number of MyProxy server.
-     * @param  credential
-     *         The GSI credentials to use.
-     * @param  username
-     *         The username of the credentials to remove.
-     * @param  passphrase
-     *         The passphrase of the credentials to remove.
-     *         Right now it is ignored by the MyProxy sever.
-     * @param  subjectDN
-     *         The expected subject name of MyProxy server. This
-     *         is used for security purposes. If null, host
-     *         authentication will be performed.
-     * @throws MyProxyException
-     *         If an error occurred during the operation.
-     * @deprecated Use non-static methods instead.
-     */
-    public static void destroy(String host,
-                               int port,
-                               GSSCredential credential,
-                               String username,
-                               String passphrase,
-                               String subjectDN)
-        throws MyProxyException {
-
-        MyProxy myProxy = new MyProxy(host, port);
-        myProxy.setAuthorization(getAuthorization(subjectDN));
-        myProxy.destroy(credential,
-                        username,
-                        passphrase);
-    }
-  
-    /**
-     * Retrieves delegated credentials from MyProxy server.
-     *
-     * Notes: Performs simple verification of private/public keys of
-     *        the delegated credential. Should be improved later.
-     *        And only checks for RSA keys.
-     *
-     * @param  host
-     *         The hostname of MyProxy server.
-     * @param  port
-     *         The port number of MyProxy server.
-     * @param  credential
-     *         The GSI credentials to use.
-     * @param  username
-     *         The username of the credentials to retrieve.
-     * @param  passphrase
-     *         The passphrase of the credentials to retrieve.
-     * @param  lifetime
-     *         The requested lifetime of the retrieved credential (in seconds).
-     * @return GSSCredential
-     *         The retrieved delegated credentials.
-     * @exception MyProxyException
-     *         If an error occurred during the operation.
-     * @deprecated Use non-static methods instead.
-     */
-    public static GSSCredential get(String host,
-                                    int port,
-                                    GSSCredential credential,
-                                    String username,
-                                    String passphrase,
-                                    int lifetime)
-        throws MyProxyException {
-        return get(host, port, credential, 
-                   username, passphrase, lifetime, null);
-    }
-
-    /**
-     * Retrieves delegated credentials from MyProxy server.
-     *
-     * Notes: Performs simple verification of private/public keys of
-     *        the delegated credential. Should be improved later.
-     *        And only checks for RSA keys.
-     *
-     * @param  host
-     *         The hostname of MyProxy server.
-     * @param  port
-     *         The port number of MyProxy server.
-     * @param  credential
-     *         The GSI credentials to use.
-     * @param  username
-     *         The username of the credentials to retrieve.
-     * @param  passphrase
-     *         The passphrase of the credentials to retrieve.
-     * @param  lifetime
-     *         The requested lifetime of the retrieved credential (in seconds).
-     * @param  subjectDN
-     *         The expected subject name of MyProxy server. This
-     *         is used for security purposes. If null, host
-     *         authentication will be performed.
-     * @return GSSCredential 
-     *         The retrieved delegated credentials.
-     * @exception MyProxyException
-     *         If an error occurred during the operation.
-     * @deprecated Use non-static methods instead.
-     */
-    public static GSSCredential get(String host,
-                                    int port,
-                                    GSSCredential credential,
-                                    String username,
-                                    String passphrase,
-                                    int lifetime,
-                                    String subjectDN)
-        throws MyProxyException {
-
-        MyProxy myProxy = new MyProxy(host, port);
-        myProxy.setAuthorization(getAuthorization(subjectDN));
-        return myProxy.get(credential,
-                           username,
-                           passphrase,
-                           lifetime);
     }
 
     private static Authorization getAuthorization(String subjectDN) {
