@@ -107,7 +107,7 @@ public final class CertificateIOUtil {
     public static byte[] encodePrincipal(X509Name subject) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         DEROutputStream der = new DEROutputStream(bout);
-        der.writeObject(subject.getDERObject());
+        der.writeObject(subject.toASN1Primitive());
         return bout.toByteArray();
     }
 

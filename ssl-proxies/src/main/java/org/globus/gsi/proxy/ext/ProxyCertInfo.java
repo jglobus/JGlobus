@@ -20,11 +20,11 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 
 import java.io.IOException;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERInteger;
-import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERSequence;
 
 /**
@@ -34,7 +34,7 @@ import org.bouncycastle.asn1.DERSequence;
  * ProxyCertInfo ::= SEQUENCE { pCPathLenConstraint      INTEGER (0..MAX) OPTIONAL, proxyPolicy ProxyPolicy }
  * </PRE>
  */
-public class ProxyCertInfo implements DEREncodable {
+public class ProxyCertInfo implements ASN1Encodable {
 
     /** ProxyCertInfo extension OID */
     public static final DERObjectIdentifier OID 
@@ -111,9 +111,9 @@ public class ProxyCertInfo implements DEREncodable {
         } else if (obj instanceof ASN1Sequence) {
             return new ProxyCertInfo((ASN1Sequence) obj);
         } else if (obj instanceof byte[]) {
-            DERObject derObj;
+            ASN1Primitive derObj;
             try {
-                derObj = CertificateUtil.toDERObject((byte[]) obj);
+                derObj = CertificateUtil.toASN1Primitive((byte[]) obj);
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
             }
@@ -129,14 +129,14 @@ public class ProxyCertInfo implements DEREncodable {
      *
      * @return <code>DERObject</code> the encoded representation of the extension.
      */
-    public DERObject getDERObject() {
+    public ASN1Primitive toASN1Primitive() {
         ASN1EncodableVector vec = new ASN1EncodableVector();
 
         if (this.pathLenConstraint != null) {
             vec.add(this.pathLenConstraint);
         }
 
-        vec.add(this.proxyPolicy.getDERObject());
+        vec.add(this.proxyPolicy.toASN1Primitive());
 
         return new DERSequence(vec);
     }
