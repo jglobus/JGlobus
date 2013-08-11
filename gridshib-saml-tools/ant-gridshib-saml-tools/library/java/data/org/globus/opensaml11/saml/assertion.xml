@@ -1,0 +1,54 @@
+<saml:Assertion 
+  xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" 
+  AssertionID="cT_S_T-vKMwidT8_Pzkke8UkC68." 
+  IssueInstant="2004-02-25T16:31:03Z" 
+  Issuer="http://aaremote.entegrity.com" 
+  MajorVersion="1" MinorVersion="1" 
+  xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <saml:Conditions 
+    NotBefore="2004-02-25T16:26:03Z" 
+    NotOnOrAfter="2004-02-25T16:36:03Z"/>
+  <saml:AuthenticationStatement 
+    AuthenticationInstant="2004-02-25T16:30:58Z" 
+    AuthenticationMethod="urn:oasis:names:tc:SAML:1.0:am:password">
+    <saml:Subject>
+      <saml:NameIdentifier 
+        Format="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName" 
+        NameQualifier="http://www.entegrity.com">uid=charlie,ou=People,dc=entegrity,dc=com</saml:NameIdentifier>
+      <saml:SubjectConfirmation>
+        <saml:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:bearer</saml:ConfirmationMethod>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+    <saml:SubjectLocality IPAddress="192.168.4.1"/>
+  </saml:AuthenticationStatement>
+  <saml:AttributeStatement>
+    <saml:Subject>
+      <saml:NameIdentifier 
+        Format="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName" 
+        NameQualifier="http://www.entegrity.com">uid=charlie,ou=People,dc=entegrity,dc=com</saml:NameIdentifier>
+      <saml:SubjectConfirmation>
+        <saml:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:bearer</saml:ConfirmationMethod>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+    <saml:Attribute 
+      AttributeName="AssuranceLevel" 
+      AttributeNamespace="http://www.oasis-open.org/RSA2004/attributes">
+      <saml:AttributeValue>1</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute 
+      AttributeName="E-mail" 
+      AttributeNamespace="http://www.oasis-open.org/RSA2004/attributes">
+      <saml:AttributeValue>charlie@mail.com</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute 
+      AttributeName="MemberLevel" 
+      AttributeNamespace="http://www.oasis-open.org/RSA2004/attributes">
+      <saml:AttributeValue>gold</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute 
+      AttributeName="commonName" 
+      AttributeNamespace="http://www.oasis-open.org/RSA2004/attributes">
+      <saml:AttributeValue>Charles Connors</saml:AttributeValue>
+    </saml:Attribute>
+  </saml:AttributeStatement>
+</saml:Assertion>

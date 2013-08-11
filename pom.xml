@@ -17,6 +17,7 @@
 		<module>io</module>
 		<module>myproxy</module>
 		<module>axis</module>
+		<module>gridshib-saml-tools</module>
 	</modules>
 	<name>JGlobus</name>
 	<packaging>pom</packaging>

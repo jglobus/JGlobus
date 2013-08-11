@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+	targetNamespace="urn:mace:shibboleth:idp:config:1.0" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:credentials="urn:mace:shibboleth:credentials:1.0" 
+	xmlns:namemapper="urn:mace:shibboleth:namemapper:1.0" 
+	xmlns:idp="urn:mace:shibboleth:idp:config:1.0" 
+	elementFormDefault="qualified" 
+	attributeFormDefault="unqualified">
+
+	<xs:import namespace="urn:mace:shibboleth:credentials:1.0" schemaLocation="credentials.xsd"/>
+	<xs:import namespace="urn:mace:shibboleth:namemapper:1.0" schemaLocation="namemapper.xsd"/>
+
+	<xs:simpleType name="LevelType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="OFF"/>
+			<xs:enumeration value="FATAL"/>
+			<xs:enumeration value="ERROR"/>
+			<xs:enumeration value="WARN"/>
+			<xs:enumeration value="INFO"/>
+			<xs:enumeration value="DEBUG"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="LogWithLevels">
+		<xs:attribute name="location" type="xs:anyURI" use="required" />
+		<xs:attribute name="level" type="idp:LevelType" use="optional" />
+	</xs:complexType>
+
+	<xs:simpleType name="Log4JConfigType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="properties"/>
+			<xs:enumeration value="xml"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+		<xs:element name="IdPConfig">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:sequence>
+						<xs:element name="RelyingParty" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence minOccurs="0" maxOccurs="unbounded">
+									<xs:element name="NameID">
+										<xs:complexType>
+											<xs:attribute name="nameMapping" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="name" type="xs:string" use="required"/>
+								<xs:attribute name="providerId" type="xs:anyURI" use="optional"/>
+								<xs:attribute name="signingCredential" type="xs:string" use="optional"/>
+								<xs:attribute name="AAUrl" type="xs:anyURI" use="optional"/>
+								<xs:attribute name="passThruErrors" type="xs:boolean" use="optional"/>
+								<xs:attribute name="forceAttributePush" type="xs:boolean" use="optional"/>
+								<xs:attribute name="signAssertions" type="xs:boolean" use="optional"/>
+								<xs:attribute name="forceAttributeNoPush" type="xs:boolean" use="optional"/>
+								<xs:attribute name="singleAssertion" type="xs:boolean" use="optional"/>
+								<xs:attribute name="defaultToPOSTProfile" type="xs:boolean" use="optional"/>
+								<xs:attribute name="schemaHack" type="xs:boolean" use="optional"/>
+								<xs:attribute name="defaultAuthMethod" type="xs:string" use="optional"/>
+								<xs:attribute name="preferredArtifactType" type="xs:integer" use="optional"/>
+								<xs:attribute name="defaultTarget" type="xs:string" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:element name="ReleasePolicyEngine" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="ArpRepository">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:any namespace="##any" processContents="lax" minOccurs="0" 
+												maxOccurs="unbounded"/>
+										</xs:sequence>
+										<xs:attribute name="implementation" type="xs:string" use="required"/>
+										<xs:anyAttribute namespace="##any" processContents="lax"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Logging" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="ErrorLog" type="idp:LogWithLevels" minOccurs="0" maxOccurs="1" />
+									<xs:element name="TransactionLog" type="idp:LogWithLevels" minOccurs="0" 
+										maxOccurs="1" />
+								</xs:sequence>
+								<xs:element name="Log4JConfig">
+									<xs:complexType>
+										<xs:attribute name="type" type="idp:Log4JConfigType" use="optional" 
+											default="properties" />
+										<xs:attribute name="location" type="xs:anyURI" use="required" />
+									</xs:complexType>
+								</xs:element>
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:sequence>
+						<xs:element ref="namemapper:NameMapping" maxOccurs="unbounded"/>
+					</xs:sequence>
+					<xs:element name="ArtifactMapper" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+							<xs:attribute name="implementation" type="xs:string" use="required"/>
+							<xs:anyAttribute namespace="##any" processContents="lax"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element ref="credentials:Credentials"/>
+					<xs:element name="ProtocolHandler" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Location" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+								<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+							<xs:attribute name="implementation" type="xs:string" use="required" />
+							<xs:anyAttribute namespace="##any" processContents="lax"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="MetadataProvider" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+							<xs:attribute name="type" type="xs:string" use="required" />
+							<xs:anyAttribute namespace="##any" processContents="lax"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="resolverConfig" type="xs:string" use="optional" default="/conf/resolver.xml"/>
+				<xs:attribute name="AAUrl" type="xs:anyURI" use="optional"/>
+				<xs:attribute name="providerId" type="xs:anyURI" use="required"/>
+				<xs:attribute name="defaultRelyingParty" type="xs:anyURI" use="required"/>
+				<xs:attribute name="defaultAuthMethod" type="xs:string" use="optional" 
+					default="urn:oasis:names:tc:SAML:1.0:am:unspecified"/>
+				<xs:attribute name="passThruErrors" type="xs:boolean" use="optional" default="false"/>
+				<xs:attribute name="authHeaderName" type="xs:string" use="optional"/>
+				<xs:attribute name="maxSigningThreads" type="xs:integer" use="optional"/>
+			</xs:complexType>
+		</xs:element>
+
+</xs:schema>

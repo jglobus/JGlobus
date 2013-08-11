@@ -1,0 +1,9 @@
+This is still experimental code. Use at your own risk.
+
+grid_proxy_init.c: A modifed version of grid-proxy-init that supports
+	the -saml option to insert SAML assertions into proxies.
+	You will need a modified version of the gsi_proxy_core package
+	to build and run this. You can get this from:
+	http://gridshib.globus.org/downloads/experimental/globus_gsi_proxy_core-2.4.tar.gz
+grid_saml_info.c: A utilitiy that prints all the SAML assertions in a proxy
+	certificate.
