@@ -1,3 +1,0 @@
-access_id_CA      X509         '/C=AA/O=The dummy name X refers to the openly insecure public key .../OU=... of a nominal CA devoid of objective PKI CA characteristics./CN=X'
-pos_rights        globus        CA:sign
-cond_subjects     globus     '"/C=AA/O=The dummy name X refers to the openly insecure public key .../*"'

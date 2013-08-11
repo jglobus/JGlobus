@@ -1,8 +1,0 @@
--- File: gram_audit_table_init.sql
-
--- insert some values
-INSERT INTO "GLOBUS"."GRAM_AUDIT_TABLE"
-    (job_grid_id, local_job_id, subject_name, username, creation_time, queued_time, globus_toolkit_version, resource_manager_type, job_description, success_flag, finished_flag)
-VALUES
-    ('https://localhost:8443/wsrf/services/ManagedExecutableJobService?001', '00000001', 'C=US/O=National Center for Supercomputing Applications/CN=Gisolve Community User', 'gisolve', '@DATETIME@', '@DATETIME@', '4.0.9', 'Fork', 'job description (in XML)', '1', '1'),
-    ('https://localhost:8443/wsrf/services/ManagedExecutableJobService?002', '00000002', 'C=US/O=National Center for Supercomputing Applications/CN=Gisolve Community User', 'gisolve', '@DATETIME@', NULL, '4.0.9', 'Fork', 'job description (in XML)', '1', '1');
