@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+
+    <title>GridShib SAML Tools: Demo</title>
+
+    <!-- indexing information for search engines -->
+    <meta name="author" lang="en-us" content="Tom Scavo" />
+    <meta name="copyright" lang="en-us" content="&copy; 2006&ndash;2007 NCSA" />
+    <meta name="keywords" lang="en-us" content="insert keywords here" />
+    <meta name="description" lang="en-us" content="insert description here" />
+
+    <!-- server response header entries -->
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+
+    <!-- local styles -->
+    <style type="text/css">
+      ol ol { list-style-type: lower-alpha; }
+      a:link img { border: 0 }
+      a:visited img { border: 0 }
+      a:active img { border: 0 }
+    </style>
+
+    <script type="text/javascript">
+      window.onload =
+        function() {
+          document.forms[0].isMemberOf.value = "http://www.nanohub.org";
+          document.forms[0].countryName.value = "US";
+        }
+      function doSubmit() {
+        return true;
+      }
+      function doNotSubmit() {
+        window.alert("Not yet implemented!");
+        return false;
+      }
+    </script>
+
+  </head>
+
+  <body>
+
+    <h1>GridShib SAML Tools</h1>
+
+    <p>This is a demo of the <a href="http://gridshib.globus.org/download.html#saml-tools">GridShib SAML Tools</a>.</p>
+
+    <fieldset style="margin-bottom: 2ex" id="saml-issuer">
+      <legend>SAML Assertion Issuer Tool</legend>
+      <form method="get" action="/secure/issuer.php" onsubmit="return doSubmit()">
+        <!--<p>
+          Name identifier format:
+          <label title="Check desired name identifier format" for="nameid-format-unspecified">
+            <br />
+            <input type="radio" name="nameid-format" id="nameid-format-unspecified" value="unspecified" checked="checked" />&nbsp;<strong>Unspecified</strong>           </label>
+            <br />
+          <label title="Check desired name identifier format" for="nameid-format-email">
+            <input type="radio" name="nameid-format" id="nameid-format-email" value="emailAddress" />&nbsp;<strong>EmailAddress</strong>           </label>
+            <br />
+          <label title="Check desired name identifier format" for="nameid-format-x509">
+            <input type="radio" name="nameid-format" id="nameid-format-x509" value="X509SubjectName" />&nbsp;<strong>X509SubjectName</strong>           </label>
+        </p>-->
+        <p>
+          <em>Self-asserted attributes:</em>
+          <br />
+          <label title="Enter isMemberOf attribute value" for="isMemberOf">
+            <strong>isMemberOf:</strong>
+            <input type="text" name="isMemberOf" id="isMemberOf" size="30" />
+          </label>
+          <br />
+          <label title="Enter countryName attribute value" for="countryName">
+            <strong>countryName:</strong>
+            <input type="text" name="countryName" id="countryName" size="30" />
+          </label>
+        </p>
+        <p>
+          <em>Output options:</em>
+          <label title="Check output file type" for="outfile-x509">
+            <br />
+            <input type="radio" name="outfile-type" id="outfile-x509" value="X509" />&nbsp;Issue X.509 proxy certificate
+          </label>
+          <label title="Check output file type" for="outfile-saml">
+            <br />
+            <input type="radio" name="outfile-type" id="outfile-saml" value="SAML" checked="checked" />&nbsp;Issue SAML assertion only
+          </label>
+        </p>
+        <p>
+          <label title="Login to the SAML Assertion Issuer Tool">
+            <input type="submit" value="Issue" />
+          </label>
+        </p>
+      </form>
+    </fieldset>
+
+    <p>You may enter any attribute values you want.  The point of the
+    demo is that a client can self-assert whatever attributes it likes.
+    In the case of a Science Gateway, these are VO attributes asserted
+    on behalf of the user.</p>
+
+    <p>If you choose the SAML output option, an XML blob will be
+    returned to your browser.  Choosing the X.509 output option,
+    on the other hand, causes the SAML to be bound to an X.509 proxy
+    certificate, which is filtered through openssl for viewing in
+    your browser.</p>
+
+    <p>When you press the Issue button, you'll be redirected to
+    the InCommon WAYF to select your desired IdP.  Your IdP must
+    release <tt>eduPersonPrincipalName</tt> to the SP
+    (ID: https://test-sp.ncsa.uiuc.edu/shibboleth),
+    otherwise an error will occur.</p>
+
+    <p>Here's what happens when you press the Issue button, step by step:</p>
+
+    <ol>
+      <li>A request is issued for a shib-protected PHP resource.  The SP performs a security check on behalf of the resource. If a valid security context at the SP already exists, skip steps 2&ndash;11.</li>
+      <li>The SP issues an <code>AuthnRequest</code> and redirects the client to the WAYF.</li>
+      <li>The client requests the WAYF service.  The WAYF service processes the <code>AuthnRequest</code> and performs a cookie check.  If the user has the required cookie, skip steps 4 and 5.  Otherwise an HTML form is returned to the client.</li>
+      <li>The WAYF returns an HTML form to the client.</li>
+      <li>The user selects an IdP from the list and submits the form, which causes the browser to issue a GET request to the WAYF.</li>
+      <li>The WAYF updates the cookie with the user's preferred IdP and redirects the client to the SSO service at this IdP.</li>
+      <li>The client requests the SSO service at the IdP. The SSO service processes the <code>AuthnRequest</code> and performs a security check.  If the user does not have a valid security context, the IdP identifies the principal (details omitted).  Once the principal has been identified, the SSO service issues an authentication response.</li>
+      <li>The SSO service responds with a document containing an authentication response embedded in an HTML form.</li>
+      <li>The client issues a POST request to the assertion consumer service at the SP.</li>
+      <li>The assertion consumer service processes the authentication response, creates a security context at the SP and redirects the client to the target PHP resource.</li>
+      <li>The client requests the target PHP resource at the SP (again).</li>
+      <li>Since a security context exists, the SP permits access to the PHP resource.  The <a href="http://viewcvs.globus.org/viewcvs.cgi/gridshib/saml/tool/php/demo/php/secure/issuer.php?view=log">PHP script</a> performs the following steps:
+      <ol>
+        <li>The HTTP parameters (<code>isMemberOf</code> and <code>countryName</code>) are extracted from the request and plugged into a GridShib SAML Tools configuration file template.</li>
+        <li>The configuration file is written out to disk.</li>
+        <li>The authentication response obtained from the IdP is also written out to disk.</li>
+        <li>The <code>gridshib-saml-issuer</code> tool is invoked.  The tool issues a SAML assertion according to the configuration file written to disk previously.</li>
+        <li>The name identifier in the assertion is the value of the <code>REMOTE_USER</code> CGI variable, which was populated with the user's <code>eduPersonPrincipleName</code> by the SP.</li>
+        <li>The tool retrieves the authentication response from disk, extracts the authentication assertion in the response, and binds the assertion to the <code>&lt;Advice&gt;</code> element of the issued SAML assertion.</li>
+        <li>If the user requested X.509 output, the tool binds the SAML assertion to an X.509 proxy certificate, parses the certificate with <code>openssl</code>, and returns the result to the browser.  Otherwise, the tool returns the issued SAML assertion directly to the browser.</li>
+      </ol>
+      </li>
+    </ol>
+
+    <hr />
+
+    <p>
+      <a href="http://validator.w3.org/check?uri=referer"><img
+         src="../images/valid-xhtml10.png"
+         alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
+    </p>
+
+  </body>
+
+</html>

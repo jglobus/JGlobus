@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:mace:shibboleth:resolver:1.0" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:resolver="urn:mace:shibboleth:resolver:1.0" 
+	xmlns:credentials="urn:mace:shibboleth:credentials:1.0" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="urn:mace:shibboleth:credentials:1.0" 
+		schemaLocation="credentials.xsd"/>
+	<xs:element name="AttributeResolver">
+		<xs:complexType>
+			<xs:choice minOccurs="1" maxOccurs="unbounded">
+				<xs:element name="SimpleAttributeDefinition" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseAttributeDefinition">
+								<xs:attribute name="sourceName" type="xs:string" use="optional"/>
+								<xs:attribute name="smartScope" type="xs:string" use="optional"/>
+								<xs:attribute name="valueHandler" type="xs:string" use="optional"/>
+								<xs:attribute name="allowEmpty" type="xs:boolean" use="optional"/>
+								<xs:attribute name="downCase" type="xs:boolean" use="optional"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="SAML2PersistentID" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseAttributeDefinition">
+								<xs:sequence>
+									<xs:element name="Salt">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:string">
+													<xs:attribute name="keyStorePath" type="xs:string" use="optional"/>
+													<xs:attribute name="keyStoreKeyAlias" type="xs:string" 
+														use="optional"/>
+													<xs:attribute name="keyStorePassword" type="xs:string" 
+														use="optional"/>
+													<xs:attribute name="keyStoreKeyPassword" type="xs:string" 
+														use="optional"/>
+												</xs:extension>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="sourceName" type="xs:string" use="optional"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="PersistentIDAttributeDefinition" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseAttributeDefinition">
+								<xs:sequence>
+									<xs:element name="Salt">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:string">
+													<xs:attribute name="keyStorePath" type="xs:string" use="optional"/>
+													<xs:attribute name="keyStoreKeyAlias" type="xs:string" 
+														use="optional"/>
+													<xs:attribute name="keyStorePassword" type="xs:string" 
+														use="optional"/>
+													<xs:attribute name="keyStoreKeyPassword" type="xs:string" 
+														use="optional"/>
+												</xs:extension>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="sourceName" type="xs:string" use="optional"/>
+								<xs:attribute name="scope" type="xs:string" use="required"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="RegExAttributeDefinition">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseAttributeDefinition">
+								<xs:attribute name="sourceName" type="xs:string" use="optional"/>
+								<xs:attribute name="regex" type="xs:string" use="required"/>
+								<xs:attribute name="replacement" type="xs:string" use="required"/>
+								<xs:attribute name="ignoreCase" type="xs:boolean" use="optional" default="false"/>
+								<xs:attribute name="partialMatch" type="xs:boolean" use="optional" default="false"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="FormattedAttributeDefinition">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseAttributeDefinition">
+								<xs:sequence>
+									<xs:element name="Source" type="resolver:FormatType"/>
+									<xs:element name="Target" type="resolver:FormatType"/>
+								</xs:sequence>
+								<xs:attribute name="sourceName" type="xs:string" use="optional"/>
+								<xs:attribute name="skipIfSameFormat" type="xs:boolean" use="optional" default="false"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CompositeAttributeDefinition">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseAttributeDefinition">
+								<xs:attribute name="format" type="xs:string" use="optional"/>
+								<xs:attribute name="orderedSourceNames" type="xs:string" use="required"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="MappedAttributeDefinition">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseAttributeDefinition">
+								<xs:sequence>
+									<xs:element name="ValueMap" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:attribute name="value" type="xs:string" use="required"/>
+											<xs:attribute name="keyset" type="xs:string" use="required"/>
+											<xs:attribute name="separator" type="xs:string" use="optional" default=","/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="sourceName" type="xs:string" use="optional"/>
+								<xs:attribute name="ignoreCase" type="xs:boolean" use="optional" default="false"/>
+								<xs:attribute name="defaultValue" type="xs:string" use="optional"/>
+								<xs:attribute name="regex" type="xs:boolean" use="optional" default="false"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CustomAttributeDefinition" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseAttributeDefinition">
+								<xs:sequence minOccurs="0" maxOccurs="unbounded">
+									<xs:any namespace="##other" processContents="lax" minOccurs="0" 
+										maxOccurs="unbounded"/>
+								</xs:sequence>
+								<xs:attribute name="class" type="xs:string" use="required"/>
+								<xs:anyAttribute namespace="##any" processContents="lax"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CustomDataConnector" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseDataConnector">
+								<xs:sequence>
+									<xs:any namespace="##other" processContents="lax" minOccurs="0" 
+										maxOccurs="unbounded"/>
+								</xs:sequence>
+								<xs:attribute name="class" type="xs:string" use="required"/>
+								<xs:anyAttribute namespace="##any" processContents="lax"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="JNDIDirectoryDataConnector" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseDataConnector">
+								<xs:sequence>
+									<xs:element ref="credentials:Credential" minOccurs="0" maxOccurs="1"/>
+									<xs:element name="Search">
+										<xs:complexType>
+											<xs:sequence minOccurs="0">
+												<xs:element name="Controls">
+													<xs:complexType>
+														<xs:attribute name="searchScope" type="xs:string" 
+															use="optional"/>
+														<xs:attribute name="timeLimit" type="xs:int" use="optional"/>
+														<xs:attribute name="returningObjects" type="xs:boolean" 
+															use="optional"/>
+														<xs:attribute name="linkDereferencing" type="xs:boolean" 
+															use="optional"/>
+														<xs:attribute name="countLimit" type="xs:long" use="optional"/>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="filter" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Property" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:attribute name="name" type="xs:string" use="required"/>
+											<xs:attribute name="value" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="useStartTls" type="xs:boolean" use="optional" default="false"/>
+								<xs:attribute name="mergeMultipleResults" type="xs:boolean" use="optional" 
+									default="false"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="JDBCDataConnector" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="resolver:BaseDataConnector">
+								<xs:sequence>
+									<xs:element name="Query" type="xs:string"/>
+									<xs:element name="AttributeExtractor" minOccurs="0">
+										<xs:complexType>
+											<xs:attribute name="class" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="StatementCreator" minOccurs="0">
+										<xs:complexType>
+											<xs:sequence minOccurs="0" maxOccurs="unbounded">
+												<xs:any namespace="##other" processContents="lax" minOccurs="0" 
+													maxOccurs="unbounded"/>
+											</xs:sequence>
+											<xs:attribute name="class" type="xs:string" use="optional"/>
+											<xs:anyAttribute namespace="##any" processContents="lax"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Property" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:attribute name="name" type="xs:string" use="required"/>
+											<xs:attribute name="value" type="xs:string" use="required"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="dbURL" type="xs:string" use="required"/>
+								<xs:attribute name="dbDriver" type="xs:string" use="optional"/>
+								<xs:attribute name="validationQuery" type="xs:string" use="optional" 
+									default="select 1"/>
+								<xs:attribute name="maxActive" type="xs:integer" use="optional"/>
+								<xs:attribute name="maxIdle" type="xs:integer" use="optional"/>
+								<xs:attribute name="maxWait" type="xs:integer" use="optional"/>
+								<xs:attribute name="minResultSet" type="xs:integer" use="optional"/>
+								<xs:attribute name="maxResultSet" type="xs:integer" use="optional"/>
+								<xs:attribute name="retryInterval" type="xs:integer" use="optional"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="BaseAttributeDefinition">
+		<xs:complexContent>
+			<xs:extension base="resolver:BaseResolutionPlugIn">
+				<xs:attribute name="lifeTime" type="xs:long" use="optional"/>
+				<xs:attribute name="namespace" type="xs:string" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BaseDataConnector">
+		<xs:complexContent>
+			<xs:extension base="resolver:BaseResolutionPlugIn">
+				<xs:sequence>
+					<xs:element name="FailoverDependency" minOccurs="0">
+						<xs:complexType>
+							<xs:attribute name="requires" type="xs:string" 
+								use="required"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BaseResolutionPlugIn">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="DataConnectorDependency">
+				<xs:complexType>
+					<xs:attribute name="requires" type="xs:string" 
+						use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AttributeDependency">
+				<xs:complexType>
+					<xs:attribute name="requires" type="xs:string" 
+						use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="cacheTime" type="xs:string" use="optional"/>
+		<xs:attribute name="propagateErrors" type="xs:boolean" use="optional" 
+			default="true"/>
+	</xs:complexType>
+	<xs:complexType name="FormatType">
+ <xs:attribute name="format" type="xs:string" use="required"/>
+ <xs:attribute name="pattern" type="xs:string" use="required"/>
+</xs:complexType>
+</xs:schema>

@@ -1,0 +1,335 @@
+GridShib SAML Tools Change Log
+
+This change log documents all changes except those made in the saml/teragrid subtree and its dependencies.  The latter has its own CHANGES file.
+
+gridshib-saml-tools-2_0_0 (2011-05-06)
+- Updated JGlobus dependency to v2.0.1, removing stale dependencies
+- API changes required to support JGlobus 2.0.1
+  + GlobusCredential replaced by X509Credential (due to jGlobus 2.0 deprecation)
+  + GlobusCredentialException replaced by CredentialException (due to jGlobus 2.0 deprecation), extra side effect is that this exception class doesn't support error codes
+  + ApplicationRuntimeException and GridShibException now subclass Exception instead of ChainedException (due to jGlobus 2.0 deprecation)
+  + deprecated API from gridshib-saml-tools-0_5_0 (last release) or prior has been removed
+
+gridshib-saml-tools-0_5_4 (not released)
+- Define new SecurityPrincipal interface
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6690
+- Define new SecurityAttributes interface
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6689
+- Deprecate setter methods
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6691
+- New getter methods in SAMLSecurityContext
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6682
+- Bug: SAMLIdentity is not immutable
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6681
+- Implemented SAMLToken class
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6677
+- Define SecurityContextLogger interface
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6671
+  
+gridshib-saml-tools-0_5_3 (not released)
+- Deployed binary distribution of GS-ST v0.5.3 into GS4GT v0.6.2
+  + included GS-ST command-line interface (gridshib-saml-tools-0_5_3.jar)
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6426
+- Removed dependency on abs paths from properties files
+  + implemented new PropertiesUtil class
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6555#c9
+  + enabled variable substitution in BootstrapConfigLoader
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6555#c10
+- Implemented new --certPath and --keyPath command-line options
+  + new command-line options override configured issuing credential
+  + modified short command-line options for --sender-vouches and --holder-of-key (which breaks backward compatibility)
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6571
+- Bug fixes:
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6626
+
+gridshib-saml-tools-0_5_2 (not released)
+- Refactored the EntityMap interface
+  + refactored EntityMapFile and EntityMapDir
+  + refactored the TrivialEntityMap
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6501
+- Improved support for one-to-many file-based mappings
+  + implemented SetMapDir class
+  + modified SetMapFile class to allow an empty image set
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6500
+
+gridshib-saml-tools-0_5_1 (not released)
+- Added an X.509 SAML extension to the Meaningless EEC
+  + SAML attributes were bound to the Meaningless EEC
+  + included two new scripts for installing the Meaningless EEC
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6403
+- Added support for one-to-many file-based mappings
+  + implemented SetMapFile class
+  + modified LoadException class
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6500
+- Upgraded to compatible log4j version
+  + upgraded from log4j-1.2.8.jar to log4j-1.2.15.jar
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6423
+
+gridshib-saml-tools-0_5_0 (2008-09-10)
+- NO CHANGE
+
+gridshib-saml-tools-0_5_0 RC3 (2008-09-05)
+- Created new GS-ST test credential
+  + created a new CA credential for issuing test credentials
+  + created a Globus trusted CA cert and signing policy file
+  + created a new end-entity credential for testing
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6319
+- Bug: remove dependency on abs paths from properties files
+  + added system property "gridshib.home" to scripts and build files
+  + added support for relative paths in properties files
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6342
+- Bug: bad permissions on log directory/file
+  + file-based logging configured by default (etc/log4j.properties)
+  + alternate config properties specified in build.properties
+  + added alternate config /etc/log4j-syslog.properties
+  + rewrote "Configuration" section in install.html
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5939
+- Bug: unidentified SAML principals
+  + implemented new SAMLPrincipal class with ID member
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6335
+- New additions to the developer guide
+  + new section: "Deploying GridShib Common"
+  + new section: "Configuring GridShib Common"
+  + new section: "Using the Ant Build File"
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6259
+
+gridshib-saml-tools-0_5_0 RC2 (2008-07-31)
+- Fixed bug in SecurityContextFactory class
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6278
+- Created unit test for Java KeyStore credential
+  + resurrected the "create-keystore" ant target for testing purposes
+  + generalized testCreateCredential() in GSIUtilTest
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6220
+
+gridshib-saml-tools-0_5_0 RC (2008-07-08)
+- Implemented unit tests for the command-line tools
+  + implemented new Testable interface
+  + implemented new X509BindingToolTest class
+  + implemented new SAMLAssertionIssuerToolTest class
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6201
+- Implemented new SAML Assertion Testing Tool
+  + (no shell script wrappers, for internal use only)
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6200
+- Implemented new SAML Assertion Extraction Tool
+  + added --extract option to SAML Security Info Tool
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6199
+- Implemented new SAML Assertion Verify Tool
+  + implemented an equivalence relation on SAMLAttribute
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6198
+- Added new options to SAML Security Info Tool
+  + added --extract and --verbose options
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6199
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6195
+- Added support for SAML principals
+  + implemented SAMLPrincipal class and unit test
+  + created a SAMLPrincipal when a SAMLIdentity becomes trusted
+  + implemented method getSAMLPrincipals in SAMLSecurityContext
+  + rewrote toString(boolean) method in SAMLSecurityContext
+  + logged SAML principals in SecurityContextLogger
+  + exposed method quote(String) in SecurityContextLogger
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5965
+- Added identity attribute values to list of SAMLPrincipals
+  + implemented new bootstrap property identityAttributesPath
+  + created default identity-attributes.txt in etc directory
+  + implemented new methods in BootstrapConfigLoader
+  + created a list of SAMLPrincipals when a BasicAttribute becomes trusted
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6179
+- Deprecated two methods in BootstrapConfigLoader:
+  + BootstrapConfigLoader.setConfigFileDefault(String)
+  + BootstrapConfigLoader.setCredentialDefault(GlobusCredential)
+- Added new certPath/keyPath configuration parameters
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6166
+- Added new SecurityContextImpl bootstrap property
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6194
+- Bug: JDK 1.4.2 incompatibility in BootstrapConfigLoader
+  + introduced new GRIDSHIB_CONFIG environment variable
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6193
+- Bug: the --properties command-line option is broken
+  - added new methods in SAMLToolsConfigLoader
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6165
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6183
+- Bug: the --authnInstant command-line option is required
+  + the -authn and --authnInstant options are mutually required
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6180
+- Bug: a trusted security item is immutable
+  + insured immutability in BasicAttribute, SAMLAuthnContext, and SAMLIdentity
+  + added method getFormattedAuthnInstant() to SAMLAuthnContext
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6176
+- Downgraded to jce-jdk13-125.jar
+  + patched SAMLX509Extension and GlobusCredentialTest
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5791
+
+gridshib-saml-tools-0_4_2 (2008-06-11)
+- Fixed log configuration bug in BootstrapConfigLoader
+- Removed a premature log statement from SAMLSecurityInfoTool
+- Fixed NPE bug in SAMLToolsConfigLoader
+- Reissued the test credential since the previous credential expired
+
+gridshib-saml-tools-0_4_1 (2008-06-06)
+- Modified config loader framework
+  + BootstrapConfigLoader NEVER throws an exception
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6118
+
+gridshib-saml-tools-0_4_0 (2008-05-28)
+- Enhanced config loader framework
+  + config package now distributed with GridShib Common
+  + consolidated multiple *Config* classes
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5923
+  + refactored BootstrapConfigLoader
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6096
+  + repackaged gridshib-bootstrap.properties
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5906
+- Refactored GlobusSAMLCredential
+  + added numerous new methods
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=6094
+  + removed deprecated loadConfigFile(File) method
+
+gridshib-saml-tools-0_3_2 (2008-03-20)
+- Standardized file format of pem-encoded proxy credential
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5924
+
+gridshib-saml-tools-0_3_1 (2008-03-17)
+- Fixed broken links in the API documentation
+  + refreshed the online API docs
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5902
+- Optimized dependencies in the ant build file
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5903
+- Added numerous properties to the build.properties file
+  + made the bootstrap properties configurable
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5907
+- Updated the distributed HTML documentation
+  + rewrote the dev guide
+  + discussed issuing credential (EEC vs. proxy) in user guide
+  + documented configurable bootstrap props in install notes
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5905
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5917
+- Consolidated two config properties files into one
+  + removed gridshib-proxy-bind.properties and gridshib-saml-issuer.properties
+  + added gridshib-saml-tools-config.properties
+  + deprecated method GlobusSAMLCredential.loadConfigFile(File)
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5918
+
+gridshib-saml-tools-0_3_0 (2008-03-03)
+- Bug aggregator: http://bugzilla.globus.org/globus/show_bug.cgi?id=5748
+- Implemented new SAML Security Info Tool
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5599
+- Implemented new X.509 Binding Tool
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5526
+- Refactored command-line interface
+  + implemented numerous new command-line options
+  + rationalized the option shortcuts
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5751
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5527
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5301
+- Added support for SAML SubjectConfirmation in issued assertions
+  + added support for both holder-of-key and sender-vouches
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5755
+- Refactored security context implementation
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5710
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5764
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5772
+- Fixed numerous bugs
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5547
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5575
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5601
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5715
+- Added support for --properties option to Binding Tool
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5526
+- implemented GlobusSAMLCredential and GlobusSAMLException classes
+- Refactored *ConfigLoader classes to accommodate BootstrapConfigLoader
+  + refactored SAMLToolConfigLoader and X509ToolConfigLoader
+  + added more INFO level logging
+- Reorganized documentation repository in CVS
+  + refactored documentation and improved help screens
+  + consolidated all docs in new top-level doc directory
+  + created new docs in doc/teragrid
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5877
+- Implemented a junit-based test framework
+  + converted test applications to unit tests
+  + created a unit test for GlobusSAMLCredential
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5890
+
+gridshib-saml-tools-0_2_0 (2007-08-27)
+- added (optional) IdP.entityID configuration parameter
+- added support for --authnInstant command-line option
+- added (optional) dateTime.pattern configuration parameter
+- added support for multi-valued attributes
+  + parses a tab-separated list of attribute values in the config file
+- added support for RFC3820-compliant proxy certificates 
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5336
+- endorsed Xerces/Xalan
+  + all scripts in bin directory endorse Xerces/Xalan on the fly
+  + the "install" target in build file endorses Xerces/Xalan
+- introduced the GridShib Security Framework
+  + a standalone implementation of the X.509 Binding for SAML Assertions
+  + handles production and consumption of X.509-bound SAML
+  + includes test application GridShibSecurityTest.java
+- updated Globus SAML Library
+  + enhanced SAMLSubjectAssertion and its unit test
+  + exposed SubjectStatement class
+  + modified build to create and deploy globus-opensaml.jar on the fly
+- exposed the GridShib Common Java API (gridshib-common-0_2_0.jar)
+  + includes GridShib Security Framework
+  + includes Globus SAML Library (derived from OpenSAML 1.1)
+  + includes the Loadable interface and its implementations
+  + includes the EntityMap interface and its implementations
+  + includes the GridShib Entity Mapper, a container for EntityMap implementations
+  + includes extensive javadoc documentation
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5463
+- simplified and extended SelfIssuedAssertion API
+  + eliminated three constructors
+  + added addAuthnStatement and addAttributeStatement methods
+  + overloaded method writeToFile
+- removed Java KeyStore from the distribution
+  + a PEM-encoded X.509 v3 test credential is now provided
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5263
+- removed an unnecessary dependency on a Sun API
+  + http://bugzilla.globus.org/globus/show_bug.cgi?id=5464
+- implemented new top-level build file (for developers)
+  + added new targets (compile, install, test, create-docs, etc.)
+
+gridshib-saml-tools-0_1_4 (2007-05-14)
+- changed the name of the test output credential from "testcert.pem" to "testproxy.pem"
+- added check for v3 signing cert http://bugzilla.globus.org/globus/show_bug.cgi?id=5263
+- removed dependency on JDK 1.5 http://bugzilla.globus.org/globus/show_bug.cgi?id=5092
+- implemented --quiet option http://bugzilla.globus.org/globus/show_bug.cgi?id=5031
+- patched SAML issuer for interop with GridShib for GT http://bugzilla.globus.org/globus/show_bug.cgi?id=5262
+- fixed return codes of shell scripts http://bugzilla.globus.org/globus/show_bug.cgi?id=5030
+
+gridshib-saml-tools-0_1_3 (2007-02-14)
+- added support for --ssoResponse option
+- fixed logging bug http://bugzilla.globus.org/globus/show_bug.cgi?id=4982
+- fixed (UNIX) file permissions on scripts in bin/
+- fixed CRLF on scripts and all editable text files
+- implemented web-based demo script https://computer.ncsa.uiuc.edu/gst-demo/
+
+gridshib-saml-tools-0_1_2 (2007-01-19)
+- fixed incompatibility bugs with JDK 1.4
+  + added source="1.4" flag to build.xml
+- fixed incompatibility bugs with OpenSAML 1.1
+  + renamed opensaml.properties -> globus-saml.properties
+- enabled logging
+  + added bootstrap property gridshib.logConfigPath to build.xml
+- enabled debug option
+- updated JGlobus CoG library
+  + added cryptix libraries
+- added subjectIP address to command-line interface
+
+gridshib-saml-tools-0_1_1 (2007-01-05)
+- removed certPath and keyPath config properties
+  + use certLocation and keyLocation for PEM-encoded credentials
+- added keyStoreLocation, keyStorePassword, keyStoreKeyAlias, and keyStoreKeyPassword config properties
+- installed a default issuing credential (a Java KeyStore)
+  + added ant target create-keystore to the build file
+- overloaded getCredential in GSIUtil.java
+  + create a GlobusCredential from a Java KeyStore
+- created org.globus.gridshib.common.BasicCLI
+  + moved all command-line options except LIFETIME, AUTHN, AUTHNMETHOD, and AUTHNINSTANT to BasicCLI
+- created org.globus.gridshib.common.BasicConfig
+  + moved all properties except SAML attributes to BasicConfig
+- enhanced documentation
+
+gridshib-saml-tools-0_1_0 (2006-12-22)
+- initial release of GridShib SAML Tools
+- retired GridShib Authentication Assertion Client v0.2.0
+- retired Shibboleth IdP Tester v0.5.1
