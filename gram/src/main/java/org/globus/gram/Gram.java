@@ -71,7 +71,8 @@ public class Gram  {
     private static Socket gatekeeperConnect(GSSCredential cred,
 					    ResourceManagerContact rmc,
 					    boolean doDel,
-					    boolean limitedDelegation)
+					    boolean limitedDelegation,
+                        boolean forceSSLV3ForGram)
 	throws GSSException, GramException {
 	
         GSSAuthorization auth = null;
@@ -101,6 +102,9 @@ public class Gram  {
 			      (limitedDelegation) ? 
 			      GSIConstants.DELEGATION_TYPE_LIMITED :
 			      GSIConstants.DELEGATION_TYPE_FULL);
+
+        context.setOption(GSSConstants.FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM,
+                forceSSLV3ForGram);
 	
 	    GssSocketFactory factory = GssSocketFactory.getDefault();
 	    
@@ -195,7 +199,22 @@ public class Gram  {
 	throws GramException, GSSException {
     	ping(null, resourceManagerContact);
     }
-  
+
+    /**
+     * Performs ping operation on the gatekeeper with
+     * specified user credentials.
+     * Verifies if the user is authorized to submit a job
+     * to that gatekeeper.
+     *
+     * @throws GramException if an error occurs or user in unauthorized
+     * @param cred user credentials
+     * @param resourceManagerContact resource manager contact
+     */
+    public static void ping(GSSCredential cred, String resourceManagerContact)
+            throws GramException, GSSException {
+        ping(cred, resourceManagerContact, false);
+    }
+
     /** 
      * Performs ping operation on the gatekeeper with
      * specified user credentials.
@@ -205,13 +224,19 @@ public class Gram  {
      * @throws GramException if an error occurs or user in unauthorized
      * @param cred user credentials
      * @param resourceManagerContact resource manager contact
+     * @param forceSSLV3ForGram Communication with GRAM servers will currently only succeed with
+     *                          SSLv3 and a narrow set of cipher suites. So, applications attempting
+     *                          communication with GRAM must set this to true to force the GSSAPI layer to constrain
+     *                          JSSE to SSLv3 and SSL_RSA_WITH_3DES_EDE_CBC_SHA when confidentiality is requested via
+     *                          requestConf() and SSL_RSA_WITH_NULL_SHA otherwise.
+     *                          Also see gss/src/main/java/org/globus/gsi/gssapi/Java_GSI_GSSAPI.html.
      */
-    public static void ping(GSSCredential cred, String resourceManagerContact) 
+    public static void ping(GSSCredential cred, String resourceManagerContact, boolean forceSSLV3ForGram)
 	throws GramException, GSSException {
 	 
 	ResourceManagerContact rmc = 
 	    new ResourceManagerContact(resourceManagerContact);
-	Socket socket = gatekeeperConnect(cred, rmc, false, false);
+	Socket socket = gatekeeperConnect(cred, rmc, false, false, forceSSLV3ForGram);
 	
 	HttpResponse hd = null;
 
@@ -272,6 +297,31 @@ public class Gram  {
 	request(resourceManagerContact, job, batchJob, true);
     }
 
+    /**
+     * Submits a GramJob to specified gatekeeper as
+     * a interactive or batch job.
+     *
+     * @throws GramException if an error occurs during submisson
+     * @param resourceManagerContact
+     *        resource manager contact
+     * @param job
+     *        gram job
+     * @param batchJob
+     *        true if batch job, interactive otherwise.
+     * @param limitedDelegation
+     *        true for limited delegation, false for full delegation.
+     *        limited delegation should be the default option.
+     */
+    public static void request(String resourceManagerContact,
+                               GramJob job,
+                               boolean batchJob,
+                               boolean limitedDelegation)
+            throws GramException, GSSException {
+
+        request(resourceManagerContact, job, batchJob, limitedDelegation, false);
+    }
+
+
     /** 
      * Submits a GramJob to specified gatekeeper as
      * a interactive or batch job.
@@ -286,11 +336,17 @@ public class Gram  {
      * @param limitedDelegation
      *        true for limited delegation, false for full delegation.
      *        limited delegation should be the default option.
+     * @param forceSSLV3ForGram Communication with GRAM servers will currently only succeed with
+     *                          SSLv3 and a narrow set of cipher suites. So, applications attempting
+     *                          communication with GRAM must set this to true to force the GSSAPI layer to constrain
+     *                          JSSE to SSLv3 and SSL_RSA_WITH_3DES_EDE_CBC_SHA when confidentiality is requested via
+     *                          requestConf() and SSL_RSA_WITH_NULL_SHA otherwise.
+     *                          Also see gss/src/main/java/org/globus/gsi/gssapi/Java_GSI_GSSAPI.html.
      */
     public static void request(String resourceManagerContact,
 			       GramJob job,
 			       boolean batchJob,
-			       boolean limitedDelegation) 
+			       boolean limitedDelegation, boolean forceSSLV3ForGram)
 	throws GramException, GSSException {
 	 
 	GSSCredential cred = getJobCredentials(job);
@@ -311,7 +367,7 @@ public class Gram  {
 	ResourceManagerContact rmc = 
 	    new ResourceManagerContact(resourceManagerContact);
 	 
-	Socket socket = gatekeeperConnect(cred, rmc, true, limitedDelegation);
+	Socket socket = gatekeeperConnect(cred, rmc, true, limitedDelegation, forceSSLV3ForGram);
 
 	GatekeeperReply hd = null;
 
