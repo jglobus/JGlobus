@@ -16,7 +16,7 @@ package org.globus.gsi.bc;
 
 import java.io.IOException;
 
-import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.ASN1Encodable;
 
 import org.globus.gsi.X509Extension;
 
@@ -36,22 +36,22 @@ public class BouncyCastleX509Extension extends X509Extension {
 	this(oid, false, null);
     }
     
-    public BouncyCastleX509Extension(String oid, DEREncodable value) {
+    public BouncyCastleX509Extension(String oid, ASN1Encodable value) {
 	this(oid, false, value);
     }
     
     public BouncyCastleX509Extension(String oid, boolean critical, 
-				     DEREncodable value) {
+				     ASN1Encodable value) {
 	super(oid, critical, null);
 	setValue(value);
     }
     
-    protected void setValue(DEREncodable value) {
+    protected void setValue(ASN1Encodable value) {
 	if (value == null) {
 	    return;
 	}
     	try {
-	    setValue(BouncyCastleUtil.toByteArray(value.getDERObject()));
+	    setValue(BouncyCastleUtil.toByteArray(value.toASN1Primitive()));
 	} catch (IOException e) {
 	    throw new RuntimeException(i18n.getMessage("byteArrayErr") +
 				       e.getMessage());

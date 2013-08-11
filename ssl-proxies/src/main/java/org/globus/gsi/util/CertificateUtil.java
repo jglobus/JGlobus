@@ -18,12 +18,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DERString;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
@@ -188,7 +190,7 @@ public final class CertificateUtil {
             return -1;
         }
         X509Extension proxyExtension =
-                extensions.getExtension(X509Extensions.BasicConstraints);
+                extensions.getExtension(X509Extension.basicConstraints);
         if (proxyExtension != null) {
             BasicConstraints basicExt =
                     getBasicConstraints(proxyExtension);
@@ -282,7 +284,7 @@ public final class CertificateUtil {
         X509Extension ext = null;
 
         if (extensions != null) {
-            ext = extensions.getExtension(X509Extensions.BasicConstraints);
+            ext = extensions.getExtension(X509Extension.basicConstraints);
             if (ext != null) {
                 BasicConstraints basicExt = getBasicConstraints(ext);
                 if (basicExt.isCA()) {
@@ -294,11 +296,11 @@ public final class CertificateUtil {
         GSIConstants.CertificateType type = GSIConstants.CertificateType.EEC;
 
         // does not handle multiple AVAs
-        X509Name subject = crt.getSubject();
+        X500Name subject = crt.getSubject();
 
         ASN1Set entry = X509NameHelper.getLastNameEntry(subject);
         ASN1Sequence ava = (ASN1Sequence) entry.getObjectAt(0);
-        if (X509Name.CN.equals(ava.getObjectAt(0))) {
+        if (BCStyle.CN.equals(ava.getObjectAt(0))) {
             type = processCN(extensions, type, ava);
         }
 
@@ -308,7 +310,7 @@ public final class CertificateUtil {
     private static GSIConstants.CertificateType processCN(
             X509Extensions extensions, GSIConstants.CertificateType type, ASN1Sequence ava) throws CertificateException {
         X509Extension ext;
-        String value = ((DERString) ava.getObjectAt(1)).getString();
+        String value = ((ASN1String) ava.getObjectAt(1)).getString();
         GSIConstants.CertificateType certType = type;
         if (value.equalsIgnoreCase("proxy")) {
             certType = GSIConstants.CertificateType.GSI_2_PROXY;
@@ -403,7 +405,7 @@ public final class CertificateUtil {
      * @return the DERObject.
      * @throws IOException if conversion fails
      */
-    public static DERObject toDERObject(byte[] data)
+    public static ASN1Primitive toASN1Primitive(byte[] data)
             throws IOException {
         ByteArrayInputStream inStream = new ByteArrayInputStream(data);
         ASN1InputStream derInputStream = new ASN1InputStream(inStream);
@@ -422,7 +424,7 @@ public final class CertificateUtil {
     public static TBSCertificateStructure getTBSCertificateStructure(
             X509Certificate cert)
             throws CertificateEncodingException, IOException {
-        DERObject obj = toDERObject(cert.getTBSCertificate());
+        ASN1Primitive obj = toASN1Primitive(cert.getTBSCertificate());
         return TBSCertificateStructure.getInstance(obj);
     }
 
@@ -433,7 +435,7 @@ public final class CertificateUtil {
             return null;
         }
         X509Extension extension =
-                extensions.getExtension(X509Extensions.KeyUsage);
+                extensions.getExtension(X509Extension.keyUsage);
         return (extension != null) ? getKeyUsage(extension) : null;
     }
 
@@ -461,9 +463,9 @@ public final class CertificateUtil {
      * @param ext the certificate extension to extract the value from.
      * @throws IOException if extraction fails.
      */
-    public static DERObject getExtensionObject(X509Extension ext)
+    public static ASN1Primitive getExtensionObject(X509Extension ext)
             throws IOException {
-        return toDERObject(ext.getValue().getOctets());
+        return toASN1Primitive(ext.getValue().getOctets());
     }
 
     /**

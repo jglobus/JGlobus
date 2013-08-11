@@ -30,16 +30,15 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERBoolean;
-import org.bouncycastle.asn1.DEREncodable;
-import org.bouncycastle.asn1.DERInteger;
-import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.DERString;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
@@ -76,7 +75,7 @@ public class BouncyCastleUtil {
      * @return the DER-encoded byte array
      * @exception IOException if conversion fails
      */
-    public static byte[] toByteArray(DERObject obj) 
+    public static byte[] toByteArray(ASN1Primitive obj) 
 	throws IOException {
 	ByteArrayOutputStream bout = new ByteArrayOutputStream();
 	DEROutputStream der = new DEROutputStream(bout);
@@ -92,7 +91,7 @@ public class BouncyCastleUtil {
      * @return the DERObject.
      * @exception IOException if conversion fails
      */
-    public static DERObject toDERObject(byte[] data) 
+    public static ASN1Primitive toASN1Primitive(byte[] data) 
 	throws IOException {
         ByteArrayInputStream inStream = new ByteArrayInputStream(data);
         ASN1InputStream derInputStream = new ASN1InputStream(inStream);
@@ -108,9 +107,9 @@ public class BouncyCastleUtil {
      * @return a copy of the DERObject.
      * @exception IOException if replication fails
      */
-    public static DERObject duplicate(DERObject obj) 
+    public static ASN1Primitive duplicate(ASN1Primitive obj) 
 	throws IOException {
-	return toDERObject(toByteArray(obj));
+	return toASN1Primitive(toByteArray(obj));
     }
 
     /**
@@ -123,7 +122,7 @@ public class BouncyCastleUtil {
      */
     public static TBSCertificateStructure getTBSCertificateStructure(X509Certificate cert)
 	throws CertificateEncodingException, IOException {
-	DERObject obj = BouncyCastleUtil.toDERObject(cert.getTBSCertificate());
+	ASN1Primitive obj = BouncyCastleUtil.toASN1Primitive(cert.getTBSCertificate());
 	return TBSCertificateStructure.getInstance(obj);
     }
 
@@ -133,9 +132,9 @@ public class BouncyCastleUtil {
      * @param ext the certificate extension to extract the value from.
      * @exception IOException if extraction fails.
      */
-    public static DERObject getExtensionObject(X509Extension ext) 
+    public static ASN1Primitive getExtensionObject(X509Extension ext) 
 	throws IOException {
-	return toDERObject(ext.getValue().getOctets());
+	return toASN1Primitive(ext.getValue().getOctets());
     }
 
     /**
@@ -295,9 +294,9 @@ public class BouncyCastleUtil {
 	X509Extension ext = null;
 
 	if (extensions != null) {
-	    ext = extensions.getExtension(X509Extensions.BasicConstraints);
+	    ext = extensions.getExtension(X509Extension.basicConstraints);
 	    if (ext != null) {
-		BasicConstraints basicExt = getBasicConstraints(ext);
+		BasicConstraints basicExt = BasicConstraints.getInstance(ext);
 		if (basicExt.isCA()) {
 		    return GSIConstants.CertificateType.CA;
 		}
@@ -307,12 +306,12 @@ public class BouncyCastleUtil {
 	GSIConstants.CertificateType type = GSIConstants.CertificateType.EEC;
 	
 	// does not handle multiple AVAs
-	X509Name subject = crt.getSubject();
+	X500Name subject = crt.getSubject();
 
 	ASN1Set entry = X509NameHelper.getLastNameEntry(subject);
 	ASN1Sequence ava = (ASN1Sequence)entry.getObjectAt(0);
-	if (X509Name.CN.equals(ava.getObjectAt(0))) {
-	    String value = ((DERString)ava.getObjectAt(1)).getString();
+	if (BCStyle.CN.equals(ava.getObjectAt(0))) {
+	    String value = ((ASN1String)ava.getObjectAt(1)).getString();
 	    if (value.equalsIgnoreCase("proxy")) {
 		type = GSIConstants.CertificateType.GSI_2_PROXY;
 	    } else if (value.equalsIgnoreCase("limited proxy")) {
@@ -370,7 +369,7 @@ public class BouncyCastleUtil {
 		X509NameHelper iss = new X509NameHelper(crt.getIssuer());
 		iss.add((ASN1Set)BouncyCastleUtil.duplicate(entry));
 		X509Name issuer = iss.getAsName();
-		if (!issuer.equals(subject)) {
+		if (!issuer.equals(X509Name.getInstance(subject))) {
                     String err = i18n.getMessage("proxyDNErr");
 		    throw new CertificateException(err);
 		}
@@ -403,36 +402,6 @@ public class BouncyCastleUtil {
 	return keyUsage;
     }
 
-    /**
-     * Creates a <code>BasicConstraints</code> object from given
-     * extension.
-     *
-     * @param ext the extension.
-     * @return the <code>BasicConstraints</code> object.
-     * @exception IOException if something fails.
-     */
-    public static BasicConstraints getBasicConstraints(X509Extension ext) 
-	throws IOException {
-	DERObject obj = BouncyCastleUtil.getExtensionObject(ext);
-	if (obj instanceof ASN1Sequence) {
-	    ASN1Sequence seq = (ASN1Sequence)obj;
-	    int size = seq.size();
-	    if (size == 0) {
-		return new BasicConstraints(false);
-	    } else if (size == 1) {
-		DEREncodable value = seq.getObjectAt(0);
-		if (value instanceof DERInteger) {
-		    int length = ((DERInteger)value).getValue().intValue();
-		    return new BasicConstraints(false, length);
-		} else if (value instanceof DERBoolean) {
-		    boolean ca = ((DERBoolean)value).isTrue();
-		    return new BasicConstraints(ca);
-		}
-	    } 
-	}
-	return BasicConstraints.getInstance(obj);
-    }
-    
     /**
      * Creates a <code>ProxyCertInfo</code> object from given
      * extension.
@@ -531,7 +500,7 @@ public class BouncyCastleUtil {
 	throws IOException {
 	ByteArrayInputStream inStream = new ByteArrayInputStream(certExtValue);
 	ASN1InputStream derInputStream = new ASN1InputStream(inStream);
-	DERObject object = derInputStream.readObject();
+        ASN1Primitive object = derInputStream.readObject();
 	if (object instanceof ASN1OctetString) {
 	    return ((ASN1OctetString)object).getOctets();
 	} else {

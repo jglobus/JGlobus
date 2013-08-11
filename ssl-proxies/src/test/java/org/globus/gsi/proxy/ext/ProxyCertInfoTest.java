@@ -24,7 +24,7 @@ import org.globus.gsi.proxy.ext.ProxyCertInfo;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 
 import junit.framework.TestCase;
@@ -63,7 +63,7 @@ public class ProxyCertInfoTest extends TestCase {
 	ByteArrayInputStream bIn = 
 	    new ByteArrayInputStream(bOut.toByteArray());
 	ASN1InputStream dIn = new ASN1InputStream(bIn);
-	DERObject obj = dIn.readObject();
+	ASN1Primitive obj = dIn.readObject();
 	
 	assertTrue(obj instanceof ASN1Sequence);
 	
@@ -112,7 +112,7 @@ public class ProxyCertInfoTest extends TestCase {
 	ByteArrayInputStream bIn = 
 	    new ByteArrayInputStream(bOut.toByteArray());
 	ASN1InputStream dIn = new ASN1InputStream(bIn);
-	DERObject obj = dIn.readObject();
+	ASN1Primitive obj = dIn.readObject();
 
 	ProxyCertInfo testInfo = new ProxyCertInfo((ASN1Sequence)obj);
 
