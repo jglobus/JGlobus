@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.jglobus</groupId>
@@ -20,7 +21,8 @@
 	</modules>
 	<name>JGlobus</name>
 	<packaging>pom</packaging>
-	<description>Java implementation of the Grid Security Infrastructure (GSI), developed by the Globus project.</description>
+	<description>Java implementation of the clients to Grid Security Infrastructure (GSI), MyProxy, GRAM, GridFTP. JGlobus is originally developed by the Globus project
+	and now adopted by user community and developed in GitHub.</description>
 	<url>https://github.com/jglobus/JGlobus</url>
 	<licenses>
 		<license>
@@ -35,6 +37,44 @@
 			<name>Brian Bockelman</name>
 			<email>bockelman+maven@gmail.com</email>
 		</developer>
+		<developer>
+			<id>bd4</id>
+			<name>bd4</name>
+		</developer>
+		<developer>
+			<id>jbasney</id>
+			<name>Jim Basney</name>
+			<email>jbasney@illinois.edu</email>
+			<timezone>-4</timezone>
+			<organization>NCSA</organization>
+		</developer>
+		<developer>
+			<id>kofemann</id>
+			<name>kofemann</name>
+		</developer>
+		<developer>
+			<id>bpalak</id>
+			<name>bpalak</name>
+		</developer>
+		<developer>
+			<id>smarru</id>
+			<name>Suresh Marru</name>
+			<email>smarru@apache.org</email>
+			<timezone>-5</timezone>
+			<organization>Indiana University</organization>
+		</developer>
+		<developer>
+			<id>stumartin</id>
+			<name>Stuart Martin</name>
+			<email>smartin@mcs.anl.gov</email>
+			<timezone>-5</timezone>
+			<organization>Globus</organization>
+		</developer>
+		<developer>
+			<id>vijayanand</id>
+			<name>Vijay Anand</name>
+			<email>ananvij@iit.edu</email>
+		</developer>
 	</developers>
 
 	<issueManagement>
@@ -42,6 +82,25 @@
 		<url>https://github.com/jglobus/JGlobus/issues</url>
 	</issueManagement>
 
+	<mailingLists>
+
+		<mailingList>
+			<name>JGlobus Developer List</name>
+			<subscribe>dev-subscribe@airavata.apache.org</subscribe>
+			<unsubscribe>dev-unsubscribe@airavata.apache.org</unsubscribe>
+			<post>mailto:dev@airavata.apache.org</post>
+			<archive>http://mail-archives.apache.org/mod_mbox/airavata-dev/</archive>
+		</mailingList>
+
+		<mailingList>
+			<name>JGLobus Users List</name>
+			<subscribe>users-subscribe@airavata.apache.org</subscribe>
+			<unsubscribe>users-unsubscribe@airavata.apache.org</unsubscribe>
+			<post>mailto:users@airavata.apache.org</post>
+			<archive>http://mail-archives.apache.org/mod_mbox/airavata-users/</archive>
+		</mailingList>
+
+	</mailingLists>
 	<scm>
 		<connection>scm:git:git@github.com:jglobus/JGlobus.git</connection>
 		<developerConnection>scm:git:git@github.com:jglobus/JGlobus.git</developerConnection>
@@ -61,14 +120,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<!--<version>2.0.3</version>-->
+				<!--<version>2.0.3</version> -->
 				<executions>
 					<execution>
 						<goals>
@@ -77,10 +136,9 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- See: http://jira.codehaus.org/browse/MRELEASE-579
-			     We need at least this version of the release plugin in order
-			     to have functioning git integration with branches
-			     -->
+			<!-- See: http://jira.codehaus.org/browse/MRELEASE-579 We need at least 
+				this version of the release plugin in order to have functioning git integration 
+				with branches -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -89,7 +147,7 @@
 		</plugins>
 	</build>
 	<dependencyManagement>
-		<dependencies>	
+		<dependencies>
 			<dependency>
 				<groupId>axis</groupId>
 				<artifactId>axis</artifactId>

@@ -19,6 +19,16 @@ The notable JARs part of the JGlobus project include:
 *****************
 * Release Notes *
 *****************
+JGlobus 2.0.6 Release Notes
+- This release now includes MyProxy JGlobus 2.0 fixes from CILogon CVS.
+- Uses org.bouncycastle.util.encoders.Base64 instead of org.globus.util.Base64
+- Support list of MyProxy server hostnames/ports
+- force GSS confidentiality
+- handle multiple authz challenge options
+- remove very old deprecated API
+- Bug fix for issue - https://github.com/jglobus/JGlobus/issues/102
+- This release is verified to work with XSEDE Myproxy Server, GridFTP and GRAM deployments
+
 JGlobus 2.0.5 Release Notes
 - This is the first release from github and distributed through Maven central, as opposed to globus.org
 - This release addresses compatibility and performance issues with the IGTF CA bundle.
