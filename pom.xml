@@ -86,18 +86,14 @@
 
 		<mailingList>
 			<name>JGlobus Developer List</name>
-			<subscribe>dev-subscribe@airavata.apache.org</subscribe>
-			<unsubscribe>dev-unsubscribe@airavata.apache.org</unsubscribe>
-			<post>mailto:dev@airavata.apache.org</post>
-			<archive>http://mail-archives.apache.org/mod_mbox/airavata-dev/</archive>
+			<post>mailto:jglobus-dev@googlegroups.com</post>
+			<archive>https://groups.google.com/forum/#!forum/jglobus-dev</archive>
 		</mailingList>
 
 		<mailingList>
 			<name>JGLobus Users List</name>
-			<subscribe>users-subscribe@airavata.apache.org</subscribe>
-			<unsubscribe>users-unsubscribe@airavata.apache.org</unsubscribe>
-			<post>mailto:users@airavata.apache.org</post>
-			<archive>http://mail-archives.apache.org/mod_mbox/airavata-users/</archive>
+			<post>mailto:jglobus-user@googlegroups.com</post>
+			<archive>https://groups.google.com/forum/#!forum/jglobus-user</archive>
 		</mailingList>
 
 	</mailingLists>
