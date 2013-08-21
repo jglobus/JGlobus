@@ -15,6 +15,7 @@
 
 package org.globus.gsi.tomcat;
 
+import org.apache.tomcat.util.net.AbstractEndpoint;
 import org.apache.tomcat.util.net.jsse.JSSESocketFactory;
 import org.globus.gsi.X509ProxyCertPathParameters;
 import org.globus.gsi.jsse.GlobusSSLHelper;
@@ -45,8 +46,17 @@ public class GlobusSSLSocketFactory extends JSSESocketFactory {
     static {
         Security.addProvider(new GlobusProvider());
     }
-    
-    
+
+    protected Object crlLocation;
+    protected Object signingPolicyLocation;
+    protected Object rejectLimitedProxyEntry;
+
+    public GlobusSSLSocketFactory(AbstractEndpoint endpoint) {
+        super(endpoint);
+        crlLocation = endpoint.getAttribute("crlLocation");
+        signingPolicyLocation = endpoint.getAttribute("signingPolicyLocation");
+        rejectLimitedProxyEntry = endpoint.getAttribute("rejectLimitedProxy");
+    }
 
     /**
      * Create a Globus trust manager which supports proxy certificates.  This requires that the CRL store, and
@@ -62,20 +72,20 @@ public class GlobusSSLSocketFactory extends JSSESocketFactory {
     protected TrustManager[] getTrustManagers(String keystoreType, String keystoreProvider, String algorithm)
             throws Exception {
         KeyStore trustStore = getTrustStore(keystoreType, keystoreProvider);
+
         CertStore crlStore = null;
-        Object crlLocation = attributes.get("crlLocation");
         if (crlLocation != null) {
-            crlStore = GlobusSSLHelper.findCRLStore((String) attributes.get("crlLocation"));
+            crlStore = GlobusSSLHelper.findCRLStore((String) crlLocation);
         }
-        Object signingPolicyLocation = attributes.get("signingPolicyLocation");
+
         ResourceSigningPolicyStore policyStore = null;
         if (signingPolicyLocation != null) {
-            policyStore = Stores.getSigningPolicyStore((String) attributes.get("signingPolicyLocation"));
+            policyStore = Stores.getSigningPolicyStore((String) signingPolicyLocation);
         }
-        Object rejectLimitedProxyEntry = attributes.get("rejectLimitedProxy");
 
         boolean rejectLimitedProxy = rejectLimitedProxyEntry != null &&
-                Boolean.parseBoolean(attributes.get("rejectLimitedProxy").toString());
+            Boolean.parseBoolean((String) rejectLimitedProxyEntry);
+
         X509ProxyCertPathParameters parameters = new X509ProxyCertPathParameters(trustStore, crlStore, policyStore,
                 rejectLimitedProxy);
         TrustManager trustManager = new PKITrustManager(new X509ProxyCertPathValidator(), parameters);
