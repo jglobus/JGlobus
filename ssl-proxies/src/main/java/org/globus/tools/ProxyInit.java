@@ -666,9 +666,11 @@ class DefaultProxyInit extends ProxyInit {
         
     } catch(IOException e) {
         System.err.println("Error: Failed to load key: " + arg);
+        System.err.println("Error: " + e.getMessage());
         System.exit(-1);
     } catch(GeneralSecurityException e) {
         System.err.println("Error: Wrong pass phrase");
+        System.err.println("Error: " + e.getMessage());
         if (debug) {
         e.printStackTrace();
         }
