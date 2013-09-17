@@ -8,7 +8,7 @@
 </formats>
 <fileSets>
   <fileSet>
-    <directory>${project.artifactId}-${project.version}-cli</directory>
+     <directory>config</directory>
     <outputDirectory>/</outputDirectory>
     <filtered>false</filtered>
   </fileSet>
