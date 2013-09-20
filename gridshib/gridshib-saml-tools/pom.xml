@@ -287,7 +287,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-saml-issuer.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-saml-issuer</executable>
                 <arguments>
                     <argument>-d</argument>
                 </arguments>
@@ -300,7 +300,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-saml-issuer.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-saml-issuer</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-u</argument>
@@ -316,7 +316,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-saml-issuer.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-saml-issuer</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-u</argument>
@@ -332,7 +332,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-saml-issuer.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-saml-issuer</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-u</argument>
@@ -350,7 +350,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-proxy-bind.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-proxy-bind</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-f</argument>
@@ -370,7 +370,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-saml-issuer.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-saml-issuer</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-u</argument>
@@ -389,7 +389,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-proxy-bind.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-proxy-bind</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-f</argument>
@@ -409,7 +409,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-saml-issuer.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-saml-issuer</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-u</argument>
@@ -433,7 +433,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/gridshib-saml-issuer.sh</executable>
+                <executable>${gridshib.home}/bin/gridshib-saml-issuer</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-u</argument>
@@ -524,7 +524,7 @@
                 <executable>sh</executable>
                 <arguments>
                     <argument>${basedir}/misc/testhelper2.sh</argument>
-                    <argument>${gridshib.home}/bin/test-gram-audit.sh -d -q</argument>
+                    <argument>${gridshib.home}/bin/test-gram-audit -d -q</argument>
                     <argument>infile1.txt</argument>
                 </arguments>
             </configuration>
@@ -536,7 +536,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/resolve-gram-attributes.sh</executable>
+                <executable>${gridshib.home}/bin/resolve-gram-attributes</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-t</argument>
@@ -557,7 +557,7 @@
                 <executable>sh</executable>
                 <arguments>
                     <argument>${basedir}/misc/testhelper2.sh</argument>
-                    <argument>${gridshib.home}/bin/test-gram-audit.sh -d -q -Z</argument>
+                    <argument>${gridshib.home}/bin/test-gram-audit -d -q -Z</argument>
                     <argument>infile2.txt</argument>
                 </arguments>
             </configuration>
@@ -569,7 +569,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/resolve-gram-attributes.sh</executable>
+                <executable>${gridshib.home}/bin/resolve-gram-attributes</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-t</argument>
@@ -670,7 +670,7 @@
                 <executable>sh</executable>
                 <arguments>
                     <argument>${basedir}/misc/testhelper2.sh</argument>
-                    <argument>${gridshib.home}/bin/test-gram-audit.sh -d -q</argument>
+                    <argument>${gridshib.home}/bin/test-gram-audit -d -q</argument>
                     <argument>infile3.txt</argument>
                 </arguments>
             </configuration>
@@ -682,7 +682,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/resolve-gram-attributes.sh</executable>
+                <executable>${gridshib.home}/bin/resolve-gram-attributes</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-t</argument>
@@ -703,7 +703,7 @@
                 <executable>sh</executable>
                 <arguments>
                     <argument>${basedir}/misc/testhelper2.sh</argument>
-                    <argument>${gridshib.home}/bin/test-gram-audit.sh -d -q -Z</argument>
+                    <argument>${gridshib.home}/bin/test-gram-audit -d -q -Z</argument>
                     <argument>infile4.txt</argument>
                 </arguments>
             </configuration>
@@ -715,7 +715,7 @@
             </goals>
             <phase>integration-test</phase>
             <configuration>
-                <executable>${gridshib.home}/bin/resolve-gram-attributes.sh</executable>
+                <executable>${gridshib.home}/bin/resolve-gram-attributes</executable>
                 <arguments>
                     <argument>-d</argument>
                     <argument>-t</argument>
@@ -777,6 +777,50 @@
     </execution>
   </executions>
 </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>create-javadoc</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>javadoc-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+<!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.3</version>
+        <executions>
+          <execution>
+            <id>create-site</id>
+            <phase>package</phase>
+            <goals>
+              <goal>site</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>site-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+-->
     </plugins>
 </build>
 </project>

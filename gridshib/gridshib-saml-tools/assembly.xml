@@ -1,7 +1,7 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>cli</id>
+  <id>config-cli-doc</id>
 <formats>
   <format>tar.gz</format>
   <format>tar.bz2</format>
@@ -23,6 +23,16 @@
     <includes>
       <include>*.jar</include>
     </includes>
+    <filtered>false</filtered>
+  </fileSet>
+  <fileSet>
+    <directory>doc</directory>
+    <outputDirectory>doc</outputDirectory>
+    <filtered>false</filtered>
+  </fileSet>
+  <fileSet>
+    <directory>target/site/apidocs</directory>
+    <outputDirectory>doc/api</outputDirectory>
     <filtered>false</filtered>
   </fileSet>
 </fileSets>
