@@ -1,3 +1,5 @@
+This was formerly an ant project that has been now Maven-ized.
+
 The code currently depends on the following that are not in standard
 Maven repositories:
 
