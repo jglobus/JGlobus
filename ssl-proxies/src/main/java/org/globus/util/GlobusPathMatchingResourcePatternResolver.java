@@ -1,13 +1,11 @@
 package org.globus.util;
 
-import org.apache.commons.codec.net.URLCodec;
-
 import java.io.File;
-import java.util.Vector;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Provides methods to resolve locationPatterns and return GlobusResource
@@ -138,15 +136,25 @@ public class GlobusPathMatchingResourcePatternResolver {
     }
 
     /**
-     * Go through every directory recursively and perform parseFilesInDirectory method.
+     * Recursive variant of parseFilesInDirectory.
      * @param currentDirectory The currentDirectory to explore.
      */
     private void parseDirectoryStructure(File currentDirectory) {
-        parseFilesInDirectory(currentDirectory);
-        File[] directoryContents = currentDirectory.listFiles();
-        if (directoryContents != null) {
+        File[] directoryContents;
+        if (currentDirectory.isDirectory()) {
+            directoryContents = currentDirectory.listFiles();    //Get a list of the files and directories
+        } else {
+            directoryContents = new File[] { currentDirectory };
+        }
+        if(directoryContents != null){
             for (File currentFile : directoryContents) {
-                if (currentFile.isDirectory()) {
+                if (currentFile.isFile()) { //We are only interested in files not directories
+                    String absolutePath = currentFile.getAbsolutePath();
+                    Matcher locationPatternMatcher = locationPattern.matcher(absolutePath);
+                    if (locationPatternMatcher.find()) {
+                        pathsMatchingLocationPattern.add(new GlobusResource(absolutePath));
+                    }
+                } else if (currentFile.isDirectory()) {
                     parseDirectoryStructure(currentFile);
                 }
             }
