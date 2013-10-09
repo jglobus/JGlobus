@@ -15,19 +15,16 @@
 
 package org.globus.gsi.stores;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.gsi.CredentialException;
 import org.globus.gsi.X509Credential;
-
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.commons.logging.Log;
+import org.globus.util.GlobusResource;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
-
-import org.globus.util.GlobusResource;
 
 /**
  * JGLOBUS-87 : document me
@@ -37,60 +34,60 @@ import org.globus.util.GlobusResource;
 public class ResourceProxyCredential extends AbstractResourceSecurityWrapper<X509Credential>
         implements CredentialWrapper {
 
-    private Log logger = LogFactory.getLog(getClass().getCanonicalName());
+    private static final SecurityObjectFactory<X509Credential> FACTORY =
+            new SecurityObjectFactory<X509Credential>() {
+                private Log logger = LogFactory.getLog(getClass());
+
+                public X509Credential create(GlobusResource globusResource)
+                        throws ResourceStoreException {
+                    InputStream keyInputStream = null;
+                    InputStream certInputStream = null;
+                    try {
+                        keyInputStream = new BufferedInputStream(globusResource.getInputStream());
+                        certInputStream = new BufferedInputStream(globusResource.getInputStream());
+                        return new X509Credential(keyInputStream, certInputStream);
+                    } catch (IOException e) {
+                        throw new ResourceStoreException(e);
+                    } catch (CredentialException e) {
+                        throw new ResourceStoreException(e);
+                    } finally {
+
+                        if (keyInputStream != null) {
+                            try {
+                                keyInputStream.close();
+                            } catch (Exception e) {
+                                logger.warn("Unable to close stream.");
+                            }
+                        }
+                        if (certInputStream != null) {
+                            try {
+                                certInputStream.close();
+                            } catch (Exception e) {
+                                logger.warn("Unable to close stream.");
+                            }
+                        }
+                    }
+                }
+            };
 
     public ResourceProxyCredential(String locationPattern) throws ResourceStoreException {
-    	super(false);
-        init(locationPattern);
+    	super(FACTORY, false, locationPattern);
     }
 
     public ResourceProxyCredential(GlobusResource globusResource) throws ResourceStoreException {
-    	super(false);
-        init(globusResource);
+    	super(FACTORY, false, globusResource);
     }
 
     public ResourceProxyCredential(String filename, X509Credential object) throws ResourceStoreException {
-    	super(false);
-        init(filename, object);
+    	super(FACTORY, false, filename, object);
     }
 
     public ResourceProxyCredential(boolean inMemory, GlobusResource globusResource, X509Credential object) throws ResourceStoreException {
-    	super(inMemory);
-        init(globusResource, object);
+    	super(FACTORY, inMemory, globusResource, object);
     }
 
     public X509Credential getCredential() throws ResourceStoreException {
         return getSecurityObject();
-    }
-
-    protected X509Credential create(GlobusResource globusResource) throws ResourceStoreException {
-        InputStream keyInputStream = null;
-        InputStream certInputStream = null;
-        try {
-            keyInputStream = new BufferedInputStream(globusResource.getInputStream());
-            certInputStream = new BufferedInputStream(globusResource.getInputStream());
-            return new X509Credential(keyInputStream, certInputStream);
-        } catch (IOException e) {
-            throw new ResourceStoreException(e);
-        } catch (CredentialException e) {
-            throw new ResourceStoreException(e);
-        } finally {
-
-            if (keyInputStream != null) {
-                try {
-                    keyInputStream.close();
-                } catch (Exception e) {
-                    logger.warn("Unable to close stream.");
-                }
-            }
-            if (certInputStream != null) {
-                try {
-                    certInputStream.close();
-                } catch (Exception e) {
-                    logger.warn("Unable to close stream.");
-                }
-            }
-        }
     }
 
     public void store() throws ResourceStoreException {

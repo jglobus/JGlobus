@@ -24,51 +24,43 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 
-/**
- * Created by IntelliJ IDEA.
- * User: turtlebender
- * Date: Dec 29, 2009
- * Time: 12:41:39 PM
- * To change this template use File | Settings | File Templates.
- */
 public class ResourceCRL extends AbstractResourceSecurityWrapper<X509CRL> {
 
+    private static final SecurityObjectFactory<X509CRL> FACTORY =
+            new SecurityObjectFactory<X509CRL>() {
+                public X509CRL create(GlobusResource resource) throws ResourceStoreException {
+                    try {
+                        InputStream is = resource.getInputStream();
+                        try {
+                            return CertificateLoadUtil.loadCrl(new BufferedInputStream(is));
+                        } finally {
+                            try {
+                                is.close();
+                            } catch (IOException ignored) {
+                            }
+                        }
+                    } catch (IOException e) {
+                        throw new ResourceStoreException(e);
+                    } catch (GeneralSecurityException e) {
+                        throw new ResourceStoreException(e);
+                    }
+                }
+            };
+
     public ResourceCRL(String fileName) throws ResourceStoreException {
-    	super(false);
-    	init(globusResolver.getResource(fileName));
+    	super(FACTORY, false, fileName);
     }
 
     public ResourceCRL(boolean inMemory, GlobusResource globusResource) throws ResourceStoreException {
-    	super(inMemory);
-        init(globusResource);
+    	super(FACTORY, inMemory, globusResource);
     }
 
     public ResourceCRL(String fileName, X509CRL crl) throws ResourceStoreException {
-    	super(false);
-        init(globusResolver.getResource(fileName), crl);
+    	super(FACTORY, false, fileName, crl);
     }
 
     public X509CRL getCrl() throws ResourceStoreException {
         return getSecurityObject();
-    }
-
-    @Override
-    protected X509CRL create(GlobusResource resource) throws ResourceStoreException {
-        try {
-            InputStream is = resource.getInputStream();
-            try {
-                return CertificateLoadUtil.loadCrl(new BufferedInputStream(is));
-            } finally {
-                try {
-                    is.close();
-                } catch (IOException ignored) {
-                }
-            }
-        } catch (IOException e) {
-            throw new ResourceStoreException(e);
-        } catch (GeneralSecurityException e) {
-            throw new ResourceStoreException(e);
-        }
     }
 
     public void store() throws ResourceStoreException {

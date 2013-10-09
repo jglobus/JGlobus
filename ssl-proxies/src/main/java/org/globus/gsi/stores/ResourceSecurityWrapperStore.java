@@ -15,9 +15,10 @@
 
 package org.globus.gsi.stores;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
+import org.globus.util.GlobusResource;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -29,21 +30,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
-import org.globus.util.GlobusResource;
-import org.globus.util.GlobusPathMatchingResourcePatternResolver;
-
 /**
  * Created by IntelliJ IDEA. User: turtlebender Date: Dec 29, 2009 Time:
  * 12:29:45 PM To change this template use File | Settings | File Templates.
- * 
+ *
  * @param <T>
  * @param <V>
  */
 public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSecurityWrapper<V>, V> {
 	private Collection<V> rootObjects;
-    private GlobusPathMatchingResourcePatternResolver globusResolver = new GlobusPathMatchingResourcePatternResolver();
-	private Map<String, T> wrapperMap = new HashMap<String, T>();
+    private Map<String, T> wrapperMap = new HashMap<String, T>();
 	private Log logger = LogFactory.getLog(ResourceSecurityWrapperStore.class.getCanonicalName());
 
 	public Map<String, T> getWrapperMap() {
@@ -99,7 +95,7 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 			Map<String, T> newWrapperMap) throws ResourceStoreException {
 		boolean changed = false;
 		try {
-            GlobusResource[] globusResources = globusResolver.getResources(locationPattern);
+            GlobusResource[] globusResources = new GlobusPathMatchingResourcePatternResolver().getResources(locationPattern);
             for (GlobusResource globusResource : globusResources){
                 URI uri =globusResource.getURI();
                 if (!globusResource.isReadable()) {
@@ -120,16 +116,10 @@ public abstract class ResourceSecurityWrapperStore<T extends AbstractResourceSec
 		if (!resource.isReadable()) {
 			throw new ResourceStoreException("Cannot read file");
 		}
-		try {
-			if (resource.getFile().isDirectory()) {
-				File directory = resource.getFile();
-				currentRoots.addAll(addCredentials(directory, newWrapperMap));
-				return true;
-			}
-		} catch (IOException e) {
-			// This is ok, it just means the resource is not a
-			// filesystemresources
-			logger.debug("Not a filesystem resource", e);
+		if (resource.getFile().isDirectory()) {
+			File directory = resource.getFile();
+			currentRoots.addAll(addCredentials(directory, newWrapperMap));
+			return true;
 		}
 		try {
 			String resourceUri = resource.getURL().toExternalForm();

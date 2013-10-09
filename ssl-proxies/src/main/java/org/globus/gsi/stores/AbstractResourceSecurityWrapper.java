@@ -15,133 +15,132 @@
 
 package org.globus.gsi.stores;
 
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.util.GlobusPathMatchingResourcePatternResolver;
+import org.globus.util.GlobusResource;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.globus.util.GlobusResource;
-import org.globus.util.GlobusPathMatchingResourcePatternResolver;
-
 /**
  * // JGLOBUS-91 : add javadoc
- * 
+ *
  * @param <T>
  *            Type of security object
  */
 public abstract class AbstractResourceSecurityWrapper<T> implements
-		SecurityObjectWrapper<T>, Storable {
+        SecurityObjectWrapper<T>, Storable {
 
-    protected GlobusPathMatchingResourcePatternResolver globusResolver = new GlobusPathMatchingResourcePatternResolver();
     protected GlobusResource globusResource;
 
-	private Log logger = LogFactory.getLog(getClass().getCanonicalName());
+    private Log logger = LogFactory.getLog(getClass());
 
-	private boolean changed;
-	private T securityObject;
-	private long lastModified = -1;
-	private String alias;
-	private boolean inMemory = false;
+    private boolean changed;
+    private T securityObject;
+    private long lastModified = -1;
+    private final String alias;
+    private final boolean inMemory;
+    private final SecurityObjectFactory<T> factory;
 
-	protected AbstractResourceSecurityWrapper(boolean inMemory) {
-		this.inMemory = inMemory;
-	}
+    protected static interface SecurityObjectFactory<T>
+    {
+        T create(GlobusResource resource)
+            throws ResourceStoreException;
+    }
 
-	protected void init(String locationPattern) throws ResourceStoreException {
-		init(globusResolver.getResource(locationPattern));
-	}
+    protected AbstractResourceSecurityWrapper(SecurityObjectFactory<T> factory, boolean inMemory, String locationPattern)
+            throws ResourceStoreException {
+        this(factory, inMemory, new GlobusPathMatchingResourcePatternResolver().getResource(locationPattern));
+    }
 
-    protected void init(GlobusResource initialResource) throws ResourceStoreException {
+    protected AbstractResourceSecurityWrapper(SecurityObjectFactory<T> factory, boolean inMemory, GlobusResource initialResource)
+            throws ResourceStoreException {
+        this(factory, inMemory, initialResource, factory.create(initialResource));
+    }
+
+    protected AbstractResourceSecurityWrapper(SecurityObjectFactory<T> factory, boolean inMemory, String locationPattern, T initialSecurityObject)
+            throws ResourceStoreException {
+        this(factory, inMemory, new GlobusPathMatchingResourcePatternResolver().getResource(locationPattern), initialSecurityObject);
+    }
+
+    protected AbstractResourceSecurityWrapper(SecurityObjectFactory<T> factory, boolean inMemory, GlobusResource initialResource, T initialSecurityObject)
+            throws ResourceStoreException {
+        this.factory = factory;
+        this.inMemory = inMemory;
+        if (initialSecurityObject == null) {
+            // JGLOBUS-88 : better exception?
+            throw new IllegalArgumentException("Object cannot be null");
+        }
+        this.securityObject = initialSecurityObject;
         this.globusResource = initialResource;
-        this.securityObject = create(this.globusResource);
-        logger.debug(String.format("Loading initialResource: %s", this.globusResource.toString()));
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Loading initialResource: %s", this.globusResource.toString()));
+        }
         try {
             this.alias = this.globusResource.getURL().toExternalForm();
-            this.lastModified = this.globusResource.lastModified();
+            if(!this.inMemory){
+                this.lastModified = this.globusResource.lastModified();
+            }
         } catch (IOException e) {
             throw new ResourceStoreException(e);
         }
     }
 
-	public String getAlias() {
-		return alias;
-	}
-
-	protected void init(String locationPattern, T initialSecurityObject)
-			throws ResourceStoreException {
-		init(globusResolver.getResource(locationPattern), initialSecurityObject);
-	}
-
-	protected void init(GlobusResource initialResource, T initialSecurityObject)
-			throws ResourceStoreException {
-		if (initialSecurityObject == null) {
-			// JGLOBUS-88 : better exception?
-			throw new IllegalArgumentException("Object cannot be null");
-		}
-		this.securityObject = initialSecurityObject;
-		this.globusResource = initialResource;
-		try {
-			this.alias = this.globusResource.getURL().toExternalForm();
-			if(!inMemory){
-				this.lastModified = this.globusResource.lastModified();
-			}
-		} catch (IOException e) {
-			throw new ResourceStoreException(e);
-		}
-	}
+    public String getAlias() {
+        return alias;
+    }
 
     public GlobusResource getGlobusResource(){
         return globusResource;
     }
 
-	public URL getResourceURL() {
-		try {
-			return globusResource.getURL();
-		} catch (IOException e) {
-			logger.warn("Unable to extract url", e);
-			return null;
-		}
-	}
+    public URL getResourceURL() {
+        try {
+            return globusResource.getURL();
+        } catch (IOException e) {
+            logger.warn("Unable to extract url", e);
+            return null;
+        }
+    }
 
 
-	public File getFile() {
-		try {
-			return globusResource.getFile();
-		} catch (IOException e) {
-			logger.debug("Resource is not a file", e);
-			return null;
-		}
-	}
+    public File getFile() {
+        return globusResource.getFile();
+    }
 
-	public void refresh() throws ResourceStoreException {
-		if(!inMemory){
-			this.changed = false;
-			long latestLastModified;
-			try {
-				latestLastModified = this.globusResource.lastModified();
-			} catch (IOException e) {
-				throw new ResourceStoreException(e);
-			}
-			if (this.lastModified < latestLastModified) {
-				this.securityObject = create(this.globusResource);
-				this.lastModified = latestLastModified;
-				this.changed = true;
-			}
-		}
-	}
+    public void refresh() throws ResourceStoreException {
+        if(!inMemory){
+            synchronized (this) {
+                this.changed = false;
+                long latestLastModified;
+                try {
+                    latestLastModified = this.globusResource.lastModified();
+                } catch (IOException e) {
+                    throw new ResourceStoreException(e);
+                }
+                if (this.lastModified < latestLastModified) {
+                    this.securityObject = factory.create(this.globusResource);
+                    this.lastModified = latestLastModified;
+                    this.changed = true;
+                }
+            }
+        }
+    }
 
-    protected abstract T create(GlobusResource targetResource)
-            throws ResourceStoreException;
+    protected final T create(GlobusResource targetResource)
+            throws ResourceStoreException
+    {
+        return factory.create(targetResource);
+    }
 
-	public T getSecurityObject() throws ResourceStoreException {
-		refresh();
-		return this.securityObject;
-	}
+    public T getSecurityObject() throws ResourceStoreException {
+        refresh();
+        return this.securityObject;
+    }
 
-	public boolean hasChanged() {
-		return this.changed;
-	}
+    public boolean hasChanged() {
+        return this.changed;
+    }
 }
