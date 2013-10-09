@@ -17,14 +17,15 @@ package org.globus.gsi.stores;
 
 import org.globus.gsi.util.CertificateIOUtil;
 import org.globus.gsi.util.CertificateLoadUtil;
+import org.globus.util.GlobusResource;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
-
-import org.globus.util.GlobusResource;
 
 
 /**
@@ -65,7 +66,15 @@ public class ResourceTrustAnchor extends AbstractResourceSecurityWrapper<TrustAn
     protected TrustAnchor create(GlobusResource globusResource) throws ResourceStoreException {
         X509Certificate certificate;
         try {
-            certificate = CertificateLoadUtil.loadCertificate(globusResource.getInputStream());
+            InputStream inputStream = globusResource.getInputStream();
+            try {
+                certificate = CertificateLoadUtil.loadCertificate(new BufferedInputStream(inputStream));
+            } finally {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
         } catch (IOException e) {
             throw new ResourceStoreException(e);
         } catch (GeneralSecurityException e) {
