@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.gsi.stores.Stores;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,7 +38,7 @@ import java.security.cert.CertificateException;
 /**
  * This is a utility class designed to simplify common tasks required for
  * configuring the globus ssl support.
- * 
+ *
  * @version 1.0
  * @since 1.0
  */
@@ -52,7 +53,7 @@ public final class GlobusSSLHelper {
 	 * Create a trust store using the supplied details. Java SSL requires the
 	 * trust store to be supplied as a java.security.KeyStore, so this will
 	 * create a KeyStore containing all of the Trust Anchors.
-	 * 
+	 *
 	 * @param provider
 	 *            The Java security provider to use.
 	 * @param trustAnchorStoreType
@@ -79,9 +80,13 @@ public final class GlobusSSLHelper {
 						provider);
 			}
 			InputStream keyStoreInput = getStream(trustAnchorStoreLocation);
-			trustAnchorStore.load(keyStoreInput,
+                        try {
+                            trustAnchorStore.load(new BufferedInputStream(keyStoreInput),
 					trustAnchorStorePassword == null ? null
 							: trustAnchorStorePassword.toCharArray());
+                        } finally {
+                            keyStoreInput.close();
+                        }
 			return trustAnchorStore;
 		} catch (KeyStoreException e) {
 			throw new GlobusSSLConfigurationException(e);
@@ -99,7 +104,7 @@ public final class GlobusSSLHelper {
 	/**
 	 * Create a configured CredentialStore using the supplied parameters. The
 	 * credential store is a java.security.KeyStore.
-	 * 
+	 *
 	 * @param provider
 	 *            The Java security provider to use.
 	 * @param credentialStoreType
@@ -126,9 +131,13 @@ public final class GlobusSSLHelper {
 						provider);
 			}
 			InputStream keyStoreInput = getStream(credentialStoreLocation);
-			credentialStore.load(keyStoreInput,
+                        try {
+                            credentialStore.load(new BufferedInputStream(keyStoreInput),
 					credentialStorePassword == null ? null
 							: credentialStorePassword.toCharArray());
+                        } finally {
+                            keyStoreInput.close();
+                        }
 			return credentialStore;
 		} catch (KeyStoreException e) {
 			throw new GlobusSSLConfigurationException(e);
@@ -173,7 +182,7 @@ public final class GlobusSSLHelper {
 	 * both CRL's and non-trusted certs. For the purposes of this method, we
 	 * assume that only crl's will be loaded. This can only be used with the
 	 * Globus provided Certificate Store.
-	 * 
+	 *
 	 * @param crlPattern
 	 *            The pattern which defines the locations of the CRL's
 	 * @return A configured Java CertStore containing the specified CRL's
