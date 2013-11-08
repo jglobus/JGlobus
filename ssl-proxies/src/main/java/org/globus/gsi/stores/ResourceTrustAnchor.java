@@ -28,60 +28,50 @@ import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 
 
-/**
- * Created by IntelliJ IDEA.
- * User: turtlebender
- * Date: Dec 29, 2009
- * Time: 11:37:52 AM
- * To change this template use File | Settings | File Templates.
- */
 public class ResourceTrustAnchor extends AbstractResourceSecurityWrapper<TrustAnchor> {
 
+    private static final SecurityObjectFactory<TrustAnchor> FACTORY =
+            new SecurityObjectFactory<TrustAnchor>() {
+                public TrustAnchor create(GlobusResource globusResource) throws ResourceStoreException {
+                    X509Certificate certificate;
+                    try {
+                        InputStream inputStream = globusResource.getInputStream();
+                        try {
+                            certificate = CertificateLoadUtil.loadCertificate(new BufferedInputStream(inputStream));
+                        } finally {
+                            try {
+                                inputStream.close();
+                            } catch (IOException ignored) {
+                            }
+                        }
+                    } catch (IOException e) {
+                        throw new ResourceStoreException(e);
+                    } catch (GeneralSecurityException e) {
+                        throw new ResourceStoreException(e);
+                    }
+
+                    return new TrustAnchor(certificate, null);
+                }
+            };
 
     public ResourceTrustAnchor(String fileName) throws ResourceStoreException {
-    	super(false);
-        init(globusResolver.getResource(fileName));
+    	super(FACTORY, false, fileName);
     }
 
     public ResourceTrustAnchor(boolean inMemory, GlobusResource globusResource) throws ResourceStoreException {
-    	super(inMemory);
-        init(globusResource);
+    	super(FACTORY, inMemory, globusResource);
     }
 
     public ResourceTrustAnchor(String fileName, TrustAnchor cachedAnchor) throws ResourceStoreException {
-    	super(false);
-        init(globusResolver.getResource(fileName), cachedAnchor);
+    	super(FACTORY, false, fileName, cachedAnchor);
     }
 
     public ResourceTrustAnchor(boolean inMemory, GlobusResource globusResource, TrustAnchor cachedAnchor) throws ResourceStoreException {
-    	super(inMemory);
-        init(globusResource, cachedAnchor);
+    	super(FACTORY, inMemory, globusResource, cachedAnchor);
     }
 
     public TrustAnchor getTrustAnchor() throws ResourceStoreException {
         return super.getSecurityObject();
-    }
-
-    @Override
-    protected TrustAnchor create(GlobusResource globusResource) throws ResourceStoreException {
-        X509Certificate certificate;
-        try {
-            InputStream inputStream = globusResource.getInputStream();
-            try {
-                certificate = CertificateLoadUtil.loadCertificate(new BufferedInputStream(inputStream));
-            } finally {
-                try {
-                    inputStream.close();
-                } catch (IOException ignored) {
-                }
-            }
-        } catch (IOException e) {
-            throw new ResourceStoreException(e);
-        } catch (GeneralSecurityException e) {
-            throw new ResourceStoreException(e);
-        }
-
-        return new TrustAnchor(certificate, null);
     }
 
     public void store() throws ResourceStoreException {

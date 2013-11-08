@@ -15,16 +15,15 @@
 
 package org.globus.gsi.stores;
 
+import org.apache.commons.io.FileUtils;
 import org.globus.gsi.CredentialException;
 import org.globus.gsi.X509Credential;
+import org.globus.util.GlobusResource;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
-
-import org.apache.commons.io.FileUtils;
-import org.globus.util.GlobusResource;
 
 /**
  * Fill Me
@@ -160,6 +159,6 @@ public class CertKeyCredential implements SecurityObjectWrapper<X509Credential>,
     }
 
     public String getAlias() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return globusCertFile.getFile() + ":" + globusKeyFile.getFile();
     }
 }
