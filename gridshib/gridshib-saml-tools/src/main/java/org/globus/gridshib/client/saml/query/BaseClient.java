@@ -387,7 +387,8 @@ public abstract class BaseClient {
                 if (opt != null) {
                     String desc = opt.getDescription();
                     desc += " (Default '" + entry.getValue() + "')";
-                    opt.setDescription(desc);
+                    // The following not supported by commons-cli 20040117.000000
+                    // opt.setDescription(desc);
                 }
             }
         }
