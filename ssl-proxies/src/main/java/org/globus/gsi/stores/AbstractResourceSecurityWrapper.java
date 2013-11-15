@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import org.globus.util.GlobusResource;
 import org.globus.util.GlobusPathMatchingResourcePatternResolver;
@@ -38,11 +39,14 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
     protected GlobusPathMatchingResourcePatternResolver globusResolver = new GlobusPathMatchingResourcePatternResolver();
     protected GlobusResource globusResource;
 
+    private static final long REFRESH_IDLE_TIME = TimeUnit.MINUTES.toMillis(1);
+
 	private Log logger = LogFactory.getLog(getClass().getCanonicalName());
 
 	private boolean changed;
 	private T securityObject;
 	private long lastModified = -1;
+        private long lastRefresh;
 	private String alias;
 	private boolean inMemory = false;
 
@@ -61,6 +65,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
         try {
             this.alias = this.globusResource.getURL().toExternalForm();
             this.lastModified = this.globusResource.lastModified();
+            this.lastRefresh = System.currentTimeMillis();
         } catch (IOException e) {
             throw new ResourceStoreException(e);
         }
@@ -87,6 +92,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 			this.alias = this.globusResource.getURL().toExternalForm();
 			if(!inMemory){
 				this.lastModified = this.globusResource.lastModified();
+                                this.lastRefresh = System.currentTimeMillis();
 			}
 		} catch (IOException e) {
 			throw new ResourceStoreException(e);
@@ -118,6 +124,8 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 
 	public void refresh() throws ResourceStoreException {
 		if(!inMemory){
+                    long now = System.currentTimeMillis();
+                    if (this.lastRefresh + REFRESH_IDLE_TIME < now) {
 			this.changed = false;
 			long latestLastModified;
 			try {
@@ -130,6 +138,8 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 				this.lastModified = latestLastModified;
 				this.changed = true;
 			}
+                        this.lastRefresh = now;
+                    }
 		}
 	}
 
