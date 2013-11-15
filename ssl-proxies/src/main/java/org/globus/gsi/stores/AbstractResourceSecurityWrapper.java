@@ -59,16 +59,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 	}
 
     protected void init(GlobusResource initialResource) throws ResourceStoreException {
-        this.globusResource = initialResource;
-        this.securityObject = create(this.globusResource);
-        logger.debug(String.format("Loading initialResource: %s", this.globusResource.toString()));
-        try {
-            this.alias = this.globusResource.getURL().toExternalForm();
-            this.lastModified = this.globusResource.lastModified();
-            this.lastRefresh = System.currentTimeMillis();
-        } catch (IOException e) {
-            throw new ResourceStoreException(e);
-        }
+        init(initialResource, create(this.globusResource));
     }
 
 	public String getAlias() {
@@ -88,6 +79,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 		}
 		this.securityObject = initialSecurityObject;
 		this.globusResource = initialResource;
+                logger.debug(String.format("Loading initialResource: %s", this.globusResource.toString()));
 		try {
 			this.alias = this.globusResource.getURL().toExternalForm();
 			if(!inMemory){
