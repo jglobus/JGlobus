@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import org.globus.common.CoGProperties;
 
 import org.globus.util.GlobusResource;
 import org.globus.util.GlobusPathMatchingResourcePatternResolver;
@@ -43,11 +44,14 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 	private boolean changed;
 	private T securityObject;
 	private long lastModified = -1;
+        private long lastRefresh;
+        private final long cacheLifetime;
 	private String alias;
 	private boolean inMemory = false;
 
 	protected AbstractResourceSecurityWrapper(boolean inMemory) {
 		this.inMemory = inMemory;
+                cacheLifetime = CoGProperties.getDefault().getCertCacheLifetime();
 	}
 
 	protected void init(String locationPattern) throws ResourceStoreException {
@@ -55,15 +59,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 	}
 
     protected void init(GlobusResource initialResource) throws ResourceStoreException {
-        this.globusResource = initialResource;
-        this.securityObject = create(this.globusResource);
-        logger.debug(String.format("Loading initialResource: %s", this.globusResource.toString()));
-        try {
-            this.alias = this.globusResource.getURL().toExternalForm();
-            this.lastModified = this.globusResource.lastModified();
-        } catch (IOException e) {
-            throw new ResourceStoreException(e);
-        }
+        init(initialResource, create(this.globusResource));
     }
 
 	public String getAlias() {
@@ -83,10 +79,12 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 		}
 		this.securityObject = initialSecurityObject;
 		this.globusResource = initialResource;
+                logger.debug(String.format("Loading initialResource: %s", this.globusResource.toString()));
 		try {
 			this.alias = this.globusResource.getURL().toExternalForm();
 			if(!inMemory){
 				this.lastModified = this.globusResource.lastModified();
+                                this.lastRefresh = System.currentTimeMillis();
 			}
 		} catch (IOException e) {
 			throw new ResourceStoreException(e);
@@ -118,6 +116,8 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 
 	public void refresh() throws ResourceStoreException {
 		if(!inMemory){
+                    long now = System.currentTimeMillis();
+                    if (this.lastRefresh + this.cacheLifetime < now) {
 			this.changed = false;
 			long latestLastModified;
 			try {
@@ -130,6 +130,8 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 				this.lastModified = latestLastModified;
 				this.changed = true;
 			}
+                        this.lastRefresh = now;
+                    }
 		}
 	}
 
