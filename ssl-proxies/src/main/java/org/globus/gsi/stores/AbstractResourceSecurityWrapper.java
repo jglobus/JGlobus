@@ -23,6 +23,7 @@ import org.globus.util.GlobusResource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import org.globus.common.CoGProperties;
 
 /**
  * // JGLOBUS-91 : add javadoc
@@ -40,6 +41,8 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
     private boolean changed;
     private T securityObject;
     private long lastModified = -1;
+    private long lastRefreshed;
+    private final long cacheLifetime;
     private final String alias;
     private final boolean inMemory;
     private final SecurityObjectFactory<T> factory;
@@ -69,6 +72,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
             throws ResourceStoreException {
         this.factory = factory;
         this.inMemory = inMemory;
+        this.cacheLifetime = CoGProperties.getDefault().getCertCacheLifetime();
         if (initialSecurityObject == null) {
             // JGLOBUS-88 : better exception?
             throw new IllegalArgumentException("Object cannot be null");
@@ -82,6 +86,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
             this.alias = this.globusResource.getURL().toExternalForm();
             if(!this.inMemory){
                 this.lastModified = this.globusResource.lastModified();
+                this.lastRefreshed = System.currentTimeMillis();
             }
         } catch (IOException e) {
             throw new ResourceStoreException(e);
@@ -113,17 +118,21 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
     public void refresh() throws ResourceStoreException {
         if(!inMemory){
             synchronized (this) {
-                this.changed = false;
-                long latestLastModified;
-                try {
-                    latestLastModified = this.globusResource.lastModified();
-                } catch (IOException e) {
-                    throw new ResourceStoreException(e);
-                }
-                if (this.lastModified < latestLastModified) {
-                    this.securityObject = factory.create(this.globusResource);
-                    this.lastModified = latestLastModified;
-                    this.changed = true;
+                long now = System.currentTimeMillis();
+                if (this.lastRefreshed + this.cacheLifetime < now ) {
+                    this.changed = false;
+                    long latestLastModified;
+                    try {
+                        latestLastModified = this.globusResource.lastModified();
+                    } catch (IOException e) {
+                        throw new ResourceStoreException(e);
+                    }
+                    if (this.lastModified < latestLastModified) {
+                        this.securityObject = factory.create(this.globusResource);
+                        this.lastModified = latestLastModified;
+                        this.changed = true;
+                    }
+                    this.lastRefreshed = now;
                 }
             }
         }

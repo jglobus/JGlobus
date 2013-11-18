@@ -59,8 +59,12 @@ public class CoGProperties extends Properties {
     public static final String DELEGATION_KEY_CACHE_LIFETIME =
         "org.globus.jglobus.delegation.cache.lifetime";
     
+    @Deprecated
     public static final String CRL_CACHE_LIFETIME =
         "org.globus.jglobus.crl.cache.lifetime";
+
+    public static final String CERT_CACHE_LIFETIME =
+        "org.globus.jglobus.cert.cache.lifetime";
 
     public static final String MDSHOST = "localhost";
     public static final String MDSPORT = "2135";
@@ -533,13 +537,50 @@ public class CoGProperties extends Properties {
      * @throws NumberFormatException if the cache lifetime property
      *         could not be parsed
      * @return the CRL cache lifetime in milliseconds
+     * @deprecated  replaced by {@link #getCertCacheLifetime()}
      */
-    public long getCRLCacheLifetime()
+    @Deprecated
+    public long getCRLCacheLifetime() {
+
+        long value = getCertCacheLifetime();
+
+        String property = getProperty(CRL_CACHE_LIFETIME);
+        if (property != null && property.length() > 0) {
+            long parsedValue = Long.parseLong(property);
+            if (parsedValue > 0) {
+                value = parsedValue;
+            }
+        }
+
+        // System property takes precedence
+        property = System.getProperty(CRL_CACHE_LIFETIME);
+        if (property != null && property.length() > 0) {
+            long parsedValue = Long.parseLong(property);
+            if (parsedValue > 0) {
+                value = parsedValue;
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Returns the Cert cache lifetime. If this property is
+     * set to zero or less, no caching is done. The value is the
+     * number of milliseconds the certificates are cached without checking for
+     * modifications on disk.
+     *
+     * Defaults to 60s.
+     *
+     * @throws NumberFormatException if the cache lifetime property
+     *         could not be parsed
+     * @return the Cert cache lifetime in milliseconds
+     */
+    public long getCertCacheLifetime()
         throws NumberFormatException {
 
         long value = 60*1000;
 
-        String property = getProperty(CRL_CACHE_LIFETIME);
+        String property = getProperty(CERT_CACHE_LIFETIME);
         if (property != null && property.length() > 0) {
             long parsedValue  = Long.parseLong(property);
             if (parsedValue > 0) {
@@ -548,7 +589,7 @@ public class CoGProperties extends Properties {
         }
 
         // System property takes precedence
-        property = System.getProperty(CRL_CACHE_LIFETIME);
+        property = System.getProperty(CERT_CACHE_LIFETIME);
         if (property != null && property.length() > 0) {
             long parsedValue = Long.parseLong(property);
             if (parsedValue > 0) {
