@@ -59,7 +59,7 @@ public abstract class AbstractResourceSecurityWrapper<T> implements
 	}
 
     protected void init(GlobusResource initialResource) throws ResourceStoreException {
-        init(initialResource, create(this.globusResource));
+        init(initialResource, create(initialResource));
     }
 
 	public String getAlias() {
