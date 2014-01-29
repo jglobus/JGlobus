@@ -17,9 +17,13 @@ package org.globus.gsi.stores;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 
 import org.globus.common.CoGProperties;
@@ -35,11 +39,11 @@ public class Stores {
 	private static String defaultCRLFilesPattern = "*.r*";
 	private static String defaultSigningPolicyFilesPattern = "*.signing_policy";
 	
-	private static final HashMap<String, KeyStore> TRUST_STORES = new HashMap<String, KeyStore>();
-	private static final HashMap<String, CertStore> CRL_STORES = new HashMap<String, CertStore>();
-	private static final HashMap<String, CertStore> CA_CERT_STORES = new HashMap<String, CertStore>();
+	private static final HashMap<String, ReloadableTrustStore> TRUST_STORES = new HashMap<String, ReloadableTrustStore>();
+	private static final HashMap<String, ReloadableCrlStore> CRL_STORES = new HashMap<String, ReloadableCrlStore>();
+	private static final HashMap<String, ReloadableCaCertStore> CA_CERT_STORES = new HashMap<String, ReloadableCaCertStore>();
 	private static final HashMap<String, ResourceSigningPolicyStore> SIGNING_POLICY_STORES = new HashMap<String, ResourceSigningPolicyStore>();
-	
+	private final static long CACHE_TIME_MILLIS = 3600*1000;
 	
 	public static KeyStore getDefaultTrustStore() throws  GeneralSecurityException, IOException {
 		String pattern = "file:" + CoGProperties.getDefault().getCaCertLocations() + "/" + defaultCAFilesPattern;
@@ -48,15 +52,13 @@ public class Stores {
 	
 	public static KeyStore getTrustStore(String casLocationPattern) throws  GeneralSecurityException, IOException {
 		synchronized (TRUST_STORES) {
-			KeyStore keyStore = TRUST_STORES.get(casLocationPattern);
-			if(keyStore != null){
-				return keyStore;
+			ReloadableTrustStore reloadableKeystore = TRUST_STORES.get(casLocationPattern);
+			if(reloadableKeystore != null){
+				return reloadableKeystore.getTrustStore();
 			}
-	        keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
-	        keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(casLocationPattern));
-	        
-	        TRUST_STORES.put(casLocationPattern, keyStore);
-	        return keyStore;
+			reloadableKeystore = new ReloadableTrustStore(casLocationPattern);
+	        TRUST_STORES.put(casLocationPattern, reloadableKeystore);
+	        return reloadableKeystore.getTrustStore();
 		}
     }
     
@@ -68,15 +70,12 @@ public class Stores {
     
 	public static CertStore getCACertStore(String casLocationPattern) throws GeneralSecurityException, NoSuchAlgorithmException {
     	synchronized (CA_CERT_STORES) {
-	    	CertStore caStore = CA_CERT_STORES.get(casLocationPattern);
-			if(caStore != null){
-				return caStore;
+	    	ReloadableCaCertStore reloadableCaCertStore = CA_CERT_STORES.get(casLocationPattern);
+			if(reloadableCaCertStore == null){
+				reloadableCaCertStore = new ReloadableCaCertStore(casLocationPattern);
+		        CA_CERT_STORES.put(casLocationPattern, reloadableCaCertStore);
 			}
-			caStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(casLocationPattern, null));
-	        
-	        CA_CERT_STORES.put(casLocationPattern, caStore);
-	        
-	        return caStore;
+	        return reloadableCaCertStore.getCaCertStore();
     	}
     }
     
@@ -87,15 +86,12 @@ public class Stores {
     
     public static CertStore getCRLStore(String crlsLocationPattern) throws GeneralSecurityException, NoSuchAlgorithmException {
     	synchronized (CRL_STORES) {
-	    	CertStore crlStore = CRL_STORES.get(crlsLocationPattern);
-			if(crlStore != null){
-				return crlStore;
+	    	ReloadableCrlStore reloadableCrlStore = CRL_STORES.get(crlsLocationPattern);
+			if(reloadableCrlStore == null){
+				reloadableCrlStore = new ReloadableCrlStore(crlsLocationPattern);
+		        CRL_STORES.put(crlsLocationPattern, reloadableCrlStore);
 			}
-	        crlStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null, crlsLocationPattern));
-	        
-	        CRL_STORES.put(crlsLocationPattern, crlStore);
-	        
-	        return crlStore;
+	        return reloadableCrlStore.getCrlStore();
     	}
     }
     
@@ -107,13 +103,10 @@ public class Stores {
     public static ResourceSigningPolicyStore getSigningPolicyStore(String signingPolicyLocationPattern) throws GeneralSecurityException {
     	synchronized (SIGNING_POLICY_STORES) {
     		ResourceSigningPolicyStore signingPolicyStore = SIGNING_POLICY_STORES.get(signingPolicyLocationPattern);
-			if(signingPolicyStore != null){
-				return signingPolicyStore;
+			if(signingPolicyStore == null){
+				signingPolicyStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(signingPolicyLocationPattern));
+		        SIGNING_POLICY_STORES.put(signingPolicyLocationPattern, signingPolicyStore) ;
 			}
-	        signingPolicyStore = new ResourceSigningPolicyStore(new ResourceSigningPolicyStoreParameters(signingPolicyLocationPattern));
-	        
-	        SIGNING_POLICY_STORES.put(signingPolicyLocationPattern, signingPolicyStore) ;
-	        
 	        return signingPolicyStore;
     	}
     }
@@ -125,9 +118,9 @@ public class Stores {
 	public static void setDefaultCAFilesPattern(String defaultCAFilesPattern) {
 		synchronized (TRUST_STORES) {
 			synchronized (CA_CERT_STORES) {
-                                if (defaultCAFilesPattern == null || Stores.defaultCAFilesPattern.equals(defaultCAFilesPattern)){
-                                    return;
-                                }
+                if (defaultCAFilesPattern == null || Stores.defaultCAFilesPattern.equals(defaultCAFilesPattern)){
+                    return;
+                }
 				Stores.defaultCAFilesPattern = defaultCAFilesPattern;
 				//Clear if we change the default pattern to prevent potential memory issue;
 				TRUST_STORES.clear();
@@ -142,9 +135,9 @@ public class Stores {
 
 	public static void setDefaultCRLFilesPattern(String defaultCRLFilesPattern) {
 		synchronized (CRL_STORES) {
-                        if(defaultCRLFilesPattern == null || Stores.defaultCRLFilesPattern.equals(defaultCRLFilesPattern)){
-                            return;
-                        }
+            if(defaultCRLFilesPattern == null || Stores.defaultCRLFilesPattern.equals(defaultCRLFilesPattern)){
+                return;
+            }
 			Stores.defaultCRLFilesPattern = defaultCRLFilesPattern;
 			//Clear if we change the default pattern to prevent potential memory issue;
 			CRL_STORES.clear();
@@ -157,13 +150,94 @@ public class Stores {
 
 	public static void setDefaultSigningPolicyFilesPattern(String defaultSigningPolicyFilesPattern) {
 		synchronized (SIGNING_POLICY_STORES) {
-                        if(defaultSigningPolicyFilesPattern == null || Stores.defaultSigningPolicyFilesPattern.equals(defaultSigningPolicyFilesPattern)){
-                            return;
-                        }
+            if(defaultSigningPolicyFilesPattern == null || Stores.defaultSigningPolicyFilesPattern.equals(defaultSigningPolicyFilesPattern)){
+                return;
+            }
 			Stores.defaultSigningPolicyFilesPattern = defaultSigningPolicyFilesPattern;
 			//Clear if we change the default pattern to prevent potential memory issue;
 			SIGNING_POLICY_STORES.clear();
 		}
 	}
+	
+	private static class ReloadableTrustStore{
+		private final String casLocationPattern;
+		private final KeyStore keyStore;		
+		private long lastUpdateTime;
 
+		protected ReloadableTrustStore(String casLocationPattern) throws KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, IOException {
+			this.casLocationPattern = casLocationPattern;
+			keyStore = KeyStore.getInstance(GlobusProvider.KEYSTORE_TYPE, GlobusProvider.PROVIDER_NAME);
+	        reload();
+		}
+		
+		private void reload() throws NoSuchAlgorithmException, CertificateException, IOException{
+			keyStore.load(KeyStoreParametersFactory.createTrustStoreParameters(casLocationPattern));
+			lastUpdateTime= System.currentTimeMillis();
+		}
+		
+		protected boolean isStillValid(){
+			return lastUpdateTime + CACHE_TIME_MILLIS > System.currentTimeMillis();
+		}
+		
+		protected KeyStore getTrustStore() throws NoSuchAlgorithmException, CertificateException, IOException {
+			if(!isStillValid()){
+				reload();
+			}
+			return keyStore;
+		}
+	}
+	
+	private static class ReloadableCrlStore{
+		private final String crlsLocationPattern;
+		private CertStore certStore;
+		private long lastUpdateTime;
+
+		protected ReloadableCrlStore(String crlsLocationPattern) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+			this.crlsLocationPattern = crlsLocationPattern;
+			load();
+		}
+		
+		private void load() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException{
+			certStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(null, crlsLocationPattern));
+			lastUpdateTime = System.currentTimeMillis();
+		}
+		
+		protected boolean isStillValid(){
+			return lastUpdateTime + CACHE_TIME_MILLIS > System.currentTimeMillis();
+		}
+		
+		protected CertStore getCrlStore() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+			if(!isStillValid()){
+				load();
+			}
+			return certStore;
+		}
+	}
+	
+	private static class ReloadableCaCertStore{
+		private final String casLocationPattern;
+		private CertStore certStore;
+		private long lastUpdateTime;
+
+		protected ReloadableCaCertStore(String casLocationPattern) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+			this.casLocationPattern = casLocationPattern;
+			load();
+		}
+		
+		private void load() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException{
+			certStore = CertStore.getInstance(GlobusProvider.CERTSTORE_TYPE, new ResourceCertStoreParameters(casLocationPattern, null));
+			lastUpdateTime = System.currentTimeMillis();
+		}
+		
+		protected boolean isStillValid(){
+			return lastUpdateTime + CACHE_TIME_MILLIS > System.currentTimeMillis();
+		}
+		
+		protected CertStore getCaCertStore() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+			if(!isStillValid()){
+				load();
+			}
+			return certStore;
+		}
+	}
 }
