@@ -1,0 +1,72 @@
+diff --git a/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java b/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java
+index 96fed75..1741218 100644
+--- a/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java
++++ b/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLImplementation.java
+@@ -1,7 +1,6 @@
+ package org.globus.gsi.tomcat;
+ 
+ 
+-import org.apache.tomcat.util.net.AbstractEndpoint;
+ import org.apache.tomcat.util.net.ServerSocketFactory;
+ import org.apache.tomcat.util.net.jsse.JSSEImplementation;
+ 
+@@ -15,8 +14,8 @@ public class GlobusSSLImplementation extends JSSEImplementation {
+ 		return "GlobusSSLImplementation";
+ 	}
+ 
+-	public ServerSocketFactory getServerSocketFactory(AbstractEndpoint endpoint) {
+-		return new GlobusSSLSocketFactory(endpoint);
++	public ServerSocketFactory getServerSocketFactory() {
++		return new GlobusSSLSocketFactory();
+ 	}
+ 
+ }
+diff --git a/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java b/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java
+index 3718fa3..49cd674 100644
+--- a/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java
++++ b/ssl-proxies-tomcat/src/main/java/org/globus/gsi/tomcat/GlobusSSLSocketFactory.java
+@@ -15,7 +15,6 @@
+ 
+ package org.globus.gsi.tomcat;
+ 
+-import org.apache.tomcat.util.net.AbstractEndpoint;
+ import org.apache.tomcat.util.net.jsse.JSSESocketFactory;
+ import org.globus.gsi.X509ProxyCertPathParameters;
+ import org.globus.gsi.jsse.GlobusSSLHelper;
+@@ -47,17 +46,6 @@ public class GlobusSSLSocketFactory extends JSSESocketFactory {
+         Security.addProvider(new GlobusProvider());
+     }
+ 
+-    protected Object crlLocation;
+-    protected Object signingPolicyLocation;
+-    protected Object rejectLimitedProxyEntry;
+-
+-    public GlobusSSLSocketFactory(AbstractEndpoint endpoint) {
+-        super(endpoint);
+-        crlLocation = endpoint.getAttribute("crlLocation");
+-        signingPolicyLocation = endpoint.getAttribute("signingPolicyLocation");
+-        rejectLimitedProxyEntry = endpoint.getAttribute("rejectLimitedProxy");
+-    }
+-
+     /**
+      * Create a Globus trust manager which supports proxy certificates.  This requires that the CRL store, and
+      * signing policy store be configured.
+@@ -74,15 +62,18 @@ public class GlobusSSLSocketFactory extends JSSESocketFactory {
+         KeyStore trustStore = getTrustStore(keystoreType, keystoreProvider);
+ 
+         CertStore crlStore = null;
++        Object crlLocation = attributes.get("crlLocation");
+         if (crlLocation != null) {
+             crlStore = GlobusSSLHelper.findCRLStore((String) crlLocation);
+         }
+ 
++        Object signingPolicyLocation = attributes.get("signingPolicyLocation");
+         ResourceSigningPolicyStore policyStore = null;
+         if (signingPolicyLocation != null) {
+             policyStore = Stores.getSigningPolicyStore((String) signingPolicyLocation);
+         }
+ 
++        Object rejectLimitedProxyEntry = attributes.get("rejectLimitedProxy");
+         boolean rejectLimitedProxy = rejectLimitedProxyEntry != null &&
+             Boolean.parseBoolean((String) rejectLimitedProxyEntry);
+ 
