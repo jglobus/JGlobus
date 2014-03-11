@@ -1641,8 +1641,8 @@ public class  FTPClient {
 
         if (Reply.isTransientNegativeCompletion(reply)
             || Reply.isPermanentNegativeCompletion(reply)) {
-            throw new ServerException(ServerException.SERVER_REFUSED,
-                                      reply.getMessage());
+            throw ServerException.embedUnexpectedReplyCodeException(
+                    new UnexpectedReplyCodeException(reply), reply.getMessage());
         }
 
         if (reply.getCode() != 127) {
