@@ -594,16 +594,45 @@ public final class CertificateUtil {
 
         StringBuilder buf = new StringBuilder();
 
-        String[] tokens = dn.split(",");
-        for (int i = tokens.length - 1; i >= 0; i--) {
-            String token = tokens[i].trim();
-            if (!token.isEmpty()) {
-                buf.append("/");
-                buf.append(token);
+        final int IDLE = 0;
+        final int VALUE = 1;
+        final int KEY = 2;
+
+        int state = IDLE;
+
+        int cEnd = 0;
+        char[] asChars = dn.toCharArray();
+        /*
+         * walk in reverse order and merge RDN
+         */
+        for (int i = asChars.length - 1; i >= 0; i--) {
+
+            char c = asChars[i];
+            switch (state) {
+                case KEY:
+                    if (c == ',') {
+                        String s = dn.substring(i + 1, cEnd + 1);
+                        buf.append('/').append(s);
+                        state = IDLE;
+                    }
+                    break;
+                case VALUE:
+                    if (c == '=') {
+                        state = KEY;
+                    }
+                    break;
+                case IDLE:
+                default:
+                    cEnd = i;
+                    state = VALUE;
             }
         }
 
-        return buf.toString();
+        String s = dn.substring(0, cEnd + 1);
+        buf.append('/').append(s);
+
+        // remove comma escaping as some other components may use string comparison.
+        return buf.toString().replace("\\,", ",");
     }
 
     /**
@@ -643,7 +672,15 @@ public final class CertificateUtil {
                 switch (state) {
                     case KEY:
                         if (c == '/' || c == ' ') {
-                            buf.append(id.substring(i + 1, cEnd + 1)).append(',');
+                            /*
+                              handle names with comma according rfc1779
+                             */
+                            String s = id.substring(i + 1, cEnd + 1);
+                            int commaIndex = s.indexOf(',');
+                            if (commaIndex != -1) {
+                                s = s.substring(0, commaIndex) + "\\" + s.substring(commaIndex);
+                            }
+                            buf.append(s).append(',');
                             state = IDLE;
                         }
                         break;
@@ -652,6 +689,7 @@ public final class CertificateUtil {
                             state = KEY;
                         }
                         break;
+                    case IDLE:
                     default:
                         // idle
                         if (c == '/' || c == ' ') {
