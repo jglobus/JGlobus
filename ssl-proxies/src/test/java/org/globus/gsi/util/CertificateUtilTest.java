@@ -290,6 +290,14 @@ public class CertificateUtilTest {
         assertThat(newDn, is(dn));
     }
 
+    @Test
+    public void testToPrincipalWithComma() {
+        String dn = "/C=DE/ST=Hamburg/O=dCache.ORG/CN=Gena, Crocodile";
+        X500Principal principal = CertificateUtil.toPrincipal(dn);
+        String newDn = CertificateUtil.toGlobusID(principal);
+        assertThat(newDn, is(dn));
+    }
+
     @After
     public void tearDown() {
 
