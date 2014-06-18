@@ -20,6 +20,7 @@ import org.globus.gsi.stores.ResourceCRL;
 import org.globus.gsi.testutils.FileSetupUtil;
 import java.io.File;
 import java.security.cert.X509CRL;
+import org.globus.common.CoGProperties;
 import org.globus.util.GlobusResource;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +38,8 @@ public class TestFileBasedCRL {
     @Before
     public void setUp() throws Exception {
 
+        CoGProperties.getDefault().setProperty(CoGProperties.CRL_CACHE_LIFETIME, "1");
+        CoGProperties.getDefault().setProperty(CoGProperties.CERT_CACHE_LIFETIME, "1");
         this.testCrl1 = new FileSetupUtil("certificateUtilTest/validCrl.r0");
     }
 

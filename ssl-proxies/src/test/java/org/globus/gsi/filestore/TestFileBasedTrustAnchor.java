@@ -22,6 +22,7 @@ import org.globus.gsi.testutils.FileSetupUtil;
 import java.io.File;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
+import org.globus.common.CoGProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +39,8 @@ public class TestFileBasedTrustAnchor {
     @Before
     public void setUp() throws Exception {
 
+        CoGProperties.getDefault().setProperty(CoGProperties.CRL_CACHE_LIFETIME, "1");
+        CoGProperties.getDefault().setProperty(CoGProperties.CERT_CACHE_LIFETIME, "1");
         this.testCert1 = new FileSetupUtil("certificateUtilTest/1c3f2ca8.0");
     }
 
