@@ -830,6 +830,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 			// More data needed from peer
 			break;
 		}
+                else if (result.getStatus() ==
+                        SSLEngineResult.Status.CLOSED) {
+                    throw new ClosedGSSException();
+                }
+
 		if (result.getStatus() !=
 			SSLEngineResult.Status.OK) {
                 	throw new GlobusGSSException(GSSException.FAILURE,
@@ -845,6 +850,8 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                 throw new GlobusGSSException(GSSException.BAD_MIC, e);
             else
                 throw new GlobusGSSException(GSSException.FAILURE, e);
+        } catch (GSSException e) {
+            throw e;
 	} catch (Exception e) {
             throw new GlobusGSSException(GSSException.FAILURE, e);
 	}
