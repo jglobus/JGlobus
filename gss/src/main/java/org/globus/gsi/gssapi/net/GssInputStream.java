@@ -14,11 +14,13 @@
  */
 package org.globus.gsi.gssapi.net;
 
+import java.io.EOFException;
 import java.io.InputStream;
 import java.io.IOException;
 
 import org.globus.common.ChainedIOException;
 
+import org.globus.gsi.gssapi.ClosedGSSException;
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSException;
 
@@ -40,7 +42,9 @@ public abstract class GssInputStream extends InputStream {
     protected byte[] unwrap(byte [] msg) 
 	throws IOException {
 	try {
-	    return this.context.unwrap(msg, 0, msg.length, null);
+            return this.context.unwrap(msg, 0, msg.length, null);
+        } catch (ClosedGSSException e) {
+            throw new EOFException("Remote host terminated connection");
 	} catch (GSSException e) {
 	    throw new ChainedIOException("unwrap failed", e);
 	}
@@ -82,8 +86,12 @@ public abstract class GssInputStream extends InputStream {
 	    return false;
 	}
 	if (this.buff.length == this.index) {
-	    readMsg();
-	}
+            try {
+                readMsg();
+            } catch (EOFException e) {
+                return false;
+            }
+        }
 	if (this.buff == null) {
             return false;
         }
