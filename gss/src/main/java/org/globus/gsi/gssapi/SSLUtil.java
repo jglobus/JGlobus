@@ -108,14 +108,14 @@ public class SSLUtil {
     
     /**
      * Determines if a given header is a SSLv3 packet
-     * (has a SSL header)
+     * (has a SSL header) or a backward compatible version of TLS
+     * using the same header format.
      *
      * @return true if the header is a SSLv3 header. False, otherwise.
      */
     public static final boolean isSSLv3Packet(byte[] header) {
-        return ( (header[0] >= 20 && header[0] <= 26 &&
-                  (header[1] == 3 && (header[2] == 0 || header[2] == 1) ||
-                   header[1] == 2 && header[2] == 0)) );
+        return header[0] >= 20 && header[0] <= 26 &&
+            (header[1] == 3 || (header[1] == 2 && header[2] == 0));
     }
     
     /**
