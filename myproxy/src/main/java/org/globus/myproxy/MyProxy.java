@@ -310,7 +310,7 @@ public class MyProxy  {
                         socket = new Socket();
                         socket.connect(
                             new InetSocketAddress(addrs[addrIdx],port), 
-                            socketTimeout*1000); // seconds to milliseconds
+                            socketTimeout); // seconds to milliseconds
 
                         goodAddr = addrs[addrIdx].toString();
                         if (logger.isDebugEnabled()) {

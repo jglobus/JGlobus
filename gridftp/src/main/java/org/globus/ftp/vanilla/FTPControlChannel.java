@@ -156,7 +156,7 @@ public class FTPControlChannel extends BasicClientControlChannel {
 
                     socket = new Socket();
                     socket.setSoTimeout(CoGProperties.getDefault().getSocketTimeout());
-                    socket.connect(isa);
+                    socket.connect(isa, CoGProperties.getDefault().getSocketTimeout());
                     found = true;
                 }
                 catch(IOException ioEx)
