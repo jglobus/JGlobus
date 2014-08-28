@@ -27,7 +27,7 @@ import javax.net.ssl.SSLException;
 public class GlobusGSSException extends GSSException {
 
     private static final long serialVersionUID = 1366868883920091438L;
-    
+
     public static final int
 	PROXY_VIOLATION = 5,
 	BAD_ARGUMENT = 7,
@@ -44,7 +44,7 @@ public class GlobusGSSException extends GSSException {
 	UNKNOWN = 102;
 
     private static ResourceBundle resources;
-    
+
     static {
 	try {
 	    resources = ResourceBundle.getBundle("org.globus.gsi.gssapi.errors");
@@ -52,17 +52,17 @@ public class GlobusGSSException extends GSSException {
 	    throw new RuntimeException(e.getMessage());
 	}
     }
-    
+
     private final boolean hasCustomMessage;
 
-    public GlobusGSSException(int majorCode, 
+    public GlobusGSSException(int majorCode,
 			      Throwable cause) {
 	super(majorCode);
 	initCause(cause);
 	hasCustomMessage = false;
     }
 
-    public GlobusGSSException(int majorCode, 
+    public GlobusGSSException(int majorCode,
 			      int minorCode,
 			      String minorString,
 			      Throwable cause) {
@@ -76,13 +76,13 @@ public class GlobusGSSException extends GSSException {
 			      String key) {
 	this(majorCode, minorCode, key, (Object[])null);
     }
-    
+
     public GlobusGSSException(int majorCode,
 			      int minorCode,
 			      String key,
 			      Object [] args) {
 	super(majorCode);
-	
+
 	String msg = null;
 	try {
 	    msg = MessageFormat.format(resources.getString(key), args);
@@ -90,13 +90,13 @@ public class GlobusGSSException extends GSSException {
 	    //msg = "No msg text defined for '" + key + "'";
 	    throw new RuntimeException("bad" + key);
 	}
-	
+
 	setMinor(minorCode, msg);
         initCause(null);
 	hasCustomMessage = true;
     }
 
-    
+
     /**
      * Prints this exception's stack trace to <tt>System.err</tt>.
      * If this exception has a root exception; the stack trace of the
@@ -119,7 +119,7 @@ public class GlobusGSSException extends GSSException {
             String superString = getLocalMessage();
             synchronized ( ps ) {
                 ps.print(superString);
-                ps.print((superString.endsWith(".") ? 
+                ps.print((superString.endsWith(".") ?
                           " Caused by " : ". Caused by "));
                 getCause().printStackTrace( ps );
             }
@@ -127,7 +127,7 @@ public class GlobusGSSException extends GSSException {
             super.printStackTrace( ps );
         }
     }
-    
+
     /**
      * Prints this exception's stack trace to a print writer.
      * If this exception has a root exception; the stack trace of the
@@ -140,7 +140,7 @@ public class GlobusGSSException extends GSSException {
             String superString = getLocalMessage();
             synchronized (pw) {
                 pw.print(superString);
-                pw.print((superString.endsWith(".") ? 
+                pw.print((superString.endsWith(".") ?
                           " Caused by " : ". Caused by "));
                 getCause().printStackTrace( pw );
             }
@@ -152,7 +152,7 @@ public class GlobusGSSException extends GSSException {
     @Override
     public String getMessage() {
         Throwable cause = getCause();
-        
+
         if (isBoring(this)) {
             return getUsefulMessage(cause);
         } else {
@@ -174,7 +174,7 @@ public class GlobusGSSException extends GSSException {
         while(isBoring(throwable)) {
             throwable = throwable.getCause();
         }
-        
+
         String message = throwable.getMessage();
         if (message == null) {
             message = throwable.getClass().getName();
@@ -185,31 +185,31 @@ public class GlobusGSSException extends GSSException {
     /**
      * Use heuristics to determine whether the supplied Throwable has any
      * semantic content (i.e., does it provide any additional information).
-     * 
+     *
      * It seems that many GSSException objects are created with no information.
      * Instead, the useful information is contained within the causing
      * Throwable.
-     * 
+     *
      * Also, an SSLException may be thrown by SSLEngine that wraps some more
      * interesting exception but the message has no information.
-     * 
+     *
      * As part of a work-around for this problem, this method tries to guess
      * whether the supplied Throwable contains useful information.
-     * 
+     *
      * @return true if the Throwable contains no useful information, false
      * otherwise.
      */
     private static boolean isBoring(Throwable t) {
-        
+
         // Last throwable in the causal chain is never boring.
         if (t.getCause() == null) {
             return false;
         }
-        
+
         // Some GSSExceptions have no semantic content, therefore boring.
         if (t instanceof GSSException) {
             GSSException g = (GlobusGSSException) t;
-            
+
             if (g.getMajor() == GSSException.FAILURE && g.getMinor() == 0) {
                 if (g instanceof GlobusGSSException) {
                     return !((GlobusGSSException)g).hasCustomMessage;
@@ -220,7 +220,7 @@ public class GlobusGSSException extends GSSException {
                 }
             }
         }
-        
+
         // SSLEngine can return a message with no meaning, therefore boring.
         if (t instanceof SSLException &&
                 t.getMessage().equals("General SSLEngine problem")) {

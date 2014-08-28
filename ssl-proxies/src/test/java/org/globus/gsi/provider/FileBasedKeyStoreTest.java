@@ -42,7 +42,7 @@ public class FileBasedKeyStoreTest {
     private PEMKeyStore keystore = new PEMKeyStore();
     private GlobusPathMatchingResourcePatternResolver globusResolver = new GlobusPathMatchingResourcePatternResolver();
     private Log logger = LogFactory.getLog(FileBasedKeyStoreTest.class.getCanonicalName());
-    
+
     @Test
     public void testIO() throws Exception {
         InputStream is;

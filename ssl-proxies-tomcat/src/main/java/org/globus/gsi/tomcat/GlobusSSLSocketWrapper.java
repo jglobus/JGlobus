@@ -11,7 +11,7 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
 public class GlobusSSLSocketWrapper extends SSLServerSocket {
-	
+
 	private SSLServerSocket delegate;
 
 	public GlobusSSLSocketWrapper(SSLServerSocket delegate) throws IOException {

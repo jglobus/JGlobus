@@ -22,9 +22,9 @@ import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
 
 /**
- * Generic JAAS Subject helper API that provides abstraction layer on top of 
- * vendor-specific JAAS Subject extensions implementations. 
- * Most vendors defined their own JAAS Subject helper classes because of the 
+ * Generic JAAS Subject helper API that provides abstraction layer on top of
+ * vendor-specific JAAS Subject extensions implementations.
+ * Most vendors defined their own JAAS Subject helper classes because of the
  * <a href="http://publib7b.boulder.ibm.com/wasinfo1/en/info/aes/ae/rsec_jaasauthor.html">
  * Subject propagation issue</a> in JAAS.
  */
@@ -34,13 +34,13 @@ public abstract class JaasSubject {
             I18n.getI18n("org.globus.gsi.gssapi.errors",
                          JaasSubject.class.getClassLoader());
     private static JaasSubject subject;
-    
+
     protected JaasSubject() {}
-    
+
     /**
      * Gets current implementation of the <code>JaasSubject</code> API.
      * The method attempts to load a <code>JaasSubject</code> implementation
-     * by loading a class specified by the 
+     * by loading a class specified by the
      * "<i>org.globus.jaas.provider</i>" system property. If the property
      * is not set the default Globus implementation is loaded.
      */
@@ -70,48 +70,48 @@ public abstract class JaasSubject {
 	return subject;
     }
 
-    // SPI 
+    // SPI
     /**
-     * SPI method. 
+     * SPI method.
      */
     public abstract Subject getSubject();
-    
+
     /**
-     * SPI method. 
+     * SPI method.
      */
     public abstract Object runAs(Subject subject, PrivilegedAction action);
 
     /**
-     * SPI method. 
+     * SPI method.
      */
     public abstract Object runAs(Subject subject, PrivilegedExceptionAction action)
 	throws PrivilegedActionException;
-    
+
     // API
-    
+
     /**
-     * A convenience method, calls 
+     * A convenience method, calls
      * <code>JaasSubject.getJaasSubject().runAs()<code/>.
      */
-    public static Object doAs(Subject subject, PrivilegedExceptionAction action) 
+    public static Object doAs(Subject subject, PrivilegedExceptionAction action)
 	throws PrivilegedActionException {
 	return JaasSubject.getJaasSubject().runAs(subject, action);
     }
-    
+
     /**
-     * A convenience method, calls 
+     * A convenience method, calls
      * <code>JaasSubject.getJaasSubject().runAs()<code/>.
      */
     public static Object doAs(Subject subject, PrivilegedAction action) {
 	return JaasSubject.getJaasSubject().runAs(subject, action);
     }
-    
+
     /**
-     * A convenience method, calls 
+     * A convenience method, calls
      * <code>JaasSubject.getJaasSubject().getSubject()<code/>.
      */
     public static Subject getCurrentSubject() {
 	return JaasSubject.getJaasSubject().getSubject();
     }
-    
+
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,30 +18,30 @@ package org.globus.rsl;
 import java.util.*;
 
 /**
- * This class represents an abstract RSL parse tree. It is composed of variable definitions 
+ * This class represents an abstract RSL parse tree. It is composed of variable definitions
  * (bindings), relations, and sub-specifications (sub nodes).
  */
 public abstract class AbstractRslNode {
-    
+
     public static final int AND   = 1;
     public static final int OR    = 2;
     public static final int MULTI = 3;
-    
+
     protected int _operator;
     protected List _specifications;
-    
+
     public AbstractRslNode() {
 	setOperator(AND);
     }
-    
+
     public AbstractRslNode(int operator) {
 	setOperator(operator);
     }
 
     public abstract boolean add(Bindings bindings);
-    
+
     public abstract boolean add(NameOpValue relations);
-    
+
     /**
      * Adds a rsl parse tree to this node.
      *
@@ -69,7 +69,7 @@ public abstract class AbstractRslNode {
      *         Null, if not found.
      */
     public abstract Bindings getBindings(String attribute);
-    
+
     /**
      * Removes a specific sub-specification tree from the
      * sub-specification list.
@@ -169,13 +169,13 @@ public abstract class AbstractRslNode {
      */
     public static String getOperatorAsString(int op) {
 	switch(op) {
-	case AND: 
+	case AND:
 	    return "&";
-	case MULTI: 
+	case MULTI:
 	    return "+";
-	case OR: 
+	case OR:
 	    return "|";
-	default: 
+	default:
 	    return "??";
 	}
     }
@@ -187,14 +187,14 @@ public abstract class AbstractRslNode {
      * followed by the sub-specifications are evaluated.
      *
      * @return the evaluated rsl tree.
-     * @exception RslEvaluationException If an error occured during 
+     * @exception RslEvaluationException If an error occured during
      *            rsl evaluation.
      */
-    public AbstractRslNode evaluate() 
+    public AbstractRslNode evaluate()
 	throws RslEvaluationException {
 	return evaluate(null);
     }
-    
+
     /**
      * Evalutes the rsl tree against the specified symbol table.
      * All the variable definitions are first evaluated because
@@ -203,12 +203,12 @@ public abstract class AbstractRslNode {
      *
      * @param symbolTable the symbol table to evalute variables against.
      * @return the evaluated rsl tree.
-     * @exception RslEvaluationException If an error occured during 
+     * @exception RslEvaluationException If an error occured during
      *            rsl evaluation.
      */
     public abstract AbstractRslNode evaluate(Map symbolTable)
 	throws RslEvaluationException;
-    
+
     /**
      * Returns a RSL representation of this relation. <BR>
      * <I>Note: Enable explicitConcat to generate more 'valid' RSL</I>
@@ -229,15 +229,15 @@ public abstract class AbstractRslNode {
      * @param buf buffer to add the RSL representation to.
      * @param explicitConcat if true explicit concatination will
      *        be used in RSL strings.
-     */    
+     */
     public abstract void toRSL(StringBuffer buf, boolean explicitConcat);
-    
+
     public String toString() {
 	return toRSL(true);
     }
 
     /**
-     * Canonicalizes a string by removing any underscores and 
+     * Canonicalizes a string by removing any underscores and
      * moving all characters to lowercase.
      *
      * @param str string to canonicalize
@@ -255,5 +255,5 @@ public abstract class AbstractRslNode {
 	}
 	return buf.toString();
     }
-    
+
 }

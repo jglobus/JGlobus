@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,19 +50,19 @@ public class SSLContextHelper {
     private Authorization myAuth;
     private ExtendedGSSContext myContext;
 
-    public SSLContextHelper(MessageContext msgContext, 
-                            String host, int port) 
+    public SSLContextHelper(MessageContext msgContext,
+                            String host, int port)
         throws GSSException {
-        Authorization auth = (Authorization)Util.getProperty(msgContext, 
+        Authorization auth = (Authorization)Util.getProperty(msgContext,
                                          GSIHTTPTransport.GSI_AUTHORIZATION);
-        Boolean anonymous =  (Boolean)Util.getProperty(msgContext, 
+        Boolean anonymous =  (Boolean)Util.getProperty(msgContext,
                                          GSIHTTPTransport.GSI_ANONYMOUS);
-        GSSCredential cred = (GSSCredential)Util.getProperty(msgContext, 
+        GSSCredential cred = (GSSCredential)Util.getProperty(msgContext,
                                          GSIHTTPTransport.GSI_CREDENTIALS);
         Integer protection = (Integer)Util.getProperty(msgContext,
                                          GSIConstants.GSI_TRANSPORT);
-	TrustedCertificates trustedCerts = 
-            (TrustedCertificates)Util.getProperty(msgContext, 
+	TrustedCertificates trustedCerts =
+            (TrustedCertificates)Util.getProperty(msgContext,
                                                   GSIHTTPTransport
                                                   .TRUSTED_CERTIFICATES);
         init(host, port,
@@ -77,7 +77,7 @@ public class SSLContextHelper {
                             TrustedCertificates trustedCerts)
         throws GSSException {
 
-        init(host, port, 
+        init(host, port,
              auth, anonymous, cred, protection, trustedCerts);
     }
 
@@ -91,15 +91,15 @@ public class SSLContextHelper {
 
         this.host = host;
         this.port = port;
-        
+
         if (auth == null) {
             auth = HostOrSelfAuthorization.getInstance();
         }
 
         GSSManager manager = ExtendedGSSManager.getInstance();
-        
+
         boolean anon = false;
-        
+
         if (anonymous != null && anonymous.equals(Boolean.TRUE)) {
             anon = true;
         }
@@ -113,7 +113,7 @@ public class SSLContextHelper {
                 (Oid)null,
                 GSSCredential.INITIATE_ONLY);
         }
-        
+
         // Expected name is null since delegation is never
         // done. Custom authorization is invoked after handshake is finished.
         ExtendedGSSContext context =(ExtendedGSSContext)manager
@@ -125,7 +125,7 @@ public class SSLContextHelper {
         if (anon) {
             context.requestAnonymity(true);
         }
-                        
+
         context.setOption(GSSConstants.GSS_MODE, GSIConstants.MODE_SSL);
 
         if (GSIConstants.ENCRYPTION.equals(protection)) {
@@ -133,7 +133,7 @@ public class SSLContextHelper {
         } else {
             context.requestConf(false);
         }
-        
+
         if (trustedCerts != null) {
             context.setOption(GSSConstants.TRUSTED_CERTIFICATES, trustedCerts);
         }
@@ -142,20 +142,20 @@ public class SSLContextHelper {
         this.myAuth = auth;
     }
 
-        
+
     public GssSocket wrapSocket(Socket socket) {
-        
+
         GssSocketFactory factory = GssSocketFactory.getDefault();
-        
+
         GssSocket gsiSocket =
-            (GssSocket)factory.createSocket(socket, 
+            (GssSocket)factory.createSocket(socket,
                                             this.host,
                                             this.port,
                                             this.myContext);
-        
+
         gsiSocket.setAuthorization(this.myAuth);
-        
+
         return gsiSocket;
     }
-    
+
 }

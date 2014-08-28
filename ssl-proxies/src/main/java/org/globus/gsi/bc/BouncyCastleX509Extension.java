@@ -22,8 +22,8 @@ import org.globus.gsi.X509Extension;
 
 import org.globus.util.I18n;
 
-/** 
- * A convenience class for creating X.509 extensions from 
+/**
+ * A convenience class for creating X.509 extensions from
  * <code>DEREncodable</code> objects.
  */
 public class BouncyCastleX509Extension extends X509Extension {
@@ -35,17 +35,17 @@ public class BouncyCastleX509Extension extends X509Extension {
     public BouncyCastleX509Extension(String oid) {
 	this(oid, false, null);
     }
-    
+
     public BouncyCastleX509Extension(String oid, ASN1Encodable value) {
 	this(oid, false, value);
     }
-    
-    public BouncyCastleX509Extension(String oid, boolean critical, 
+
+    public BouncyCastleX509Extension(String oid, boolean critical,
 				     ASN1Encodable value) {
 	super(oid, critical, null);
 	setValue(value);
     }
-    
+
     protected void setValue(ASN1Encodable value) {
 	if (value == null) {
 	    return;

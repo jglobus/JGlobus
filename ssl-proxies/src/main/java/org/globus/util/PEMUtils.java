@@ -18,31 +18,31 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 public class PEMUtils {
-    
+
     static final int LINE_LENGTH = 64;
-    
+
     public final static String lineSep;
     public final static byte[] lineSepBytes;
-    
+
     static {
 	lineSep = System.getProperty("line.separator");
 	lineSepBytes = lineSep.getBytes();
     }
-    
+
     public static void writeBase64(OutputStream out,
-				   String header, 
+				   String header,
 				   byte[] base64Data,
-				   String footer) 
+				   String footer)
 	throws IOException {
-	
+
 	int length = LINE_LENGTH;
 	int offset = 0;
-	
+
 	if (header != null) {
 	    out.write(header.getBytes());
 	    out.write(lineSepBytes);
 	}
-	
+
 	int size = base64Data.length;
 	while (offset < size) {
 	    if (LINE_LENGTH > (size - offset)) {
@@ -52,7 +52,7 @@ public class PEMUtils {
 	    out.write(lineSepBytes);
 	    offset = offset + LINE_LENGTH;
 	}
-	
+
 	if (footer != null) {
 	    out.write(footer.getBytes());
 	    out.write(lineSepBytes);
@@ -67,8 +67,8 @@ public class PEMUtils {
     public final static String toHex(byte [] b) {
 	char[] buf = new char[b.length * 2];
 	int i, j, k;
-	
-	i = j = 0;    
+
+	i = j = 0;
 	for (; i < b.length; i++) {
 	    k = b[i];
 	    buf[j++] = hex[(k >>> 4) & 0x0F];
@@ -76,7 +76,7 @@ public class PEMUtils {
 	}
 	return new String(buf);
     }
-    
+
     private static final char[] hex = {'0','1','2','3','4','5','6','7','8','9',
 				       'A','B','C','D','E','F'};
 

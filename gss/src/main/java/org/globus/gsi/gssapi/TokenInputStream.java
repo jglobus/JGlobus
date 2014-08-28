@@ -25,11 +25,11 @@ import org.apache.commons.logging.LogFactory;
  * Used as token-oriented input stream needed for SSL library I/O abstraction.
  */
 public class TokenInputStream extends InputStream {
-    
-    private static Log logger = 
+
+    private static Log logger =
 	LogFactory.getLog(TokenInputStream.class.getName());
 
-    private LinkedList tokens; // list of buffers 
+    private LinkedList tokens; // list of buffers
     private byte [] buff; // current buffer
     private int index; // position within current buffer
 
@@ -40,7 +40,7 @@ public class TokenInputStream extends InputStream {
 	this.index = 0;
 	this.closed = false;
     }
-    
+
     // main function
     public void putToken(byte [] buf, int off, int len) {
 	if (buf == null || len <=0) {
@@ -50,7 +50,7 @@ public class TokenInputStream extends InputStream {
 	if (logger.isDebugEnabled()) {
 	    logger.debug("put token: " + len);
 	}
-	
+
 	byte[] localBuf = buf;
 	if (off != 0) {
 	    localBuf = new byte[len];
@@ -74,7 +74,7 @@ public class TokenInputStream extends InputStream {
 	return read(data, 0, data.length);
     }
 
-    public int read(byte [] data, int off, int len) 
+    public int read(byte [] data, int off, int len)
 	throws IOException {
 	if (logger.isDebugEnabled()) {
 	    logger.debug("read byte array: " + len);
@@ -91,7 +91,7 @@ public class TokenInputStream extends InputStream {
 	return size;
     }
 
-    public int read() 
+    public int read()
 	throws IOException {
 	logger.debug("read byte");
 
@@ -120,7 +120,7 @@ public class TokenInputStream extends InputStream {
 	if (this.buff == null) {
 	    return false;
 	}
-	
+
 	if (this.buff.length == this.index) {
 	    if (tokens.isEmpty()) {
 		return false;
@@ -133,9 +133,9 @@ public class TokenInputStream extends InputStream {
 	return true;
     }
 
-    public int available() 
+    public int available()
 	throws IOException {
-	if (!hasData()) { 
+	if (!hasData()) {
 	    return 0;
 	} else {
 	    return buff.length-index;
@@ -150,9 +150,9 @@ public class TokenInputStream extends InputStream {
 	    notify();
 	}
     }
-    
+
     public String toString() {
 	return tokens.toString() + " " + index + " " + buff.length;
     }
-    
+
 }

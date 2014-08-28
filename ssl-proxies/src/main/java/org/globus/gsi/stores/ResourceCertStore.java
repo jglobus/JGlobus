@@ -48,7 +48,7 @@ public class ResourceCertStore extends CertStoreSpi {
 
 	/**
 	 * The sole constructor.
-	 * 
+	 *
 	 * @param params
 	 *            the initialization parameters (may be <code>null</code>)
 	 * @throws java.security.InvalidAlgorithmParameterException
@@ -90,7 +90,7 @@ public class ResourceCertStore extends CertStoreSpi {
 	 * unless a non-null <code>CertSelector</code> is provided that includes
 	 * specific criteria that can be used to find the certificates. Issuer
 	 * and/or subject names are especially useful criteria.
-	 * 
+	 *
 	 * @param selector
 	 *            A <code>CertSelector</code> used to select which
 	 *            <code>Certificate</code>s should be returned. Specify
@@ -148,7 +148,7 @@ public class ResourceCertStore extends CertStoreSpi {
 	 * unless a non-null <code>CRLSelector</code> is provided that includes
 	 * specific criteria that can be used to find the CRLs. Issuer names and/or
 	 * the certificate to be checked are especially useful.
-	 * 
+	 *
 	 * @param selector
 	 *            A <code>CRLSelector</code> used to select which
 	 *            <code>CRL</code>s should be returned. Specify

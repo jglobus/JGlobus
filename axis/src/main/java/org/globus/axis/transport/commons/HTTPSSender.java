@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,24 +34,24 @@ import org.globus.axis.transport.HTTPUtils;
 /**
  * Overwrites the Axis sender to use a global connection manager
  */
-public class HTTPSSender 
+public class HTTPSSender
     extends org.apache.axis.transport.http.CommonsHTTPSender {
-    
+
     protected static final String[] PARAMS =
-    { 
+    {
         GSIHTTPTransport.GSI_AUTHORIZATION,
         GSIHTTPTransport.GSI_ANONYMOUS,
         GSIHTTPTransport.GSI_CREDENTIALS,
         GSIConstants.GSI_TRANSPORT,
         GSIHTTPTransport.TRUSTED_CERTIFICATES
     };
-    
+
     private static CommonsHttpConnectionManager globalConnectionManager;
     private static CommonsHTTPClientProperties globalClientProperties;
 
     static {
         // install protocol handler
-        Protocol protocol = 
+        Protocol protocol =
             new Protocol("https", new CommonsSSLSocketFactory(), 443);
         Protocol.registerProtocol("https", protocol);
 
@@ -69,15 +69,15 @@ public class HTTPSSender
         this.connectionManager = globalConnectionManager;
     }
 
-    protected HostConfiguration getHostConfiguration(HttpClient client, 
+    protected HostConfiguration getHostConfiguration(HttpClient client,
                                                      MessageContext context,
                                                      URL targetURL) {
         HostConfiguration config = super.getHostConfiguration(client,
                                                               context,
                                                               targetURL);
-        
+
         // handle disable chunking option
-        Boolean prop = 
+        Boolean prop =
             (Boolean)context.getProperty(HTTPUtils.DISABLE_CHUNKING);
         if (prop != null) {
             client.getParams().setParameter(HTTPUtils.DISABLE_CHUNKING, prop);

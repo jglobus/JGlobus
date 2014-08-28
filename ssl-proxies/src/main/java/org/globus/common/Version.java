@@ -14,7 +14,7 @@
  */
 package org.globus.common;
 
-/** 
+/**
  * This class contains version information of the JGlobus module.
  * The version number is composed as MAJOR.MINOR.PATCH.
  */
@@ -25,16 +25,16 @@ public class Version {
      * format integer.integer.integer.
      */
     private static String COG_VERSION = "1.8.0";
-    
+
     /** The major release number */
     public static final int MAJOR;
-    
+
     /** The minor release number */
     public static final int MINOR;
-    
+
     /** The patchlevel of the current release */
     public static final int PATCH;
-    
+
     static {
 
         int firstDot = COG_VERSION.indexOf(".");
@@ -58,7 +58,7 @@ public class Version {
                                                + " required to be integers" +
                                                e.getMessage());
         }
-        
+
         int secondDot = COG_VERSION.indexOf(".", firstDot + 1);
         if (secondDot == -1) {
             PATCH = 0;
@@ -67,10 +67,10 @@ public class Version {
                 throw new IllegalArgumentException("Number needed after . " +
                                                    "COG version required " +
                                                    "MAJOR.MINOR.PATCH. It "
-                                                   + "is set as " + 
+                                                   + "is set as " +
                                                    COG_VERSION);
             }
-            try {                    
+            try {
                 MINOR = Integer.parseInt(tmp);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("COG version numbers are"
@@ -78,7 +78,7 @@ public class Version {
             }
         } else {
             try {
-                MINOR = Integer.parseInt(COG_VERSION.substring(firstDot + 1, 
+                MINOR = Integer.parseInt(COG_VERSION.substring(firstDot + 1,
                                                                secondDot));
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("COG version numbers are"
@@ -87,7 +87,7 @@ public class Version {
 
             try {
                 PATCH = Integer.parseInt(COG_VERSION
-                                         .substring(secondDot + 1, 
+                                         .substring(secondDot + 1,
                                                     COG_VERSION.length()));
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("COG version numbers are"
@@ -98,47 +98,47 @@ public class Version {
         }
     }
 
-    /** 
+    /**
      * Returns the current version as string in the form MAJOR.MINOR.PATCH.
      */
     public static String getVersion() {
         return getMajor() + "." + getMinor() + "." + getPatch();
     }
-    
+
     /**
      * Returns the major release number.
-     * 
+     *
      * @return the major release
      */
     public static int getMajor() {
         return MAJOR;
     }
-    
+
     /**
      * Returns the minor release number.
-     * 
+     *
      * @return the minor release number
      */
     public static int getMinor() {
         return MINOR;
     }
-    
-    /** 
+
+    /**
      * Returns the patch level.
-     * 
+     *
      * @return the patch level
      */
     public static int getPatch() {
         return PATCH;
     }
-    
-    /** 
+
+    /**
      * Returns the version for the Java CoG Kit as a readble string.
-     * 
-     * @param args 
+     *
+     * @param args
      */
     public static void main(String [] args) {
         System.out.println("Java CoG version: " + getVersion());
     }
-    
+
 }

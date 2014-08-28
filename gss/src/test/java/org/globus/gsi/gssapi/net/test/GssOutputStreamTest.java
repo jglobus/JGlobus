@@ -32,7 +32,7 @@ public class GssOutputStreamTest extends TestCase {
 
 	t.write('A');
 	t.write('B');
-	
+
 	assertEquals(2, t.getIndex());
 
 	t.write('C');
@@ -57,7 +57,7 @@ public class GssOutputStreamTest extends TestCase {
 
 	byte [] m1 = new byte[] {'A', 'B'};
 	t.write(m1);
-	
+
 	assertEquals(2, t.getIndex());
 
 	byte [] m2 = new byte[] {'C', 'D', 'E'};
@@ -71,7 +71,7 @@ public class GssOutputStreamTest extends TestCase {
 
 	assertEquals("ABCDE", new String(out.toByteArray()));
     }
-    
+
     public void test3() throws Exception {
 	ByteArrayOutputStream out
 	    = new ByteArrayOutputStream();
@@ -80,7 +80,7 @@ public class GssOutputStreamTest extends TestCase {
 
 	byte [] m1 = new byte[] {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
 	t.write(m1);
-	
+
 	assertEquals(2, t.getIndex());
 
 	assertEquals("ABCDE", new String(out.toByteArray()));
@@ -89,14 +89,14 @@ public class GssOutputStreamTest extends TestCase {
     public void test4() throws Exception {
 	ByteArrayOutputStream out
 	    = new ByteArrayOutputStream();
-	
+
 	TestGssOutputStream t = new TestGssOutputStream(out, 5);
-	
-	byte [] m1 = new byte[] {'A', 'B', 'C', 'D', 'E', 
+
+	byte [] m1 = new byte[] {'A', 'B', 'C', 'D', 'E',
 				 'F', 'G', 'H', 'I', 'J',
 				 'K', 'L', 'M'};
 	t.write(m1);
-	
+
 	assertEquals(3, t.getIndex());
 
 	assertEquals("ABCDEFGHIJ", new String(out.toByteArray()));
@@ -105,20 +105,20 @@ public class GssOutputStreamTest extends TestCase {
     public void test5() throws Exception {
 	ByteArrayOutputStream out
 	    = new ByteArrayOutputStream();
-	
+
 	TestGssOutputStream t = new TestGssOutputStream(out, 5);
-	
-	byte [] m1 = new byte[] {'A', 'B', 'C', 'D', 'E', 
+
+	byte [] m1 = new byte[] {'A', 'B', 'C', 'D', 'E',
 				 'F', 'G', 'H', 'I', 'J',
 				 'K', 'L', 'M', 'N', 'O'};
 	t.write(m1);
-	
+
 	assertEquals(5, t.getIndex());
 
 	assertEquals("ABCDEFGHIJ", new String(out.toByteArray()));
 
 	t.write('B');
-	
+
 	assertEquals(1, t.getIndex());
 	assertEquals("ABCDEFGHIJKLMNO", new String(out.toByteArray()));
     }

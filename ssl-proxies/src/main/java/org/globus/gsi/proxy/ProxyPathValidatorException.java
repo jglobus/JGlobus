@@ -25,9 +25,9 @@ import java.security.cert.X509Certificate;
 /**
  * @deprecated
  */
-public class ProxyPathValidatorException 
+public class ProxyPathValidatorException
     extends GeneralSecurityException {
-    
+
     public static final int FAILURE = -1;
 
     // proxy constraints violation
@@ -66,7 +66,7 @@ public class ProxyPathValidatorException
     private X509Certificate cert;
 
     private int errorCode = FAILURE;
-    
+
     public ProxyPathValidatorException(int errorCode) {
 	this(errorCode, null);
     }
@@ -90,11 +90,11 @@ public class ProxyPathValidatorException
 	this.errorCode = errorCode;
 	this.cert = cert;
     }
-    
+
     public int getErrorCode() {
 	return this.errorCode;
     }
-    
+
 
     /**
      * Returns the certificate that was being validated when
@@ -106,7 +106,7 @@ public class ProxyPathValidatorException
     public X509Certificate getCertificate() {
 	return this.cert;
     }
-    
+
     public static String getDateAsString(Date date) {
         TimeZone tz = TimeZone.getTimeZone("GMT");
         DateFormat df = new SimpleDateFormat("MMM dd HH:mm:ss yyyy z");

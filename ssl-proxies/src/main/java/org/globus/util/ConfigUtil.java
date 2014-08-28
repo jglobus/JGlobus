@@ -26,42 +26,42 @@ public class ConfigUtil {
     public static final int UNIX_OS      = 1;
     public static final int MAC_OS       = 2;
     public static final int OTHER_OS     = 3;
-  
+
     private static int osType = UNDEFINED_OS;
 
     private static final String PROXY_NAME = "x509up_u";
 
     private static final String SOLARIS_ID_EXEC =
         "/usr/xpg4/bin/id";
-        
+
     public static String globus_dir = null;
-    
+
     static {
-        globus_dir = System.getProperty("user.home") + 
-            File.separator + 
+        globus_dir = System.getProperty("user.home") +
+            File.separator +
             ".globus" +
             File.separator;
     }
-    
+
     /** Returns default PKCS11 library name */
     public static String discoverPKCS11LibName() {
         return "dspkcs"; // use the ibutton library as the default for now
     }
-    
+
     /** Returns default location of user cert file */
     public static String discoverUserCertLocation() {
         String location = null;
         location = globus_dir + "usercert.pem";
         return location;
     }
-    
+
     /** Returns default location of user key file */
     public static String discoverUserKeyLocation() {
         String location = null;
         location = globus_dir + "userkey.pem";
         return location;
     }
-    
+
     /**
      * Tries to discover user proxy location.
      * If a UID system property is set, and running on a Unix machine it
@@ -81,7 +81,7 @@ public class ConfigUtil {
             String tmpDir = System.getProperty("java.io.tmpdir");
             dir = (tmpDir == null) ? globus_dir : tmpDir;
         }
-        
+
         String uid = System.getProperty("UID");
 
         if (uid != null) {
@@ -92,7 +92,7 @@ public class ConfigUtil {
             } catch (IOException e) {
             }
         }
-        
+
         /* If all else fails use username */
         String suffix = System.getProperty("user.name");
         if (suffix != null) {
@@ -111,15 +111,15 @@ public class ConfigUtil {
 
     /**
      * Returns the user id. The user id is obtained by executing 'id -u'
-     * external program. 
+     * external program.
      * <BR><BR><B>Note: </B><I>
-     * Under some circumstances, this function executes an external program; 
+     * Under some circumstances, this function executes an external program;
      * thus, its behavior is influenced by environment variables such as the
-     * caller's PATH and the environment variables that control dynamic 
-     * loading.  Care should be used if calling this function from a program 
+     * caller's PATH and the environment variables that control dynamic
+     * loading.  Care should be used if calling this function from a program
      * that will be run as a Unix setuid program, or in any other manner in
      * which the owner of the Unix process does not completely control its
-     * runtime environment. 
+     * runtime environment.
      * </I>
      *
      * @throws IOException if unable to determine the user id.
@@ -150,7 +150,7 @@ public class ConfigUtil {
         try {
             process = runTime.exec(exec + " -u");
             buffInReader = new BufferedReader
-                ( new InputStreamReader(process.getInputStream()) ); 
+                ( new InputStreamReader(process.getInputStream()) );
             while ((s = buffInReader.readLine()) != null) {
                 output.append(s);
             }
@@ -159,16 +159,16 @@ public class ConfigUtil {
             throw new IOException("Unable to execute 'id -u'");
         } finally {
             if (buffInReader != null) {
-                try { 
+                try {
                     buffInReader.close();
                 } catch (IOException e) {}
             }
             if (process != null) {
-                try { 
-                    process.getErrorStream().close(); 
+                try {
+                    process.getErrorStream().close();
                 } catch (IOException e) {}
-                try { 
-                    process.getOutputStream().close(); 
+                try {
+                    process.getOutputStream().close();
                 } catch (IOException e) {}
             }
         }
@@ -176,41 +176,41 @@ public class ConfigUtil {
             throw new IOException("Unable to perform 'id -u'");
         }
         return output.toString().trim();
-    } 
+    }
 
     /**
      * Discovers location of CA certificates directory.
      * First the ${user.home}/.globus/certificates directory is checked.
      * If the directory does not exist, and on a Unix machine, the
      * /etc/grid-security/certificates directory is checked next.
-     * If that directory does not exist and GLOBUS_LOCATION 
+     * If that directory does not exist and GLOBUS_LOCATION
      * system property is set then the ${GLOBUS_LOCATION}/share/certificates
-     * directory is checked. Otherwise, null is returned. 
+     * directory is checked. Otherwise, null is returned.
      * This indicates that the certificates directory could
      * not be found.
      */
     public static String discoverCertDirLocation() {
         String location = null;
-    
+
         location = getDir(globus_dir + "certificates");
         if (location != null) return location;
-        
+
         if (getOS() == UNIX_OS) {
             location = getDir( "/etc/grid-security/certificates");
             if (location != null) return location;
         }
 
-        String suffix = File.separator + "share" + File.separator + 
+        String suffix = File.separator + "share" + File.separator +
             "certificates";
-            
+
         location = getDir(System.getProperty("GLOBUS_LOCATION") +
                           suffix);
         if (location != null) return location;
-        
+
         return null;
     }
 
-  
+
     public static int getOS() {
         if (osType != UNDEFINED_OS) {
             return osType;
@@ -241,7 +241,7 @@ public class ConfigUtil {
         } else {
             osType = OTHER_OS;
         }
-    
+
         return osType;
     }
 
@@ -254,5 +254,5 @@ public class ConfigUtil {
             return null;
         }
     }
-    
+
 }

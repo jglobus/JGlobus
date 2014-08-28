@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ import org.ietf.jgss.GSSName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/** 
+/**
  * This is the main class for using the Globus GRAM API
  * It implements all of the GRAM API functionality such as
  * job submission, canceling, gatekeeper pinging, and job
@@ -73,7 +73,7 @@ public class Gram  {
 					    boolean doDel,
 					    boolean limitedDelegation)
 	throws GSSException, GramException {
-	
+
         GSSAuthorization auth = null;
         String authDN = rmc.getDN();
         if (authDN != null) {
@@ -83,32 +83,32 @@ public class Gram  {
         }
 
 	GSSManager manager = ExtendedGSSManager.getInstance();
-	
+
 	try {
-        
-		
+
+
 		GSSName name = auth.getExpectedName(cred, rmc.getHostName());
- 
-	    ExtendedGSSContext context = 
-		(ExtendedGSSContext)manager.createContext(name, 
+
+	    ExtendedGSSContext context =
+		(ExtendedGSSContext)manager.createContext(name,
 							  GSSConstants.MECH_OID,
 							  cred,
 							  GSSContext.DEFAULT_LIFETIME);
-	    
+
 	    context.requestCredDeleg(doDel);
-	
+
 	    context.setOption(GSSConstants.DELEGATION_TYPE,
-			      (limitedDelegation) ? 
+			      (limitedDelegation) ?
 			      GSIConstants.DELEGATION_TYPE_LIMITED :
 			      GSIConstants.DELEGATION_TYPE_FULL);
-	
+
 	    GssSocketFactory factory = GssSocketFactory.getDefault();
-	    
-	    GssSocket socket = 
-		(GssSocket)factory.createSocket(rmc.getHostName(), 
+
+	    GssSocket socket =
+		(GssSocket)factory.createSocket(rmc.getHostName(),
 						rmc.getPortNumber(),
 						context);
-	    
+
             socket.setAuthorization(NoAuthorization.getInstance());
 
 	    return socket;
@@ -118,20 +118,20 @@ public class Gram  {
     }
 
     /**    */
-    private static void checkProtocolVersion(int protocolVersion) 
+    private static void checkProtocolVersion(int protocolVersion)
 	throws GramException {
 	if (protocolVersion != GRAMProtocol.GRAM_PROTOCOL_VERSION) {
 	    throw new GramException(GramException.VERSION_MISMATCH);
 	}
     }
 
-    /**    
-     * @exception GramException 
-     * @param code 
+    /**
+     * @exception GramException
+     * @param code
      */
-    private static void checkHttpReply(int code) 
+    private static void checkHttpReply(int code)
 	throws GramException {
-	
+
 	if (code == 200) {
 	    return;
 	} else if (code == 400) {
@@ -145,13 +145,13 @@ public class Gram  {
 	} else {
 	    // from globus code
 	    throw new GramException(GramException.HTTP_UNFRAME_FAILED,
-				    new Exception("Unexpected reply: " + 
+				    new Exception("Unexpected reply: " +
 						  code));
 	}
-	
+
     }
-  
-    /** Returns total number of jobs currently running 
+
+    /** Returns total number of jobs currently running
      * for all credentials -- all callback handlers
      *
      * @return number of jobs running
@@ -165,10 +165,10 @@ public class Gram  {
 	}
 	return jobs;
     }
-  
+
     /** Returns number of jobs currently running
      * for a specified credential (one credential one callback handler)
-     * 
+     *
      * @return number of jobs running for given credential
      */
     public static int getActiveJobs(GSSCredential cred) {
@@ -178,84 +178,84 @@ public class Gram  {
 	CallbackHandler handler = (CallbackHandler)callbackHandlers.get(cred);
 	return (handler == null) ? 0 : handler.getRegisteredJobsSize();
     }
-    
+
 
     // ----------- GATEKEEPER CALLS ---------------------------
-    
-    /** 
+
+    /**
      * Performs ping operation on the gatekeeper with
      * default user credentials.
      * Verifies if the user is authorized to submit a job
      * to that gatekeeper.
-     * 
+     *
      * @throws GramException if an error occurs or user in unauthorized
      * @param resourceManagerContact resource manager contact
      */
-    public static void ping(String resourceManagerContact) 
+    public static void ping(String resourceManagerContact)
 	throws GramException, GSSException {
     	ping(null, resourceManagerContact);
     }
-  
-    /** 
+
+    /**
      * Performs ping operation on the gatekeeper with
      * specified user credentials.
      * Verifies if the user is authorized to submit a job
      * to that gatekeeper.
-     * 
+     *
      * @throws GramException if an error occurs or user in unauthorized
      * @param cred user credentials
      * @param resourceManagerContact resource manager contact
      */
-    public static void ping(GSSCredential cred, String resourceManagerContact) 
+    public static void ping(GSSCredential cred, String resourceManagerContact)
 	throws GramException, GSSException {
-	 
-	ResourceManagerContact rmc = 
+
+	ResourceManagerContact rmc =
 	    new ResourceManagerContact(resourceManagerContact);
 	Socket socket = gatekeeperConnect(cred, rmc, false, false);
-	
+
 	HttpResponse hd = null;
 
 	try {
 	    OutputStream out = socket.getOutputStream();
 	    InputStream in   = socket.getInputStream();
-	    
+
 	    String msg = GRAMProtocol.PING(rmc.getServiceName(),
 					   rmc.getHostName());
 
 	    // send message
 	    out.write(msg.getBytes());
 	    out.flush();
-	    
+
 	    debug("PG SENT:", msg);
-	    
+
 	    // receive reply
 	    hd = new HttpResponse(in);
-	    
+
 	} catch(IOException e) {
 	    throw new GramException(GramException.ERROR_PROTOCOL_FAILED, e);
 	} finally {
 	    try { socket.close(); } catch (Exception e) {}
 	}
-	
+
 	debug("PG RECEIVED:", hd);
-	
+
 	checkHttpReply(hd.httpCode);
     }
-    
-    /** 
+
+    /**
      * Submits a GramJob to specified gatekeeper as an
      * interactive job. Performs limited delegation.
-     * 
+     *
      * @throws GramException if an error occurs during submisson
      * @param resourceManagerContact resource manager contact
      * @param job gram job
      */
     public static void request(String resourceManagerContact,
-			       GramJob job) 
+			       GramJob job)
 	throws GramException, GSSException {
-	request(resourceManagerContact, job, false);	 
+	request(resourceManagerContact, job, false);
     }
-    
+
     /**
      * Submits a GramJob to specified gatekeeper as
      * a interactive or batch job. Performs limited delegation.
@@ -272,16 +272,16 @@ public class Gram  {
 	request(resourceManagerContact, job, batchJob, true);
     }
 
-    /** 
+    /**
      * Submits a GramJob to specified gatekeeper as
      * a interactive or batch job.
-     * 
+     *
      * @throws GramException if an error occurs during submisson
-     * @param resourceManagerContact 
+     * @param resourceManagerContact
      *        resource manager contact
-     * @param job 
+     * @param job
      *        gram job
-     * @param batchJob 
+     * @param batchJob
      *        true if batch job, interactive otherwise.
      * @param limitedDelegation
      *        true for limited delegation, false for full delegation.
@@ -290,27 +290,27 @@ public class Gram  {
     public static void request(String resourceManagerContact,
 			       GramJob job,
 			       boolean batchJob,
-			       boolean limitedDelegation) 
+			       boolean limitedDelegation)
 	throws GramException, GSSException {
-	 
+
 	GSSCredential cred = getJobCredentials(job);
 
 	// at this point proxy cannot be null
 
 	String callbackURL      = null;
 	CallbackHandler handler = null;
-	
-	if (!batchJob) { 
+
+	if (!batchJob) {
 	    handler = initCallbackHandler(cred);
 	    callbackURL = handler.getURL();
 	    logger.debug("Callback url: " + callbackURL);
 	} else {
 	    callbackURL = "\"\"";
 	}
-	 
-	ResourceManagerContact rmc = 
+
+	ResourceManagerContact rmc =
 	    new ResourceManagerContact(resourceManagerContact);
-	 
+
 	Socket socket = gatekeeperConnect(cred, rmc, true, limitedDelegation);
 
 	GatekeeperReply hd = null;
@@ -324,7 +324,7 @@ public class Gram  {
 					      GRAMConstants.STATUS_ALL,
 					      callbackURL,
 					      job.getRSL());
-	     
+
 	    // send message
 	    out.write(msg.getBytes());
 	    out.flush();
@@ -344,17 +344,17 @@ public class Gram  {
 
 	// must be 200
 	checkHttpReply(hd.httpCode);
-	
+
 	// protocol version must match
 	checkProtocolVersion(hd.protocolVersion);
-	
+
 	if (hd.status == 0 || hd.status == GramException.WAITING_FOR_COMMIT) {
 	    try {
 		job.setID( hd.jobManagerUrl );
 	    } catch(MalformedURLException ex) {
 		throw new GramException(GramException.INVALID_JOB_CONTACT, ex);
 	    }
-	    if (!batchJob) handler.registerJob(job);	    
+	    if (!batchJob) handler.registerJob(job);
 	    if (hd.status == GramException.WAITING_FOR_COMMIT) {
                 throw new WaitingForCommitException();
             }
@@ -364,20 +364,20 @@ public class Gram  {
     }
 
     // --------------------- JOB MANAGER CALLS --------------------------------
-    
-    private static GatekeeperReply jmConnect(GSSCredential cred, 
-					     GlobusURL jobURL, 
-					     String msg) 
+
+    private static GatekeeperReply jmConnect(GSSCredential cred,
+					     GlobusURL jobURL,
+					     String msg)
 	throws GramException, GSSException {
 
 	GSSManager manager = ExtendedGSSManager.getInstance();
-	
+
 	GatekeeperReply reply = null;
 	GssSocket socket = null;
 
 	try {
 
-	    ExtendedGSSContext context = 
+	    ExtendedGSSContext context =
 		(ExtendedGSSContext)manager.createContext(null,
 							  GSSConstants.MECH_OID,
 							  cred,
@@ -385,23 +385,23 @@ public class Gram  {
 
 	    context.setOption(GSSConstants.GSS_MODE,
 			      GSIConstants.MODE_SSL);
-	
+
 	    GssSocketFactory factory = GssSocketFactory.getDefault();
-	
-	    socket = (GssSocket)factory.createSocket(jobURL.getHost(), 
+
+	    socket = (GssSocket)factory.createSocket(jobURL.getHost(),
 						     jobURL.getPort(),
 						     context);
-	    
+
 	    socket.setAuthorization(SelfAuthorization.getInstance());
-	    
+
 	    OutputStream out = socket.getOutputStream();
 	    InputStream in   = socket.getInputStream();
-	    
+
 	    out.write(msg.getBytes());
 	    out.flush();
-	    
+
 	    debug("JM SENT:", msg);
-	    
+
 	    reply = new GatekeeperReply(in);
 
 	} catch(IOException e) {
@@ -416,19 +416,19 @@ public class Gram  {
 
 	// must be 200 otherwise throw exception
 	checkHttpReply(reply.httpCode);
-	
+
 	// protocol version must match
 	checkProtocolVersion(reply.protocolVersion);
-	
+
 	return reply;
     }
 
-    /** 
+    /**
      * Frames and wraps a token according to the GRAM "renew" protocol
      * for use in a GSI delegation handshake.  The input token is framed with
      * a 4 byte big-endian token length header, and the resulting framed token
      * wrapped in SSL mode (GSSContext's GSS_MODE option set to MODE_SSL)
-     * 
+     *
      * @param c The context used to wrap the token
      * @param token The unaltered output of the context's initDelegation
      * @throws GSSException if an error occurs during token wrapping or if
@@ -447,12 +447,12 @@ public class Gram  {
         return c.wrap(framedToken, 0, framedToken.length, null);
     }
 
-    /** 
+    /**
      * Unwraps and discards frame of a token according to the GRAM "renew"
      * protocol for use in a GSI delegation handshake.  The input token is
      * received from a globus job manager and comes wrapped (SSL mode) and
      * framed with a 4 byte big-endian token length header.
-     * 
+     *
      * @param c The context to use to unwrap the token
      * @param wrappedToken Token received from job manager during GSI handshake
      * @throws GSSException if an error occurs during token wrapping or if
@@ -472,13 +472,13 @@ public class Gram  {
         return token;
     }
 
-    /** 
+    /**
      * Completes a GSI delegation handshake with a globus job manager
      * that has agreed to a (previously sent) GRAM "renew" request.  After
      * the job manager receives the last token in the handshake, it responds
      * with a message following the GRAM protocol indicating delegation success
      * or failure.
-     * 
+     *
      * @param context Previously established context with job manager
      * @param newCred The credential used to generate a new delegated proxy
      * @param out Stream used to send messages to job manager
@@ -524,12 +524,12 @@ public class Gram  {
         renew(job, newCred, true);
     }
 
-    /** 
+    /**
      * Requests that a globus job manager accept newly delegated credentials.
      * This consists of a "renew" message in the GRAM protocol followed by a
      * GSI delegation handshake using wrapped/framed tokens.  Upon successful
      * delegation, the job's credentials are set to the ones used in delegation.
-     * 
+     *
      * @param job The job whose credentials are to be renewed/refreshed
      * @param newCred The credentials to use in the delegation process
      * @param limitedDelegation Whether to use a full or limited proxy
@@ -601,15 +601,15 @@ public class Gram  {
         }
     }
 
-    /** 
+    /**
      * This function cancels an already running job.
-     * 
+     *
      * @throws GramException if an error occurs during cancel
      * @param job job to be canceled
      */
     public static void cancel(GramJob job)
 	throws GramException, GSSException {
-      
+
 	GlobusURL jobURL  = job.getID();
 
 	if (jobURL == null) {
@@ -617,10 +617,10 @@ public class Gram  {
 	}
 
 	GSSCredential cred = getJobCredentials(job);
-	
+
 	String msg = GRAMProtocol.CANCEL_JOB(jobURL.getURL(),
 					     jobURL.getHost());
-	
+
 	GatekeeperReply reply = jmConnect(cred,
 					  jobURL,
 					  msg);
@@ -632,40 +632,40 @@ public class Gram  {
 	// this might need to be fixed
 	// if (handler != null) handler.unregisterJob(jobContact);
     }
-  
-    /** 
+
+    /**
      * This function updates the status of a job (within the job object),
      * and throws an exception if the status is not OK. If the
      * job manager cannot be contacted the job error code is
-     * set to GramException.ERROR_CONTACTING_JOB_MANAGER and an 
+     * set to GramException.ERROR_CONTACTING_JOB_MANAGER and an
      * exception with the same error code is thrown.
-     * 
+     *
      * @throws GramException if an error occurs during status update.
      * @param job the job whose status is to be updated.
      */
-    public static void jobStatus(GramJob job) 
+    public static void jobStatus(GramJob job)
 	throws GramException, GSSException {
-      
+
 	GlobusURL jobURL  = job.getID();
 	GSSCredential cred = getJobCredentials(job);
-	
+
 	String msg = GRAMProtocol.STATUS_POLL(jobURL.getURL(),
 					      jobURL.getHost());
-	
+
 	GatekeeperReply hd = null;
-      
+
 	try {
 	    hd = jmConnect(cred, jobURL, msg);
 	} catch(GramException e) {
 	    // this is exactly what C does
 	    if (e.getErrorCode() == GramException.ERROR_CONNECTION_FAILED) {
-		job.setError( GramException.ERROR_CONTACTING_JOB_MANAGER );	
+		job.setError( GramException.ERROR_CONTACTING_JOB_MANAGER );
 		e.setErrorCode( GramException.ERROR_CONTACTING_JOB_MANAGER );
 	    }
 	    throw e;
 	}
-	
-	// We didn't seem to care much about setting things 
+
+	// We didn't seem to care much about setting things
 	// before the status here, presumably because of the
 	// assumption that, when polling, listeners are not used
 	// on the GramJob. I disagree. There is no good reason
@@ -674,10 +674,10 @@ public class Gram  {
 	job.setError( hd.failureCode );
 	job.setStatus( hd.status );
     }
-  
-    /** 
+
+    /**
      * This function sends a signal to a job.
-     * 
+     *
      * @throws GramException if an error occurs during cancel
      * @param job the signaled job
      * @param signal type of the signal
@@ -688,16 +688,16 @@ public class Gram  {
 
 	GlobusURL jobURL  = job.getID();
 	GSSCredential cred = getJobCredentials(job);
-	
+
 	String msg = GRAMProtocol.SIGNAL(jobURL.getURL(),
 					 jobURL.getHost(),
 					 signal,
 					 arg);
 
 	GatekeeperReply hd = null;
-	
+
 	hd = jmConnect(cred, jobURL, msg);
-	
+
 	switch(signal) {
 	case GramJob.SIGNAL_PRIORITY:
 	    return hd.failureCode;
@@ -724,13 +724,13 @@ public class Gram  {
 	}
     }
 
-    /** 
+    /**
      * This function registers the job for status updates.
-     * 
+     *
      * @throws GramException if an error occurs during registration
      * @param job the job
      */
-    public static void registerListener(GramJob job) 
+    public static void registerListener(GramJob job)
 	throws GramException, GSSException {
 
 	CallbackHandler handler;
@@ -738,43 +738,43 @@ public class Gram  {
 	GSSCredential cred = getJobCredentials(job);
 
 	handler = initCallbackHandler(cred);
-	
+
 	registerListener(job, handler);
     }
 
-    public static void registerListener(GramJob job, CallbackHandler handler) 
+    public static void registerListener(GramJob job, CallbackHandler handler)
 	throws GramException, GSSException {
-	    
+
 	String callbackURL;
 	GlobusURL jobURL;
 
 	GSSCredential cred = getJobCredentials(job);
 	callbackURL = handler.getURL();
 	jobURL = job.getID();
-	 
+
 	String msg = GRAMProtocol.REGISTER_CALLBACK(jobURL.getURL(),
 						    jobURL.getHost(),
 						    GRAMConstants.STATUS_ALL,
 						    callbackURL);
-	 
+
 	GatekeeperReply hd = jmConnect(cred, jobURL, msg);
-	
+
 	if (hd.failureCode == 0) {
-	    handler.registerJob(job);	    
+	    handler.registerJob(job);
 	} else {
 	    throw new GramException(hd.failureCode);
 	}
     }
-    
-  
-    /** 
+
+
+    /**
      * This function unregisters the job from callback
      * listener. The job status will not be updated.
-     * 
+     *
      * @throws GramException if an error occurs during unregistering
      * @param job the job
      */
-    public static void unregisterListener(GramJob job) 
+    public static void unregisterListener(GramJob job)
 	throws GramException, GSSException {
 
         CallbackHandler handler;
@@ -782,27 +782,27 @@ public class Gram  {
         GSSCredential cred = getJobCredentials(job);
 
         handler = initCallbackHandler(cred);
-	
+
         unregisterListener(job, handler);
     }
 
     public static void unregisterListener(GramJob job, CallbackHandler handler)
         throws GramException, GSSException {
-	
+
 	GlobusURL jobURL;
 
 	GSSCredential cred = getJobCredentials(job);
 	jobURL = job.getID();
-	
+
 	String msg = GRAMProtocol.UNREGISTER_CALLBACK(jobURL.getURL(),
 						      jobURL.getHost(),
 						      handler.getURL());
-	
+
 	GatekeeperReply reply = jmConnect(cred, jobURL, msg);
-	
+
 	handler.unregisterJob(job);
     }
-    
+
 
     /**
      * Deactivates all callback handlers.
@@ -822,14 +822,14 @@ public class Gram  {
      * Deactivates a callback handler for a given credential.
      *
      * @param cred the credential of the callback handler.
-     * @return the callback handler that was deactivated. Null, 
+     * @return the callback handler that was deactivated. Null,
      *         if no callback handler is associated with the credential
      */
     public static CallbackHandler deactivateCallbackHandler(GSSCredential cred) {
 	if (cred == null) {
 	    return null;
 	}
-	CallbackHandler handler = 
+	CallbackHandler handler =
 	    (CallbackHandler)callbackHandlers.remove(cred);
 	if (handler == null) {
 	    return null;
@@ -839,10 +839,10 @@ public class Gram  {
     }
 
     // -------- INTERNAL CALLBACK STUFF -----------------------
-  
+
     /**    */
     protected static Hashtable callbackHandlers = new Hashtable();
-    
+
     static {
 	Deactivator.registerDeactivation(new DeactivationHandler() {
 		public void deactivate() {
@@ -859,10 +859,10 @@ public class Gram  {
 	}
 
 	CallbackHandler handler = (CallbackHandler)callbackHandlers.get(cred);
-	
+
 	if (handler == null) {
 	    try {
-		handler = new CallbackHandler(cred, 0);	
+		handler = new CallbackHandler(cred, 0);
 		// sets socket timeout to max cred lifetime
 		handler.setTimeout(cred.getRemainingLifetime());
 		callbackHandlers.put(cred, handler);
@@ -870,12 +870,12 @@ public class Gram  {
 		throw new GramException(GramException.INIT_CALLBACK_HANDLER_FAILED, e);
 	    }
 	}
-	
+
 	return handler;
     }
 
     /**    */
-    private static GSSCredential getJobCredentials(GramJob job) 
+    private static GSSCredential getJobCredentials(GramJob job)
 	throws GSSException {
 	GSSCredential cred = job.getCredentials();
 	if (cred == null) {
@@ -887,8 +887,8 @@ public class Gram  {
     }
 
     // --------- DEBUG CONVINIENCE FUNCTIONS ------------
-  
-    /** 
+
+    /**
      * Debug function for displaying the gatekeeper reply.
      */
     private static void debug(String header, GatekeeperReply reply) {
@@ -897,8 +897,8 @@ public class Gram  {
 	    logger.trace(reply.toString());
 	}
     }
-    
-    /** 
+
+    /**
      * Debug function for displaying HTTP responses.
      */
     private static void debug(String header, HttpResponse response) {
@@ -907,10 +907,10 @@ public class Gram  {
 	    logger.trace(response.toString());
 	}
     }
-    
+
     /** A general debug message that prints the header and msg
      * when the debug level is smaler than 3
-     * 
+     *
      * @param header The header to be printed
      * @param msg The message to be printed
      */

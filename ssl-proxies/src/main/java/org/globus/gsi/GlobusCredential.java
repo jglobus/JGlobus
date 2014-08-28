@@ -64,7 +64,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Creates a GlobusCredential from a private key and a certificate chain.
-     * 
+     *
      * @param key
      *            the private key
      * @param certs
@@ -76,7 +76,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Creates a GlobusCredential from a proxy file.
-     * 
+     *
      * @param proxyFile
      *            the file to load the credential from.
      * @exception GlobusCredentialException
@@ -92,7 +92,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Creates a GlobusCredential from certificate file and a unencrypted key file.
-     * 
+     *
      * @param certFile
      *            the file containing the certificate
      * @param unencryptedKeyFile
@@ -115,7 +115,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Creates a GlobusCredential from an input stream.
-     * 
+     *
      * @param input
      *            the stream to load the credential from.
      * @exception GlobusCredentialException
@@ -133,7 +133,7 @@ public class GlobusCredential implements Serializable {
     /**
      * Saves the credential into a specified output stream. The self-signed certificates in the certificate
      * chain will not be saved. The output stream should always be closed after calling this function.
-     * 
+     *
      * @param out
      *            the output stream to write the credential to.
      * @exception IOException
@@ -151,7 +151,7 @@ public class GlobusCredential implements Serializable {
     /**
      * Verifies the validity of the credentials. All certificate path validation is performed using trusted
      * certificates in default locations.
-     * 
+     *
      * @exception GlobusCredentialException
      *                if one of the certificates in the chain expired or if path validiation fails.
      */
@@ -176,7 +176,7 @@ public class GlobusCredential implements Serializable {
     /**
      * Returns the identity certificate of this credential. The identity certificate is the first certificate
      * in the chain that is not an impersonation proxy certificate.
-     * 
+     *
      * @return <code>X509Certificate</code> the identity cert. Null, if unable to get the identity certificate
      *         (an error occurred)
      */
@@ -187,7 +187,7 @@ public class GlobusCredential implements Serializable {
     /**
      * Returns the path length constraint. The shortest length in the chain of certificates is returned as the
      * credential's path length.
-     * 
+     *
      * @return The path length constraint of the credential. -1 is any error occurs.
      */
     public int getPathConstraint() {
@@ -196,9 +196,9 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Returns the identity of this credential.
-     * 
+     *
      * @see #getIdentityCertificate()
-     * 
+     *
      * @return The identity cert in Globus format (e.g. /C=US/..). Null, if unable to get the identity (an
      *         error occurred)
      */
@@ -208,7 +208,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Returns the private key of this credential.
-     * 
+     *
      * @return <code>PrivateKey</code> the private key
      */
     public PrivateKey getPrivateKey() {
@@ -221,7 +221,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Returns the certificate chain of this credential.
-     * 
+     *
      * @return <code>X509Certificate []</code> the certificate chain
      */
     public X509Certificate[] getCertificateChain() {
@@ -230,7 +230,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Returns the number of certificates in the credential without the self-signed certificates.
-     * 
+     *
      * @return number of certificates without counting self-signed certificates
      */
     public int getCertNum() {
@@ -239,7 +239,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Returns strength of the private/public key in bits.
-     * 
+     *
      * @return strength of the key in bits. Returns -1 if unable to determine it.
      */
     public int getStrength() {
@@ -252,7 +252,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Returns the subject DN of the first certificate in the chain.
-     * 
+     *
      * @return subject DN.
      */
     public String getSubject() {
@@ -261,7 +261,7 @@ public class GlobusCredential implements Serializable {
 
     /**
      * Returns the issuer DN of the first certificate in the chain.
-     * 
+     *
      * @return issuer DN.
      */
     public String getIssuer() {
@@ -271,9 +271,9 @@ public class GlobusCredential implements Serializable {
     /**
      * Returns the certificate type of the first certificate in the chain. Returns -1 if unable to determine
      * the certificate type (an error occurred)
-     * 
+     *
      * @see BouncyCastleUtil#getCertificateType(X509Certificate)
-     * 
+     *
      * @return the type of first certificate in the chain. -1 if unable to determine the certificate type.
      */
     public int getProxyType() {
@@ -283,7 +283,7 @@ public class GlobusCredential implements Serializable {
     /**
      * Returns time left of this credential. The time left of the credential is based on the certificate with
      * the shortest validity time.
-     * 
+     *
      * @return time left in seconds. Returns 0 if the certificate has expired.
      */
     public long getTimeLeft() {
@@ -295,7 +295,7 @@ public class GlobusCredential implements Serializable {
      * The credential will be loaded on the initial call. It must not be expired. All subsequent calls to this
      * function return cached credential object. Once the credential is cached, and the underlying file
      * changes, the credential will be reloaded.
-     * 
+     *
      * @return the default credential.
      * @exception GlobusCredentialException
      *                if the credential expired or some other error with the credential.
@@ -314,7 +314,7 @@ public class GlobusCredential implements Serializable {
         return defaultCred;
     }
 
-    private static void reloadDefaultCredential() 
+    private static void reloadDefaultCredential()
         throws GlobusCredentialException {
         String proxyLocation = CoGProperties.getDefault().getProxyFile();
         defaultCred = new GlobusCredential(proxyLocation);
@@ -322,10 +322,10 @@ public class GlobusCredential implements Serializable {
         credentialLastModified = credentialFile.lastModified();
         defaultCred.verify();
     }
-    
+
     /**
      * Sets default credential.
-     * 
+     *
      * @param cred
      *            the credential to set a default.
      */

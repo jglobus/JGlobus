@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,17 +25,17 @@ import java.net.SocketException;
 import java.io.IOException;
 
 /**
- * This factory allows for creating datagram sockets. 
+ * This factory allows for creating datagram sockets.
  * If the udp.source.port.range system property is set it will create
  * datagram sockets within the specified local port range (if the local port
  * number is set to 0).
  */
 public class DatagramSocketFactory {
-    
+
     private static DatagramSocketFactory defaultFactory = null;
 
     private PortRange portRange = null;
-    
+
     protected DatagramSocketFactory() {
         this.portRange = PortRange.getUdpSourceInstance();
     }
@@ -52,16 +52,16 @@ public class DatagramSocketFactory {
         return defaultFactory;
     }
 
-    public DatagramSocket createDatagramSocket() 
+    public DatagramSocket createDatagramSocket()
         throws IOException {
         return createDatagramSocket(0, null);
     }
-    
-    public DatagramSocket createDatagramSocket(int port) 
+
+    public DatagramSocket createDatagramSocket(int port)
         throws IOException {
         return createDatagramSocket(port, null);
     }
-    
+
     public DatagramSocket createDatagramSocket(int port, InetAddress localAddr)
         throws IOException {
         if (this.portRange.isEnabled() && port == 0) {
@@ -77,7 +77,7 @@ public class DatagramSocketFactory {
         throws IOException {
         DatagramSocket socket = null;
         int localPort = 0;
-        
+
         while(true) {
             localPort = this.portRange.getFreePort(localPort);
 
@@ -97,7 +97,7 @@ public class DatagramSocketFactory {
 
         private DatagramSocket socket;
 
-        public PrDatagramSocket(DatagramSocket socket) 
+        public PrDatagramSocket(DatagramSocket socket)
             throws SocketException {
             super.close();
             this.socket = socket;
@@ -106,7 +106,7 @@ public class DatagramSocketFactory {
         public void connect(InetAddress address, int port) {
             this.socket.connect(address, port);
         }
-        
+
         public void disconnect() {
             this.socket.disconnect();
         }
@@ -118,15 +118,15 @@ public class DatagramSocketFactory {
         public int getPort() {
             return this.socket.getPort();
         }
-        
+
         public void send(DatagramPacket p) throws IOException  {
             this.socket.send(p);
         }
-        
+
         public void receive(DatagramPacket p) throws IOException {
             this.socket.receive(p);
         }
-        
+
         public InetAddress getLocalAddress() {
             return this.socket.getLocalAddress();
         }
@@ -134,7 +134,7 @@ public class DatagramSocketFactory {
         public int getLocalPort() {
             return this.socket.getLocalPort();
         }
-        
+
         public void setSoTimeout(int timeout) throws SocketException {
             this.socket.setSoTimeout(timeout);
         }
@@ -158,7 +158,7 @@ public class DatagramSocketFactory {
         public int getReceiveBufferSize() throws SocketException {
             return this.socket.getReceiveBufferSize();
         }
-        
+
         public void close() {
             int port = getLocalPort();
             socket.close();

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,20 +41,20 @@ public class RslAttributesTest extends TestCase {
 
     public void setUp() {
 	String rsl = "&(rsl_substitution=(HOME /home/gawor)(VAR2 testValue))(exECutable=/bin/ls)(arGUments=-arg1 -arg2 \"-arg3 with space\" \"'arg4 in quotes'\")(directory=/home/vijay/gram)(stdin=https://localhost:9999/test)(environment=(v1 value1/$(JAREK)/value2 ) (v2 $(GLOBUS)) (v3 $(HOME)/data # /bin))";
-	
+
 	try {
-	    attribs = new RslAttributes(rsl); 
+	    attribs = new RslAttributes(rsl);
 	} catch(Exception e) {
 	    fail("Failed to parse rsl");
 }
 	}
-    
+
     public void testParse() {
-	
-	assertEquals("executable", 
+
+	assertEquals("executable",
 		     "/bin/ls", attribs.getSingle("executable"));
-	
-	assertEquals("directory", 
+
+	assertEquals("directory",
 		     "/home/vijay/gram", attribs.getSingle("directory"));
 
 	assertEquals("stdin",
@@ -65,24 +65,24 @@ public class RslAttributesTest extends TestCase {
 				  null, attribs.getSingle("stdout"));
 
 	List args = attribs.getMulti("arguments");
-	
+
 	assertEquals("arg size",
 		     4, args.size());
-	
+
 	assertEquals("arg 1",
 		     "-arg1", args.get(0));
-	
+
 	assertEquals("arg 2",
 		     "-arg2", args.get(1));
-	
+
 	assertEquals("arg 3",
 		     "-arg3 with space", args.get(2));
-	
+
 	assertEquals("arg 4",
 		     "'arg4 in quotes'", args.get(3));
 
 	Map envs = attribs.getMap("environment");
-	
+
 	assertEquals("env size",
 		     3, envs.size());
 
@@ -91,7 +91,7 @@ public class RslAttributesTest extends TestCase {
 
 	assertEquals("env2",
 		     "$(GLOBUS)", envs.get("v2"));
-	
+
 	assertEquals("env3",
 		     "$(HOME)/data/bin", envs.get("v3"));
 
@@ -120,24 +120,24 @@ public class RslAttributesTest extends TestCase {
 
 	attribs.set("executabLE", "/home/gawor/ls");
 
-	assertEquals("executable", 
-		     "/home/gawor/ls", 
+	assertEquals("executable",
+		     "/home/gawor/ls",
 		     attribs.getSingle("executable"));
-	
+
 	attribs.set("stdout", "http://goshen.mcs.anl.gov:2222:/kkkk");
-	
+
 	assertEquals("stdout",
 		     "http://goshen.mcs.anl.gov:2222:/kkkk",
 		     attribs.getSingle("stdOUT"));
 
 	// modify arg list
-	
+
 	assertEquals("delete arg1",
 		     true, attribs.remove("arguments", "-arg2") );
-	
+
 	assertEquals("delete arg2",
 		     false, attribs.remove("arguments", "-noarg") );
-	
+
 	attribs.add("arguments", "test arg");
 
 	// check arg list
@@ -146,46 +146,46 @@ public class RslAttributesTest extends TestCase {
 
 	assertEquals("arg size",
 		     4, args.size());
-	
+
 	assertEquals("arg 1",
 		     "-arg1", args.get(0));
-	
+
 	assertEquals("arg 2",
 		     "-arg3 with space", args.get(1));
-	
+
 	assertEquals("arg 3",
 		     "'arg4 in quotes'", args.get(2));
 
 	assertEquals("arg 4",
 		     "test arg", args.get(3));
-	
+
 	// modify env
 
 	assertEquals("delete env1",
 		     true, attribs.removeMap("environment", "v2") );
-	
+
 	assertEquals("delete env2",
 		     false, attribs.removeMap("environment", "v8") );
-	
+
 	attribs.addMulti("environment", new String [] {"v5", "value5"});
-	
+
 	// check env
 
 	Map envs = attribs.getMap("environment");
-	
+
 	assertEquals("env size",
 		     3, envs.size());
-	
+
 	assertEquals("env1",
 		     "value1/$(JAREK)/value2", envs.get("v1"));
 
 	assertEquals("env2",
 		     "$(HOME)/data/bin", envs.get("v3"));
-	
+
 	assertEquals("env3",
 		     "value5", envs.get("v5"));
 
-	
+
 	// modify variables
 
 	assertEquals("var remove",
@@ -193,11 +193,11 @@ public class RslAttributesTest extends TestCase {
 
 	assertEquals("var remove",
 		     true, attribs.removeVariable("rsl_substitution", "VAR2"));
-	
+
 	attribs.addVariable("rsl_substitution", "VAR3", "variable3");
 
 
-	// check variables 
+	// check variables
 
         Map vars = attribs.getVariables("rsl_substitution");
 
@@ -220,5 +220,5 @@ public class RslAttributesTest extends TestCase {
 
 	System.out.println( attribs.toRSL() );
     }
-    
+
 }

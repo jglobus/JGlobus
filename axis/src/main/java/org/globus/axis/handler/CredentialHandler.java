@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public class CredentialHandler extends BasicHandler {
     // must match the PEER_SUBJECT in security code
     private static final String CALLER_SUBJECT =
         "callerSubject";
-    
+
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: invoke");
 
@@ -56,7 +56,7 @@ public class CredentialHandler extends BasicHandler {
         }
 
         HttpServletRequest req = (HttpServletRequest)tmp;
-        
+
         // if httpg is access protocol in servlet engine, axis
         // will not set the TRANS_URL property correctly.
         // this is a workaround for that problem
@@ -67,14 +67,14 @@ public class CredentialHandler extends BasicHandler {
         }
 
         Subject subject = getSubject(msgContext);
-        
+
         // USER_DN is set by both HTTPS/HTTPG valves
         tmp = req.getAttribute(GSIConstants.GSI_USER_DN);
         if (tmp != null) {
             msgContext.setProperty(GSIConstants.GSI_USER_DN, tmp);
             subject.getPrincipals().add(new GlobusPrincipal((String)tmp));
         }
-        
+
         // GSI_CONTEXT is set by HTTPS valve only
         tmp = req.getAttribute(GSIConstants.GSI_CONTEXT);
         if (tmp != null) {
@@ -99,19 +99,19 @@ public class CredentialHandler extends BasicHandler {
         } else {
             log.debug("Delegation not performed. Not setting credentials property.");
         }
-        
+
         // GSI_AUTH_USERNAM is set only by HTTPG Valve
         tmp = req.getAttribute(GSIConstants.GSI_AUTH_USERNAME);
         if (tmp != null) {
             msgContext.setProperty(GSIConstants.GSI_AUTH_USERNAME, tmp);
             subject.getPrincipals().add(new UserNamePrincipal((String)tmp));
         }
-        
+
         log.debug("Exit: invoke");
     }
 
     protected Subject getSubject(MessageContext msgCtx) {
-        Subject subject = 
+        Subject subject =
             (Subject)msgCtx.getProperty(CALLER_SUBJECT);
         if (subject == null) {
             subject = new Subject();

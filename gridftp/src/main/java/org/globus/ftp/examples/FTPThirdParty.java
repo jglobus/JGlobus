@@ -25,7 +25,7 @@ class FTPThirdParty
 		String remoteSource = "/etc/passwd";
 		String remoteDest = "/tmp/mypasswd";
 		boolean append = false;
-		
+
 		try
 		{
 			ftp1 = new FTPClient(hostname1, port1);
@@ -66,13 +66,13 @@ class FTPThirdParty
 		}
 		catch(ServerException e)
 		{
-			System.out.println("Server exception transferring file: " + 
+			System.out.println("Server exception transferring file: " +
 				e.getMessage());
 			System.exit(1);
 		}
 		catch(ClientException e)
 		{
-			System.out.println("Client exception transferring file: " + 
+			System.out.println("Client exception transferring file: " +
 				e.getMessage());
 			System.exit(1);
 		}

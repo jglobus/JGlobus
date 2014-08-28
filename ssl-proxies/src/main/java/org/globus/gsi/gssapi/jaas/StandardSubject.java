@@ -27,19 +27,19 @@ import javax.security.auth.Subject;
  * the Subject object from the thread context.
  */
 public class StandardSubject extends JaasSubject {
-    
+
     protected StandardSubject() {
 	super();
     }
-    
+
     public Subject getSubject() {
 	return Subject.getSubject(AccessController.getContext());
     }
-    
+
     public Object runAs(Subject subject, PrivilegedAction action) {
 	return Subject.doAs(subject, action);
     }
-    
+
     public Object runAs(Subject subject, PrivilegedExceptionAction action)
 	throws PrivilegedActionException {
 	return Subject.doAs(subject, action);

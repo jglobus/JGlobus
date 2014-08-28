@@ -30,23 +30,23 @@ import org.apache.commons.logging.LogFactory;
  * The peer's host name (in FQDN form) is compared with the
  * host name specified in the peer's certificate chain.
  */
-public class HostAuthorization 
+public class HostAuthorization
     extends GSSAuthorization {
 
     private static Log logger =
         LogFactory.getLog(HostAuthorization.class.getName());
 
-    public static final HostAuthorization ldapAuthorization = 
+    public static final HostAuthorization ldapAuthorization =
         new HostAuthorization("ldap");
 
     private String _service = null;
 
     private static HostAuthorization hostAuthorization;
-    
+
     public HostAuthorization(String service) {
         _service = (service == null) ? "host" : service;
     }
-    
+
     /**
      * Returns an instance of host authentication.
      *
@@ -59,17 +59,17 @@ public class HostAuthorization
         }
         return hostAuthorization;
     }
-    
-    public GSSName getExpectedName(GSSCredential cred, String host) 
+
+    public GSSName getExpectedName(GSSCredential cred, String host)
         throws GSSException {
         GSSManager manager = ExtendedGSSManager.getInstance();
-        return manager.createName(_service + "@" + host, 
+        return manager.createName(_service + "@" + host,
                                   GSSName.NT_HOSTBASED_SERVICE);
     }
-    
+
     /**
      * Performs host authentication. The hostname of the peer is
-     * compared with the hostname specified in the peer's (topmost) 
+     * compared with the hostname specified in the peer's (topmost)
      * certificate in the certificate chain. The hostnames must
      * match exactly (in case-insensitive way)
      *
@@ -84,14 +84,14 @@ public class HostAuthorization
 
         try {
             GSSName expected = getExpectedName(null, host);
-        
+
             GSSName target = null;
             if (context.isInitiator()) {
                 target = context.getTargName();
             } else {
                 target = context.getSrcName();
             }
-        
+
             if (!expected.equals(target)) {
                 generateAuthorizationException(expected, target);
             }
@@ -117,9 +117,9 @@ public class HostAuthorization
         }
         return false;
     }
-    
+
     public int hashCode() {
         return (this._service == null) ? 0 : this._service.hashCode();
     }
-    
+
 }

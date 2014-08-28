@@ -17,7 +17,7 @@ class FTPPut
 		int port = 5555;
 		String username = "anonymous";
 		String password = "anonymous";
-		
+
 		try
 		{
 			ftp = new FTPClient(hostname, port);
@@ -37,14 +37,14 @@ class FTPPut
 		File localFile = new File("/etc/passwd");
 		String remoteDestination = "mypasswd";
 		DataSource source = null;
-		
+
 		try
 		{
 			source = new DataSourceStream(new FileInputStream(localFile));
 		}
 		catch(FileNotFoundException e)
 		{
-			System.out.println("could not access client source: " + 
+			System.out.println("could not access client source: " +
 				e.toString());
 			System.exit(1);
 		}

@@ -42,46 +42,46 @@ public class GSIHttpURLConnection extends GSIURLConnection {
 
     public static final int PORT = 8443;
 
-    private static final String USER_AGENT = 
+    private static final String USER_AGENT =
         "Java-Globus-GASS-HTTP/1.1.0";
-    private static final String POST_CONTENT_TYPE = 
+    private static final String POST_CONTENT_TYPE =
         "application/x-www-form-urlencoded";
-    
+
     private Socket socket;
     private int port;
-    
+
     private HTTPResponseParser response;
     private InputStream is;
     private OutputStream os;
-    
+
     public GSIHttpURLConnection(URL u) {
         super(u);
     }
-    
-    public synchronized void connect() 
+
+    public synchronized void connect()
         throws IOException {
-        
+
         if (this.connected) {
             return;
         } else {
             this.connected = true;
         }
-        
+
         this.port = (url.getPort() == -1) ? PORT : url.getPort();
-        
+
         GSSManager manager = ExtendedGSSManager.getInstance();
-        
+
         ExtendedGSSContext context = null;
-        
+
         try {
-            context = 
+            context =
                 (ExtendedGSSContext)manager.createContext(getExpectedName(),
                                                           GSSConstants.MECH_OID,
                                                           this.credentials,
                                                           GSSContext.DEFAULT_LIFETIME);
-            
+
             switch (this.delegationType) {
-            
+
             case GSIConstants.DELEGATION_NONE:
                 context.requestCredDeleg(false);
                 break;
@@ -99,9 +99,9 @@ public class GSIHttpURLConnection extends GSIURLConnection {
                 context.requestCredDeleg(true);
                 context.setOption(GSSConstants.DELEGATION_TYPE,
                                   new Integer(this.delegationType));
-                
+
             }
-            
+
             if (this.gssMode != null) {
                 context.setOption(GSSConstants.GSS_MODE,
                                   gssMode);
@@ -112,12 +112,12 @@ public class GSIHttpURLConnection extends GSIURLConnection {
         }
 
         GssSocketFactory factory = GssSocketFactory.getDefault();
-        
+
         socket = factory.createSocket(url.getHost(), this.port, context);
 
         ((GssSocket)socket).setAuthorization(authorization);
     }
-    
+
     public synchronized void disconnect() {
         if (socket != null) {
             try { socket.close(); } catch (Exception e) {}
@@ -125,7 +125,7 @@ public class GSIHttpURLConnection extends GSIURLConnection {
         }
     }
 
-    public synchronized OutputStream getOutputStream() 
+    public synchronized OutputStream getOutputStream()
         throws IOException {
         // maybe already doing a GET, so only input stream
         if (this.is != null && this.os == null) {
@@ -134,36 +134,36 @@ public class GSIHttpURLConnection extends GSIURLConnection {
         }
         if (this.os == null) {
             connect();
-            String header = 
-                HTTPProtocol.createPUTHeader(url.getFile(), 
+            String header =
+                HTTPProtocol.createPUTHeader(url.getFile(),
                                              url.getHost() + ":" + port,
-                                             USER_AGENT, 
+                                             USER_AGENT,
                                              POST_CONTENT_TYPE, -1, true);
             OutputStream wrapped = socket.getOutputStream();
             wrapped.write(header.getBytes());
-            // create an output stream that will stream 
+            // create an output stream that will stream
             // the result using chunked coding
             this.os = new HTTPChunkedOutputStream(wrapped);
         }
-        
+
         return os;
     }
-    
+
     public synchronized InputStream getInputStream()
         throws IOException {
-        
+
         if (this.is == null) {
             connect();
-            
+
             if (this.os == null) {
                 // if no output stream already created, send a GET request
                 OutputStream out = socket.getOutputStream();
-                
-                String msg = 
+
+                String msg =
                     HTTPProtocol.createGETHeader(url.getFile(),
                                                  url.getHost() + ":" + this.port,
                                                  USER_AGENT);
-                
+
                 out.write( msg.getBytes() );
                 out.flush();
             } else {
@@ -172,30 +172,30 @@ public class GSIHttpURLConnection extends GSIURLConnection {
                 this.os.close();
                 this.os = null;
             }
-            
+
             InputStream in = socket.getInputStream();
-            
+
             response = new HTTPResponseParser(in);
-            
+
             if (!response.isOK()) {
                 throw new IOException(response.getMessage());
             }
-            
+
             if (response.isChunked()) {
                 is = new HTTPChunkedInputStream(in);
             } else {
                 is = in;
             }
         }
-        
+
         return is;
     }
-    
+
     public String getHeaderField(String name) {
         if (response == null) {
             return null;
         }
-        
+
         if (name.equalsIgnoreCase("content-type")) {
             return response.getContentType();
         } else if (name.equalsIgnoreCase("content-length")) {

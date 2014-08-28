@@ -17,7 +17,7 @@ package org.globus.util;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/** 
+/**
  * This class represents the URLs needed by various Globus services,
  * including:
  * <ul>
@@ -33,9 +33,9 @@ import java.net.URL;
  * as well. It also can parse literal IPv6 addresses (as per RFC 2732).
  */
 public class GlobusURL {
-    
+
     protected String protocol = null;
-    protected String host = null;    
+    protected String host = null;
     protected String urlPath = null;
     protected String user = null;
     protected String pwd  = null;
@@ -50,7 +50,7 @@ public class GlobusURL {
      *         is malformed.
      */
     public GlobusURL(String url) throws MalformedURLException {
-	
+
 	int p1, p2;
 
         url = url.trim();
@@ -58,7 +58,7 @@ public class GlobusURL {
 	if (p1 == -1) {
 	    throw new MalformedURLException("Missing '[protocol]://'");
 	}
-    
+
 	protocol = url.substring(0, p1).toLowerCase();
 	p1 += 3;
 
@@ -68,14 +68,14 @@ public class GlobusURL {
 
 	if (p2 == -1) {
 	    /*throw new MalformedURLException("Missing '/' at [host]:[port]/");*/
-      
+
 	    base = url.substring(p1);
 	    urlPath = null;
-	    
+
 	} else {
-	    
+
 	    base = url.substring(p1, p2);
-	    
+
 	    // this is after /
 	    p2++;
 	    if (p2 != url.length()) {
@@ -84,32 +84,32 @@ public class GlobusURL {
 		urlPath = null;
 	    }
 	}
-	
+
 	// this is [user]:[pwd]@[host]:[port]
 	p1 = base.indexOf('@');
-    
+
 	if (p1 == -1) {
 	    parseHostPort(base);
 	} else {
 	    parseUserPwd( base.substring(0, p1) );
 	    parseHostPort( base.substring(p1+1) );
 	}
-	
+
 	if (port == -1) {
 	    port = getPort(protocol);
 	}
-    
+
 	if (protocol.equals("ftp") && user == null && pwd == null) {
 	    user = "anonymous";
 	    pwd  = "anon@anon.com";
 	}
-	
+
 	this.url = url;
     }
 
     /**
      * Creates a GlobusURL instance from URL instance.
-     * <BR><B>Note: </B><I>Not all the url parts are 
+     * <BR><B>Note: </B><I>Not all the url parts are
      * copied.</I>
      */
     public GlobusURL(URL url) {
@@ -152,7 +152,7 @@ public class GlobusURL {
 	}
 
 	int p1 = str.indexOf(':', start);
-	
+
 	if (p1 == -1) {
 	    host = str;
 	} else {
@@ -165,12 +165,12 @@ public class GlobusURL {
 	    }
 	}
     }
-    
+
     private void parseUserPwd(String str) {
 	int p1;
-	
+
 	p1 = str.indexOf(':');
-	
+
 	if (p1 == -1) {
 	    user = Util.decode(str);
 	} else {
@@ -178,9 +178,9 @@ public class GlobusURL {
 	    pwd  = Util.decode(str.substring(p1+1));
 	}
     }
-    
+
     /**
-     * Returns the string representation of 
+     * Returns the string representation of
      * an url.
      *
      * @return the url as string.
@@ -188,7 +188,7 @@ public class GlobusURL {
     public String getURL() {
 	return url;
     }
-    
+
     /**
      * Returns the protocol of an url.
      *
@@ -197,7 +197,7 @@ public class GlobusURL {
     public String getProtocol() {
 	return protocol;
     }
-    
+
     /**
      * Returns the host name of an url.
      *
@@ -206,7 +206,7 @@ public class GlobusURL {
     public String getHost() {
 	return host;
     }
-    
+
     /**
      * Returns the port number of an url.
      *
@@ -221,13 +221,13 @@ public class GlobusURL {
      * Returns the url path part of an url.
      *
      * @return the url path part of the url.
-     *         Returns null if the url path is 
+     *         Returns null if the url path is
      *         not specified.
      */
     public String getPath() {
 	return urlPath;
     }
-        
+
     /**
      * Returns the user name of an url.
      *
@@ -237,7 +237,7 @@ public class GlobusURL {
     public String getUser() {
 	return user;
     }
-  
+
     /**
      * Returns the password of an url.
      *
@@ -249,15 +249,15 @@ public class GlobusURL {
     }
 
     /**
-     * Compares two urls. 
-     * 
+     * Compares two urls.
+     *
      * @param obj could be a string representation of an url
-     *        or an instance of this class. 
+     *        or an instance of this class.
      * @return true if the urls are the same, false otherwise.
      */
     public boolean equals(Object obj) {
 	GlobusURL cUrl = null;
-	
+
 	if (obj instanceof String) {
 	    try {
 		cUrl = new GlobusURL((String)obj);
@@ -269,7 +269,7 @@ public class GlobusURL {
 	} else {
 	    return false;
 	}
-	
+
 	// do the comparison
 
 	// compare ports
@@ -279,7 +279,7 @@ public class GlobusURL {
 	if (!compare(urlPath, cUrl.urlPath, false)) return false;
 	if (!compare(getUser(), cUrl.getUser(), false)) return false;
 	if (!compare(getPwd(), cUrl.getPwd(), false)) return false;
-	
+
 	return true;
     }
 
@@ -323,5 +323,5 @@ public class GlobusURL {
 	info.append("Pwd         : " + pwd + "\n");
 	return info.toString();
     }
-    
+
 }

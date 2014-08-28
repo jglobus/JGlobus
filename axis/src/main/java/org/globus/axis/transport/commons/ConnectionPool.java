@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,32 +30,32 @@ public class ConnectionPool {
         LogFactory.getLog(ConnectionPool.class);
 
     // 2 min default idle time
-    private long idleTime = 1000 * 60 * 2; 
-    
+    private long idleTime = 1000 * 60 * 2;
+
     private HashMap freeConnections;
-    
+
     public ConnectionPool() {
         this.freeConnections = new HashMap();
     }
-    
+
     public void setIdleTime(long time) {
         this.idleTime = time;
     }
-    
+
     public synchronized ExtendedHttpConnection getPooledConnection() {
         if (this.freeConnections.isEmpty()) {
             return null;
         }
-        
+
         long idleTimeout = System.currentTimeMillis() - this.idleTime;
         Iterator iter = this.freeConnections.entrySet().iterator();
         while(iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
-            // either it's good or expired 
+            // either it's good or expired
             iter.remove();
-            ConnectionEntry connectionEntry = 
+            ConnectionEntry connectionEntry =
                 (ConnectionEntry)entry.getValue();
-            ExtendedHttpConnection connection = 
+            ExtendedHttpConnection connection =
                 connectionEntry.getConnection();
             if (connectionEntry.getTimeAdded() <= idleTimeout) {
                 // it's expired
@@ -70,10 +70,10 @@ public class ConnectionPool {
                 return connection;
             }
         }
-        
+
         return null;
     }
-    
+
     public synchronized void releaseConnection(HttpConnection conn) {
         ExtendedHttpConnection extConn = (ExtendedHttpConnection)conn;
         this.freeConnections.put(conn, new ConnectionEntry(extConn));
@@ -81,20 +81,20 @@ public class ConnectionPool {
             logger.debug("returned connection to pool: " + conn);
         }
     }
-    
+
     public synchronized void closeIdleConnections() {
         long idleTimeout = System.currentTimeMillis() - this.idleTime;
         Iterator iter = this.freeConnections.entrySet().iterator();
         while(iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
-            ConnectionEntry connectionEntry = 
+            ConnectionEntry connectionEntry =
                 (ConnectionEntry)entry.getValue();
             if (connectionEntry.getTimeAdded() <= idleTimeout) {
                 // it's expired - remove & close it
                 iter.remove();
                 connectionEntry.getConnection().close();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("closed idle connection: " + 
+                    logger.debug("closed idle connection: " +
                                  connectionEntry.getConnection());
                 }
             }
@@ -105,7 +105,7 @@ public class ConnectionPool {
         Iterator iter = this.freeConnections.entrySet().iterator();
         while(iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
-            ConnectionEntry connectionEntry = 
+            ConnectionEntry connectionEntry =
                 (ConnectionEntry)entry.getValue();
             connectionEntry.getConnection().close();
         }
@@ -115,12 +115,12 @@ public class ConnectionPool {
     private static class ConnectionEntry {
         ExtendedHttpConnection connection;
         long timeAdded;
-        
+
         public ConnectionEntry(ExtendedHttpConnection conn) {
             this.connection = conn;
             this.timeAdded = System.currentTimeMillis();
         }
-        
+
         public ExtendedHttpConnection getConnection() {
             return this.connection;
         }

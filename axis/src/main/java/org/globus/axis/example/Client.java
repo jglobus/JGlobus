@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,13 +38,13 @@ public class Client {
     public static void main(String [] args) {
 
 	Util.registerTransport();
-        
+
         try {
             Options options = new Options(args);
-            
+
             String endpointURL = options.getURL();
             String textToSend;
-            
+
             args = options.getRemainingArgs();
             if ((args == null) || (args.length < 1)) {
                 textToSend = "<nothing>";
@@ -55,7 +55,7 @@ public class Client {
             // these transport handlers would normally
             // be configured in client-config.wsdd file
 	    SimpleProvider provider = new SimpleProvider();
-	    
+
 	    SimpleTargetedChain c = null;
 
 	    c = new SimpleTargetedChain(new GSIHTTPSender());
@@ -63,14 +63,14 @@ public class Client {
 
             c = new SimpleTargetedChain(new HTTPSSender());
             provider.deployTransport("https", c);
-            
+
 	    c = new SimpleTargetedChain(new HTTPSender());
 	    provider.deployTransport("http", c);
 
             // only necessary becuase of Options.getURL()
             // re-initializes Call settings
             Util.reregisterTransport();
-	    
+
             Service  service = new Service(provider);
             Call     call    = (Call) service.createCall();
 
@@ -91,17 +91,17 @@ public class Client {
             call.setTargetEndpointAddress( new URL(endpointURL) );
 
 
-	    call.setOperationName(new QName("MyService", 
+	    call.setOperationName(new QName("MyService",
 					    "serviceMethod"));
-	    
-            call.addParameter( "arg1", 
-			       XMLType.XSD_STRING, 
+
+            call.addParameter( "arg1",
+			       XMLType.XSD_STRING,
 			       ParameterMode.IN);
 
 	    call.setReturnType( XMLType.XSD_STRING );
-	    
+
             String ret = (String) call.invoke( new Object[] { textToSend } );
-            
+
             System.out.println("Service response : " + ret);
         } catch (Exception e) {
 	    e.printStackTrace();

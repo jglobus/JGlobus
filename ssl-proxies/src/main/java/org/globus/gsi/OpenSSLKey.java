@@ -371,12 +371,12 @@ public abstract class OpenSSLKey implements Serializable {
      */
     public void writeTo(String file) throws IOException {
     	File privateKey = FileUtil.createFile(file);
-        // JGLOBUS-96 
+        // JGLOBUS-96
         try{
         	privateKey.setReadable(false, true);//setOwnerAccessOnly(file);
-        	privateKey.setWritable(false, true);//setOwnerAccessOnly(file);        	
+        	privateKey.setWritable(false, true);//setOwnerAccessOnly(file);
         }catch(SecurityException e){
-        	
+
         }
         PrintWriter p = new PrintWriter(new FileOutputStream(privateKey));
 
@@ -464,7 +464,7 @@ public abstract class OpenSSLKey implements Serializable {
         int len = s.length() / 2;
         if (len != this.ivLength) {
             String err = "ivLength";
-            //JGLOBUS-91 
+            //JGLOBUS-91
             throw new GeneralSecurityException(err);
         }
         byte[] ivBytes = new byte[len];
@@ -551,7 +551,7 @@ public abstract class OpenSSLKey implements Serializable {
                     data,
                     "-----END RSA PRIVATE KEY-----");
         } catch (IOException e) {
-            // JGLOBUS-91 
+            // JGLOBUS-91
             throw new RuntimeException("Unexpected error", e);
         }
 

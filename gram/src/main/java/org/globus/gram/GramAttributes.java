@@ -1,15 +1,15 @@
-/** 
+/**
  *  $Id: GramAttributes.java,v 1.9 2006/04/09 05:56:59 gawor Exp $
  */
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,10 +27,10 @@ import org.globus.rsl.ParseException;
 
 /**
  * A convienience class for operating on GRAM-specific RSL attributes.
- * Please note the attribute values for attributes such as setStdout, 
+ * Please note the attribute values for attributes such as setStdout,
  * setStderr, setStdin, setDirectory, setExecutable, etc. are treated
- * as single arguments. In case the value contains a RSL variable, 
- * the variable will not be properly resolved. For example, if you 
+ * as single arguments. In case the value contains a RSL variable,
+ * the variable will not be properly resolved. For example, if you
  * set the stdout to:
  * <pre>
  * atts.setStdout("$(MY_URL)/bar");
@@ -40,7 +40,7 @@ import org.globus.rsl.ParseException;
  * <pre>
  * &("stdout"="$(MY_URL)/hello")("environment"=("MY_URL" "http://foo"))
  * </pre>
- * Since the "$(MY_URL)/hello" is in double quotes it will be treated as 
+ * Since the "$(MY_URL)/hello" is in double quotes it will be treated as
  * a single string and the variable will never be resolved. The parser
  * will set "stdout" to "$(MY_URL)/hello" instead of "http://foo/hello".
  */
@@ -50,9 +50,9 @@ public class GramAttributes extends RslAttributes {
     public static final int JOBTYPE_MULTIPLE = 2;
     public static final int JOBTYPE_MPI      = 3;
     public static final int JOBTYPE_CONDOR   = 4;
-    
+
     /**
-     * Constructs a new, empty GramAttributes object. 
+     * Constructs a new, empty GramAttributes object.
      */
     public GramAttributes() {
 	super();
@@ -68,21 +68,21 @@ public class GramAttributes extends RslAttributes {
     public GramAttributes(String rsl) throws ParseException {
 	super(rsl);
     }
-    
+
     /**
      * Constructs a new GramAttributes object initialized with
      * the specified RSL parse tree.
-     * 
+     *
      * @param rslTree the rsl parse tree to initialize the class with.
      */
     public GramAttributes(RslNode rslTree) {
 	super(rslTree);
     }
-    
+
     /**
      * Specify the name of the executable to run
      *
-     * @param executable the name of the executable    
+     * @param executable the name of the executable
      */
     public void setExecutable(String executable) {
 	set("executable", executable);
@@ -92,7 +92,7 @@ public class GramAttributes extends RslAttributes {
      * Return executable name
      *
      * @return executable
-     */ 
+     */
     public String getExecutable() {
 	return getSingle("executable");
     }
@@ -100,7 +100,7 @@ public class GramAttributes extends RslAttributes {
     /**
      * Specify the directory path the executable will be run in
      *
-     * @param directory the directory path on the submission machine    
+     * @param directory the directory path on the submission machine
      */
     public void setDirectory(String directory) {
 	set("directory", directory);
@@ -177,7 +177,7 @@ public class GramAttributes extends RslAttributes {
     public void setDryRun(boolean enable) {
 	set("dryrun", (enable) ? "yes" : "no");
     }
-    
+
     /**
      * Checks if dryryn is enabled.
      *
@@ -217,7 +217,7 @@ public class GramAttributes extends RslAttributes {
     public void setProject(String project) {
 	set("project", project);
     }
-    
+
     /**
      * Return the project name charged for this job
      *
@@ -244,7 +244,7 @@ public class GramAttributes extends RslAttributes {
 	    type = "mpi"; break;
 	case JOBTYPE_CONDOR:
 	    type = "condor"; break;
-	}	
+	}
 	if (type != null) {
 	    set("jobtype", type);
 	}
@@ -253,7 +253,7 @@ public class GramAttributes extends RslAttributes {
     /**
      * Returns type of the job.
      *
-     * @return job type. -1 if not set or job type 
+     * @return job type. -1 if not set or job type
      *         is unknown.
      */
     public int getJobType() {
@@ -303,7 +303,7 @@ public class GramAttributes extends RslAttributes {
     public void setNumProcs(int numprocs) {
 	set("count", String.valueOf(numprocs));
     }
-    
+
     /**
      * Return the number of processors
      *
@@ -386,11 +386,11 @@ public class GramAttributes extends RslAttributes {
             return -1;
         }
     }
-    
+
     /**
      * Adds a single argument.
      *
-     * @param argument an argument to add. 
+     * @param argument an argument to add.
      *        It will be treated as a single argument.
      */
     public void addArgument(String argument) {
@@ -401,13 +401,13 @@ public class GramAttributes extends RslAttributes {
      * Removes a specific argument from the argument list.
      *
      * @param argument argument to remove.
-     * @return true if the argument was removed, 
+     * @return true if the argument was removed,
      *         false otherwise.
      */
     public boolean deleteArgument(String argument) {
 	return remove("arguments", argument);
     }
-    
+
     /**
      * Returns a list of arguments.
      *
@@ -416,7 +416,7 @@ public class GramAttributes extends RslAttributes {
     public List getArguments() {
 	return getMulti("arguments");
     }
-    
+
     /**
      * Adds an environment variable.
      *
@@ -426,7 +426,7 @@ public class GramAttributes extends RslAttributes {
     public void addEnvVariable(String varName, String value) {
 	addMulti("environment", new String [] {varName, value});
     }
-    
+
     /**
      * Removes a specific environment variable from the
      * environment list.
@@ -438,16 +438,16 @@ public class GramAttributes extends RslAttributes {
     public boolean deleteEnvVariable(String varName) {
 	return removeMap("environment", varName);
     }
-    
+
     /**
-     * Returns a variable/value pair list of environment 
+     * Returns a variable/value pair list of environment
      * variables.
      *
-     * @return the association list of environment 
+     * @return the association list of environment
      *         variables.
      */
     public Map getEnvironment() {
 	return getMap("environment");
     }
-    
+
 }

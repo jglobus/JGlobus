@@ -36,12 +36,12 @@ public class Tail implements Runnable {
     private Thread _thread;
 
     private Log _logger;
-    
+
     public Tail() {
 	buffer = new byte[CHUNK_SIZE];
 	list = Collections.synchronizedList(new LinkedList());
     }
-    
+
     public void setLog(Log logger) {
 	_logger = logger;
     }
@@ -55,25 +55,25 @@ public class Tail implements Runnable {
 	private RandomAccessFile _ras;
 	private OutputStream _out;
 	private long _pos;
-	
-	public FileWatcher(File file, OutputStream out, int pos) 
+
+	public FileWatcher(File file, OutputStream out, int pos)
 	    throws IOException {
 	    _ras = new RandomAccessFile(file, "r");
 	    _out = out;
 	    _pos = pos;
 	}
 
-	public void init() 
+	public void init()
 	    throws IOException {
 	    _ras.seek(_pos);
 	}
-	
-	public long getDiff() 
+
+	public long getDiff()
 	    throws IOException {
 	    return _ras.length() - _pos;
 	}
 
-	public void moveBuffer(byte [] buffer, int size) 
+	public void moveBuffer(byte [] buffer, int size)
 	    throws IOException {
 	    _ras.readFully(buffer, 0, size);
 	    _pos += size;
@@ -81,7 +81,7 @@ public class Tail implements Runnable {
 	    if (_logger.isDebugEnabled()) {
                 _logger.debug("[tail] output size: " + size);
             }
-	    
+
 	    _out.write(buffer, 0, size);
 	}
 
@@ -95,23 +95,23 @@ public class Tail implements Runnable {
 	}
     }
 
-    public void join() 
+    public void join()
 	throws InterruptedException {
 	_thread.join();
     }
 
-    public void addFile(File file, OutputStream out, int pos) 
+    public void addFile(File file, OutputStream out, int pos)
 	throws IOException {
 	list.add(new FileWatcher(file, out, pos));
     }
 
     public void run() {
-	
+
 	_logger.debug("[tail] running...");
-	
+
 	long len;
 	int size;
-	
+
 	Iterator iter = null;
 	FileWatcher watcher = null;
 
@@ -123,7 +123,7 @@ public class Tail implements Runnable {
 	    }
 
 	    while(!isDone()) {
-		
+
 		try {
 		    Thread.sleep(2000);
 		} catch(Exception e) {
@@ -148,25 +148,25 @@ public class Tail implements Runnable {
 	} finally {
 	    close();
 	}
-	
+
 	_logger.debug("[tail] done.");
     }
-    
-    private boolean isDone() 
+
+    private boolean isDone()
 	throws IOException {
 	if (!_stop) return false;
 	Iterator iter = null;
         FileWatcher watcher = null;
-	
+
 	iter = list.iterator();
 	while(iter.hasNext()) {
 	    watcher = (FileWatcher)iter.next();
 	    if (watcher.getDiff() > 0) return false;
 	}
-	
+
 	return true;
     }
-    
+
     private void close() {
         Iterator iter = null;
         FileWatcher watcher = null;
@@ -176,7 +176,7 @@ public class Tail implements Runnable {
             watcher.close();
         }
     }
-    
+
     public void stop() {
 	_logger.debug("[tail] stop called");
 	_stop = true;

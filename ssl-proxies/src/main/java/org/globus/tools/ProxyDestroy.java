@@ -45,14 +45,14 @@ public class ProxyDestroy {
 	"\t\tPrints what files would have been destroyed\n" +
 	"\tfile1 file2 ...\n" +
 	"\t\tDestroys files listed\n\n";
-    
+
   public static void main(String args[]) {
 
       boolean dryrun      = false;
       boolean error       = false;
       boolean debug       = false;
       File file           = null;
-      
+
       for (int i = 0; i < args.length; i++) {
 	  if (args[i].equalsIgnoreCase("-dryrun")) {
 	      dryrun = true;
@@ -69,7 +69,7 @@ public class ProxyDestroy {
 	      Util.destroy(file);
 	  }
       }
-      
+
       String fn = CoGProperties.getDefault().getProxyFile();
       if (fn == null) return ;
       file = new File(fn);
@@ -77,8 +77,8 @@ public class ProxyDestroy {
 	  System.out.println("Would remove " + file.getAbsolutePath());
 	  return;
       }
-      
+
       Util.destroy(file);
   }
-    
+
 }

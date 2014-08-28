@@ -29,7 +29,7 @@ import org.globus.util.GlobusPathMatchingResourcePatternResolver;
 
 /**
  * // JGLOBUS-91 : add javadoc
- * 
+ *
  * @param <T>
  *            Type of security object
  */

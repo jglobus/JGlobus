@@ -23,7 +23,7 @@ public class HTTPResponseParser extends HTTPParser {
     protected int _httpCode;
     protected String _httpMsg;
 
-    public HTTPResponseParser(InputStream is) 
+    public HTTPResponseParser(InputStream is)
 	throws IOException {
 	super(is);
     }
@@ -40,28 +40,28 @@ public class HTTPResponseParser extends HTTPParser {
 	return (_httpCode == 200);
     }
 
-    public void parseHead(String line) 
+    public void parseHead(String line)
 	throws IOException {
 	int st = line.indexOf(" ");
 	if (st == -1) {
 	    throw new IOException("Bad HTTP header");
 	}
 	_httpType = line.substring(0, st);
-	
+
 	st++;
 	int et = line.indexOf(" ", st);
 	if (et == -1) {
 	    throw new IOException("Bad HTTP header");
 	}
-	
+
 	try {
 	    _httpCode = Integer.parseInt(line.substring(st, et).trim());
 	} catch(Exception e) {
 	    throw new IOException("Bad HTTP header");
 	}
-	
+
 	et++;
 	_httpMsg = line.substring(et);
     }
-    
+
 }

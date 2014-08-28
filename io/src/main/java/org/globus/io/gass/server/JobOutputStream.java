@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,13 +33,13 @@ import java.io.IOException;
 public class JobOutputStream extends OutputStream {
 
   protected JobOutputListener listener;
-  
+
   /**
    * Creates a job output stream with a specific
    * job output listener to which the job output
    * will be redirected to.
    *
-   * @param jobListener an instance of the job output 
+   * @param jobListener an instance of the job output
    *        listener. Cannot be null.
    */
   public JobOutputStream(JobOutputListener jobListener) {
@@ -48,36 +48,36 @@ public class JobOutputStream extends OutputStream {
     }
     listener = jobListener;
   }
-  
+
   /**
    * Converts the byte array to a string and forwards
    * it to the job output listener.
    * <BR>Called by the GassServer.
    */
-  public void write(byte[] b, int off, int len) 
+  public void write(byte[] b, int off, int len)
        throws IOException {
 	 String s = new String(b, off, len);
 	 listener.outputChanged(s);
   }
-  
+
   /**
    * Converts the int to a string and forwards
    * it to the job output listener.
    * <BR>Called by the GassServer.
    */
-  public void write(int b) 
+  public void write(int b)
        throws IOException {
 	 listener.outputChanged(String.valueOf(b));
   }
-  
+
   /**
    * Notifies the job output listener that
    * no more output will be produced.
    * <BR>Called by the GassServer.
    */
-  public void close() 
+  public void close()
        throws IOException {
 	 listener.outputClosed();
   }
-  
+
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +20,9 @@ import java.io.RandomAccessFile;
 
 /**
    Thread safe reference implementation of DataSink and DataSource.
-   Implements reading and writing data to a local file. 
+   Implements reading and writing data to a local file.
    <b>Note: Does not work with {@link Session#MODE_STREAM Session.STREAM}
-   transfer mode, only with {@link GridFTPSession#MODE_EBLOCK 
+   transfer mode, only with {@link GridFTPSession#MODE_EBLOCK
    GridFTPSession.EBLOCK} mode.</b>
  */
 public class FileRandomIO
@@ -33,7 +33,7 @@ public class FileRandomIO
     protected int bufferSize;
     protected RandomAccessFile file;
     protected long offset;
-    
+
     /**
        Behave like FileRandomIO(file, DEFAULT_BUFFER_SIZE)
        @param file local file that will be be used as data source or
@@ -84,7 +84,7 @@ public class FileRandomIO
 	    return new Buffer(buf, read, offset);
 	}
     }
-    
+
     /**
        Closes the underlying file
      */
@@ -92,9 +92,9 @@ public class FileRandomIO
 	throws IOException {
 	file.close();
     }
-    
-    
-    public long totalSize() 
+
+
+    public long totalSize()
 	throws IOException {
         return file.length();
     }

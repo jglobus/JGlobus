@@ -32,7 +32,7 @@ import java.net.ServerSocket;
 
 public class GssServer {
 
-    private static final String helpMsg = 
+    private static final String helpMsg =
 	"Where options are:\n" +
 	" -gss-mode mode\t\t\tmode is: 'ssl' or 'gsi' (default)\n" +
 	" -deleg-type type\t\ttype is: 'none', 'limited' (default), or 'full'\n" +
@@ -64,7 +64,7 @@ public class GssServer {
 	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
-	} 
+	}
     }
 
 }
@@ -73,7 +73,7 @@ class Client extends Thread {
 
     GetOpts opts;
     Socket s;
-    
+
     public Client(Socket s, GetOpts opts) {
 	this.s = s;
 	this.opts = opts;
@@ -82,53 +82,53 @@ class Client extends Thread {
     public void run() {
 
 	System.out.println("client connected");
-	
+
 	// to make sure we use right impl
 	GSSManager manager = new GlobusGSSManagerImpl();
 	ExtendedGSSContext context = null;
-	
+
 	try {
 	    OutputStream out = s.getOutputStream();
 	    InputStream in = s.getInputStream();
-	    
+
 	    byte [] inToken = null;
 	    byte [] outToken = null;
 
 	    context = (ExtendedGSSContext)manager.createContext((GSSCredential)null);
-	    
+
 	    context.requestConf(opts.conf);
-	    
+
 	    context.setOption(GSSConstants.GSS_MODE,
-			      (opts.gsiMode) ? 
-			      GSIConstants.MODE_GSI : 
+			      (opts.gsiMode) ?
+			      GSIConstants.MODE_GSI :
 			      GSIConstants.MODE_SSL);
-	    
+
 	    context.setOption(GSSConstants.REJECT_LIMITED_PROXY,
 			      new Boolean(opts.rejectLimitedProxy));
-	    
+
 	    context.setOption(GSSConstants.REQUIRE_CLIENT_AUTH,
 			      new Boolean(!opts.anonymity));
-	    
+
 	    // Loop while there still is a token to be processed
 	    while (!context.isEstablished()) {
 		inToken = SSLUtil.readSslMessage(in);
-		
-		outToken 
+
+		outToken
 		    = context.acceptSecContext(inToken, 0, inToken.length);
-		
+
 		if (outToken != null) {
 		    out.write(outToken);
 		    out.flush();
 		}
 	    }
-	    
+
 	    System.out.println("Context established.");
 	    System.out.println("Initiator : " + context.getSrcName());
-	    System.out.println("Acceptor  : " + context.getTargName());	    
+	    System.out.println("Acceptor  : " + context.getTargName());
 	    System.out.println("Lifetime  : " + context.getLifetime());
 	    System.out.println("Privacy   : " + context.getConfState());
-	    
-	    GlobusGSSCredentialImpl cred = 
+
+	    GlobusGSSCredentialImpl cred =
 		(GlobusGSSCredentialImpl)context.getDelegCred();
 	    System.out.println("Delegated credential :");
 	    if (cred != null) {
@@ -136,21 +136,21 @@ class Client extends Thread {
 	    } else {
 		System.out.println("None");
 	    }
-	    
+
 	    inToken = SSLUtil.readSslMessage(in);
-	    
+
 	    outToken = context.unwrap(inToken, 0, inToken.length, null);
-	    
+
 	    System.out.println(new String(outToken));
-	    
-	    byte[] msg = 
+
+	    byte[] msg =
 		"HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n".getBytes();
-	    
+
 	    outToken = context.wrap(msg, 0, msg.length, null);
-	    
+
 	    out.write(outToken);
 	    out.flush();
-	    
+
 	} catch (Exception e) {
 	    e.printStackTrace();
 	} finally {

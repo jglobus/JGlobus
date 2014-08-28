@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@ import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.ietf.jgss.GSSCredential;
 
 public class MultiUserGramTest implements GramJobListener {
-				
+
     public void statusChanged(GramJob job) {
 	String subject = "unknown";
 	try {
@@ -31,13 +31,13 @@ public class MultiUserGramTest implements GramJobListener {
 	} catch (Exception e) {
 	}
 	System.out.println(
-			   "Job status change \n" +  
-			   "    ID     : " + job.getIDAsString() + "\n" + 
-			   "    Status : " + job.getStatusAsString() + "\n" + 
+			   "Job status change \n" +
+			   "    ID     : " + job.getIDAsString() + "\n" +
+			   "    Status : " + job.getStatusAsString() + "\n" +
 			   "   Subject : " + subject);
     }
-    
-    private static GramJob createJob(GSSCredential proxy, 
+
+    private static GramJob createJob(GSSCredential proxy,
 				     GramJobListener listener, String dir, int id) {
 	String subject = "unknown";
 	try {
@@ -45,17 +45,17 @@ public class MultiUserGramTest implements GramJobListener {
 	} catch (Exception e) {
 	}
 	GramJob job = null;
-	String env = "(environment=(CERT_SUBJECT \"" + 
+	String env = "(environment=(CERT_SUBJECT \"" +
 	    subject + "\"))";
 	job = new GramJob("&(directory=\"" + dir + "\")" +
-			  "(stdout=date.out." + id + ")" + 
-			  env + 
+			  "(stdout=date.out." + id + ")" +
+			  env +
 			  "(executable=\"/bin/env\")");
 	job.setCredentials(proxy);
 	job.addListener(listener);
 	return job;
     }
-  
+
     private static GSSCredential load(String file) {
 	try {
 	    X509Credential cred = new X509Credential(file);
@@ -66,7 +66,7 @@ public class MultiUserGramTest implements GramJobListener {
 	}
 	return null;
     }
-    
+
     private static Thread submit(String contact, GramJob job) {
 	Thread t = new Thread(new JobRun(contact, job));
 	t.start();
@@ -95,18 +95,18 @@ public class MultiUserGramTest implements GramJobListener {
 
 	job1 = createJob(proxy1, test, dir, 0);
 	job2 = createJob(proxy2, test, dir, 1);
-    
+
 	t1 = submit(contact, job1);
 	t2 = submit(contact, job2);
-    
+
 	System.out.println("wait for job completion.");
 	while(true) {
 	    try {
 		Thread.sleep(1000);
 	    } catch (InterruptedException e) {}
-	    if ( (job1.getStatus() == GramJob.STATUS_DONE || 
+	    if ( (job1.getStatus() == GramJob.STATUS_DONE ||
 		  job1.getStatus() == GramJob.STATUS_FAILED) &&
-		 (job2.getStatus() == GramJob.STATUS_DONE || 
+		 (job2.getStatus() == GramJob.STATUS_DONE ||
 		  job2.getStatus() == GramJob.STATUS_FAILED) ) break;
 	}
 	Deactivator.deactivateAll();
@@ -122,10 +122,10 @@ class JobRun implements Runnable {
 	this.resourceManagerContact = resourceManagerContact;
 	this.gramJob = gramJob;
     }
-  
+
     public void run() {
 	try {
-	    String jobname = 
+	    String jobname =
 		gramJob.getCredentials().getName().toString();
 	    System.out.println("Submitting job with subject : " + jobname);
 	    Gram.request( resourceManagerContact, gramJob );

@@ -22,7 +22,7 @@ import org.ietf.jgss.GSSCredential;
  * GSSAPI client authorization.
  */
 public abstract class GSSAuthorization extends Authorization {
-    
+
     /**
      * Returns expected <code>GSSName</code> used for authorization purposes.
      * Can returns null for self authorization.
@@ -31,7 +31,7 @@ public abstract class GSSAuthorization extends Authorization {
      * @param host host address of the peer.
      * @exception GSSException if unable to create the name.
      */
-    public abstract GSSName getExpectedName(GSSCredential cred, String host) 
+    public abstract GSSName getExpectedName(GSSCredential cred, String host)
 	throws GSSException;
-    
+
 }

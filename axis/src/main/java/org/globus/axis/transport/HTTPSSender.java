@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,8 +32,8 @@ public class HTTPSSender extends HTTPSender {
     protected void getSocket(SocketHolder sockHolder,
                              MessageContext msgContext,
                              String protocol,
-                             String host, int port, int timeout, 
-                             StringBuffer otherHeaders, 
+                             String host, int port, int timeout,
+                             StringBuffer otherHeaders,
                              BooleanHolder useFullURL)
         throws Exception {
 
@@ -46,14 +46,14 @@ public class HTTPSSender extends HTTPSender {
         SSLContextHelper helper = new SSLContextHelper(msgContext,
                                                        host,
                                                        lport);
-                                                       
+
         super.getSocket(sockHolder, msgContext, "http", host,
                         lport, timeout, otherHeaders, useFullURL);
 
-        
+
         GssSocket gsiSocket = helper.wrapSocket(sockHolder.getSocket());
 
         sockHolder.setSocket(gsiSocket);
     }
-    
+
 }

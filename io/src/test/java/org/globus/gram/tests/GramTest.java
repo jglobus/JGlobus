@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,12 +37,12 @@ public class GramTest extends TestCase {
 
     private static final int TIMEOUT = 1000*60*2;
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(GramTest.class.getName());
 
-    private static final String CONFIG = 
+    private static final String CONFIG =
 	"test.properties";
-    
+
     private static TestUtil util;
 
     static {
@@ -87,7 +87,7 @@ public class GramTest extends TestCase {
 
         int i = 0;
 	while ( Gram.getActiveJobs() != 0 ) {
-            Thread.sleep(2000); 
+            Thread.sleep(2000);
             i++;
             if (i == 40) {
                 fail("getActiveJob() did not reported 0 jobs");
@@ -99,7 +99,7 @@ public class GramTest extends TestCase {
 
 	GramJob job = new
 	    GramJob(util.get("job.long"));
-	
+
 	logger.debug("submitting job in batch mode...");
 	job.request(util.get("job.long.contact"), true);
 	logger.debug("job submitted: " + job.getIDAsString());
@@ -126,19 +126,19 @@ public class GramTest extends TestCase {
 		    fail("Failed to get job status: " + e.getMessage());
 		}
 	    }
-	  
+
 	    status = job.getStatusAsString();
 	    logger.debug("status: " + status);
-	    
+
 	} while (!status.equals("DONE"));
-	
+
     }
 
     public void testBind() throws Exception {
-	
+
 	GramJob job = new
 	    GramJob(util.get("job.long"));
-	
+
 	logger.debug("submitting job in batch mode...");
 	job.request(util.get("job.long.contact"), true);
 	logger.debug("job submitted: " + job.getIDAsString());
@@ -146,7 +146,7 @@ public class GramTest extends TestCase {
 	DoneStatusListener listener = new DoneStatusListener();
 
 	job.addListener(listener);
-	
+
 	job.bind();
 
 	if (!listener.waitFor(TIMEOUT)) {
@@ -155,14 +155,14 @@ public class GramTest extends TestCase {
     }
 
     public void testCancel() throws Exception {
-	
+
 	GramJob job = new
 	    GramJob(util.get("job.long"));
 
 	FailedStatusListener listener = new FailedStatusListener();
-	
+
 	job.addListener(listener);
-	
+
 	logger.debug("submitting job in interactive mode...");
 	job.request(util.get("job.long.contact"));
 	logger.debug("job submitted: " + job.getIDAsString());
@@ -177,25 +177,25 @@ public class GramTest extends TestCase {
     }
 
     public void testUnbind() throws Exception {
-	
+
 	GramJob job = new
 	    GramJob(util.get("job.long"));
 
 	ActiveStatusListener listener = new ActiveStatusListener();
-	
+
 	job.addListener(listener);
-	
+
 	logger.debug("submitting job in interactive mode...");
 	job.request(util.get("job.long.contact"));
 	logger.debug("job submitted: " + job.getIDAsString());
-	
+
 	if (!listener.waitFor(TIMEOUT)) {
 	    fail("Did not get ACTIVE notification");
 	}
 
 	job.unbind();
 	listener.reset();
-	
+
 	Thread.sleep(2000);
 
 	job.cancel();
@@ -233,18 +233,18 @@ public class GramTest extends TestCase {
 	    logger.debug("Error returned on request()");
 	    return;
 	}
-	
+
 	if (!listener.waitFor(TIMEOUT)) {
 	    fail("Did not get FAILED notification");
 	}
-	
+
 	if (job.getError() != GramException.EXECUTABLE_NOT_FOUND) {
 	    fail("Unexpected error returned: " + job.getError());
 	}
     }
 
     public void testRedirect() throws Exception {
-	
+
 	DoneStatusListener listener = new DoneStatusListener();
 
 	GassServer server = null;
@@ -252,7 +252,7 @@ public class GramTest extends TestCase {
 	    server = new GassServer();
 	    String url = server.getURL();
 
-	    ByteArrayOutputStream stdout = 
+	    ByteArrayOutputStream stdout =
 		new ByteArrayOutputStream();
 
 	    StringBuffer rsl = new StringBuffer();
@@ -299,7 +299,7 @@ public class GramTest extends TestCase {
 		notify();
 	    }
 	}
-	public synchronized boolean waitFor(int timeout) 
+	public synchronized boolean waitFor(int timeout)
 	    throws Exception {
 	    wait(timeout);
 	    return notified;
@@ -314,7 +314,7 @@ public class GramTest extends TestCase {
 		notify();
 	    }
 	}
-	public synchronized boolean waitFor(int timeout) 
+	public synchronized boolean waitFor(int timeout)
 	    throws Exception {
 	    wait(timeout);
 	    return notified;
@@ -329,7 +329,7 @@ public class GramTest extends TestCase {
 		notify();
 	    }
 	}
-	public synchronized boolean waitFor(int timeout) 
+	public synchronized boolean waitFor(int timeout)
 	    throws Exception {
 	    wait(timeout);
 	    return notified;
@@ -341,9 +341,9 @@ public class GramTest extends TestCase {
 	    return notified;
 	}
     }
-    
+
     // These are 1.5 gram tests
-    
+
     public void testTwoPhaseSignalCancel() throws Exception {
         twoPhaseSubmit(false);
     }
@@ -353,7 +353,7 @@ public class GramTest extends TestCase {
     }
 
     private void twoPhaseSubmit(boolean cancelCall) throws Exception {
-	
+
         GramJob job = new GramJob(util.get("job.long") + "(twoPhase=yes)");
 
         try {
@@ -365,7 +365,7 @@ public class GramTest extends TestCase {
 
             job.signal(GramJob.SIGNAL_COMMIT_REQUEST);
 	}
-	
+
         logger.debug("job submited: " + job.getIDAsString());
 
         Thread.sleep(5000);
@@ -380,7 +380,7 @@ public class GramTest extends TestCase {
 
             // XXX: this should be common to both ways
             logger.debug("Two phase commit: sending COMMIT_END signal");
-            
+
             job.signal(GramJob.SIGNAL_COMMIT_END);
         } else {
             logger.debug("Canceling job... (cancel signal)");
@@ -388,23 +388,23 @@ public class GramTest extends TestCase {
             job.signal(GramJob.SIGNAL_CANCEL, " ");
 	}
     }
-    
+
     public void testTwoPhaseExtend() throws Exception {
-        
+
         GramJob job = new GramJob(util.get("job.long") + "(twoPhase=yes)");
-        
+
         try {
             job.request(util.get("job.long.contact"));
 	} catch(WaitingForCommitException e) {
             logger.debug("Two phase commit: sending COMMIT_EXTEND signal");
-            
+
             job.signal(GramJob.SIGNAL_COMMIT_EXTEND, "30");
 	}
-	
+
         logger.debug("job submited: " + job.getIDAsString());
-        
+
         Thread.sleep(75000);
-        
+
 	if (job.getStatus() == job.STATUS_FAILED) {
 	    fail("Timeout expired!");
 	}

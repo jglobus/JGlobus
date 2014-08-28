@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,16 +43,16 @@ public class GassOutputStream extends HTTPOutputStream {
      * @param port port number of the gass server.
      * @param file name of the file on the remote side.
      * @param length total size of the data to be transfered.
-     *               Use -1 if unknown. The data then will be 
+     *               Use -1 if unknown. The data then will be
      *               transfered in chunks.
-     * @param append if true, append data to existing file. 
+     * @param append if true, append data to existing file.
      *               Otherwise, the file will be overwritten.
      */
     public GassOutputStream(String host,
 			    int port,
 			    String file,
 			    long length,
-			    boolean append) 
+			    boolean append)
 	throws GassException, GSSException, IOException {
 	this(null, SelfAuthorization.getInstance(),
 	     host, port, file, length, append);
@@ -67,10 +67,10 @@ public class GassOutputStream extends HTTPOutputStream {
      * @param host host name of the gass server.
      * @param port port number of the gass server.
      * @param file name of the file on the remote side.
-     * @param length total size of the data to be transfered. 
+     * @param length total size of the data to be transfered.
      *               Use -1 if unknown. The data then will be
-     *               transfered in chunks. 
-     * @param append if true, append data to existing file. 
+     *               transfered in chunks.
+     * @param append if true, append data to existing file.
      *               Otherwise, the file will be overwritten.
      */
     public GassOutputStream(GSSCredential cred,
@@ -94,7 +94,7 @@ public class GassOutputStream extends HTTPOutputStream {
      * @param port port number of the gass server.
      * @param file name of the file on the remote side.
      * @param length total size of the data to be transfered.
-     *               Use -1 if unknown. The data then will be 
+     *               Use -1 if unknown. The data then will be
      *               transfered in chunks.
      * @param append if true, append data to existing file.
      *               Otherwise, the file will be overwritten.
@@ -105,30 +105,30 @@ public class GassOutputStream extends HTTPOutputStream {
 			    int port,
 			    String file,
 			    long length,
-			    boolean append) 
+			    boolean append)
 	throws GassException, GSSException, IOException {
 	super();
 
 	this.size = length;
 	this.append = append;
-	
+
 	GSSManager manager = ExtendedGSSManager.getInstance();
-	
-	ExtendedGSSContext context = 
-	    (ExtendedGSSContext)manager.createContext(null, 
+
+	ExtendedGSSContext context =
+	    (ExtendedGSSContext)manager.createContext(null,
 						      GSSConstants.MECH_OID,
 						      cred,
 						      GSSContext.DEFAULT_LIFETIME);
-	
+
 	context.setOption(GSSConstants.GSS_MODE, GSIConstants.MODE_SSL);
-	
+
 	GssSocketFactory factory = GssSocketFactory.getDefault();
-	
+
 	socket = factory.createSocket(host, port, context);
-	
+
 	((GssSocket)socket).setAuthorization(auth);
-	
+
 	put(host, file, length, -1);
     }
-    
+
 }

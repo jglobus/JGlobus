@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,17 +35,17 @@ import org.globus.ftp.Session;
  */
 public class MlsxTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(MlsxTest.class.getName());
 
     public static void main(String[] argv) {
 	junit.textui.TestRunner.run(suite());
     }
-    
+
     public static Test suite() {
 	return new TestSuite(MlsxTest.class);
     }
-    
+
     public MlsxTest(String name) {
 	super(name);
     }
@@ -119,33 +119,33 @@ public class MlsxTest extends TestCase {
 	src.changeDir(TestEnv.serverADir);
 
 	MlsxEntry entry = src.mlst(TestEnv.serverAFile);
-	logger.debug(entry.toString());	
+	logger.debug(entry.toString());
 
         assertEquals(MlsxEntry.TYPE_FILE, entry.get(MlsxEntry.TYPE));
-        assertEquals(String.valueOf(TestEnv.serverAFileSize), 
+        assertEquals(String.valueOf(TestEnv.serverAFileSize),
                      entry.get(MlsxEntry.SIZE));
         assertEquals(TestEnv.serverAFile, entry.getFileName());
 
 	src.close();
     }
-	
+
     public void test3() throws Exception {
 	logger.info("show mlsd output using GridFTPClient");
-	
+
 	GridFTPClient src = new GridFTPClient(TestEnv.serverAHost, TestEnv.serverAPort);
 	src.setAuthorization(TestEnv.getAuthorization(TestEnv.serverASubject));
 	src.authenticate(null); // use default creds
-	
+
 	src.setType(Session.TYPE_ASCII);
 	src.changeDir(TestEnv.serverADir);
-	
+
 	Vector v = src.mlsd();
 	logger.debug("mlsd received");
 	while (!v.isEmpty()) {
 	    MlsxEntry f = (MlsxEntry) v.remove(0);
 	    logger.info(f.toString());
 	}
-	
+
 	src.close();
     }
 
@@ -173,10 +173,10 @@ public class MlsxTest extends TestCase {
 	    MlsxEntry f = (MlsxEntry) v.remove(0);
 	    logger.debug(f.toString());
 	}
-	
+
 	src.close();
     }
-    
+
     public void test5() throws Exception {
 	logger.info(
 		    "test two consective mlsd, using both mlsd functions, using GridFTPClient");
@@ -187,7 +187,7 @@ public class MlsxTest extends TestCase {
 
 	String output1 = null;
 	String output2 = null;
-	
+
 	// using mlsd()
 
 	Vector v = src.mlsd(TestEnv.serverADir);
@@ -196,13 +196,13 @@ public class MlsxTest extends TestCase {
 	while (!v.isEmpty()) {
 	    MlsxEntry f = (MlsxEntry) v.remove(0);
 	    output1Buffer.append(f.toString()).append("\n");
-	    
+
 	}
 	output1 = output1Buffer.toString();
 	logger.debug(output1);
 
 	// using mlsd 2nd time
-	
+
 	HostPort hp2 = src.setPassive();
 	src.setLocalActive();
 
@@ -213,7 +213,7 @@ public class MlsxTest extends TestCase {
 	while (!v.isEmpty()) {
 	    MlsxEntry f = (MlsxEntry) v.remove(0);
 	    output2Buffer.append(f.toString()).append("\n");
-	    
+
 	}
 	output2 = output2Buffer.toString();
 	logger.debug(output2);

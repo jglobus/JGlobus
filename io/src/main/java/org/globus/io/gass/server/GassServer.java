@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,34 +59,34 @@ public class GassServer extends BaseServer {
 
     private static Log logger =
         LogFactory.getLog(GassServer.class.getName());
-    
+
     public static final int READ_ENABLE            = 8;
     public static final int WRITE_ENABLE           = 16;
     public static final int STDOUT_ENABLE          = 32;
     public static final int STDERR_ENABLE          = 64;
     public static final int CLIENT_SHUTDOWN_ENABLE = 128;
-  
+
     public static final String SHUTDOWN_STR = "/dev/globus_gass_client_shutdown";
 
     private Hashtable jobOutputs = null;
     private int options          = 0;
-    
+
     /**
      * Starts Gass Server with default user credentials.
      * Port of the server will be dynamically assigned
      */
-    public GassServer() 
+    public GassServer()
 	throws IOException {
 	this(null, 0);
     }
-  
+
     /**
      * Starts Gass Server on given port with default user credentials.
      *
      * @param port
      *         port of the server, if 0 it will be dynamically assigned
      */
-    public GassServer(int port) 
+    public GassServer(int port)
 	throws IOException {
 	this(null, port);
     }
@@ -110,17 +110,17 @@ public class GassServer extends BaseServer {
      * Starts Gass Server on given port and mode.
      * If secure mode, it will use default user credentials
      *
-     * @param secure 
+     * @param secure
      *         if true starts server in secure mode, otherwise unsecure
      * @param port
      *         port of the server, if 0 it will be dynamically assigned
      */
-    public GassServer(boolean secure, int port) 
+    public GassServer(boolean secure, int port)
 	throws IOException {
 	super(secure, port);
 	init();
     }
-  
+
     private void init() {
 	jobOutputs = new Hashtable();
 	options = READ_ENABLE | WRITE_ENABLE | STDOUT_ENABLE | STDERR_ENABLE;
@@ -129,15 +129,15 @@ public class GassServer extends BaseServer {
     }
 
     /**
-     * Sets the options of the gass server such 
+     * Sets the options of the gass server such
      * as enabling client shutdown, etc.
      *
-     * @param options server options 
+     * @param options server options
      */
     public void setOptions(int options) {
 	this.options = options;
     }
-  
+
     /**
      * Returns current options of the server.
      *
@@ -147,14 +147,14 @@ public class GassServer extends BaseServer {
     public int getOptions() {
 	return options;
     }
-    
+
     /**
      * Registers a output stream with a job. This is
      * used for job stdout/err redirection.
      * The label of the job should be the ending of the
      * job redirected url. For example, given following RSL
      * (stdout=$(GASS_URL)/dev/stdout-5) the label to register
-     * the output stream with should be 'out-5'. 
+     * the output stream with should be 'out-5'.
      *
      * @param lb job label as described above.
      * @param out the output stream to redirect output to.
@@ -172,24 +172,24 @@ public class GassServer extends BaseServer {
     public void unregisterJobOutputStream(String lb) {
 	jobOutputs.remove(lb);
     }
-    
+
     /**
      * Unregisters a job output stream. This method is deprecated.
      */
     public void unregisterJobOutputStream(String lb, OutputStream out) {
 	unregisterJobOutputStream(lb);
     }
-    
+
     protected OutputStream getJobOutputStream(String id) {
 	return (OutputStream)jobOutputs.get(id);
     }
-    
+
     protected void handleConnection(Socket socket) {
-	GassClientHandler gcb = new GassClientHandler(this, 
+	GassClientHandler gcb = new GassClientHandler(this,
 						      socket);
 	(new Thread(gcb)).start();
     }
-  
+
     public String toString() {
 	StringBuffer buf = new StringBuffer("GassServer: ");
 	try {
@@ -209,7 +209,7 @@ public class GassServer extends BaseServer {
 	buf.append(")");
 	return buf.toString();
     }
-  
+
     /**
      * Shutdowns a remote gass server. The server must have the
      * CLIENT_SHUTDOWN option enabled for this to work.
@@ -217,20 +217,20 @@ public class GassServer extends BaseServer {
      * @param  cred    credentials to use.
      * @param  gassURL the url of the remote gass server.
      */
-    public static void shutdown(GSSCredential cred, GlobusURL gassURL) 
+    public static void shutdown(GSSCredential cred, GlobusURL gassURL)
 	throws IOException, GSSException {
-	
+
 	OutputStream output     = null;
 	InputStream input       = null;
 	Socket socket           = null;
-	
+
 	try {
 
 	    if (gassURL.getProtocol().equalsIgnoreCase("https")) {
 
 		GSSManager manager = ExtendedGSSManager.getInstance();
-		
-		ExtendedGSSContext context = 
+
+		ExtendedGSSContext context =
 		    (ExtendedGSSContext)manager.createContext(null,
 							      GSSConstants.MECH_OID,
 							      cred,
@@ -241,31 +241,31 @@ public class GassServer extends BaseServer {
 
 		GssSocketFactory factory = GssSocketFactory.getDefault();
 
-		socket = factory.createSocket(gassURL.getHost(), 
+		socket = factory.createSocket(gassURL.getHost(),
 					      gassURL.getPort(),
 					      context);
 
 		((GssSocket)socket).setAuthorization(SelfAuthorization.getInstance());
 	    } else {
                 SocketFactory factory = SocketFactory.getDefault();
-		socket = factory.createSocket(gassURL.getHost(), 
+		socket = factory.createSocket(gassURL.getHost(),
                                               gassURL.getPort());
 	    }
-	
+
 	    output = socket.getOutputStream();
 	    input  = socket.getInputStream();
-	
+
 	    String msg =  GASSProtocol.SHUTDOWN(SHUTDOWN_STR,
 						gassURL.getHost());
-	
-	    
+
+
             if (logger.isTraceEnabled()) {
                 logger.trace("Shutdown msg: " + msg);
             }
-	
+
 	    output.write( msg.getBytes() );
 	    output.flush();
-	
+
 	    HttpResponse rp = new HttpResponse(input);
 	    if (rp.httpCode == -1 && rp.httpMsg == null) {
 		/* this is a workaround for C gass-server.
@@ -274,7 +274,7 @@ public class GassServer extends BaseServer {
 	    } else if (rp.httpCode != 200) {
 		throw new IOException("Remote shutdown failed (" + rp.httpCode + " " + rp.httpMsg + ")");
 	    }
-	    
+
 	} finally {
 	    try {
 		if (output != null) output.close();
@@ -283,7 +283,7 @@ public class GassServer extends BaseServer {
 	    } catch(Exception e) {}
 	}
     }
-	
+
 }
 
 class GassClientHandler implements Runnable {
@@ -300,32 +300,32 @@ class GassClientHandler implements Runnable {
     private static final String TRANSFER_ENCODING = "Transfer-Encoding: chunked";
     private static final String JAVA_CLIENT = "User-Agent: Java-Globus-GASS-HTTP/1.1.0";
     private static final String HTTP_CONTINUE = "HTTP/1.1 100 Continue\r\n";
-    
+
     private static final String CONTENT_BINARY = "Content-Type: application/octet-stream" + CRLF;
     private static final String CONTENT_HTML   = "Content-Type: text/html" + CRLF;
     private static final String CONTENT_TEXT   = "Content-Type: text/plain" + CRLF;
-    
+
     private static final String CONNECTION_CLOSE = "Connection: close\r\n";
-    
+
     private static final String HEADER404 = "HTTP/1.1 404 File Not Found\r\n";
 
     private static final String MSG404 =
         "<html><head><title>404 File Not Found</title></head><body>\r\n" +
         "<h1>404 File Not Found</h1></body></html>\r\n";
-    
+
     private int BUFFER_SIZE = 4096;
 
     private GassServer server;
     private Socket socket;
     private int options;
 
-    public GassClientHandler(GassServer server, 
+    public GassClientHandler(GassServer server,
 			     Socket socket) {
 	this.server  = server;
 	this.socket  = socket;
 	this.options = server.getOptions();
     }
-    
+
     private void write(OutputStream out, String msg) throws IOException {
 	out.write(msg.getBytes());
 	out.flush();
@@ -346,7 +346,7 @@ class GassClientHandler implements Runnable {
 
 	InputStream in   = null;
 	OutputStream out = null;
-    
+
 	try {
 	    in  = socket.getInputStream();
 	    out = socket.getOutputStream();
@@ -355,52 +355,52 @@ class GassClientHandler implements Runnable {
 
 		String line;
 		line = readLine(in);
-	  
+
 		if (DEBUG_ON) debug("header: " + line);
-	  
-		if (line.startsWith("GET") && 
+
+		if (line.startsWith("GET") &&
 		    (options & GassServer.READ_ENABLE) != 0) {
-		    
+
 		    // copy to client
-	    
-		    String path = 
+
+		    String path =
 			line.substring(4, line.indexOf(' ', 4) );
-	    
+
 		    do {
 			line = readLine(in);
 			if (DEBUG_ON) debug("header (get): " + line);
 		    } while ( (line.length() != 0)
 			      && (line.charAt(0) != '\r')
 			      && (line.charAt(0) != '\n') );
-		    
+
 		    transfer(out, path);
-	    
+
 		} else if (line.startsWith("PUT") &&
 			   ( ((options & GassServer.WRITE_ENABLE) != 0) ||
 			     ((options & GassServer.CLIENT_SHUTDOWN_ENABLE) != 0) )) {
-	  
+
 		    // copy from client
-	    
-		    String path = 
+
+		    String path =
 			line.substring(4, line.indexOf(' ', 4) );
 
 		    transfer(in, path, false, out);
-	    
+
 		    writeln(out, OKHEADER);
-	    
+
 		} else if (line.startsWith("POST") &&
 			   ( ((options & GassServer.WRITE_ENABLE) != 0) ||
 			     ((options & GassServer.STDOUT_ENABLE) != 0) ||
 			     ((options & GassServer.STDERR_ENABLE) != 0) ||
 			     ((options & GassServer.CLIENT_SHUTDOWN_ENABLE) != 0) )) {
 		    // append from client
-	    
+
 		    int index = line.indexOf('?') + 1;
-		    String path = 
+		    String path =
 			line.substring(index, line.indexOf(' ', index) );
-		    
+
 		    transfer(in, path, true, out);
-		    
+
 		    writeln(out, OKHEADER);
 
 		} else {
@@ -409,7 +409,7 @@ class GassClientHandler implements Runnable {
 
 	    } catch (FileNotFoundException ex) {
 		logger.debug("FileNotFoundException occured: " + ex.getMessage(), ex);
-		
+
 		StringBuffer buf = new StringBuffer(HEADER404)
 		    .append(CONNECTION_CLOSE)
 		    .append(SERVER)
@@ -417,7 +417,7 @@ class GassClientHandler implements Runnable {
 		    .append(CONTENT_LENGTH).append(" ").append(MSG404.length())
 		    .append(CRLF).append(CRLF)
 		    .append(MSG404);
-		
+
 		out.write(buf.toString().getBytes());
 		out.flush();
 	    } catch (AuthorizationException ex) {
@@ -430,7 +430,7 @@ class GassClientHandler implements Runnable {
 	} catch (IOException e) {
 	    logger.error("Error writing response: " + e.getMessage(), e);
 	} finally {
-	    try {	
+	    try {
 		socket.close();
 	    } catch (IOException e) {}
 	}
@@ -445,7 +445,7 @@ class GassClientHandler implements Runnable {
 	    return path;
 	}
     }
-    
+
     /**
      * Transfer from a file, given its path, to the given OutputStream.
      * The BufferedWriter points to the same stream but is used to write
@@ -470,28 +470,28 @@ class GassClientHandler implements Runnable {
 
         os.write(buf.toString().getBytes());
         os.flush();
-	
+
 	byte [] buffer = new byte[BUFFER_SIZE];
 	int read;
-	
+
 	while (length != 0) {
 	    read = file.read(buffer);
 	    if (read == -1) break;
 	    os.write(buffer, 0, read);
 	    length -= read;
 	}
-	
+
 	file.close();
 	os.flush();
 	os.close();
     }
-  
-  private OutputStream pickOutputStream(String path, String str, 
+
+  private OutputStream pickOutputStream(String path, String str,
 					OutputStream def) {
-    
+
     int strl   = str.length();
     int pos    = path.indexOf(str);
-    
+
     if (pos != -1) {
       OutputStream out = server.getJobOutputStream(path.substring(pos + strl - 3));
       if (out == null) {
@@ -499,9 +499,9 @@ class GassClientHandler implements Runnable {
       } else {
 	return out;
       }
-      
+
     }
-    
+
     return null;
   }
 
@@ -513,15 +513,15 @@ class GassClientHandler implements Runnable {
     private void transfer(InputStream is, String path, boolean append,
 			  OutputStream outs)
 	throws IOException {
-	 
+
 	if (((options & GassServer.CLIENT_SHUTDOWN_ENABLE) != 0) &&
 	    path.indexOf(GassServer.SHUTDOWN_STR) != -1) {
 	    server.shutdown();
 	    return;
 	}
-	 
+
 	 OutputStream out = null;
-	 
+
 	 String line;
 	 long length = 0;
 	 boolean chunked = false;
@@ -540,7 +540,7 @@ class GassClientHandler implements Runnable {
 	 } while ( (line.length() != 0)
 		   && (line.charAt(0) != '\r')
 		   && (line.charAt(0) != '\n') );
-	 
+
 	 out = pickOutputStream(path, "/dev/stdout", System.out);
 	 if (out != null) {
 	   // this is stdout
@@ -563,25 +563,25 @@ class GassClientHandler implements Runnable {
 	     out = new FileOutputStream(path, append);
 	   }
 	 }
-	 
+
 	 if (javaclient) {
 	   writeln(outs, HTTP_CONTINUE);
 	 }
-	 
+
 	 byte [] buffer = new byte[BUFFER_SIZE];
 	 int read;
-	 
+
 	 if (!chunked) {
-	   
+
 	   while (length != 0) {
 	     read = is.read(buffer);
 	     if (read == -1) break;
 	     out.write(buffer, 0, read);
 	     length -= read;
 	   }
-	   
+
 	 } else {
-	   
+
 	   /*
 	    * Chunks are of the form
 	    *
@@ -596,45 +596,45 @@ class GassClientHandler implements Runnable {
 	    * NOTE: length is represented in hex!
 	    *
 	    */
-	   
+
 	   long chunkLength;
 	   int bytes;
-	   
+
 	   do {
-	     line = readLine(is);		
+	     line = readLine(is);
 	     length = fromHex(line);
-	     
+
 	     if (DEBUG_ON) debug("chunk: '" + line + "' size:" + length);
-	     
+
 	     chunkLength = length;
-	     
+
 	     while (chunkLength != 0) {
-	       
+
 	       if (chunkLength > buffer.length) {
 		 bytes = buffer.length;
 	       } else {
 		 bytes = (int)chunkLength;
 	       }
-	       
-	       read = is.read(buffer, 0, bytes); 
+
+	       read = is.read(buffer, 0, bytes);
 	       if (read == -1) break;
 	       out.write(buffer, 0, read);
 	       chunkLength -= read;
 	     }
-	     
+
 	     is.read(); // skip CR
 	     is.read(); // skip LF
 	   } while (length > 0);
-	   
+
 	   if (DEBUG_ON) debug("finished chunking");
 	 }
-	 
+
 	 out.flush();
 	 // do not close System.out or System.err!
 	 if (out == System.out || out == System.err) return;
 	 out.close();
   }
-  
+
   /**
    * Read a line of text from the given Stream and return it
    * as a String.  Assumes lines end in CRLF.
@@ -642,24 +642,24 @@ class GassClientHandler implements Runnable {
   private String readLine(InputStream in) throws IOException {
     StringBuffer buf = new StringBuffer();
     int c, length = 0;
-    
+
     while(true) {
       c = in.read();
 
       if (c == -1 || c == '\n' || length > 512) {
 	break;
-      } else if (c == '\r') { 
-	in.read(); 
+      } else if (c == '\r') {
+	in.read();
 	return buf.toString();
-      } else {	    
+      } else {
 	buf.append((char)c);
-	length++;	
+	length++;
       }
-      
+
     }
     return buf.toString();
   }
-  
+
   /**
    * Convert a String representing a hex number to a long.
    */
@@ -679,7 +679,7 @@ class GassClientHandler implements Runnable {
       case '6':
       case '7':
       case '8':
-      case '9':		  
+      case '9':
 	result += (c - '0');
 	break;
       case 'a':
@@ -704,11 +704,11 @@ class GassClientHandler implements Runnable {
     }
     return result;
   }
-  
+
     private void debug(String msg) {
 	System.err.println(msg);
     }
-  
+
 }
 
 

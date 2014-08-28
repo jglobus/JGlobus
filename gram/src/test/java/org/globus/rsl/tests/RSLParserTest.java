@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ public class RSLParserTest extends TestCase {
 
     private Properties validRsls;
     private Properties invalidRsls;
-    
+
     public RSLParserTest(String name) {
 	super(name);
     }
@@ -80,25 +80,25 @@ public class RSLParserTest extends TestCase {
 	invalidRsls.put("rsl15", "(executable=^\")");
 	invalidRsls.put("rsl16", "(executable=^/)");
     }
-    
+
     public void testAdvanced() throws Exception {
 	String rsl = "&(arguments = -e '$GLOBUS_SH_PERL -e ''print STDERR \"stderr\n\"; '" +
 	    "#                      'print STDOUT \"stdout\n\";''')";
 
 	RslNode node = RSLParser.parse(rsl);
-	
+
 	NameOpValue nv = null;
 	List values;
 
 	nv = node.getParam("ARGUMENTS");
 	values = nv.getValues();
-	
+
 	assertEquals("arg size",
-                     2, 
+                     2,
 		     values.size());
 
 	assertEquals("arg 1",
-                     "-e", 
+                     "-e",
 		     ((Value)values.get(0)).getValue() );
 
 	String e = "$GLOBUS_SH_PERL -e 'print STDERR \"stderr\n\"; print STDOUT \"stdout\n\";'";
@@ -115,7 +115,7 @@ public class RSLParserTest extends TestCase {
 	rsl = "&(executable=/bin/echo)(arguments=\\)";
 
 	node = RSLParser.parse(rsl);
-	
+
 	NameOpValue nv = null;
 	List values;
 
@@ -123,7 +123,7 @@ public class RSLParserTest extends TestCase {
 	values = nv.getValues();
 
 	assertEquals("arg size",
-                     1, 
+                     1,
 		     values.size());
 
 	assertEquals("arg 1",
@@ -131,11 +131,11 @@ public class RSLParserTest extends TestCase {
 		     ((Value)values.get(0)).getCompleteValue() );
 
 	rsl = "&(executable=/bin/echo)(arguments=\"\\\")";
-	
+
 	node = RSLParser.parse(rsl);
 
 	assertEquals("arg size",
-                     1, 
+                     1,
 		     values.size());
 
 	assertEquals("arg 1",
@@ -150,7 +150,7 @@ public class RSLParserTest extends TestCase {
 	while(e.hasMoreElements()) {
 	    key = (String)e.nextElement();
 	    rsl = validRsls.getProperty(key);
-	    
+
 	    System.out.println("Parsing valid rsl " + key + ": " + rsl);
 	    try {
 		RSLParser.parse(rsl);
@@ -160,7 +160,7 @@ public class RSLParserTest extends TestCase {
 	    }
 	}
     }
-    
+
     public void testInvalid() {
 	Enumeration e = invalidRsls.keys();
 	String key;
@@ -168,7 +168,7 @@ public class RSLParserTest extends TestCase {
 	while(e.hasMoreElements()) {
 	    key = (String)e.nextElement();
 	    rsl = invalidRsls.getProperty(key);
-	    
+
 	    System.out.println("Parsing invalid rsl " + key + ": " + rsl);
 	    try {
 		RslNode tree = RSLParser.parse(rsl);
@@ -184,7 +184,7 @@ public class RSLParserTest extends TestCase {
 
 	rsl = "&(arg1=\"foo\"\"bar\")(arg2='foo''bar')(arg3='')(arg4=\"\")" +
 	    "(executable=\"/bin/echo\")(arguments='mis')";
-	
+
 	node = RSLParser.parse(rsl);
 
 	testQuotesSub(node);
@@ -201,7 +201,7 @@ public class RSLParserTest extends TestCase {
 
 	nv = node.getParam("arg1");
 	values = nv.getValues();
-	
+
 	assertEquals("arg1",
 		     "foo\"bar",
 		     ((Value)values.get(0)).getCompleteValue() );
@@ -213,7 +213,7 @@ public class RSLParserTest extends TestCase {
 		     "foo'bar",
 		     ((Value)values.get(0)).getCompleteValue() );
 
-	
+
 	nv = node.getParam("arg3");
 	values = nv.getValues();
 
@@ -234,13 +234,13 @@ public class RSLParserTest extends TestCase {
 	assertEquals("executable",
 		     "/bin/echo",
 		     ((Value)values.get(0)).getCompleteValue() );
-	
+
 	nv = node.getParam("arguments");
 	values = nv.getValues();
-	
+
 	assertEquals("arguments",
 		     "mis",
 		     ((Value)values.get(0)).getCompleteValue() );
     }
-    
+
 }

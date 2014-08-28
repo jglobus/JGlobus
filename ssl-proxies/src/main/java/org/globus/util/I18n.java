@@ -35,9 +35,9 @@ import java.util.ResourceBundle;
  * </pre>
  */
 public class I18n {
-    
+
     private static Map mapping = new HashMap();
-    
+
     private ResourceBundle messages = null;
 
     protected I18n(ResourceBundle messages) {
@@ -53,16 +53,16 @@ public class I18n {
     public static synchronized I18n getI18n(String resource) {
         I18n instance = (I18n)mapping.get(resource);
         if (instance == null) {
-            instance = new I18n(ResourceBundle.getBundle(resource, 
+            instance = new I18n(ResourceBundle.getBundle(resource,
                                                          Locale.getDefault(),
                                                          getClassLoader()));
             mapping.put(resource, instance);
         }
         return instance;
     }
-    
+
     /**
-     * Retrieve a I18n instance by resource name 
+     * Retrieve a I18n instance by resource name
      *
      * @param resource resource name. See {@link
      *        ResourceBundle#getBundle(String) ResourceBundle.getBundle()}
@@ -78,42 +78,42 @@ public class I18n {
             if (loader == null) {
                 loader = getClassLoader();
             }
-            instance = new I18n(ResourceBundle.getBundle(resource, 
+            instance = new I18n(ResourceBundle.getBundle(resource,
                                                          Locale.getDefault(),
                                                          loader));
             mapping.put(resource, instance);
         }
         return instance;
     }
-    
+
     private static ClassLoader getClassLoader() {
         // try to get caller's classloader otherwise use context classloader
         ClassLoader loader = ClassLoaderUtils.getClassLoaderContextAt(4);
         return (loader == null) ? Thread.currentThread().getContextClassLoader() : loader;
     }
-    
+
     /**
      * Gets a message from resource bundle.
      */
-    public String getMessage(String key) 
+    public String getMessage(String key)
         throws MissingResourceException {
         return messages.getString(key);
     }
-    
+
     /**
      * Gets a formatted message from resource bundle
      */
-    public String getMessage(String key, Object arg) 
+    public String getMessage(String key, Object arg)
         throws MissingResourceException {
         return getMessage(key, new Object[] {arg});
     }
-    
+
     /**
      * Gets a formatted message from resource bundle
      */
-    public String getMessage(String key, Object[] vars) 
+    public String getMessage(String key, Object[] vars)
         throws MissingResourceException {
         return MessageFormat.format(messages.getString(key), vars);
     }
-    
+
 }

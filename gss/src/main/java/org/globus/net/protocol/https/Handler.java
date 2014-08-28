@@ -18,7 +18,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class Handler extends org.globus.net.protocol.httpg.Handler {
-    
+
     protected URLConnection openConnection(URL u) {
         URLConnection conn = super.openConnection(u);
         conn.setRequestProperty("gssMode", "ssl");
@@ -28,5 +28,5 @@ public class Handler extends org.globus.net.protocol.httpg.Handler {
     protected int getDefaultPort() {
 	return 443;
     }
-    
+
 }

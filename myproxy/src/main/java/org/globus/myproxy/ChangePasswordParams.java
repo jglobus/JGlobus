@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,28 +23,28 @@ public class ChangePasswordParams
 
     private String newPassphrase;
     private String credentialName;
-    
+
     public ChangePasswordParams() {
         super(MyProxy.CHANGE_PASSWORD);
     }
-    
+
     public void setNewPassphrase(String newPassphrase) {
         checkPassphrase(newPassphrase);
         this.newPassphrase = newPassphrase;
     }
-    
+
     public String getNewPassphrase() {
         return this.newPassphrase;
     }
-    
+
     public void setCredentialName(String credentialName) {
         this.credentialName = credentialName;
     }
-    
+
     public String getCredentialName() {
         return this.credentialName;
     }
-    
+
     protected String makeRequest(boolean includePassword) {
         StringBuffer buf = new StringBuffer();
         buf.append(super.makeRequest(includePassword));
@@ -60,5 +60,5 @@ public class ChangePasswordParams
         add(buf, CRED_NAME, credentialName);
         return buf.toString();
     }
-    
+
 }

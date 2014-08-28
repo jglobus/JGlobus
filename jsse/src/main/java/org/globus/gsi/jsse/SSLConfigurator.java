@@ -47,7 +47,7 @@ import org.globus.gsi.proxy.ProxyPolicyHandler;
  * factories can either be built by setting the credentialStore, crlStore,
  * trustAnchorStore and policyStore directly, or it can use the java security
  * SPI mechanism. This is the simplest way to configure the globus ssl support.
- * 
+ *
  * @version ${version}
  * @since 1.0
  */
@@ -85,7 +85,7 @@ public class SSLConfigurator {
 
 	/**
 	 * Create an SSLSocketFactory based on the configured stores.
-	 * 
+	 *
 	 * @return A configured SSLSocketFactory
 	 * @throws GlobusSSLConfigurationException
 	 *             If we fail to create the socketFactory.
@@ -97,7 +97,7 @@ public class SSLConfigurator {
 
 	/**
 	 * Create an SSLContext based on the configured stores.
-	 * 
+	 *
 	 * @return A configured SSLContext.
 	 * @throws GlobusSSLConfigurationException
 	 *             If we fail to create the context.
@@ -111,7 +111,7 @@ public class SSLConfigurator {
 
 	/**
 	 * Create an SSLServerSocketFactory based on the configured stores.
-	 * 
+	 *
 	 * @return A configured SSLServerSocketFactory
 	 * @throws GlobusSSLConfigurationException
 	 *             If we fail to create the server socket factory.

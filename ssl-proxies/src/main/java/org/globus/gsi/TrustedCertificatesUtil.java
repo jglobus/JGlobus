@@ -26,14 +26,14 @@ public class TrustedCertificatesUtil {
         Security.addProvider(new GlobusProvider());
         Security.addProvider(new SimpleMemoryProvider());
     }
-    
+
     /**
      * Create a CertStore object from TrustedCertificates.
      * The store only loads  trusted certificates, no signing policies
      */
     public static CertStore createCertStore(TrustedCertificates tc) throws Exception {
-        
-        CertStore store = null;        
+
+        CertStore store = null;
         if (tc == null) {
             String caCertPattern = "file:" + CoGProperties.getDefault().getCaCertLocations() + "/*.0";
             store = Stores.getCACertStore(caCertPattern);
@@ -41,7 +41,7 @@ public class TrustedCertificatesUtil {
             SimpleMemoryCertStoreParams params = new SimpleMemoryCertStoreParams(tc.getCertificates(), null);
             params.setCerts(tc.getCertificates());
             store = CertStore.getInstance(SimpleMemoryProvider.CERTSTORE_TYPE, params, SimpleMemoryProvider.PROVIDER_NAME);
-        }        
+        }
         return store;
     }
 }

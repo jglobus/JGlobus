@@ -61,7 +61,7 @@ public class BouncyCastleUtil {
 
     static {
 	Security.addProvider(new BouncyCastleProvider());
-    } 
+    }
 
     private static I18n i18n =
         I18n.getI18n("org.globus.gsi.errors",
@@ -75,30 +75,30 @@ public class BouncyCastleUtil {
      * @return the DER-encoded byte array
      * @exception IOException if conversion fails
      */
-    public static byte[] toByteArray(ASN1Primitive obj) 
+    public static byte[] toByteArray(ASN1Primitive obj)
 	throws IOException {
 	ByteArrayOutputStream bout = new ByteArrayOutputStream();
 	DEROutputStream der = new DEROutputStream(bout);
 	der.writeObject(obj);
 	return bout.toByteArray();
     }
-    
+
     /**
-     * Converts the DER-encoded byte array into a 
+     * Converts the DER-encoded byte array into a
      * <code>DERObject</code>.
      *
      * @param data the DER-encoded byte array to convert.
      * @return the DERObject.
      * @exception IOException if conversion fails
      */
-    public static ASN1Primitive toASN1Primitive(byte[] data) 
+    public static ASN1Primitive toASN1Primitive(byte[] data)
 	throws IOException {
         ByteArrayInputStream inStream = new ByteArrayInputStream(data);
         ASN1InputStream derInputStream = new ASN1InputStream(inStream);
         return derInputStream.readObject();
     }
-    
-    
+
+
 
     /**
      * Replicates a given <code>DERObject</code>.
@@ -107,7 +107,7 @@ public class BouncyCastleUtil {
      * @return a copy of the DERObject.
      * @exception IOException if replication fails
      */
-    public static ASN1Primitive duplicate(ASN1Primitive obj) 
+    public static ASN1Primitive duplicate(ASN1Primitive obj)
 	throws IOException {
 	return toASN1Primitive(toByteArray(obj));
     }
@@ -128,27 +128,27 @@ public class BouncyCastleUtil {
 
     /**
      * Extracts the value of a certificate extension.
-     * 
+     *
      * @param ext the certificate extension to extract the value from.
      * @exception IOException if extraction fails.
      */
-    public static ASN1Primitive getExtensionObject(X509Extension ext) 
+    public static ASN1Primitive getExtensionObject(X509Extension ext)
 	throws IOException {
 	return toASN1Primitive(ext.getValue().getOctets());
     }
 
     /**
-     * Returns certificate type of the given certificate. 
+     * Returns certificate type of the given certificate.
      * Please see {@link #getCertificateType(TBSCertificateStructure,
-     * TrustedCertificates) getCertificateType} for details for 
+     * TrustedCertificates) getCertificateType} for details for
      * determining the certificate type.
      *
      * @param cert the certificate to get the type of.
-     * @param trustedCerts the trusted certificates to double check the 
-     *                     {@link GSIConstants#EEC GSIConstants.EEC} 
+     * @param trustedCerts the trusted certificates to double check the
+     *                     {@link GSIConstants#EEC GSIConstants.EEC}
      *                     certificate against.
-     * @return the certificate type as determined by 
-     *             {@link #getCertificateType(TBSCertificateStructure, 
+     * @return the certificate type as determined by
+     *             {@link #getCertificateType(TBSCertificateStructure,
      *              TrustedCertificates) getCertificateType}.
      * @exception CertificateException if something goes wrong.
      * @deprecated
@@ -164,17 +164,17 @@ public class BouncyCastleUtil {
     }
 
     /**
-     * Returns the certificate type of the given certificate. 
+     * Returns the certificate type of the given certificate.
      * Please see {@link #getCertificateType(TBSCertificateStructure,
-     * TrustedCertificates) getCertificateType} for details for 
+     * TrustedCertificates) getCertificateType} for details for
      * determining the certificate type.
      *
      * @param cert the certificate to get the type of.
-     * @param trustedCerts the trusted certificates to double check the 
-     *                     {@link GSIConstants#EEC GSIConstants.EEC} 
+     * @param trustedCerts the trusted certificates to double check the
+     *                     {@link GSIConstants#EEC GSIConstants.EEC}
      *                     certificate against.
-     * @return the certificate type as determined by 
-     *             {@link #getCertificateType(TBSCertificateStructure, 
+     * @return the certificate type as determined by
+     *             {@link #getCertificateType(TBSCertificateStructure,
      *              TrustedCertificates) getCertificateType}.
      * @exception CertificateException if something goes wrong.
      */
@@ -200,19 +200,19 @@ public class BouncyCastleUtil {
             throw new CertificateException("", e);
         }
     }
-    
+
     /**
-     * Returns certificate type of the given certificate. 
-     * Please see {@link #getCertificateType(TBSCertificateStructure) 
+     * Returns certificate type of the given certificate.
+     * Please see {@link #getCertificateType(TBSCertificateStructure)
      * getCertificateType} for details for determining the certificate type.
      *
      * @param cert the certificate to get the type of.
-     * @return the certificate type as determined by 
-     *             {@link #getCertificateType(TBSCertificateStructure) 
+     * @return the certificate type as determined by
+     *             {@link #getCertificateType(TBSCertificateStructure)
      *              getCertificateType}.
      * @exception CertificateException if something goes wrong.
      */
-    public static GSIConstants.CertificateType getCertificateType(X509Certificate cert) 
+    public static GSIConstants.CertificateType getCertificateType(X509Certificate cert)
     throws CertificateException {
     try {
         TBSCertificateStructure crt = getTBSCertificateStructure(cert);
@@ -240,15 +240,15 @@ public class BouncyCastleUtil {
 
 		return type;
 	}
-    
+
     /**
      * Returns certificate type of the given TBS certificate. <BR>
      * The certificate type is {@link GSIConstants#CA GSIConstants.CA}
-     * <B>only</B> if the certificate contains a 
+     * <B>only</B> if the certificate contains a
      * BasicConstraints extension and it is marked as CA.<BR>
      * A certificate is a GSI-2 proxy when the subject DN of the certificate
-     * ends with <I>"CN=proxy"</I> (certificate type {@link 
-     * GSIConstants#GSI_2_PROXY GSIConstants.GSI_2_PROXY}) or 
+     * ends with <I>"CN=proxy"</I> (certificate type {@link
+     * GSIConstants#GSI_2_PROXY GSIConstants.GSI_2_PROXY}) or
      * <I>"CN=limited proxy"</I> (certificate type {@link
      * GSIConstants#GSI_2_LIMITED_PROXY GSIConstants.LIMITED_PROXY}) component
      * and the issuer DN of the certificate matches the subject DN without
@@ -257,7 +257,7 @@ public class BouncyCastleUtil {
      * ends with a <I>CN</I> component, the issuer DN of the certificate
      * matches the subject DN without the last <I>CN</I> component and
      * the certificate contains {@link ProxyCertInfo ProxyCertInfo} critical
-     * extension. 
+     * extension.
      * The certificate type is {@link GSIConstants#GSI_3_IMPERSONATION_PROXY
      * GSIConstants.GSI_3_IMPERSONATION_PROXY} if the policy language of
      * the {@link ProxyCertInfo ProxyCertInfo} extension is set to
@@ -281,11 +281,11 @@ public class BouncyCastleUtil {
      * @return the certificate type. The certificate type is determined
      *         by rules described above.
      * @exception IOException if something goes wrong.
-     * @exception CertificateException for proxy certificates, if 
+     * @exception CertificateException for proxy certificates, if
      *            the issuer DN of the certificate does not match
      *            the subject DN of the certificate without the
      *            last <I>CN</I> component. Also, for GSI-3 proxies
-     *            when the <code>ProxyCertInfo</code> extension is 
+     *            when the <code>ProxyCertInfo</code> extension is
      *            not marked as critical.
      */
     private static GSIConstants.CertificateType getCertificateType(TBSCertificateStructure crt)
@@ -302,9 +302,9 @@ public class BouncyCastleUtil {
 		}
 	    }
 	}
-	
+
 	GSIConstants.CertificateType type = GSIConstants.CertificateType.EEC;
-	
+
 	// does not handle multiple AVAs
 	X500Name subject = crt.getSubject();
 
@@ -328,9 +328,9 @@ public class BouncyCastleUtil {
 		if (ext != null) {
 		    if (ext.isCritical()) {
 			ProxyCertInfo proxyCertExt = getProxyCertInfo(ext);
-                        ProxyPolicy proxyPolicy = 
+                        ProxyPolicy proxyPolicy =
                             proxyCertExt.getProxyPolicy();
-                        DERObjectIdentifier oid = 
+                        DERObjectIdentifier oid =
                             proxyPolicy.getPolicyLanguage();
 			if (ProxyPolicy.IMPERSONATION.equals(oid)) {
                             if (gsi4) {
@@ -357,14 +357,14 @@ public class BouncyCastleUtil {
                                 type = GSIConstants.CertificateType.GSI_3_RESTRICTED_PROXY;
                             }
 			}
-                        
+
 		    } else {
                         String err = i18n.getMessage("proxyCertCritical");
 			throw new CertificateException(err);
 		    }
 		}
 	    }
-	    
+
 	    if (ProxyCertificateUtil.isProxy(type)) {
 		X509NameHelper iss = new X509NameHelper(crt.getIssuer());
 		iss.add((ASN1Set)BouncyCastleUtil.duplicate(entry));
@@ -381,24 +381,24 @@ public class BouncyCastleUtil {
 
     /**
      * Gets a boolean array representing bits of the KeyUsage extension.
-     * 
+     *
      * @see java.security.cert.X509Certificate#getKeyUsage
      * @exception IOException if failed to extract the KeyUsage extension value.
      */
-    public static boolean[] getKeyUsage(X509Extension ext) 
+    public static boolean[] getKeyUsage(X509Extension ext)
 	throws IOException {
 	DERBitString bits = (DERBitString)getExtensionObject(ext);
 
 	// copied from X509CertificateObject
 	byte [] bytes = bits.getBytes();
 	int length = (bytes.length * 8) - bits.getPadBits();
-	
+
 	boolean[]  keyUsage = new boolean[(length < 9) ? 9 : length];
-	
+
 	for (int i = 0; i != length; i++) {
 	    keyUsage[i] = (bytes[i / 8] & (0x80 >>> (i % 8))) != 0;
 	}
-	
+
 	return keyUsage;
     }
 
@@ -410,7 +410,7 @@ public class BouncyCastleUtil {
      * @return the <code>ProxyCertInfo</code> object.
      * @exception IOException if something fails.
      */
-    public static ProxyCertInfo getProxyCertInfo(X509Extension ext) 
+    public static ProxyCertInfo getProxyCertInfo(X509Extension ext)
 	throws IOException {
 	return ProxyCertInfo.getInstance(BouncyCastleUtil.getExtensionObject(ext));
     }
@@ -426,7 +426,7 @@ public class BouncyCastleUtil {
     	if (cert == null) {
     		return null;
     	}
-	
+
     	String subjectDN = cert.getSubjectX500Principal().getName(X500Principal.RFC2253);
     	X509Name name = new X509Name(true, subjectDN);
 	    return X509NameHelper.toString(name);
@@ -436,7 +436,7 @@ public class BouncyCastleUtil {
     	if (cert == null) {
     		return null;
     	}
-	
+
     	String subjectDN = cert.getSubjectX500Principal().getName(X500Principal.RFC2253);
     	LdapName ldapname = null;
 		try {
@@ -453,8 +453,8 @@ public class BouncyCastleUtil {
      * Finds the identity certificate in the given chain and
      * returns the subject DN of that certificate in the Globus format.
      *
-     * @param chain the certificate chain to find the identity 
-     *              certificate in. The certificates must be 
+     * @param chain the certificate chain to find the identity
+     *              certificate in. The certificates must be
      *              of <code>X509CertificateObject</code> type.
      * @return the subject DN of the identity certificate in
      *         the Globus format.
@@ -467,15 +467,15 @@ public class BouncyCastleUtil {
 
     /**
      * Finds the identity certificate in the given chain.
-     * The identity certificate is the first certificate in the 
+     * The identity certificate is the first certificate in the
      * chain that is not an impersonation proxy (full or limited)
      *
-     * @param chain the certificate chain to find the identity 
+     * @param chain the certificate chain to find the identity
      *              certificate in.
      * @return the identity certificate.
      * @exception CertificateException if something goes wrong.
      */
-    public static X509Certificate getIdentityCertificate(X509Certificate [] chain) 
+    public static X509Certificate getIdentityCertificate(X509Certificate [] chain)
 	throws CertificateException {
 	if (chain == null) {
 	    throw new IllegalArgumentException(i18n.getMessage("certChainNull"));
@@ -492,11 +492,11 @@ public class BouncyCastleUtil {
 
     /**
      * Retrieves the actual value of the X.509 extension.
-     * 
+     *
      * @param certExtValue the DER-encoded OCTET string value of the extension.
      * @return the decoded/actual value of the extension (the octets).
      */
-    public static byte[] getExtensionValue(byte [] certExtValue) 
+    public static byte[] getExtensionValue(byte [] certExtValue)
 	throws IOException {
 	ByteArrayInputStream inStream = new ByteArrayInputStream(certExtValue);
 	ASN1InputStream derInputStream = new ASN1InputStream(inStream);
@@ -516,7 +516,7 @@ public class BouncyCastleUtil {
      * @return the actual value of the extension (not octet string encoded)
      * @exception IOException if decoding the extension fails.
      */
-    public static byte[] getExtensionValue(X509Certificate cert, String oid) 
+    public static byte[] getExtensionValue(X509Certificate cert, String oid)
     throws IOException {
     if (cert == null) {
         throw new IllegalArgumentException(i18n.getMessage("certNull"));
@@ -524,24 +524,24 @@ public class BouncyCastleUtil {
     if (oid == null) {
         throw new IllegalArgumentException(i18n.getMessage("oidNull"));
     }
-    
+
     byte [] value = cert.getExtensionValue(oid);
     if (value == null) {
         return null;
     }
-    
+
     return getExtensionValue(value);
     }
 
     public static int getProxyPathConstraint(X509Certificate cert)
             throws IOException, CertificateEncodingException {
-        
+
         TBSCertificateStructure crt = getTBSCertificateStructure(cert);
         return getProxyPathConstraint(crt);
     }
 
 
-    public static int getProxyPathConstraint(TBSCertificateStructure crt) 
+    public static int getProxyPathConstraint(TBSCertificateStructure crt)
         throws IOException {
 
         ProxyCertInfo proxyCertExt = getProxyCertInfo(crt);
@@ -549,14 +549,14 @@ public class BouncyCastleUtil {
             -1;
     }
 
-    public static ProxyCertInfo getProxyCertInfo(TBSCertificateStructure crt) 
+    public static ProxyCertInfo getProxyCertInfo(TBSCertificateStructure crt)
 	throws IOException {
 
 	X509Extensions extensions = crt.getExtensions();
 	if (extensions == null) {
 	    return null;
 	}
-	X509Extension ext = 
+	X509Extension ext =
 	    extensions.getExtension(ProxyCertInfo.OID);
         if (ext == null) {
             ext = extensions.getExtension(ProxyCertInfo.OLD_OID);

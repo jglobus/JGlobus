@@ -48,13 +48,13 @@ public class GSIGssSocket extends GssSocket {
 		    this.mode = ((GSIGssInputStream)in).getWrapMode();
 		}
 	    }
-	    this.out = new GSIGssOutputStream(this.socket.getOutputStream(), 
+	    this.out = new GSIGssOutputStream(this.socket.getOutputStream(),
 					      this.context,
 					      this.mode);
 	}
 	((GSIGssOutputStream)this.out).writeToken(token);
     }
-    
+
     protected byte[] readToken()
 	throws IOException {
 	if (this.in == null) {
@@ -63,5 +63,5 @@ public class GSIGssSocket extends GssSocket {
 	}
 	return ((GSIGssInputStream)this.in).readHandshakeToken();
     }
-    
+
 }

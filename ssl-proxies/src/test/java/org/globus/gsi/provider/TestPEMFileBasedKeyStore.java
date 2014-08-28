@@ -219,7 +219,7 @@ public class TestPEMFileBasedKeyStore {
     private PEMKeyStore loadFromParameters() throws Exception {
         LoadStoreParameter params = KeyStoreParametersFactory.createTrustStoreParameters(
         		"file:" + this.trustedDirectory.getTempDirectoryName(),
-                "file:" + this.defaultTrustedDirectory.getTempDirectoryName() 
+                "file:" + this.defaultTrustedDirectory.getTempDirectoryName()
         );
         PEMKeyStore keystore = new PEMKeyStore();
         keystore.engineLoad(params);
@@ -265,7 +265,7 @@ public class TestPEMFileBasedKeyStore {
         Properties properties = new Properties();
         properties.setProperty(PEMKeyStore.PROXY_FILENAME,
                 "file:"+ this.proxyFile1.getAbsoluteFilename());
-        
+
         InputStream ins = null;
         try {
             ins = getProperties(properties);
@@ -281,7 +281,7 @@ public class TestPEMFileBasedKeyStore {
         // proxy file 1
         String proxyId1 = new GlobusResource(this.proxyFile1.getTempFile().getAbsolutePath()).getFile().toString();//getURL().toExternalForm();
         Key key = store.engineGetKey("file:"+ this.proxyFile1.getAbsoluteFilename(), null);
-       
+
         assertTrue(store.engineIsKeyEntry("file:"+ this.proxyFile1.getAbsoluteFilename()));
         assertNotNull(key != null);
         assertTrue(key instanceof PrivateKey);
@@ -289,7 +289,7 @@ public class TestPEMFileBasedKeyStore {
         assertNotNull(certificates != null);
         assertTrue(certificates instanceof X509Certificate[]);
         key = null;
-        
+
         // assert (this.proxyCertificates.get(this.proxyFile1.getAbsoluteFilename()).equals(certificates[0]));
 
         properties.setProperty(PEMKeyStore.PROXY_FILENAME,
@@ -417,21 +417,21 @@ public class TestPEMFileBasedKeyStore {
         }
         return ins;
     }
-    public static boolean deleteDir(File dir) { 
-		if (dir.isDirectory()) { 
-			String[] dirContent = dir.list(); 
-			for (int i=0; i<dirContent.length; i++){ 
-				boolean success = deleteDir(new File(dir, dirContent[i])); 
-				if (!success) { 
-					return false; 
-				} 
-			} 
-		} // The directory is now empty so delete it 
-		return dir.delete(); 
-	} 
+    public static boolean deleteDir(File dir) {
+		if (dir.isDirectory()) {
+			String[] dirContent = dir.list();
+			for (int i=0; i<dirContent.length; i++){
+				boolean success = deleteDir(new File(dir, dirContent[i]));
+				if (!success) {
+					return false;
+				}
+			}
+		} // The directory is now empty so delete it
+		return dir.delete();
+	}
     @After
     public void tearDown() throws Exception {
-        
+
         deleteDir(new File(trustedDirectory.getTempDirectoryName()));
         this.proxyFile1.deleteFile();
         this.proxyFile2.deleteFile();

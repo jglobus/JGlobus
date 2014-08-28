@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IgnoreProxyPolicyHandler implements ProxyPolicyHandler {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(IgnoreProxyPolicyHandler.class.getName());
 
     public void validate(ProxyCertInfo proxyCertInfo,
@@ -37,5 +37,5 @@ public class IgnoreProxyPolicyHandler implements ProxyPolicyHandler {
 	throws CertPathValidatorException {
 	logger.info("ProxyPolicy ignored: " + proxyCertInfo.getProxyPolicy().getPolicyLanguage().getId());
     }
-    
+
 }

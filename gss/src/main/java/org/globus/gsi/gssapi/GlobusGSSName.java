@@ -49,11 +49,11 @@ public class GlobusGSSName implements GSSName, Serializable {
             public MapEntry(Future<String> hostName, Long inserted) {
                 this.hostName = hostName;
                 this.inserted = inserted;
-            }    
+            }
         }
-        
+
         // Use TreeMap to avoid clustering in any case
-        final protected Map<String, MapEntry> cache = new TreeMap<String, MapEntry>();        
+        final protected Map<String, MapEntry> cache = new TreeMap<String, MapEntry>();
         final long duration;
         final ExecutorService threads = Executors.newCachedThreadPool(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
@@ -68,7 +68,7 @@ public class GlobusGSSName implements GSSName, Serializable {
         public ReverseDNSCache(long duration) {
             this.duration = duration;
         }
-        
+
         protected void enforceConstraints() {
             if(oldest + duration < System.currentTimeMillis()) {
                 long newOldest = System.currentTimeMillis();
@@ -109,16 +109,16 @@ public class GlobusGSSName implements GSSName, Serializable {
             }
 
         }
-        
+
     }
 
     static String queryHost(String name) throws UnknownHostException {
         InetAddress i = InetAddress.getByName(name);
         return InetAddress.getByName(i.getHostAddress()).getHostName();
     }
-    
+
     final static ReverseDNSCache reverseDNSCache = new ReverseDNSCache(CoGProperties.getDefault().getReveseDNSCacheLifetime());
-    
+
     protected Oid nameType;
     protected X500Principal name;
 
@@ -149,14 +149,14 @@ public class GlobusGSSName implements GSSName, Serializable {
 	    this.name = new X500Principal(name);
 	}
     }
-    
+
     /**
      * Creates name from Globus DN
      *
      * @param name Globus DN (e.g. /C=US/O=Globus/..) If null
      *        it is considered set as <code>GSSName.ANONYMOUS</code> name type.
      */
-    public GlobusGSSName(String name) 
+    public GlobusGSSName(String name)
 	throws GSSException {
 	if (name == null) {
 	    this.nameType = GSSName.NT_ANONYMOUS;
@@ -173,10 +173,10 @@ public class GlobusGSSName implements GSSName, Serializable {
     /**
      * Creates name from X509 name of specified type.
      *
-     * @param name 
+     * @param name
      *        Globus DN (e.g. /C=US/O=Globus/..) or service@host name. If null
      *        it is considered set as <code>GSSName.ANONYMOUS</code> name type.
-     * @param nameType name type. Only <code>GSSName.NT_ANONYMOUS</code> 
+     * @param nameType name type. Only <code>GSSName.NT_ANONYMOUS</code>
      *                 or <code>GSSName.NT_HOSTBASED_SERVICE</code> is supported.
      *                 Maybe be null.
      */
@@ -185,7 +185,7 @@ public class GlobusGSSName implements GSSName, Serializable {
 	if (name == null) {
 	    if (nameType != null && !nameType.equals(GSSName.NT_ANONYMOUS)) {
 		throw new GSSException(GSSException.BAD_NAMETYPE);
-	    } 
+	    }
 	    this.name = null;
 	    this.nameType = GSSName.NT_ANONYMOUS;
 	} else {
@@ -225,11 +225,11 @@ public class GlobusGSSName implements GSSName, Serializable {
 	}
 	// both subject & nameType might be null
     }
-    
+
     public boolean isAnonymous() {
 	return (this.name == null);
     }
-    
+
     public boolean isMN() {
 	return true;
     }
@@ -242,7 +242,7 @@ public class GlobusGSSName implements GSSName, Serializable {
 
 	if (isAnonymous()) {
 	    return another.isAnonymous();
-	} 
+	}
 
 	if (another.isAnonymous()) {
 	    return false;
@@ -251,7 +251,7 @@ public class GlobusGSSName implements GSSName, Serializable {
 	if (!(another instanceof GlobusGSSName)) {
 	    throw new GSSException(GSSException.FAILURE);
 	}
-	
+
 	GlobusGSSName other = (GlobusGSSName)another;
 
 	// both are not anonymous
@@ -261,7 +261,7 @@ public class GlobusGSSName implements GSSName, Serializable {
 	if ((nameType != null && nameType.equals(GSSName.NT_HOSTBASED_SERVICE)) ||
 	    (other.nameType != null && other.nameType.equals(GSSName.NT_HOSTBASED_SERVICE))) {
 	    // perform host based comparison
-	
+
 	    String hp1 = this.getHostBasedServiceCN(true);
 	    String hp2 = other.getHostBasedServiceCN(true);
 
@@ -269,7 +269,7 @@ public class GlobusGSSName implements GSSName, Serializable {
 		// something is really wrong
 		return false;
 	    }
-	    
+
 	    String service1 = getService(hp1);
 	    String service2 = getService(hp2);
 
@@ -380,13 +380,13 @@ public class GlobusGSSName implements GSSName, Serializable {
 	int pos = name.indexOf('/');
 	return (pos == -1) ? "host" : name.substring(0, pos);
     }
-    
+
     private static String getHost(String name) {
 	int pos = name.indexOf('/');
 	return (pos == -1) ? name : name.substring(pos+1);
     }
 
-    private static boolean compareHost(String host1, int i, 
+    private static boolean compareHost(String host1, int i,
 				       String host2, int j) {
 	if (host1.charAt(i) != '-') {
 	    throw new IllegalArgumentException();
@@ -400,9 +400,9 @@ public class GlobusGSSName implements GSSName, Serializable {
 	    }
 	}
 	if (size - i == host2.length() - j) {
-	    return host1.regionMatches(i, 
+	    return host1.regionMatches(i,
 				       host2,
-				       j, 
+				       j,
 				       size - i);
 	} else {
 	    return false;
@@ -441,7 +441,7 @@ public class GlobusGSSName implements GSSName, Serializable {
         oos.writeObject(name.getName());
     }
 
-    private void readObject(ObjectInputStream ois) 
+    private void readObject(ObjectInputStream ois)
         throws IOException, ClassNotFoundException {
 
         this.nameType = (Oid)ois.readObject();

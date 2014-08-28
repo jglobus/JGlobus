@@ -29,14 +29,14 @@ import org.apache.commons.logging.LogFactory;
  * Implements a simple identity authorization mechanism.
  * The given identify is compared with the peer's identity.
  */
-public class IdentityAuthorization 
+public class IdentityAuthorization
     extends GSSAuthorization {
 
     private static Log logger =
         LogFactory.getLog(IdentityAuthorization.class.getName());
 
     protected String _identity;
-    
+
     /**
      * Constructor used by superclasses.
      */
@@ -54,7 +54,7 @@ public class IdentityAuthorization
     }
 
     /**
-     * Sets the expected identity for the authorization 
+     * Sets the expected identity for the authorization
      * check.
      *
      * @param identity the expected identity. Must not be null.
@@ -65,7 +65,7 @@ public class IdentityAuthorization
         }
         _identity = identity;
     }
-    
+
     /**
      * Returns the expected identity.
      *
@@ -75,7 +75,7 @@ public class IdentityAuthorization
         return _identity;
     }
 
-    public GSSName getExpectedName(GSSCredential cred, String host) 
+    public GSSName getExpectedName(GSSCredential cred, String host)
         throws GSSException {
         GSSManager manager = ExtendedGSSManager.getInstance();
         return manager.createName(_identity, null);
@@ -96,14 +96,14 @@ public class IdentityAuthorization
 
         try {
             GSSName expected = getExpectedName(null, host);
-        
+
             GSSName target = null;
             if (context.isInitiator()) {
                 target = context.getTargName();
             } else {
                 target = context.getSrcName();
             }
-            
+
             if (!expected.equals(target)) {
                 generateAuthorizationException(expected, target);
             }
@@ -111,7 +111,7 @@ public class IdentityAuthorization
             throw new AuthorizationException("Authorization failure", e);
         }
     }
-    
+
     public boolean equals(Object o) {
         if (o == null) {
             return false;
@@ -129,9 +129,9 @@ public class IdentityAuthorization
         }
         return false;
     }
-    
+
     public int hashCode() {
         return (this._identity == null) ? 0 : this._identity.hashCode();
     }
-    
+
 }

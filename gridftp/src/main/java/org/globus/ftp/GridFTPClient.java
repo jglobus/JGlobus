@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,12 +55,12 @@ import org.globus.ftp.exception.FTPException;
  * {@link #setMode(int) setMode()}, {@link #setType(int) setType()},
  * {@link #setDataChannelProtection(int) setDataChannelProtection()},
  * and {@link #setDataChannelAuthentication(DataChannelAuthentication)
- * setDataChannelAuthentication()} that affect data channel settings 
- * <b>must</b> be called before passive or active data channel mode is set. 
+ * setDataChannelAuthentication()} that affect data channel settings
+ * <b>must</b> be called before passive or active data channel mode is set.
  **/
 public class GridFTPClient extends FTPClient {
 
-    private static Log logger = 
+    private static Log logger =
         LogFactory.getLog(GridFTPClient.class.getName());
 
     //utility alias to session and localServer
@@ -70,11 +70,11 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Constructs client and connects it to the remote server.
-     * 
+     *
      * @param host remote server host
      * @param port remote server port
      */
-    public GridFTPClient(String host, int port) 
+    public GridFTPClient(String host, int port)
         throws IOException, ServerException {
         gSession = new GridFTPSession();
         session = gSession;
@@ -82,7 +82,7 @@ public class GridFTPClient extends FTPClient {
         controlChannel = new GridFTPControlChannel(host, port);
         controlChannel.open();
 
-        gLocalServer = 
+        gLocalServer =
             new GridFTPServerFacade((GridFTPControlChannel)controlChannel);
         localServer = gLocalServer;
         gLocalServer.authorize();
@@ -132,7 +132,7 @@ public class GridFTPClient extends FTPClient {
 
         // quietly send version information to the server.
         // ignore errors
-        try   
+        try
         {
             String version = Version.getVersion();
 
@@ -144,13 +144,13 @@ public class GridFTPClient extends FTPClient {
     }
 
     /**
-     * Performs remote directory listing like 
-     * {@link FTPClient#list(String,String) FTPClient.list()}. 
+     * Performs remote directory listing like
+     * {@link FTPClient#list(String,String) FTPClient.list()}.
      * <b>Note:</b> This method cannot be used
      * in conjunction with parallelism or striping; set parallelism to
      * 1 before calling it. Otherwise, use
      * {@link FTPClient#list(String,String,DataSink) FTPClient.list()}.
-     * Unlike in vanilla FTP, here IMAGE mode is allowed. 
+     * Unlike in vanilla FTP, here IMAGE mode is allowed.
      * For more documentation, look at FTPClient.
      */
     public Vector list(String filter, String modifier)
@@ -165,15 +165,15 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Performs remote directory listing like
-     * {@link FTPClient#nlist(String) FTPClient.nlist()}. 
+     * {@link FTPClient#nlist(String) FTPClient.nlist()}.
      * <b>Note:</b> This method cannot be used
      * in conjunction with parallelism or striping; set parallelism to
-     * 1 before calling it. Otherwise, use 
+     * 1 before calling it. Otherwise, use
      * {@link FTPClient#nlist(String,DataSink) FTPClient.nlist()}.
-     * Unlike in vanilla FTP, here IMAGE mode is allowed. 
+     * Unlike in vanilla FTP, here IMAGE mode is allowed.
      * For more documentation, look at FTPClient.
      */
-    public Vector nlist(String path) 
+    public Vector nlist(String path)
         throws ServerException, ClientException, IOException {
         if (gSession.parallel > 1) {
             throw new ClientException(
@@ -185,12 +185,12 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Performs remote directory listing like
-     * {@link FTPClient#mlsd(String) FTPClient.mlsd()}. 
+     * {@link FTPClient#mlsd(String) FTPClient.mlsd()}.
      * <b>Note:</b> This method cannot be used
      * in conjunction with parallelism or striping; set parallelism to
-     * 1 before calling it. Otherwise, use 
+     * 1 before calling it. Otherwise, use
      * {@link FTPClient#mlsd(String,DataSink) FTPClient.mlsd()}.
-     * Unlike in vanilla FTP, here IMAGE mode is allowed. 
+     * Unlike in vanilla FTP, here IMAGE mode is allowed.
      * For more documentation, look at FTPClient.
      */
     public Vector mlsd(String filter)
@@ -211,8 +211,8 @@ public class GridFTPClient extends FTPClient {
         throws ServerException, IOException, ClientException {
         Session localSession = localServer.getSession();
         session.matches(localSession);
-        
-        // if transfer modes have not been defined, 
+
+        // if transfer modes have not been defined,
         // set this (dest) as active
         if (session.serverMode == Session.SERVER_DEFAULT) {
 	    HostPort hp = setLocalPassive();
@@ -223,14 +223,14 @@ public class GridFTPClient extends FTPClient {
     protected String getModeStr(int mode)
     {
         switch (mode) {
-        case Session.MODE_STREAM: 
+        case Session.MODE_STREAM:
             return "S";
-        case Session.MODE_BLOCK: 
+        case Session.MODE_BLOCK:
             return "B";
-        case GridFTPSession.MODE_EBLOCK: 
+        case GridFTPSession.MODE_EBLOCK:
             return "E";
-        default: 
-            throw new IllegalArgumentException("Bad mode: " + mode); 
+        default:
+            throw new IllegalArgumentException("Bad mode: " + mode);
         }
     }
 
@@ -238,14 +238,14 @@ public class GridFTPClient extends FTPClient {
      * Sets remote server TCP buffer size, in the following way:
      * First see if server supports "SBUF" and if so, use it.
      * If not, try the following commands until success:
-     * "SITE RETRBUFSIZE", "SITE RBUFSZ", "SITE RBUFSIZ", 
+     * "SITE RETRBUFSIZE", "SITE RBUFSZ", "SITE RBUFSIZ",
      * "SITE STORBUFSIZE", "SITE SBUFSZ", "SITE SBUFSIZ",
      * "SITE BUFSIZE".
-     * Returns normally if the server confirms successfull setting of the 
+     * Returns normally if the server confirms successfull setting of the
      * remote buffer size, both for sending and for receiving data.
      * Otherwise, throws ServerException.
      **/
-    public void setTCPBufferSize(int size) 
+    public void setTCPBufferSize(int size)
         throws IOException, ServerException {
         if (size <= 0) {
             throw new IllegalArgumentException("size <= 0");
@@ -258,26 +258,26 @@ public class GridFTPClient extends FTPClient {
             if (feat.contains(FeatureList.SBUF)) {
                 succeeded = tryExecutingCommand( new Command("SBUF", sizeString));
             }
-            
+
             if (!succeeded) {
                 succeeded = tryExecutingCommand( new Command("SITE BUFSIZE", sizeString));
             }
-            
+
             if (!succeeded) {
                 succeeded = tryExecutingTwoCommands(new Command("SITE RETRBUFSIZE", sizeString),
                                                     new Command("SITE STORBUFSIZE", sizeString));
             }
-            
+
             if (!succeeded) {
                 succeeded = tryExecutingTwoCommands(new Command("SITE RBUFSZ", sizeString),
                                                     new Command("SITE SBUFSZ", sizeString));
             }
-            
+
             if (!succeeded) {
                 succeeded = tryExecutingTwoCommands(new Command("SITE RBUFSIZ", sizeString),
                                                     new Command("SITE SBUFSIZ", sizeString));
             }
-            
+
             if (succeeded) {
                 this.gSession.TCPBufferSize = size;
             } else {
@@ -290,9 +290,9 @@ public class GridFTPClient extends FTPClient {
         }
     }
 
-    private boolean tryExecutingTwoCommands(Command cmd1, Command cmd2) 
-        throws IOException, 
-               FTPReplyParseException, 
+    private boolean tryExecutingTwoCommands(Command cmd1, Command cmd2)
+        throws IOException,
+               FTPReplyParseException,
                ServerException {
         boolean result = tryExecutingCommand(cmd1);
         if (result) {
@@ -305,36 +305,36 @@ public class GridFTPClient extends FTPClient {
      * This is like controlChannel.executeCommand, only that negative reply it
      * returns "false" rather than throwing exception
      */
-    private boolean tryExecutingCommand(Command cmd) 
-        throws IOException, 
-               FTPReplyParseException, 
+    private boolean tryExecutingCommand(Command cmd)
+        throws IOException,
+               FTPReplyParseException,
                ServerException {
         Reply reply = controlChannel.exchange(cmd);
         return Reply.isPositiveCompletion(reply);
     }
-                
+
     /**
      * Sets local TCP buffer size (for both receiving and sending).
      **/
-    public void setLocalTCPBufferSize(int size) 
+    public void setLocalTCPBufferSize(int size)
         throws ClientException {
         if (size <=0 ) {
             throw new IllegalArgumentException("size <= 0");
         }
         gLocalServer.setTCPBufferSize(size);
-        
+
     }
-    
+
     /**
      * Sets remote server to striped passive server mode (SPAS).
      **/
-    public HostPortList setStripedPassive() 
-        throws IOException, 
+    public HostPortList setStripedPassive()
+        throws IOException,
                ServerException {
-        Command cmd = new Command("SPAS", 
+        Command cmd = new Command("SPAS",
                                   (controlChannel.isIPv6()) ? "2" : null);
         Reply reply = null;
-        
+
         try {
             reply = controlChannel.execute(cmd);
         } catch (UnexpectedReplyCodeException urce) {
@@ -342,10 +342,10 @@ public class GridFTPClient extends FTPClient {
         } catch(FTPReplyParseException rpe) {
             throw ServerException.embedFTPReplyParseException(rpe);
         }
-        
+
         this.gSession.serverMode = GridFTPSession.SERVER_EPAS;
         if (controlChannel.isIPv6()) {
-            gSession.serverAddressList = 
+            gSession.serverAddressList =
                 HostPortList.parseIPv6Format(reply.getMessage());
             int size = gSession.serverAddressList.size();
             for (int i=0;i<size;i++) {
@@ -356,20 +356,20 @@ public class GridFTPClient extends FTPClient {
                 }
             }
         } else {
-            gSession.serverAddressList = 
+            gSession.serverAddressList =
                 HostPortList.parseIPv4Format(reply.getMessage());
         }
         return gSession.serverAddressList;
     }
-    
+
     /**
      * Sets remote server to striped active server mode (SPOR).
      **/
     public void setStripedActive(HostPortList hpl)
-        throws IOException, 
+        throws IOException,
                ServerException {
         Command cmd = new Command("SPOR", hpl.toFtpCmdArgument());
-        
+
         try {
             controlChannel.execute(cmd);
         } catch (UnexpectedReplyCodeException urce) {
@@ -377,11 +377,11 @@ public class GridFTPClient extends FTPClient {
         } catch(FTPReplyParseException rpe) {
             throw ServerException.embedFTPReplyParseException(rpe);
         }
-        
+
         this.gSession.serverMode = GridFTPSession.SERVER_EACT;
     }
-    
-    /** 
+
+    /**
      * Starts local server in striped passive mode. Since the local server
      * is not distributed, it will only listen on one socket.
      *
@@ -391,29 +391,29 @@ public class GridFTPClient extends FTPClient {
      * @return the HostPortList of 1 element representing the socket where the
      *         local server is listening
      **/
-    public HostPortList setLocalStripedPassive(int port, int queue) 
+    public HostPortList setLocalStripedPassive(int port, int queue)
         throws IOException {
         return gLocalServer.setStripedPassive(port, queue);
     }
 
     /**
-     * Behaves like setLocalStripedPassive(FTPServerFacade.ANY_PORT, 
+     * Behaves like setLocalStripedPassive(FTPServerFacade.ANY_PORT,
      * FTPServerFacade.DEFAULT_QUEUE)
      **/
-    public HostPortList setLocalStripedPassive() 
+    public HostPortList setLocalStripedPassive()
         throws IOException {
         return gLocalServer.setStripedPassive();
     }
 
-    /** 
+    /**
      * Starts local server in striped active mode.
      * setStripedPassive() must be called before that.
      * This method takes no parameters. HostPortList of the remote
      * server, known from the last call of setStripedPassive(), is stored
      * internally and the local server will connect to this address.
      **/
-    public void setLocalStripedActive() 
-        throws ClientException, 
+    public void setLocalStripedActive()
+        throws ClientException,
                IOException {
         if (gSession.serverAddressList == null) {
             throw new ClientException(ClientException.CALL_PASSIVE_FIRST);
@@ -465,7 +465,7 @@ public class GridFTPClient extends FTPClient {
         throws IOException,
                ClientException,
                ServerException {
-        
+
         // servers support GridFTP?
         checkGridFTPSupport();
         // all parameters set correctly (or still unset)?
@@ -473,17 +473,17 @@ public class GridFTPClient extends FTPClient {
 
         gLocalServer.store(sink);
 
-        controlChannel.write(new Command("ERET", 
+        controlChannel.write(new Command("ERET",
                                          "P " + offset + " " + size
                                          + " " + remoteFileName));
-        
+
         transferRunSingleThread(localServer.getControlChannel(),
                                 mListener);
     }
 
     /**
      * Performs extended store (adujsted store mode with offset 0).
-     * 
+     *
      * @param remoteFileName file name to store
      * @param source source for the data to transfer
      * @param mListener marker listener
@@ -502,7 +502,7 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Performs extended store (adujsted store mode).
-     * 
+     *
      * @param remoteFileName file name to store
      * @param offset the offset added to the file pointer before storing
      *               the blocks of the file.
@@ -525,11 +525,11 @@ public class GridFTPClient extends FTPClient {
         localServer.retrieve(source);
 
         controlChannel.write(new Command("ESTO",
-                                         "A " + offset + " " + 
+                                         "A " + offset + " " +
                                          remoteFileName));
-        
+
         transferRunSingleThread(localServer.getControlChannel(),
-                                mListener);                      
+                                mListener);
     }
 
     /*
@@ -538,7 +538,7 @@ public class GridFTPClient extends FTPClient {
 
 
     /**
-     * Performs a third-party transfer between two servers using extended 
+     * Performs a third-party transfer between two servers using extended
      * block mode.
      * If server modes are unset, source will be set to active
      * and destination to passive.
@@ -549,19 +549,19 @@ public class GridFTPClient extends FTPClient {
      * @param mListener     transer progress listener.
      *                      Can be set to null.
      */
-    public void extendedTransfer(String remoteSrcFile, 
-                                 GridFTPClient destination, 
+    public void extendedTransfer(String remoteSrcFile,
+                                 GridFTPClient destination,
                                  String remoteDstFile,
                                  MarkerListener mListener)
         throws IOException, ServerException, ClientException {
         extendedTransfer(remoteSrcFile, 0, getSize(remoteSrcFile),
-                         destination, 
+                         destination,
                          remoteDstFile, 0,
                          mListener);
     }
 
     /**
-     * Performs a third-party transfer between two servers using extended 
+     * Performs a third-party transfer between two servers using extended
      * block mode.
      * If server modes are unset, source will be set to active
      * and destination to passive.
@@ -575,10 +575,10 @@ public class GridFTPClient extends FTPClient {
      * @param mListener     transer progress listener.
      *                      Can be set to null.
      */
-    public void extendedTransfer(String remoteSrcFile, 
+    public void extendedTransfer(String remoteSrcFile,
                                  long remoteSrcFileOffset,
                                  long remoteSrcFileLength,
-                                 GridFTPClient destination, 
+                                 GridFTPClient destination,
                                  String remoteDstFile,
                                  long remoteDstFileOffset,
                                  MarkerListener mListener)
@@ -591,32 +591,32 @@ public class GridFTPClient extends FTPClient {
         destination.checkGridFTPSupport();
         // all parameters set correctly (or still unset)?
         gSession.matches(destination.gSession);
-        
+
         //mode E
         if (gSession.transferMode != GridFTPSession.MODE_EBLOCK) {
             throw new ClientException(ClientException.BAD_MODE,
                 "Extended transfer mode is necessary");
         }
 
-        // if transfer modes have not been defined, 
+        // if transfer modes have not been defined,
         // set this (source) as active
         if (gSession.serverMode == Session.SERVER_DEFAULT) {
             HostPort hp = destination.setPassive();
             this.setActive(hp);
-        } 
+        }
 
-        Command estoCmd = 
+        Command estoCmd =
             new Command("ESTO",
                         "A " + remoteDstFileOffset + " " + remoteDstFile);
         destination.controlChannel.write(estoCmd);
-        
+
         Command eretCmd =
-            new Command("ERET", 
+            new Command("ERET",
                         "P " + remoteSrcFileOffset + " " + remoteSrcFileLength
                         + " " + remoteSrcFile);
-        
+
         controlChannel.write(eretCmd);
-        
+
         transferRunSingleThread(destination.controlChannel, mListener);
     }
 
@@ -765,9 +765,9 @@ public class GridFTPClient extends FTPClient {
      * assure that the server supports extended transfer features;
      * throw exception if not
      **/
-    protected void checkGridFTPSupport() 
+    protected void checkGridFTPSupport()
         throws IOException,
-               ServerException {            
+               ServerException {
         FeatureList fl = getFeatureList();
         if (
             !(fl.contains(FeatureList.PARALLEL)
@@ -785,12 +785,12 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Sets data channel authentication mode (DCAU)
-     * 
+     *
      * @param type for 2-party transfer must be
      * DataChannelAuthentication.SELF or DataChannelAuthentication.NONE
      **/
-    public void setDataChannelAuthentication(DataChannelAuthentication type) 
-        throws IOException, 
+    public void setDataChannelAuthentication(DataChannelAuthentication type)
+        throws IOException,
                ServerException {
 
         Command cmd = new Command("DCAU", type.toFtpCmdArgument());
@@ -811,10 +811,10 @@ public class GridFTPClient extends FTPClient {
 
         gLocalServer.setDataChannelAuthentication(type);
     }
-    
+
     /**
      * Sets compatibility mode with old GSIFTP server.
-     * Locally sets data channel authentication to NONE 
+     * Locally sets data channel authentication to NONE
      * but does not send the command
      * to the remote server (the server wouldn't understand it)
      **/
@@ -824,7 +824,7 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Returns data channel authentication mode (DCAU).
-     * 
+     *
      * @return data channel authentication mode
      **/
     public DataChannelAuthentication getDataChannelAuthentication() {
@@ -834,7 +834,7 @@ public class GridFTPClient extends FTPClient {
     /**
      * Sets data channel protection level (PROT).
      *
-     * @param protection should be 
+     * @param protection should be
      *             {@link GridFTPSession#PROTECTION_CLEAR CLEAR},
      *             {@link GridFTPSession#PROTECTION_SAFE SAFE}, or
      *             {@link GridFTPSession#PROTECTION_PRIVATE PRIVATE}, or
@@ -856,7 +856,7 @@ public class GridFTPClient extends FTPClient {
         default: throw new IllegalArgumentException("Bad protection: " +
                                                     protection);
         }
-        
+
         Command cmd = new Command("PROT", protectionStr);
         try {
             controlChannel.execute(cmd);
@@ -868,13 +868,13 @@ public class GridFTPClient extends FTPClient {
 
         this.gSession.dataChannelProtection = protection;
 
-        gLocalServer.setDataChannelProtection(protection);      
+        gLocalServer.setDataChannelProtection(protection);
     }
-    
+
     /**
      * Returns data channel protection level.
-     * 
-     * @return data channel protection level: 
+     *
+     * @return data channel protection level:
      *             {@link GridFTPSession#PROTECTION_CLEAR CLEAR},
      *             {@link GridFTPSession#PROTECTION_SAFE SAFE}, or
      *             {@link GridFTPSession#PROTECTION_PRIVATE PRIVATE}, or
@@ -892,10 +892,10 @@ public class GridFTPClient extends FTPClient {
     public void setAuthorization(Authorization authorization) {
         ((GridFTPControlChannel)this.controlChannel).setAuthorization(authorization);
     }
-    
+
     /**
      * Returns authorization method for the control channel.
-     * 
+     *
      * @return authorization method performed on the control channel.
      */
     public Authorization getAuthorization() {
@@ -905,7 +905,7 @@ public class GridFTPClient extends FTPClient {
     /**
      * Sets control channel protection level.
      *
-     * @param protection should be 
+     * @param protection should be
      *             {@link GridFTPSession#PROTECTION_CLEAR CLEAR},
      *             {@link GridFTPSession#PROTECTION_SAFE SAFE}, or
      *             {@link GridFTPSession#PROTECTION_PRIVATE PRIVATE}, or
@@ -917,8 +917,8 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Returns control channel protection level.
-     * 
-     * @return control channel protection level: 
+     *
+     * @return control channel protection level:
      *             {@link GridFTPSession#PROTECTION_CLEAR CLEAR},
      *             {@link GridFTPSession#PROTECTION_SAFE SAFE}, or
      *             {@link GridFTPSession#PROTECTION_PRIVATE PRIVATE}, or
@@ -931,12 +931,12 @@ public class GridFTPClient extends FTPClient {
     // basic compatibility API
 
     public void get(String remoteFileName,
-                    File localFile) 
+                    File localFile)
         throws IOException,
                ClientException,
                ServerException {
         if (gSession.transferMode == GridFTPSession.MODE_EBLOCK) {
-            DataSink sink = 
+            DataSink sink =
                 new FileRandomIO(new RandomAccessFile(localFile, "rw"));
             get(remoteFileName, sink, null);
         } else {
@@ -946,12 +946,12 @@ public class GridFTPClient extends FTPClient {
 
     public void put(File localFile,
                     String remoteFileName,
-                    boolean append) 
+                    boolean append)
         throws IOException,
                ServerException,
                ClientException{
         if (gSession.transferMode == GridFTPSession.MODE_EBLOCK) {
-            DataSource source = 
+            DataSource source =
                 new FileRandomIO(new RandomAccessFile(localFile, "r"));
             put(remoteFileName, source, null, append);
         } else {
@@ -989,16 +989,16 @@ public class GridFTPClient extends FTPClient {
      * @param offset the offset
      * @param length the length
      * @param file file to compute checksum of
-     * @return the computed checksum 
+     * @return the computed checksum
      * @exception ServerException if an error occured.
      */
     public String checksum(ChecksumAlgorithm algorithm,
-                           long offset, long length, String file) 
+                           long offset, long length, String file)
         throws IOException, ServerException {
-        String arguments = algorithm.toFtpCmdArgument() + " " + 
+        String arguments = algorithm.toFtpCmdArgument() + " " +
             String.valueOf(offset) + " " +
             String.valueOf(length) + " " + file;
-        
+
         Command cmd = new Command("CKSM", arguments);
         Reply reply = null;
         try {
@@ -1016,7 +1016,7 @@ public class GridFTPClient extends FTPClient {
      * (or, if path is null, at the current directory of the FTP server).
      * MlsxEntry instances for all of the files in the subtree will be
      * written through the passed MlsxEntryWriter.
-     * 
+     *
      * @param path path to begin recursive directory listing
      * @param writer sink for created MlsxEntry instances
      * @throws ServerException
@@ -1074,10 +1074,10 @@ public class GridFTPClient extends FTPClient {
             writer.close();
         }
     }
-   
+
     /**
      * Change the Unix group membership of a file.
-     * 
+     *
      * @param group the name or ID of the group
      * @param file the file whose group membership should be changed
      * @exception ServerException if an error occurred.
@@ -1097,7 +1097,7 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Change the modification time of a file.
-     * 
+     *
      * @param year      Modifcation year
      * @param month     Modification month (1-12)
      * @param day       Modification day (1-31)
@@ -1128,7 +1128,7 @@ public class GridFTPClient extends FTPClient {
 
     /**
      * Create a symbolic link on the FTP server.
-     * 
+     *
      * @param link_target the path to which the symbolic link should point
      * @param link_name the path of the symbolic link to create
      * @throws IOException
@@ -1148,5 +1148,5 @@ public class GridFTPClient extends FTPClient {
             throw ServerException.embedFTPReplyParseException(rpe);
         }
     }
- 
+
 }

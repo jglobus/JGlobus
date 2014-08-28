@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +30,12 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>
- * Represents the FTP reply. 
+ * Represents the FTP reply.
  * </p>
  */
-public class Reply 
+public class Reply
     implements Serializable {
-    
+
     private static Log logger = LogFactory.getLog(Reply.class.getName());
 
     public static final int POSITIVE_PRELIMINARY             = 1;
@@ -63,8 +63,8 @@ public class Reply
      * @throws IOException on I/O problem
      * @throws FTPReplyParseException if cannot parse
      **/
-    public Reply(BufferedReader input) 
-	throws FTPReplyParseException, 
+    public Reply(BufferedReader input)
+	throws FTPReplyParseException,
 	       EOFException,
 	       IOException {
 	logger.debug( "read 1st line");
@@ -80,11 +80,11 @@ public class Reply
 
 	//for compatibility with GT2.0 wuftp server which is incorrectly inserting \0 between lines
 	line = ignoreLeading0(line);
-	
+
 	if(line.length() < MIN_FIRST_LEN) {
 	    throw new FTPReplyParseException(
 					 FTPReplyParseException.STRING_TOO_SHORT,
-					 "Minimum 1st line length = " + MIN_FIRST_LEN 
+					 "Minimum 1st line length = " + MIN_FIRST_LEN
 					 + ". Here's the incorrect 1st line ->"
 					 + line + "<-");
 	}
@@ -97,22 +97,22 @@ public class Reply
 	} catch (NumberFormatException e) {
 	    throw new FTPReplyParseException(
 					 FTPReplyParseException.FIRST_3_CHARS,
-					 "Here's the incorrect line ->" 
+					 "Here's the incorrect line ->"
 					 + line + "<-" +
 					 "and the first 3 chars ->" + codeString + "<-"
 					 );
-	} 
+	}
 
 	// category
 	category = line.charAt(0) - '0';
-	
+
 	// message
 	char char4 = line.charAt(3);
 
 	//do not include 4th char in message
 	message = line.substring(4, line.length());
 
-	if (char4 == ' ') {	    
+	if (char4 == ' ') {
 
 	    //single line reply
 	    isMultiline = false;
@@ -122,16 +122,16 @@ public class Reply
 	    //multi - line reply
 
             isMultiline = true;
-	    
+
 	    String lastLineStarts = codeString + ' ';
 	    //platform dependent line separator
 	    String lineSeparator = System.getProperty("line.separator");
-	    if (logger.isDebugEnabled()) { 
+	    if (logger.isDebugEnabled()) {
 		logger.debug(
-			     "multiline reply; last line should start with ->" 
+			     "multiline reply; last line should start with ->"
 			     + lastLineStarts + "<-");
-		logger.debug("lenght of line.separator on this OS: " + 
-			     lineSeparator.length()); 
+		logger.debug("lenght of line.separator on this OS: " +
+			     lineSeparator.length());
 	    }
 	    StringBuffer buf = new StringBuffer(message);
 	    for (;;) {
@@ -143,15 +143,15 @@ public class Reply
 		    throw new EOFException();
 		}
 
-		//for compatibility with GT2.0 wuftp server 
+		//for compatibility with GT2.0 wuftp server
 		//which is incorrectly inserting \0 between lines
 		line = ignoreLeading0(line);
-		if (logger.isDebugEnabled()) { 
+		if (logger.isDebugEnabled()) {
 		    logger.debug( "line : ->" + line + "<-");
 		}
 		buf.append(lineSeparator).append(line);
 
-		if (line.startsWith(lastLineStarts)) { 
+		if (line.startsWith(lastLineStarts)) {
 		    logger.debug("end reached");
 		    break;
 		}
@@ -161,15 +161,15 @@ public class Reply
 	} else  {
 	    throw new FTPReplyParseException(
 					     FTPReplyParseException.UNEXPECTED_4TH_CHAR,
-					     "Here's the incorrect line ->" 
+					     "Here's the incorrect line ->"
 					     + line + "<-" );
 	}
     }
 
     /**
-     * 
-     * @return the first digit of the reply code. 
-     * 
+     *
+     * @return the first digit of the reply code.
+     *
      */
     public int getCategory() {
 	return category;
@@ -196,7 +196,7 @@ public class Reply
      * dash &quot;-&quot; and the CRLF following the last line, excluding the mentioned
      * dash and CRLF. Note that lines are separated by the local line separator
      * [as returned by System.getProperty("line.separator")] rather than CRLF.
-     * 
+     *
      * </p>
      * <p>
      *
@@ -204,7 +204,7 @@ public class Reply
      */
     public String getMessage() {
         return message;
-    } 
+    }
 
     public static boolean isPositivePreliminary(Reply reply) {
 	return (reply.getCategory() == POSITIVE_PRELIMINARY);
@@ -241,7 +241,7 @@ public class Reply
 	    logger.debug("WARNING: The first character of the reply is 0. Ignoring the character.");
 	    /*
 	    logger.debug( "\n\nWARNING:\n In the reply received from the server, the first character's code is 0! I will ignore it but this means the server is not following the protocol. Here's the details: \n first line of the reply ->" + line + "<-");
-	    logger.debug( "First 3 chars of reply->" +line.substring(0,3)+"<-"); 
+	    logger.debug( "First 3 chars of reply->" +line.substring(0,3)+"<-");
 	    logger.debug( "char 0 ->" + line.charAt(0) + "<- code = " + (int)line.charAt(0));
 	    logger.debug( "char 1 ->" + line.charAt(1) + "<- code = " + (int)line.charAt(1));
 	    logger.debug( "char 2 ->" + line.charAt(2) + "<- code = " + (int)line.charAt(2));

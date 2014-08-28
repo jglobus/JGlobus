@@ -17,7 +17,7 @@ class FTPGet
 		int port = 5555;
 		String username = "anonymous";
 		String password = "anonymous";
-		
+
 		try
 		{
 			ftp = new FTPClient(hostname, port);
@@ -37,14 +37,14 @@ class FTPGet
 		File localFile = new File("passwd");
 		String remoteFile = "/etc/passwd";
 		DataSink sink = null;
-		
+
 		try
 		{
 			sink = new DataSinkStream(new FileOutputStream(localFile));
 		}
 		catch(FileNotFoundException e)
 		{
-			System.out.println("could not access client destination: " + 
+			System.out.println("could not access client destination: " +
 				e.toString());
 			System.exit(1);
 		}

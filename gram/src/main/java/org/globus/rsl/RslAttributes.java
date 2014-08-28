@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,9 +24,9 @@ import java.util.*;
  * values of specified attributes.
  */
 public class RslAttributes {
-    
+
     protected RslNode rslTree;
-    
+
     /**
      * Creates an empty RslAttributes object.
      */
@@ -46,12 +46,12 @@ public class RslAttributes {
 
     /**
      * Creates a new RslAttributes object from
-     * specified RSL string. 
+     * specified RSL string.
      *
      * @param rsl the rsl string.
      * @exception ParseException if the rsl cannot be parsed.
      */
-    public RslAttributes(String rsl) 
+    public RslAttributes(String rsl)
 	throws ParseException {
 	rslTree = RSLParser.parse(rsl);
     }
@@ -83,15 +83,15 @@ public class RslAttributes {
 	    return ((Value)obj).getCompleteValue();
 	} else {
 	    return null;
-	}	
+	}
     }
-    
+
     /**
      * Returns a list of strings for a specified attribute.
      * For example for 'arguments' attribute.
      *
      * @param attribute the rsl attribute to return the values of.
-     * @return the list of values of the relation. Each value is 
+     * @return the list of values of the relation. Each value is
      *         a string. Null is returned if there is no such
      *         attribute or the attribute/values relation is not
      *         an equality relation.
@@ -152,7 +152,7 @@ public class RslAttributes {
 	}
 	return map;
     }
-    
+
     /**
      * Returns a variable name/value pair map of variable definitions.
      * Currently specified by the 'rsl_substitution' attribute.
@@ -162,7 +162,7 @@ public class RslAttributes {
      * @return a variable name/value pair map. Null, if there is no
      *          definitions for a specified attribute.
      *
-     */    
+     */
     public Map getVariables(String attribute) {
 	Bindings binds = rslTree.getBindings(attribute);
 	if (binds == null) return null;
@@ -177,7 +177,7 @@ public class RslAttributes {
         }
         return map;
     }
-    
+
     /**
      * Adds a new variable definition to the specified variable definitions
      * attribute.
@@ -194,14 +194,14 @@ public class RslAttributes {
 	}
 	binds.add(new Binding(varName, value));
     }
-    
+
     /**
      * Removes a specific variable definition given a variable name.
      *
      * @param attribute the attribute that defines variable definitions.
      * @param varName the name of the variable to remove.
      * @return true if the variable was successfully removed. Otherwise,
-     *         returns false, 
+     *         returns false,
      */
     public boolean removeVariable(String attribute, String varName) {
 	Bindings binds = rslTree.getBindings(attribute);
@@ -225,14 +225,14 @@ public class RslAttributes {
      * @param attribute the attribute from which to remote the value from.
      * @param value the specific value to remove.
      * @return true if the value was successfully removed. Otherwise,
-     *         returns false, 
+     *         returns false,
      */
     public boolean remove(String attribute, String value) {
 	NameOpValue nv = rslTree.getParam(attribute);
 	if (nv == null || nv.getOperator() != NameOpValue.EQ) return false;
 	return nv.remove(new Value(value));
     }
-    
+
     /**
      * Removes a specific key from a list of values of the specified
      * attribute. The attribute values must be in the right form. See
@@ -240,7 +240,7 @@ public class RslAttributes {
      *
      * @param attribute the attribute to remove the key from.
      * @param key the key to remove.
-     * @return true if the key was successfully removed. Otherwise, 
+     * @return true if the key was successfully removed. Otherwise,
      *         returns false.
      */
     public boolean removeMap(String attribute, String key) {
@@ -306,8 +306,8 @@ public class RslAttributes {
     public void add(String attribute, String value) {
 	NameOpValue nv = getRelation(attribute);
 	nv.add(new Value(value));
-    }    
-    
+    }
+
     /**
      * Sets the attribute value to the given list of values.
      * The list of values is added as a single value.
@@ -334,16 +334,16 @@ public class RslAttributes {
      */
     public void addMulti(String attribute, String [] values) {
 	NameOpValue nv = getRelation(attribute);
-	
+
 	List list = new LinkedList();
 	for (int i=0;i<values.length;i++) {
 	    list.add(new Value(values[i]));
 	}
 	nv.add(list);
-    }    
-    
+    }
+
     // --- Compatibility API with old RslAttributes class ---
-    
+
     /**
      * Returns the first value of a specified attribute.
      *
@@ -372,5 +372,5 @@ public class RslAttributes {
     public String toRSL() {
 	return rslTree.toRSL(true);
     }
-    
+
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@ import java.util.Vector;
 
 /**
  * Utility class for parsing
- * and converting host-port information from SPAS 
+ * and converting host-port information from SPAS
  * and SPOR FTP commands. Represents a list of host-port pairs.
  */
 public class HostPortList {
@@ -33,14 +33,14 @@ public class HostPortList {
       to vector, since we receive a string from server A and send a similar
       string to server B. However in client-server transfer, we do need internal
       vector representation.
-      Internally, if the constructor gets string as parameter, the default 
+      Internally, if the constructor gets string as parameter, the default
       representation remains string. Whenever you call a modifier method like
       add(), the string becomes out of date and then the vector is used.
       The string can become up to date again if updateString() called.
       The vector is not usable until updateVector() is first called,
       and then it always remains up to date.
     */
-    
+
     //internal string, in form of parameters to SPOR command
     private String sporCommandParam;
     private Vector vector = null;
@@ -74,7 +74,7 @@ public class HostPortList {
         this.vector.add(hp);
         this.sporCommandParam = null;
     }
-    
+
     /**
      * @return number of elements in the list
      **/
@@ -86,13 +86,13 @@ public class HostPortList {
      * @return element of the specified index
      **/
     public HostPort get(int index) {
-        return (this.vector == null) ? 
+        return (this.vector == null) ?
             null : (HostPort)this.vector.elementAt(index);
     }
 
     /**
      * Returns the host-port infromation in the
-     * format used by SPOR command. 
+     * format used by SPOR command.
      *
      * @return host-port information in SPOR command parameter
      *         representation.
@@ -126,7 +126,7 @@ public class HostPortList {
                     throw new IllegalArgumentException(
                          "Not a proper reply message " +
                          "->" + line  + "<-");
-                }    
+                }
             }
             line = line.trim();
             if (line.startsWith("229")) {
@@ -164,7 +164,7 @@ public class HostPortList {
         }
         return list;
     }
-    
+
     public static HostPortList parseIPv4Format(String message) {
         HostPortList list = new HostPortList();
         try {
@@ -174,5 +174,5 @@ public class HostPortList {
         }
         return list;
     }
-    
+
 }

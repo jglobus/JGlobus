@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public class Transfer {
 
     public static void main(String[] args) {
 
-	String sourceServer = null, sourceDir = null, sourceFile = null, 
+	String sourceServer = null, sourceDir = null, sourceFile = null,
 	    destServer = null, destDir= null, destFile= null;
 	int sourcePort = 0, destPort = 0;
 
@@ -65,19 +65,19 @@ public class Transfer {
 	     destDir = args[6];
 	     destFile = args[7];
 	} catch (Exception e) {
-	    System.err.println("\nUsage:"); 
+	    System.err.println("\nUsage:");
 	    System.err.println("Transfer \\");
 	    System.err.println("sourceServer sourcePort sourceDir sourceFile \\");
 	    System.err.println("destServer destPort destDir destFile");
 	    System.exit(-1);
 	}
-	
+
 	try {
 	    logger.info("starting");
-	    
+
 	    TransferParams params = new TransferParams();
-	    
-	    
+
+
 	    Transfer transfer = new Transfer(sourceServer,
 					     sourcePort,
 					     sourceDir,
@@ -92,7 +92,7 @@ public class Transfer {
 	    e.printStackTrace();
 	    System.exit(-1);
 	}
-	
+
     }
 
     /**
@@ -110,8 +110,8 @@ public class Transfer {
 		    int destPort,
 		    String destDir,
 		    String destFile,
-		    TransferParams params) 
-	throws IOException, 
+		    TransferParams params)
+	throws IOException,
 	       ServerException,
 	       ClientException {
 	this(sourceServer, sourcePort, (String)null, sourceDir, sourceFile,
@@ -136,8 +136,8 @@ public class Transfer {
 		    String destSubject,
 		    String destDir,
 		    String destFile,
-		    TransferParams params) 
-	throws IOException, 
+		    TransferParams params)
+	throws IOException,
 	       ServerException,
 	       ClientException {
 
@@ -167,7 +167,7 @@ public class Transfer {
 		    int destPort,
 		    Authorization destSubject,
 		    String absoluteDestFile,
-		    TransferParams params) 
+		    TransferParams params)
 	throws IOException,
 	       ServerException,
 	       ClientException{
@@ -186,7 +186,7 @@ public class Transfer {
 	setParams(dest, params);
 
 	GridFTPClient active, passive;
-	if (params.serverMode != Session.SERVER_PASSIVE) { // default 
+	if (params.serverMode != Session.SERVER_PASSIVE) { // default
 	    active = source;
 	    passive = dest;
 	} else { // non default
@@ -201,17 +201,17 @@ public class Transfer {
 	    HostPortList hpl = passive.setStripedPassive();
 	    active.setStripedActive(hpl);
 	}
-	
+
 	if (params.transferMode != GridFTPSession.MODE_EBLOCK) {
-	    source.transfer(absoluteSourceFile, 
-			    dest, 
-			    absoluteDestFile, 
+	    source.transfer(absoluteSourceFile,
+			    dest,
+			    absoluteDestFile,
 			    false,
 			    params.markerListener);
 	} else {
-	    source.extendedTransfer(absoluteSourceFile, 
-				    dest, 
-				    absoluteDestFile, 
+	    source.extendedTransfer(absoluteSourceFile,
+				    dest,
+				    absoluteDestFile,
 				    params.markerListener);
 
 /*
@@ -240,7 +240,7 @@ public class Transfer {
 */
 	}
     }
-    
+
 
     private static Authorization getAuthorization(String subject) {
 	if (subject == null) {
@@ -276,7 +276,7 @@ public class Transfer {
 	    client.setDataChannelAuthentication(
 	        params.dataChannelAuthentication);
 	}
-	
+
 	if (params.dataChannelProtection != Session.SERVER_DEFAULT) {
 	    client.setDataChannelProtection(
 	        params.dataChannelProtection);

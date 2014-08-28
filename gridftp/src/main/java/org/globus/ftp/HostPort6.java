@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,18 +16,18 @@
 package org.globus.ftp;
 
 /**
- * Utility class for parsing and converting host-port information from EPSV 
+ * Utility class for parsing and converting host-port information from EPSV
  * and EPRT ftp commands.
  */
 public class HostPort6 extends HostPort {
 
     public static final String IPv4 = "1";
     public static final String IPv6 = "2";
-    
+
     private String host;
     private int port;
     private String version;
-    
+
     public HostPort6(String version, String host, int port) {
         this.version = version;
         this.host = host;
@@ -54,7 +54,7 @@ public class HostPort6 extends HostPort {
         } else if (token.equals(IPv6)) {
             this.version = IPv6;
         } else {
-            throw new IllegalArgumentException("Invalid network protocol: " + 
+            throw new IllegalArgumentException("Invalid network protocol: " +
                                                token);
         }
 
@@ -64,14 +64,14 @@ public class HostPort6 extends HostPort {
         } else {
             this.host = token;
         }
-        
+
         token = tokens.nextToken().trim();
         if (token.length() == 0) {
             throw new IllegalArgumentException("Port number is required");
         }
         this.port = Integer.parseInt(token);
     }
- 
+
     private static class Parser {
 
         String line;
@@ -103,11 +103,11 @@ public class HostPort6 extends HostPort {
     public int getPort() {
 	return this.port;
     }
-  
+
     /**
      * Sets the host address
      *
-     * @param host the host address 
+     * @param host the host address
      */
     public void setHost(String host) {
 	this.host = host;
@@ -116,7 +116,7 @@ public class HostPort6 extends HostPort {
     /**
      * Returns the host address
      *
-     * @return host address 
+     * @return host address
      */
     public String getHost() {
 	return this.host;
@@ -139,10 +139,10 @@ public class HostPort6 extends HostPort {
     public void setVersion(String version) {
 	this.version = version;
     }
-  
+
     /**
      * Returns the host-port information in the
-     * format used by EPRT command. 
+     * format used by EPRT command.
      * <d><net-prt><d><net-addr><d><tcp-port><d>
      *
      * @return host-port information in EPRT command
@@ -167,5 +167,5 @@ public class HostPort6 extends HostPort {
     public static String getIPAddressVersion(String address) {
         return (address.indexOf(':') == -1) ? IPv4 : IPv6;
     }
-    
+
 }

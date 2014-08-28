@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,12 +50,12 @@ public class GassInputStream extends HTTPInputStream {
      */
     public GassInputStream(String host,
 			   int port,
-			   String file) 
+			   String file)
 	throws GassException, GSSException, IOException {
 	this(null, SelfAuthorization.getInstance(),
 	     host, port, file);
     }
-    
+
     /**
      * Opens Gass input stream in secure mode with specified
      * user credentials.
@@ -69,7 +69,7 @@ public class GassInputStream extends HTTPInputStream {
 			   Authorization auth,
 			   String host,
 			   int port,
-			   String file) 
+			   String file)
 	throws GassException, GSSException, IOException {
 	super();
 	this.cred = cred;
@@ -77,33 +77,33 @@ public class GassInputStream extends HTTPInputStream {
 	get(host, port, file);
     }
 
-    protected Socket openSocket(String host, int port) 
+    protected Socket openSocket(String host, int port)
 	throws IOException {
-	
+
 	GSSManager manager = ExtendedGSSManager.getInstance();
 
 	ExtendedGSSContext context = null;
-	try { 
-	    context = 
+	try {
+	    context =
 		(ExtendedGSSContext)manager.createContext(
                                        null,
 				       GSSConstants.MECH_OID,
 				       this.cred,
 				       GSSContext.DEFAULT_LIFETIME
             );
-	
+
 	    context.setOption(GSSConstants.GSS_MODE, GSIConstants.MODE_SSL);
 	} catch (GSSException e) {
 	    throw new ChainedIOException("Security error", e);
 	}
-	
+
 	GssSocketFactory factory = GssSocketFactory.getDefault();
-	
+
 	socket = factory.createSocket(host, port, context);
 
 	((GssSocket)socket).setAuthorization(this.auth);
-	
+
 	return socket;
     }
-    
+
 }

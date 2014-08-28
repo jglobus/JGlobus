@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,19 +22,19 @@ import org.apache.commons.logging.LogFactory;
 This context has two functions. First, it keeps tracks of EODs. Second, it has the pool
 of the available sockets.
  */
-public class EBlockParallelTransferContext 
+public class EBlockParallelTransferContext
     implements TransferContext {
 
-    protected static Log logger = LogFactory.getLog(EBlockParallelTransferContext.class.getName()); 
+    protected static Log logger = LogFactory.getLog(EBlockParallelTransferContext.class.getName());
 
     protected SocketPool socketPool;
 
 	protected Object quitToken = new Object();
-	
+
 	// since the threadmanager won't change during one transfer,
 	// the context is being used as a reference holder for transferThreadManger
 	private TransferThreadManager transferThreadManager;
-	
+
     public static final int UNDEFINED = -1;
     /**
        if sending data, this is interpreted as the number of EODS
@@ -47,7 +47,7 @@ public class EBlockParallelTransferContext
      **/
     protected int eodsTotal = UNDEFINED;
 
-	
+
     synchronized public void eodTransferred() {
 	eodsTransferred ++;
     }
@@ -65,7 +65,7 @@ public class EBlockParallelTransferContext
     }
 
     /**
-       release the token if and only if (all EODS have been sent, or all EODS have been 
+       release the token if and only if (all EODS have been sent, or all EODS have been
        received), and the token has not been released yet.
        So this method will return non-null only one in the instance's lifetime.
      **/
@@ -82,7 +82,7 @@ public class EBlockParallelTransferContext
 		} else {
 			// not ready to quit yet
 			return null;
-		}		
+		}
     }
 
     synchronized public void setSocketPool(SocketPool sp) {

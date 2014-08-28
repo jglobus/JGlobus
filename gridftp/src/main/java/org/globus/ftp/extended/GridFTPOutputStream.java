@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,17 +26,17 @@ import org.bouncycastle.util.encoders.Base64;
 import org.ietf.jgss.GSSContext;
 
 public class GridFTPOutputStream extends GssOutputStream {
-    
+
     private static final byte[] CRLF = "\r\n".getBytes();
     private static final byte[] ADAT = "ADAT ".getBytes();
     private static final byte[] MIC  = "MIC ".getBytes();
     private static final byte[] ENC  = "ENC ".getBytes();
-    
+
     public GridFTPOutputStream(OutputStream out, GSSContext context) {
 	super(new BufferedOutputStream(out), context);
     }
-    
-    public void flush() 
+
+    public void flush()
 	throws IOException {
 	if (this.index == 0) return;
 	if (this.context.getConfState()) {
@@ -46,8 +46,8 @@ public class GridFTPOutputStream extends GssOutputStream {
 	}
 	this.index = 0;
     }
-    
-    public void writeHandshakeToken(byte [] token) 
+
+    public void writeHandshakeToken(byte [] token)
 	throws IOException {
 	writeToken(ADAT, token);
     }

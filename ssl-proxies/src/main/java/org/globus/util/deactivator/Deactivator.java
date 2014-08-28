@@ -29,13 +29,13 @@ public class Deactivator {
 	}
 	modules.clear();
     }
-    
+
     public static void registerDeactivation(DeactivationHandler handler) {
 	modules.put(handler, "");
     }
-    
+
     public static void unregisterDeactivation(DeactivationHandler handler) {
 	modules.remove(handler);
     }
-    
+
 }

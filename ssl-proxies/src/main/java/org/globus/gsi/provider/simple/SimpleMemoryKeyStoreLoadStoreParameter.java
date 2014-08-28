@@ -12,7 +12,7 @@ import java.security.KeyStore.LoadStoreParameter;
 public class SimpleMemoryKeyStoreLoadStoreParameter implements LoadStoreParameter {
 
     private X509Certificate[] certs;
-    
+
     public X509Certificate[] getCerts() {
         return certs;
     }

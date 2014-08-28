@@ -38,7 +38,7 @@ import org.globus.gsi.CredentialException;
  * An implementation of <code>GlobusGSSCredential</code>.
  */
 public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
-                                                Serializable {   
+                                                Serializable {
     private static final long serialVersionUID = 1L;
 
     private int usage = 0;
@@ -61,7 +61,7 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
      * @param usage credential usage
      */
     public GlobusGSSCredentialImpl(X509Credential cred,
-				   int usage) 
+				   int usage)
 	throws GSSException {
 	if (cred == null) {
 	    throw new IllegalArgumentException("cred == null");
@@ -94,7 +94,7 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
     public void dispose() throws GSSException {
 	this.cred = null;
     }
- 
+
     public GSSName getName() throws GSSException {
 	return this.name;
     }
@@ -107,11 +107,11 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
     /**
      * Currently not implemented.
      */
-    public void add(GSSName aName, 
-		    int initLifetime, 
+    public void add(GSSName aName,
+		    int initLifetime,
 		    int acceptLifetime,
-		    Oid mech, 
-		    int usage) 
+		    Oid mech,
+		    int usage)
 	throws GSSException {
 	// currently we are not supporting multiple mechanism
 	// credentials
@@ -122,18 +122,18 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 	return usage;
     }
 
-    public int getUsage(Oid mech) 
+    public int getUsage(Oid mech)
 	throws GSSException {
 	GlobusGSSManagerImpl.checkMechanism(mech);
 	return this.usage;
     }
 
-    public int getRemainingLifetime() 
+    public int getRemainingLifetime()
 	throws GSSException {
 	return (this.cred == null) ? -1 : (int)this.cred.getTimeLeft();
     }
-    
-    public int getRemainingInitLifetime(Oid mech) 
+
+    public int getRemainingInitLifetime(Oid mech)
 	throws GSSException {
 	GlobusGSSManagerImpl.checkMechanism(mech);
 	if (this.usage == INITIATE_ONLY ||
@@ -143,8 +143,8 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 	    throw new GSSException(GSSException.FAILURE);
 	}
     }
-    
-    public int getRemainingAcceptLifetime(Oid mech) 
+
+    public int getRemainingAcceptLifetime(Oid mech)
 	throws GSSException {
 	GlobusGSSManagerImpl.checkMechanism(mech);
 	if (this.usage == ACCEPT_ONLY ||
@@ -155,7 +155,7 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 	}
     }
 
-    public Oid[] getMechs() 
+    public Oid[] getMechs()
 	throws GSSException {
 	return GlobusGSSManagerImpl.MECHS;
     }
@@ -164,7 +164,7 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 	throws GSSException {
 	return export(option, null);
     }
-    
+
     public byte[] export(int option, Oid mech)
 	throws GSSException {
 	GlobusGSSManagerImpl.checkMechanism(mech);
@@ -205,7 +205,7 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
 	    String handle = "X509_USER_PROXY=" + file.getAbsolutePath();
 	    return handle.getBytes();
 	default:
-	    throw new GlobusGSSException(GSSException.FAILURE, 
+	    throw new GlobusGSSException(GSSException.FAILURE,
 					 GlobusGSSException.BAD_ARGUMENT,
 					 "unknownOption",
 					 new Object[] {new Integer(option)});
@@ -224,26 +224,26 @@ public class GlobusGSSCredentialImpl implements ExtendedGSSCredential,
      *
      * @param oid the oid of the information desired.
      * @return the information desired. Might be null.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
-    public Object inquireByOid(Oid oid) 
+    public Object inquireByOid(Oid oid)
 	throws GSSException {
 	if (oid == null) {
-	    throw new GlobusGSSException(GSSException.FAILURE, 
+	    throw new GlobusGSSException(GSSException.FAILURE,
 					 GlobusGSSException.BAD_ARGUMENT,
 					 "nullOption");
 	}
-	
+
 	if (oid.equals(GSSConstants.X509_CERT_CHAIN)) {
-	    return (this.cred == null) ? 
-		null : 
+	    return (this.cred == null) ?
+		null :
 		this.cred.getCertificateChain();
 	}
 
 	return null;
     }
-    
+
     /**
      * Returns actual X509Credential object represented
      * by this credential (if any).

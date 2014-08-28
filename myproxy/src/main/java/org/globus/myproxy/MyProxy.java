@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,7 +92,7 @@ import org.apache.commons.logging.LogFactory;
  * storing credentials on MyProxy server. It also provides functions
  * for getting credential information and changing passwords.
  * <P>
- * More information about MyProxy is available on the 
+ * More information about MyProxy is available on the
  * <a href="http://myproxy.ncsa.uiuc.edu/">MyProxy Home Page</a>.
  * <P>
  *
@@ -100,17 +100,17 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MyProxy  {
 
-    static Log logger = 
+    static Log logger =
         LogFactory.getLog(MyProxy.class.getName());
 
     public final static String version = "2.0";
 
-    public static final int MIN_PASSWORD_LENGTH = 
+    public static final int MIN_PASSWORD_LENGTH =
         MyProxyConstants.MIN_PASSWORD_LENGTH;
-    
-    public static final String MYPROXY_PROTOCOL_VERSION = 
+
+    public static final String MYPROXY_PROTOCOL_VERSION =
         MyProxyConstants.MYPROXY_PROTOCOL_VERSION;
-    
+
     private static final String RESPONSE   = "RESPONSE=";
     private static final String ERROR      = "ERROR=";
     private static final String AUTHZ_DATA = "AUTHORIZATION_DATA=";
@@ -255,12 +255,12 @@ public class MyProxy  {
     public Authorization getAuthorization() {
         return this.authorization;
     }
-    
-    private GssSocket getSocket(GSSCredential credential) 
+
+    private GssSocket getSocket(GSSCredential credential)
         throws IOException, GSSException {
         GSSManager manager = ExtendedGSSManager.getInstance();
-        
-        this.context = manager.createContext(null, 
+
+        this.context = manager.createContext(null,
                                              GSSConstants.MECH_OID,
                                              credential,
                                              GSSContext.DEFAULT_LIFETIME);
@@ -294,7 +294,7 @@ public class MyProxy  {
                     addrs = InetAddress.getAllByName(hosts[hostIdx]);
                 } catch (UnknownHostException e) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug("getSocket(): Skipping unknown host " + 
+                        logger.debug("getSocket(): Skipping unknown host " +
                                 hosts[hostIdx]);
                     }
                     exception = e;
@@ -304,12 +304,12 @@ public class MyProxy  {
                     exception = null;
                     try {
                         if (logger.isDebugEnabled()) {
-                            logger.debug("getSocket(): Trying " + 
+                            logger.debug("getSocket(): Trying " +
                                 addrs[addrIdx].toString());
                         }
                         socket = new Socket();
                         socket.connect(
-                            new InetSocketAddress(addrs[addrIdx],port), 
+                            new InetSocketAddress(addrs[addrIdx],port),
                             socketTimeout);
 
                         goodAddr = addrs[addrIdx].toString();
@@ -322,7 +322,7 @@ public class MyProxy  {
                         if (logger.isDebugEnabled()) {
                             logger.debug("             Failed.");
                         }
-                    } 
+                    }
                 }
                 hostIdx += 1;
             }
@@ -336,13 +336,13 @@ public class MyProxy  {
         }
 
         setHost(hosts[hostIdx]); // host we have successfully connected to
-        
+
         GssSocketFactory gssFactory = GssSocketFactory.getDefault();
 
-        GssSocket gssSocket = 
+        GssSocket gssSocket =
             (GssSocket)gssFactory.createSocket(socket,
-                                               hosts[hostIdx], 
-                                               port, 
+                                               hosts[hostIdx],
+                                               port,
                                                this.context);
 
         if (logger.isDebugEnabled()) {
@@ -373,7 +373,7 @@ public class MyProxy  {
     public void put(GSSCredential credential,
                     String username,
                     String passphrase,
-                    int lifetime) 
+                    int lifetime)
         throws MyProxyException {
         InitParams request = new InitParams();
         request.setUserName(username);
@@ -393,7 +393,7 @@ public class MyProxy  {
      *            If an error occurred during the operation.
      */
     public void put(GSSCredential credential,
-                    InitParams params) 
+                    InitParams params)
         throws MyProxyException {
 
         if (credential == null) {
@@ -409,28 +409,28 @@ public class MyProxy  {
         }
 
         String msg = params.makeRequest();
-         
+
         Socket gsiSocket = null;
         OutputStream out = null;
         InputStream  in  = null;
-        
+
         try {
             gsiSocket = getSocket(credential);
-            
+
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
-            
+
             if (!((GssSocket)gsiSocket).getContext().getConfState())
                 throw new Exception("Confidentiality requested but not available");
 
             // send message
             out.write(msg.getBytes());
             out.flush();
-           
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Req sent:" + params);
             }
-           
+
             handleReply(in);
 
             BouncyCastleCertProcessingFactory certFactory =
@@ -438,12 +438,12 @@ public class MyProxy  {
 
             GlobusGSSCredentialImpl pkiCred =
                 (GlobusGSSCredentialImpl)credential;
-            
+
             X509Certificate [] certs = pkiCred.getCertificateChain();
 
             // read in the cert request from socket and
             // generate a certificate to be sent back to the server
-            X509Certificate cert = 
+            X509Certificate cert =
                 certFactory.createCertificate(in,
                                               certs[0],
                                               pkiCred.getPrivateKey(),
@@ -453,30 +453,30 @@ public class MyProxy  {
 
             // write the new cert we've generated to the socket to send it back
             // to the server
-                
+
             // must put everything into one message
             ByteArrayOutputStream buffer = new ByteArrayOutputStream(2048);
-                
+
             buffer.write( (byte)(certs.length+1) );
-                
+
             // write signed ceritifcate
             buffer.write(cert.getEncoded());
-                
+
             for (int i=0;i<certs.length;i++) {
                 buffer.write( certs[i].getEncoded() );
-                    
+
                 // DEBUG: print out subject name of sent certificate
                 if (logger.isDebugEnabled()) {
                     logger.debug("Sent cert: " + certs[i].getSubjectDN());
                 }
-                    
+
             }
-                
+
             out.write(buffer.toByteArray());
             out.flush();
-                
+
             handleReply(in);
-            
+
         } catch(Exception e) {
             throw new MyProxyException("MyProxy put failed.", e);
         } finally {
@@ -504,7 +504,7 @@ public class MyProxy  {
     public void store(GSSCredential credential,
                       X509Certificate [] certs,
                       OpenSSLKey key,
-                      StoreParams params) 
+                      StoreParams params)
         throws MyProxyException {
 
         if (credential == null) {
@@ -528,28 +528,28 @@ public class MyProxy  {
         }
 
         String msg = params.makeRequest();
-         
+
         Socket gsiSocket = null;
         OutputStream out = null;
         InputStream  in  = null;
-        
+
         try {
             gsiSocket = getSocket(credential);
-            
+
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
-            
+
             if (!((GssSocket)gsiSocket).getContext().getConfState())
                 throw new Exception("Confidentiality requested but not available");
-            
+
             // send message
             out.write(msg.getBytes());
             out.flush();
-           
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Req sent:" + params);
             }
-           
+
             handleReply(in);
 
             CertificateIOUtil.writeCertificate(out, certs[0]);
@@ -562,9 +562,9 @@ public class MyProxy  {
             }
             out.write('\0');
             out.flush();
-                
+
             handleReply(in);
-            
+
         } catch(Exception e) {
             throw new MyProxyException("MyProxy store failed.", e);
         } finally {
@@ -577,7 +577,7 @@ public class MyProxy  {
      * Removes delegated credentials from the MyProxy server.
      *
      * @param  credential
-     *         The local GSI credentials to use for authentication. 
+     *         The local GSI credentials to use for authentication.
      * @param  username
      *         The username of the credentials to remove.
      * @param  passphrase
@@ -599,16 +599,16 @@ public class MyProxy  {
      * Removes delegated credentials from the MyProxy server.
      *
      * @param  credential
-     *         The local GSI credentials to use for authentication. 
+     *         The local GSI credentials to use for authentication.
      * @param  params
      *         The parameters for the destroy operation.
      * @exception MyProxyException
      *         If an error occurred during the operation.
      */
     public void destroy(GSSCredential credential,
-                        DestroyParams params) 
+                        DestroyParams params)
         throws MyProxyException {
-        
+
         if (credential == null) {
             throw new IllegalArgumentException("credential == null");
         }
@@ -616,32 +616,32 @@ public class MyProxy  {
         if (params == null) {
             throw new IllegalArgumentException("params == null");
         }
-        
+
         String msg = params.makeRequest();
-        
+
         Socket gsiSocket = null;
         OutputStream out = null;
         InputStream  in  = null;
-        
+
         try {
             gsiSocket = getSocket(credential);
-            
+
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
-            
+
             if (!((GssSocket)gsiSocket).getContext().getConfState())
                 throw new Exception("Confidentiality requested but not available");
-            
+
             // send message
             out.write(msg.getBytes());
             out.flush();
-            
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Req sent:" + params);
             }
-            
+
             handleReply(in);
-            
+
         } catch(Exception e) {
             throw new MyProxyException("MyProxy destroy failed.", e);
         } finally {
@@ -655,7 +655,7 @@ public class MyProxy  {
      * MyProxy server.
      *
      * @param  credential
-     *         The local GSI credentials to use for authentication. 
+     *         The local GSI credentials to use for authentication.
      * @param  params
      *         The parameters for the change password operation.
      * @exception MyProxyException
@@ -676,28 +676,28 @@ public class MyProxy  {
         Socket gsiSocket = null;
         OutputStream out = null;
         InputStream  in  = null;
-        
+
         String msg = params.makeRequest();
 
         try {
             gsiSocket = getSocket(credential);
-            
+
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
-            
+
             if (!((GssSocket)gsiSocket).getContext().getConfState())
                 throw new Exception("Confidentiality requested but not available");
-            
+
             // send message
             out.write(msg.getBytes());
             out.flush();
-            
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Req sent:" + params);
             }
-            
+
             handleReply(in);
-            
+
         } catch(Exception e) {
             throw new MyProxyException("MyProxy change password failed.", e);
         } finally {
@@ -713,7 +713,7 @@ public class MyProxy  {
      * by this operation.
      *
      * @param  credential
-     *         The local GSI credentials to use for authentication. 
+     *         The local GSI credentials to use for authentication.
      * @param  username
      *         The username of the credentials to remove.
      * @param  passphrase
@@ -732,12 +732,12 @@ public class MyProxy  {
         request.setPassphrase(passphrase);
         return info(credential, request)[0];
     }
-    
+
     /**
      * Retrieves credential information from MyProxy server.
      *
      * @param  credential
-     *         The local GSI credentials to use for authentication. 
+     *         The local GSI credentials to use for authentication.
      * @param  params
      *         The parameters for the info operation.
      * @exception MyProxyException
@@ -748,7 +748,7 @@ public class MyProxy  {
     public CredentialInfo[] info(GSSCredential credential,
                                  InfoParams params)
         throws MyProxyException {
-        
+
         if (credential == null) {
             throw new IllegalArgumentException("credential == null");
         }
@@ -756,31 +756,31 @@ public class MyProxy  {
         if (params == null) {
             throw new IllegalArgumentException("params == null");
         }
-        
+
         String msg = params.makeRequest();
-        
+
         CredentialInfo [] creds = null;
         Socket gsiSocket = null;
         OutputStream out = null;
         InputStream  in  = null;
-        
+
         try {
             gsiSocket = getSocket(credential);
-            
+
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
-            
+
             if (!((GssSocket)gsiSocket).getContext().getConfState())
                 throw new Exception("Confidentiality requested but not available");
-            
+
             // send message
             out.write(msg.getBytes());
             out.flush();
-            
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Req sent:" + params);
             }
-            
+
             InputStream reply = handleReply(in);
             String line = null;
             String value = null;
@@ -831,7 +831,7 @@ public class MyProxy  {
                     }
                 }
             }
-            
+
             creds = new CredentialInfo[1 + credMap.size()];
             creds[0] = info; // defailt creds at position 0
 
@@ -852,7 +852,7 @@ public class MyProxy  {
             close(out, in, gsiSocket);
         }
     }
-    
+
     private boolean matches(String line, int pos, String arg) {
         return line.regionMatches(true,
                                   pos - arg.length(),
@@ -864,7 +864,7 @@ public class MyProxy  {
     private String getCredName(String line, int pos, String arg) {
         return line.substring(CRED.length(), pos-arg.length());
     }
-        
+
     private CredentialInfo getCredentialInfo(Map map, String name) {
         CredentialInfo info = (CredentialInfo)map.get(name);
         if (info == null) {
@@ -889,14 +889,14 @@ public class MyProxy  {
      *         The passphrase of the credentials to retrieve.
      * @param  lifetime
      *         The requested lifetime of the retrieved credential (in seconds).
-     * @return GSSCredential 
+     * @return GSSCredential
      *         The retrieved delegated credentials.
      * @exception MyProxyException
      *         If an error occurred during the operation.
      */
     public GSSCredential get(String username,
                              String passphrase,
-                             int lifetime) 
+                             int lifetime)
         throws MyProxyException {
         return get(null, username, passphrase, lifetime);
     }
@@ -908,7 +908,7 @@ public class MyProxy  {
      *        the delegated credential. Should be improved later.
      *        And only checks for RSA keys.
      *
-     * @param  credential 
+     * @param  credential
      *         The local GSI credentials to use for authentication.
      *         Can be set to null if no local credentials.
      * @param  username
@@ -917,7 +917,7 @@ public class MyProxy  {
      *         The passphrase of the credentials to retrieve.
      * @param  lifetime
      *         The requested lifetime of the retrieved credential (in seconds).
-     * @return GSSCredential 
+     * @return GSSCredential
      *         The retrieved delegated credentials.
      * @exception MyProxyException
      *         If an error occurred during the operation.
@@ -925,7 +925,7 @@ public class MyProxy  {
     public GSSCredential get(GSSCredential credential,
                              String username,
                              String passphrase,
-                             int lifetime) 
+                             int lifetime)
         throws MyProxyException {
         GetParams request = new GetParams();
         request.setUserName(username);
@@ -933,24 +933,24 @@ public class MyProxy  {
         request.setLifetime(lifetime);
         return get(credential, request);
     }
-    
+
     /**
      * Retrieves delegated credentials from the MyProxy server.
      *
-     * @param  credential 
+     * @param  credential
      *         The local GSI credentials to use for authentication.
      *         Can be set to null if no local credentials.
      * @param  params
      *         The parameters for the get operation.
-     * @return GSSCredential 
+     * @return GSSCredential
      *         The retrieved delegated credentials.
      * @exception MyProxyException
      *         If an error occurred during the operation.
      */
     public GSSCredential get(GSSCredential credential,
-                             GetParams params) 
+                             GetParams params)
         throws MyProxyException {
-         
+
         if (params == null) {
             throw new IllegalArgumentException("params == null");
         }
@@ -978,7 +978,7 @@ public class MyProxy  {
 
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
-            
+
             if (!((GssSocket)gsiSocket).getContext().getConfState())
                 throw new Exception("Confidentiality requested but not available");
 
@@ -1044,17 +1044,17 @@ public class MyProxy  {
             // send the request to server
             out.write(req);
             out.flush();
-            
+
             // read the number of certificates
             int size = in.read();
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Reading " + size + " certs");
             }
-            
+
             X509Certificate [] chain
                 = new X509Certificate[size];
-            
+
             for (int i=0;i<size;i++) {
                 chain[i] = certFactory.loadCertificate(in);
                 // DEBUG: display the cert names
@@ -1070,19 +1070,19 @@ public class MyProxy  {
             // currently only works with RSA keys
             RSAPublicKey pkey   = (RSAPublicKey)chain[0].getPublicKey();
             RSAPrivateKey prkey = (RSAPrivateKey)keyPair.getPrivate();
-            
+
             if (!pkey.getModulus().equals(prkey.getModulus())) {
                 throw new MyProxyException("Private/Public key mismatch!");
             }
-            
+
             X509Credential newCredential = null;
-            
+
             newCredential = new X509Credential(keyPair.getPrivate(),
                                                  chain);
-            
+
             return new GlobusGSSCredentialImpl(newCredential,
                                                GSSCredential.INITIATE_AND_ACCEPT);
-            
+
         } catch(Exception e) {
             throw new MyProxyException("MyProxy get failed.", e);
         } finally {
@@ -1094,7 +1094,7 @@ public class MyProxy  {
     /**
      * Retrieves trustroot information from the MyProxy server.
      *
-     * @param  credential 
+     * @param  credential
      *         The local GSI credentials to use for authentication.
      *         Can be set to null if no local credentials.
      * @param  params
@@ -1103,7 +1103,7 @@ public class MyProxy  {
      *         If an error occurred during the operation.
      */
     public void getTrustroots(GSSCredential credential,
-                              GetTrustrootsParams params) 
+                              GetTrustrootsParams params)
         throws MyProxyException {
 
         if (params == null) {
@@ -1133,7 +1133,7 @@ public class MyProxy  {
 
             out = gsiSocket.getOutputStream();
             in  = gsiSocket.getInputStream();
-            
+
             if (!((GssSocket)gsiSocket).getContext().getConfState())
                 throw new Exception("Confidentiality requested but not available");
 
@@ -1266,15 +1266,15 @@ public class MyProxy  {
         return handleReply(in, null, null, false);
     }
 
-    
-    private InputStream handleReply(InputStream in, 
+
+    private InputStream handleReply(InputStream in,
                                     OutputStream out,
                                     GSSCredential authzcreds,
                                     boolean wantTrustroots)
         throws IOException, MyProxyException {
         String tmp = null;
 
-        /* there was something weird here with the 
+        /* there was something weird here with the
            received protocol version sometimes. it
            contains an extra <32 byte. fixed it by
            using endsWith. now i read extra byte at the
@@ -1329,7 +1329,7 @@ public class MyProxy  {
                     int pos = tmp.indexOf(':', AUTHZ_DATA.length()+1);
                     if (pos != -1) {
                         authzdata = new String[2];
-                        authzdata[0] = 
+                        authzdata[0] =
                             tmp.substring(AUTHZ_DATA.length(), pos).trim();
                         authzdata[1] =
                             tmp.substring(pos+1).trim();
@@ -1370,9 +1370,9 @@ public class MyProxy  {
                     }
                 }
             }
- 
+
             return handleReply(in, out, authzcreds, wantTrustroots);
- 
+
         }
 
         if (wantTrustroots == true) {
@@ -1399,7 +1399,7 @@ public class MyProxy  {
                 }
             }
         }
-        
+
         /* always consume the entire message */
         int avail = in.available();
         byte [] b = new byte[avail];
@@ -1410,7 +1410,7 @@ public class MyProxy  {
         return inn;
     }
 
-    private static void close(OutputStream out, 
+    private static void close(OutputStream out,
                               InputStream in,
                               Socket sock) {
         try {
@@ -1428,7 +1428,7 @@ public class MyProxy  {
         }
     }
 
-    private GSSCredential getAnonymousCredential() 
+    private GSSCredential getAnonymousCredential()
         throws GSSException {
         GSSManager manager = ExtendedGSSManager.getInstance();
         GSSName anonName = manager.createName((String)null, null);

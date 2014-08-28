@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 **/
 public class GridFTPRestartMarkerTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(GridFTPRestartMarkerTest.class.getName());
 
     private static String nl = System.getProperty("line.separator");
@@ -39,7 +39,7 @@ public class GridFTPRestartMarkerTest extends TestCase {
     public static void main(String[] argv) {
 	junit.textui.TestRunner.run (suite());
     }
-    
+
     public static Test suite() {
 	return new TestSuite(GridFTPRestartMarkerTest.class);
     }
@@ -85,7 +85,7 @@ public class GridFTPRestartMarkerTest extends TestCase {
 
     private void testConstruction(String in, String out) {
 	logger.info(" constructing: " + in + " -> " + out);
-	GridFTPRestartMarker m = 
+	GridFTPRestartMarker m =
 	    new GridFTPRestartMarker("Range Marker " + in);
 	ByteRangeList l = new ByteRangeList();
 	l.merge(m.toVector());
@@ -99,8 +99,8 @@ public class GridFTPRestartMarkerTest extends TestCase {
 	    new GridFTPRestartMarker(arg);
 	} catch (IllegalArgumentException e) {
 	    threwOk = true;
-	} 
-	
+	}
+
 	if (! threwOk ) {
 	    fail("constructor did not throw an exception when it should have");
 	}

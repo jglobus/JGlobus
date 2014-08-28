@@ -23,7 +23,7 @@ import java.util.MissingResourceException;
  * by various errors in/problems with Globus proxies.
  */
 public class GlobusCredentialException extends Exception {
-    
+
     public static final int FAILURE = -1;
     public static final int EXPIRED = 1;
     public static final int DEFECTIVE = 2;
@@ -31,7 +31,7 @@ public class GlobusCredentialException extends Exception {
     public static final int SEC_ERROR = 3;
 
     private static ResourceBundle resources;
-    
+
     static {
 	try {
 	    resources = ResourceBundle.getBundle("org.globus.gsi.errors");
@@ -41,7 +41,7 @@ public class GlobusCredentialException extends Exception {
     }
 
     private int errorCode = FAILURE;
-    
+
     public GlobusCredentialException(int errorCode,
 				     String msgId,
 				     Throwable root) {
@@ -53,7 +53,7 @@ public class GlobusCredentialException extends Exception {
 				     Object [] args) {
 	this(errorCode, msgId, args, null);
     }
-    
+
     public GlobusCredentialException(int errorCode,
 				     String msgId,
 				     Object [] args,
@@ -61,7 +61,7 @@ public class GlobusCredentialException extends Exception {
 	super(getMessage(msgId, args), root);
 	this.errorCode = errorCode;
     }
-    
+
     public int getErrorCode() {
 	return this.errorCode;
     }

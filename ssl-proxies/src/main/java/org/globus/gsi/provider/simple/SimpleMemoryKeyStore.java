@@ -30,7 +30,7 @@ public class SimpleMemoryKeyStore extends KeyStoreSpi {
 
     private Log logger = LogFactory.getLog(SimpleMemoryKeyStore.class);
     private Map<String, X509Certificate> certMap;
-    
+
     @Override
     public void engineLoad(LoadStoreParameter params) throws IOException, NoSuchAlgorithmException,
         CertificateException {
@@ -51,7 +51,7 @@ public class SimpleMemoryKeyStore extends KeyStoreSpi {
             }
         }
     }
-    
+
     @Override
     public Enumeration<String> engineAliases() {
         return Collections.enumeration(this.certMap.keySet());
@@ -141,5 +141,5 @@ public class SimpleMemoryKeyStore extends KeyStoreSpi {
     public Key engineGetKey(String alias, char[] password) throws NoSuchAlgorithmException, UnrecoverableKeyException {
         throw new UnsupportedOperationException();
     }
-    
+
 }

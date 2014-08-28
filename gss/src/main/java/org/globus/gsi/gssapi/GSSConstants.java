@@ -26,7 +26,7 @@ public abstract class GSSConstants {
 
     /** Context option. It is used to configure the GSS mode. It can be set to
      * {@link org.globus.gsi.GSIConstants#MODE_GSI GSIConstants.MODE_GSI} or
-     * {@link org.globus.gsi.GSIConstants#MODE_SSL GSIConstants.MODE_SSL}. 
+     * {@link org.globus.gsi.GSIConstants#MODE_SSL GSIConstants.MODE_SSL}.
      * By default GSI mode is enabled. */
     public static final Oid GSS_MODE;
 
@@ -36,15 +36,15 @@ public abstract class GSSConstants {
      * By default limited proxies are accepted.*/
     public static final Oid REJECT_LIMITED_PROXY;
 
-    /** Context option. It is used to configure delegation type to be 
+    /** Context option. It is used to configure delegation type to be
      * performed either during authentication or using the delegation API.
      * It can be set to {@link org.globus.gsi.GSIConstants#DELEGATION_TYPE_LIMITED
-     * GSIConstants.DELEGATION_TYPE_LIMITED} or 
-     * {@link org.globus.gsi.GSIConstants#DELEGATION_TYPE_FULL 
+     * GSIConstants.DELEGATION_TYPE_LIMITED} or
+     * {@link org.globus.gsi.GSIConstants#DELEGATION_TYPE_FULL
      * GSIConstants.DELEGATION_TYPE_FULL}
      * By default limited delegation is performed. */
     public static final Oid DELEGATION_TYPE;
-    
+
     /** Context option. It is used to enable/disable context expiration
      * checking for methods like <code>wrap, unwrap, verifyMIC, getMIC</code>.
      * In can be set to either <code>Boolean.TRUE</code> or
@@ -59,7 +59,7 @@ public abstract class GSSConstants {
     public static final Oid REQUIRE_CLIENT_AUTH;
 
     /** Context option. It is only used when client authentication is enabled.
-     * In can be set to either <code>Boolean.TRUE</code> or 
+     * In can be set to either <code>Boolean.TRUE</code> or
      * <code>Boolean.FALSE</code>. If set to <code>Boolean.TRUE</code>
      * a context will be successfully established even though client
      * send no certificates and client authentication was required.
@@ -69,18 +69,18 @@ public abstract class GSSConstants {
      */
     public static final Oid ACCEPT_NO_CLIENT_CERTS;
 
-    /** Context option. It is used to set a policy handler for 
-     * GRIM credentials. The value is an instance of 
+    /** Context option. It is used to set a policy handler for
+     * GRIM credentials. The value is an instance of
      * {@link org.globus.gsi.proxy.ProxyPolicyHandler
      * ProxyPolicyHandler}
-     * @deprecated Please use {@link GSSConstants#PROXY_POLICY_HANDLERS 
+     * @deprecated Please use {@link GSSConstants#PROXY_POLICY_HANDLERS
      * GSSConstants.PROXY_POLICY_HANDLERS} option instead.
      */
     public static final Oid GRIM_POLICY_HANDLER;
 
     /** Context option. It is used to pass a set of proxy policy handlers.
      * The value if a <code>Map</code> type. It contains mappings of
-     * proxy policy language oids and instances of 
+     * proxy policy language oids and instances of
      * {@link org.globus.gsi.proxy.ProxyPolicyHandler ProxyPolicyHandler}
      */
     public static final Oid PROXY_POLICY_HANDLERS;
@@ -123,7 +123,7 @@ public abstract class GSSConstants {
 	try {
 	    // globus mech oid
 	    MECH_OID = new Oid("1.3.6.1.4.1.3536.1.1");
-	     
+
 	    // options
 	    GSS_MODE = new Oid("1.3.6.1.4.1.3536.1.1.1");
 	    DELEGATION_TYPE = new Oid("1.3.6.1.4.1.3536.1.1.2");
@@ -133,17 +133,17 @@ public abstract class GSSConstants {
 	    GRIM_POLICY_HANDLER = new Oid("1.3.6.1.4.1.3536.1.1.6");
 	    TRUSTED_CERTIFICATES = new Oid("1.3.6.1.4.1.3536.1.1.7");
 	    X509_CERT_CHAIN = new Oid("1.3.6.1.4.1.3536.1.1.8");
-	    
+
 	    ACCEPT_NO_CLIENT_CERTS = new Oid("1.3.6.1.4.1.3536.1.1.19");
 	    PROXY_POLICY_HANDLERS = new Oid("1.3.6.1.4.1.3536.1.1.20");
 	    RECEIVED_LIMITED_PROXY = new Oid("1.3.6.1.4.1.3536.1.1.21");
-	    AUTHZ_REQUIRED_WITH_DELEGATION = 
+	    AUTHZ_REQUIRED_WITH_DELEGATION =
                 new Oid("1.3.6.1.4.1.3536.1.1.22");
-	    FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM = 
+	    FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM =
                 new Oid("1.3.6.1.4.1.3536.1.1.23");
 	} catch (Exception e) {
 	    throw new RuntimeException(e.getMessage());
 	}
     }
-    
+
 }

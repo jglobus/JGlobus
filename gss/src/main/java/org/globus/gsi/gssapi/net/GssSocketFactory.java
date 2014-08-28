@@ -20,7 +20,7 @@ import java.io.IOException;
 import org.ietf.jgss.GSSContext;
 
 public abstract class GssSocketFactory {
-  
+
     private static GssSocketFactory factory = null;
 
     public synchronized static GssSocketFactory getDefault() {
@@ -49,14 +49,14 @@ public abstract class GssSocketFactory {
 	return factory;
     }
 
-    public abstract Socket createSocket(Socket s, 
+    public abstract Socket createSocket(Socket s,
 					String host,
-					int port, 
+					int port,
 					GSSContext context);
 
-    public abstract Socket createSocket(String host, 
-					int port, 
+    public abstract Socket createSocket(String host,
+					int port,
 					GSSContext context)
 	throws IOException;
-    
+
 }

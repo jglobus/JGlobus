@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,13 +32,13 @@ import junit.framework.TestSuite;
 /**
    Test parallel GridFTPClient.get() and put()
  **/
-public class GridFTPClient2PartyParallelTest 
+public class GridFTPClient2PartyParallelTest
     extends GridFTPClient2PartyTest {
 
     int parallelism = 1;
 
     //use inherited logger
-    //private static Log logger = 
+    //private static Log logger =
     //LogFactory.getLog(GridFTPClient2PartyParallelTest.class.getName());
 
     public GridFTPClient2PartyParallelTest(String name) {
@@ -46,18 +46,18 @@ public class GridFTPClient2PartyParallelTest
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
 	return new TestSuite(GridFTPClient2PartyParallelTest.class);
     }
-    
+
 
     // overriden methods
 
     /**
-       Test get() and put() with parallelism ranging from 1 to 
+       Test get() and put() with parallelism ranging from 1 to
        the test property org.globus.ftp.test.gridftp.parallelism
      **/
     public void testGet() {
@@ -70,7 +70,7 @@ public class GridFTPClient2PartyParallelTest
     }
 
     public void testPut() {
-        //int i = 5;                                                                                                          
+        //int i = 5;
         title();
         for (int i = 1; i <= TestEnv.parallelism; i++) {
             this.parallelism = i;
@@ -93,10 +93,10 @@ public class GridFTPClient2PartyParallelTest
 
 	logger.info("with configuration: parallel, passive, image, eblock");
 	testGet(host, port, subject,
-		remoteDir + "/" + remoteFile, 
-		localDir,		
-		Session.SERVER_PASSIVE, 
-		Session.TYPE_IMAGE, 
+		remoteDir + "/" + remoteFile,
+		localDir,
+		Session.SERVER_PASSIVE,
+		Session.TYPE_IMAGE,
 		GridFTPSession.MODE_EBLOCK);
 	// stream mode not supported with parallelism
     }
@@ -113,22 +113,22 @@ public class GridFTPClient2PartyParallelTest
 
 	logger.info("with configuration: parallel, active, image, eblock");
 	testPut(host, port, subject,
-		remoteDir, localFile, 
-		localDir,		
-		Session.SERVER_ACTIVE, 
-		Session.TYPE_IMAGE, 
+		remoteDir, localFile,
+		localDir,
+		Session.SERVER_ACTIVE,
+		Session.TYPE_IMAGE,
 		GridFTPSession.MODE_EBLOCK);
 	// stream mode not supported with parallelism
     }
 
-    protected void get(GridFTPClient client, 
+    protected void get(GridFTPClient client,
 		       int localServerMode,
 		       int transferType,
 		       int transferMode,
 		       DataChannelAuthentication dcau,
 		       int prot,
 		       String fullLocalFile,
-		       String fullRemoteFile) 
+		       String fullRemoteFile)
 	throws Exception{
 	client.authenticate(null); /* use default cred */
 	client.setProtectionBufferSize(16384);
@@ -143,14 +143,14 @@ public class GridFTPClient2PartyParallelTest
 	// in extended block mode, receiving side must be passive
 	assertTrue(localServerMode == Session.SERVER_PASSIVE);
 
-    client.setLocalPassive(); 
+    client.setLocalPassive();
     /*
-        This seems like a bad test, selecting the same port always 
+        This seems like a bad test, selecting the same port always
         results in errors
 	if (TestEnv.localServerPort == TestEnv.UNDEFINED) {
-        client.setLocalPassive(); 
+        client.setLocalPassive();
 	} else {
-	    client.setLocalPassive(TestEnv.localServerPort, 
+	    client.setLocalPassive(TestEnv.localServerPort,
 				   org.globus.ftp.vanilla.FTPServerFacade.DEFAULT_QUEUE);
 	}
     */
@@ -159,20 +159,20 @@ public class GridFTPClient2PartyParallelTest
 	assertTrue(transferMode == GridFTPSession.MODE_EBLOCK);
 
 	DataSink sink = null;
-	sink = new FileRandomIO(new RandomAccessFile(fullLocalFile, 
+	sink = new FileRandomIO(new RandomAccessFile(fullLocalFile,
 						     "rw"));
 	client.get(fullRemoteFile, sink, null);
     }
-    
 
-    protected void put(GridFTPClient client, 
+
+    protected void put(GridFTPClient client,
 		       int localServerMode,
 		       int transferType,
 		       int transferMode,
 		       DataChannelAuthentication dcau,
 		       int prot,
 		       String fullLocalFile,
-		       String fullRemoteFile) 
+		       String fullRemoteFile)
 	throws Exception{
 	client.authenticate(null); /* use default cred */
 	client.setProtectionBufferSize(16384);
@@ -193,9 +193,9 @@ public class GridFTPClient2PartyParallelTest
 
 	logger.debug("sending file " + fullLocalFile);
 	DataSource source = null;
-	source = new FileRandomIO(new RandomAccessFile(fullLocalFile, 
+	source = new FileRandomIO(new RandomAccessFile(fullLocalFile,
 						       "r"));
 	client.put(fullRemoteFile, source, null);
     }
 
-} 
+}

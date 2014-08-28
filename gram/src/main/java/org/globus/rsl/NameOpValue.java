@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,12 +39,12 @@ public class NameOpValue extends NameValue {
 	super(attribute);
 	setOperator(op);
     }
-    
+
     public NameOpValue(String attribute, int op, String strValue) {
 	this(attribute, op);
 	add(strValue);
     }
-    
+
     public NameOpValue(String attribute, int op, String [] strValues) {
 	this(attribute, op);
 	add(strValues);
@@ -54,7 +54,7 @@ public class NameOpValue extends NameValue {
 	this(attribute, op);
 	add(value);
     }
-    
+
     /**
      * Sets the relation operator.
      *
@@ -83,7 +83,7 @@ public class NameOpValue extends NameValue {
     }
 
     /**
-     * Returns a string representation of the specified 
+     * Returns a string representation of the specified
      * relation operator.
      *
      * @param op the relation operator
@@ -91,22 +91,22 @@ public class NameOpValue extends NameValue {
      */
     public static String getOperatorAsString(int op) {
 	switch(op) {
-	case EQ: 
+	case EQ:
 	    return "=";
-	case NEQ: 
+	case NEQ:
 	    return "!=";
-	case GT: 
+	case GT:
 	    return ">";
-	case GTEQ: 
+	case GTEQ:
 	    return ">=";
-	case LT: 
+	case LT:
 	    return "<";
-	case LTEQ: 
+	case LTEQ:
 	    return "<=";
 	default: return "??";
 	}
     }
-    
+
     /**
      * Adds a value to the list of values.
      *
@@ -116,7 +116,7 @@ public class NameOpValue extends NameValue {
 	if (values == null) values = new LinkedList();
 	values.add(value);
     }
-    
+
     /**
      * Adds a value to the list of values.
      * The string value is first converted into
@@ -130,7 +130,7 @@ public class NameOpValue extends NameValue {
 
     /**
      * Adds an array of values to the list of values.
-     * Each element in the array is converted into a 
+     * Each element in the array is converted into a
      * Value object and inserted as a separate value
      * into the list of values.
      *
@@ -154,12 +154,12 @@ public class NameOpValue extends NameValue {
 	if (values == null) values = new LinkedList();
 	values.add(list);
     }
-    
+
     public List getValuesAsStrings(boolean includeNested) {
 	return getValuesAsString( getValues(), includeNested );
     }
-    
-    public static List getValuesAsString(List values, 
+
+    public static List getValuesAsString(List values,
 					 boolean includeNested) {
 	if (values == null) return null;
 	List list = new LinkedList();
@@ -171,7 +171,7 @@ public class NameOpValue extends NameValue {
 		list.add( ((Value)obj).getCompleteValue() );
 	    } else if (includeNested && obj instanceof List) {
 		list.add( getValuesAsString( (List)obj, includeNested ) );
-	    } 
+	    }
 	}
 	return list;
     }
@@ -182,7 +182,7 @@ public class NameOpValue extends NameValue {
      * @param buf buffer to add the RSL representation to.
      * @param explicitConcat if true explicit concatination will
      *        be used in RSL strings.
-     */    
+     */
     public void toRSL(StringBuffer buf, boolean explicitConcat) {
 	buf.append("( ");
 	buf.append( getAttribute() );
@@ -193,7 +193,7 @@ public class NameOpValue extends NameValue {
 	buf.append(" )");
     }
 
-    private void toRSLSub(List values, StringBuffer buf, 
+    private void toRSLSub(List values, StringBuffer buf,
 			  boolean explicitConcat) {
 	Iterator iter = values.iterator();
 	Object obj;
@@ -215,27 +215,27 @@ public class NameOpValue extends NameValue {
 
     /**
      * Evaluates the relation against the symbol table.
-     * 
+     *
      * @param symbolTable the symbol table to evalute the relation
      *        against.
      * @return a new evaluted relation.
-     * @exception RslEvaluationException If an error occured during 
+     * @exception RslEvaluationException If an error occured during
      *            rsl evaluation.
      */
-    public NameOpValue evaluate(Map symbolTable) 
+    public NameOpValue evaluate(Map symbolTable)
 	throws RslEvaluationException {
-	
+
 	List list = evaluateSub(values, symbolTable);
-	
+
 	NameOpValue newNV = new NameOpValue(getAttribute(),
 					    getOperator());
-	
+
 	newNV.setValues(list);
-	
+
 	return newNV;
     }
-    
-    private List evaluateSub(List values, Map symbolTable) 
+
+    private List evaluateSub(List values, Map symbolTable)
 	throws RslEvaluationException {
 	List newValues = new LinkedList();
 	Iterator iter = values.iterator();

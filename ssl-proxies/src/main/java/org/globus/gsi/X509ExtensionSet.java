@@ -19,7 +19,7 @@ import java.util.Hashtable;
 
 import org.globus.util.I18n;
 
-/** 
+/**
  * Represents a set of X.509 extensions.
  */
 public class X509ExtensionSet {
@@ -27,7 +27,7 @@ public class X509ExtensionSet {
     private static I18n i18n =
         I18n.getI18n("org.globus.gsi.errors",
                      X509ExtensionSet.class.getClassLoader());
-   
+
     private Hashtable extensions;
 
     /**
@@ -52,7 +52,7 @@ public class X509ExtensionSet {
 	return (X509Extension)this.extensions.put(extension.getOid(),
 						  extension);
     }
-    
+
     /**
      * Retrieves X509Extension by given oid.
      *
@@ -80,7 +80,7 @@ public class X509ExtensionSet {
 	}
 	return (X509Extension)this.extensions.remove(oid);
     }
-    
+
     /**
      * Returns the size of the set.
      *
@@ -89,7 +89,7 @@ public class X509ExtensionSet {
     public int size() {
 	return this.extensions.size();
     }
-    
+
     /**
      * Returns if the set is empty.
      *
@@ -98,14 +98,14 @@ public class X509ExtensionSet {
     public boolean isEmpty() {
 	return this.extensions.isEmpty();
     }
-    
+
     /**
      * Removes all extensions from the set.
      */
     public void clear() {
 	this.extensions.clear();
     }
-    
+
     /**
      * Returns a set view of the OIDs of the extensions contained in this
      * extension set.
@@ -115,5 +115,5 @@ public class X509ExtensionSet {
     public Set oidSet() {
 	return this.extensions.keySet();
     }
-    
+
 }

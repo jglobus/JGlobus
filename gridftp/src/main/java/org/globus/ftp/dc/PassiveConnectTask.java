@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
-   This task will wait on the local server for the new incoming connection 
+   This task will wait on the local server for the new incoming connection
    and when it comes it will start a new transfer thread on the new connection.
    It is little tricky: it will cause data channel to start
    a new thread. By the time this task completes, the new
@@ -51,7 +51,7 @@ public class PassiveConnectTask extends Task {
     protected Session session;
     protected DataChannelFactory factory;
     protected TransferContext context;
-    
+
     public PassiveConnectTask(ServerSocket myServer,
                               DataSink sink,
                               BasicServerControlChannel control,
@@ -61,7 +61,7 @@ public class PassiveConnectTask extends Task {
         this.sink = sink;
         init(myServer, control, session, factory, context);
     }
-    
+
     public PassiveConnectTask(ServerSocket myServer,
                               DataSource source,
                               BasicServerControlChannel control,
@@ -81,7 +81,7 @@ public class PassiveConnectTask extends Task {
               || session.serverMode == GridFTPSession.SERVER_EPAS)) {
             throw new IllegalStateException();
         }
-        
+
         if (myServer == null) {
             throw new IllegalArgumentException("server is nul");
         }
@@ -138,19 +138,19 @@ public class PassiveConnectTask extends Task {
     **/
     protected SocketBox openSocket() throws Exception {
         logger.debug("server.accept()");
-        
+
         SocketBox sBox = new SimpleSocketBox();
         Socket newSocket = myServer.accept();
         sBox.setSocket(newSocket);
-        
+
         return sBox;
     }
-    
+
     private void close() {
         // server will by closed by the FTPServerFacade.
         try { myServer.close(); } catch (Exception ignore) {}
     }
-    
+
     public void stop() {
         close();
     }

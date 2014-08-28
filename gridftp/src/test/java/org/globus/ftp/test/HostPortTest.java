@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,13 +29,13 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class HostPortTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(HostPortTest.class.getName());
 
     public static void main(String[] argv) {
 	junit.textui.TestRunner.run (suite());
     }
-    
+
     public static Test suite() {
 	return new TestSuite(HostPortTest.class);
     }
@@ -47,7 +47,7 @@ public class HostPortTest extends TestCase {
     public void testCreateIPv6() {
         HostPort6 hp = null;
 
-        hp = new HostPort6(HostPort6.IPv6, 
+        hp = new HostPort6(HostPort6.IPv6,
                            "1080::8:800:200C:417A",
                            123);
         assertEquals(HostPort6.IPv6, hp.getVersion());
@@ -55,7 +55,7 @@ public class HostPortTest extends TestCase {
         assertEquals(123, hp.getPort());
         assertEquals("|2|1080::8:800:200C:417A|123|", hp.toFtpCmdArgument());
 
-        hp = new HostPort6(HostPort6.IPv4, 
+        hp = new HostPort6(HostPort6.IPv4,
                            "192.168.1.1",
                            456);
         assertEquals(HostPort6.IPv4, hp.getVersion());
@@ -72,13 +72,13 @@ public class HostPortTest extends TestCase {
         parseIPv6("|2|1080::8:800:200C:417A|5282|",
                   "2", "1080::8:800:200C:417A", 5282);
     }
-    
+
     private void parseIPv6(String reply,
                            String version,
                            String host,
                            int port) {
         HostPort6 p = new HostPort6(reply);
-        
+
         assertEquals(version, p.getVersion());
         assertEquals(host, p.getHost());
         assertEquals(port, p.getPort());

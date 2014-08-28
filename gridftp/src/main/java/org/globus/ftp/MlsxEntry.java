@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,17 +28,17 @@ import org.apache.commons.logging.LogFactory;
 import org.globus.ftp.exception.FTPException;
 
 /**
- * 
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
+ *
  */
 public class MlsxEntry {
 
-   private static Log logger = 
+   private static Log logger =
 	LogFactory.getLog(MlsxEntry.class.getName());
-   
+
     private static SimpleDateFormat dateFormatter = null;
 
     public static final String SIZE = "size";
@@ -57,16 +57,16 @@ public class MlsxEntry {
     public static final String UNIX_UID = "unix.uid";
     public static final String UNIX_GID = "unix.gid";
     public static final String ERROR = "error";
-    
+
     public static final String TYPE_FILE = "file";
     public static final String TYPE_CDIR = "cdir";
     public static final String TYPE_PDIR = "pdir";
     public static final String TYPE_DIR = "dir";
     public static final String TYPE_SLINK = "slink";
-    
+
     public static final String ERROR_OPENFAILED = "OpenFailed";
     public static final String ERROR_INVALIDLINK = "InvalidLink";
-    
+
     private String fileName = null;
     private Hashtable facts = new Hashtable();
 
@@ -78,21 +78,21 @@ public class MlsxEntry {
     public MlsxEntry(String mlsxEntry) throws FTPException {
         this.parse(mlsxEntry);
     }
-    
+
     /**
      * Method parse.
      * @param mlsxEntry
      */
     private void parse(String mlsxEntry) {
-        
+
         StringTokenizer tokenizer = new StringTokenizer(mlsxEntry, ";");
 
         while (tokenizer.hasMoreTokens()) {
-            
+
             String token = tokenizer.nextToken();
-            
+
             if (tokenizer.hasMoreTokens()) {
-                
+
                 //next fact
                 String fact = token;
                 logger.debug("fact: " + fact);
@@ -106,7 +106,7 @@ public class MlsxEntry {
             } else {
 
                 // name: trim leading space
-                this.fileName = token.substring(1, 
+                this.fileName = token.substring(1,
                                                 token.length());
                 logger.debug("name: " + fileName);
 
@@ -117,7 +117,7 @@ public class MlsxEntry {
     public void set(String factName, String factValue) {
         facts.put(factName, factValue);
     }
-    
+
     public String getFileName() {
         return this.fileName;
     }
@@ -137,22 +137,22 @@ public class MlsxEntry {
         }
         return d;
     }
-    
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         Enumeration e = facts.keys();
-        
+
         while (e.hasMoreElements()) {
             String key = (String) e.nextElement();
             String value = (String)facts.get(key);
             buf.append( key + "=" + value +";");
         }
-        
+
         buf.append( " " + fileName);
-        
-        return buf.toString();		
+
+        return buf.toString();
     }
-	
+
     static {
 		dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
 		dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));

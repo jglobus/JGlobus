@@ -39,7 +39,7 @@ import java.net.Socket;
 
 public class GssClient {
 
-    private static final String helpMsg = 
+    private static final String helpMsg =
 	"Where options are:\n" +
 	" -gss-mode mode\t\t\tmode is: 'ssl' or 'gsi' (default)\n" +
 	" -deleg-type type\t\ttype is: 'none', 'limited' (default), or 'full'\n" +
@@ -53,13 +53,13 @@ public class GssClient {
 	"           \t\t\tOtherwise, identity authorization is performed.\n" +
 	"           \t\t\tAuthorization is not performed by default.\n" +
 	" -wrap-mode mode\t\tmode is: 'ssl' (default) or 'gsi'";
-    
+
 
     private Authorization auth;
     private GSSName targetName;
     private static GSSCredential cred;
 
-    private static GSSCredential getCredential(GSSManager manager) 
+    private static GSSCredential getCredential(GSSManager manager)
         throws Exception {
         // return null if needed to automatically reload the default creds
         if (cred == null) {
@@ -75,7 +75,7 @@ public class GssClient {
 	GetOpts opts = new GetOpts(usage, helpMsg);
 
 	int pos = opts.parse(args);
-	
+
 	if (pos + 2 > args.length) {
 	    System.err.println(usage);
 	    return;
@@ -83,7 +83,7 @@ public class GssClient {
 
 	String host = args[pos];
 	int port = Integer.parseInt(args[pos+1]);
-	
+
         GssClient client = new GssClient();
 
 	Authorization auth = SelfAuthorization.getInstance();
@@ -99,13 +99,13 @@ public class GssClient {
 	    }
 
             // XXX: When doing delegation targetName cannot be null.
-            // additional authorization will be performed after the handshake 
+            // additional authorization will be performed after the handshake
             // in the socket code.
             if (opts.deleg) {
                 if (auth instanceof GSSAuthorization) {
                     GSSAuthorization gssAuth = (GSSAuthorization)auth;
                 try {
-                    client.targetName = 
+                    client.targetName =
                         gssAuth.getExpectedName(null, host);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -113,36 +113,36 @@ public class GssClient {
                 }
             }
                 }
-        
+
         client.connect(host, port, opts);
             }
 
     public void connect(String host, int port, GetOpts opts) {
         // to make sure we use right impl
 	GSSManager manager = new GlobusGSSManagerImpl();
-        
+
 	ExtendedGSSContext context = null;
 	Socket s = null;
-        
+
         try {
 	    context = (ExtendedGSSContext)manager.createContext(
                                              this.targetName,
 								GSSConstants.MECH_OID,
                                              getCredential(manager),
 								opts.lifetime);
-	    
+
 	    context.requestCredDeleg(opts.deleg);
 	    context.requestConf(opts.conf);
 	    context.requestAnonymity(opts.anonymity);
 
 	    context.setOption(GSSConstants.GSS_MODE,
-			      (opts.gsiMode) ? 
-			      GSIConstants.MODE_GSI : 
+			      (opts.gsiMode) ?
+			      GSIConstants.MODE_GSI :
 			      GSIConstants.MODE_SSL);
 
 	    if (opts.deleg) {
 		context.setOption(GSSConstants.DELEGATION_TYPE,
-				  (opts.limitedDeleg) ? 
+				  (opts.limitedDeleg) ?
 				  GSIConstants.DELEGATION_TYPE_LIMITED :
 				  GSIConstants.DELEGATION_TYPE_FULL);
 	    }
@@ -164,7 +164,7 @@ public class GssClient {
 	    System.out.println("Privacy   : " + context.getConfState());
 	    System.out.println("Anonymity : " + context.getAnonymityState());
 
-	    String msg = 
+	    String msg =
 		"POST ping/jobmanager HTTP/1.1\r\n" +
 		"Host: " + host + "\r\n" +
 		"Content-Type: application/x-globus-gram\r\n" +

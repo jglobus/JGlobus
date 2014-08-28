@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class FTPControlChannelTest extends TestCase{
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(FTPControlChannelTest.class.getName());
 
     public FTPControlChannelTest(String name) {
@@ -86,10 +86,10 @@ public class FTPControlChannelTest extends TestCase{
 	}
     }
 
-    private void testAuth(String host, 
+    private void testAuth(String host,
 			  int port,
 			  String user,
-			  String password) 
+			  String password)
 	throws Exception {
 
 	    FTPControlChannel pi = new FTPControlChannel(host, port);
@@ -100,12 +100,12 @@ public class FTPControlChannelTest extends TestCase{
 	    }
 	    pi.write(new Command("USER", user));
 	    Reply reply = pi.read();
-	    
-	    if (Reply.isPositiveIntermediate(reply)) { 
+
+	    if (Reply.isPositiveIntermediate(reply)) {
 		pi.write(new Command("PASS", password));
 		reply = pi.read();
 	    }
-	    
+
             pi.close();
 
 	    if (! Reply.isPositiveCompletion(reply)) {
@@ -113,13 +113,13 @@ public class FTPControlChannelTest extends TestCase{
 	    }
     } //testAuth
 
-    private void testRetr(String host, 
+    private void testRetr(String host,
 			  int port,
 			  String dir,
 			  String separator,
 			  String file,
 			  String user,
-			  String password) 
+			  String password)
 	throws Exception {
 
 	    FTPControlChannel pi = new FTPControlChannel(host, port);
@@ -130,12 +130,12 @@ public class FTPControlChannelTest extends TestCase{
 	    }
 	    pi.write(new Command("USER", user));
 	    Reply reply = pi.read();
-	    
-	    if (Reply.isPositiveIntermediate(reply)) { 
+
+	    if (Reply.isPositiveIntermediate(reply)) {
 		pi.write(new Command("PASS", password));
 		reply = pi.read();
 	    }
-	    
+
 	    if (! Reply.isPositiveCompletion(reply)) {
 		fail("in attempt to log in, received unexpected reply from server: " + reply);
 	    }
@@ -148,7 +148,7 @@ public class FTPControlChannelTest extends TestCase{
 	    /*
 	    logger.debug("tester: start reading reply...");
 	    int b;
-	    java.io.InputStream is = pi.getInputStream();	    
+	    java.io.InputStream is = pi.getInputStream();
 	    while ( (b = is.read()) != '\n' ) {
 		System.out.println("next byte ->" + (char)b +"<- code ["
 				 + b + "]");
@@ -159,12 +159,12 @@ public class FTPControlChannelTest extends TestCase{
 
     } //testRetr
 
-    // not possible to test it: 
+    // not possible to test it:
     // list needs data channel
-    private void testList(String host, 
+    private void testList(String host,
 			  int port,
 			  String user,
-			  String password) 
+			  String password)
 	throws Exception {
 
 	    FTPControlChannel pi = new FTPControlChannel(host, port);
@@ -175,12 +175,12 @@ public class FTPControlChannelTest extends TestCase{
 	    }
 	    pi.write(new Command("USER", user));
 	    Reply reply = pi.read();
-	    
-	    if (Reply.isPositiveIntermediate(reply)) { 
+
+	    if (Reply.isPositiveIntermediate(reply)) {
 		pi.write(new Command("PASS", password));
 		reply = pi.read();
 	    }
-	    
+
 	    if (! Reply.isPositiveCompletion(reply)) {
 		fail("in attempt to log in, received unexpected reply from server: " + reply);
 	    }

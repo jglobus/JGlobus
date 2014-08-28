@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ import org.gridforum.jgss.ExtendedGSSManager;
  **/
 public class GridFTPClient2PartyTransferTest extends TestCase {
 
-    protected static Log logger = 
+    protected static Log logger =
 	LogFactory.getLog(GridFTPClient2PartyTransferTest.class.getName());
 
     public GridFTPClient2PartyTransferTest(String name) {
@@ -55,7 +55,7 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
@@ -71,86 +71,86 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
 	testGet(Session.SERVER_PASSIVE);
 
 	// test EBLOCK
-	testGet(Session.SERVER_PASSIVE, 
-		Session.TYPE_IMAGE, 
-		GridFTPSession.MODE_EBLOCK);	
+	testGet(Session.SERVER_PASSIVE,
+		Session.TYPE_IMAGE,
+		GridFTPSession.MODE_EBLOCK);
     }
 
     public void testPutPassive() throws Exception {
 
 	testPut(Session.SERVER_ACTIVE);
-	
+
 	// test EBLOCK
 	testPut(Session.SERVER_ACTIVE,
-		Session.TYPE_IMAGE, 
-		GridFTPSession.MODE_EBLOCK);	
+		Session.TYPE_IMAGE,
+		GridFTPSession.MODE_EBLOCK);
     }
 
     public void testPutActive() throws Exception {
 	testPut(Session.SERVER_PASSIVE);
     }
-    
+
 
 
     // --------- internal functions -----------------
-    
+
     // test two stream binary and stream ascii
     protected void testGet(int localServerMode) throws Exception {
 	testGet(localServerMode,
-		Session.TYPE_IMAGE, 
+		Session.TYPE_IMAGE,
 		Session.MODE_STREAM);
-	
+
 	testGet(localServerMode,
 		Session.TYPE_ASCII,
 		Session.MODE_STREAM);
     }
-    
+
     // test no dcau, dcau with clear, and dcau with safe
     protected void testGet(int localServerMode,
 			   int transferType,
 			   int transferMode) throws Exception {
-	
+
 	testGet(localServerMode, transferType, transferMode,
 		DataChannelAuthentication.NONE, GridFTPSession.PROTECTION_CLEAR);
-	
+
 	testGet(localServerMode, transferType, transferMode,
 		DataChannelAuthentication.SELF, GridFTPSession.PROTECTION_CLEAR);
-	
+
 	testGet(localServerMode, transferType, transferMode,
 		DataChannelAuthentication.SELF, GridFTPSession.PROTECTION_SAFE);
     }
-	
+
     protected void testGet(int localServerMode,
 			   int transferType,
 			   int transferMode,
 			   DataChannelAuthentication dcau,
 			   int prot) throws Exception {
-	
+
 	String smode = (localServerMode == Session.SERVER_PASSIVE)?
 	    "pasv" : "actv";
 	String tmode = (transferMode == Session.MODE_STREAM) ?
 	    "stream" : "eblock";
 	String ttype = (transferType == Session.TYPE_ASCII) ?
 	    "ascii" : "image";
-	String dcauStr = (dcau == DataChannelAuthentication.NONE) ? 
+	String dcauStr = (dcau == DataChannelAuthentication.NONE) ?
 	    "nodcau" : "dcau";
 	String protStr = (prot == GridFTPSession.PROTECTION_CLEAR) ?
 	    "clear" : "safe";
-	    
-	logger.info("with configuration: " + dcauStr + ", " + protStr);	    
-	    
+
+	logger.info("with configuration: " + dcauStr + ", " + protStr);
+
 	String fullRemoteFile = TestEnv.serverADir + "/" + TestEnv.serverASmallFile;
-	    
-	String fullLocalFile = 
-	    TestEnv.localDestDir + 
-	    "/c2ptt.get." + smode + "." + tmode +"." + ttype 
+
+	String fullLocalFile =
+	    TestEnv.localDestDir +
+	    "/c2ptt.get." + smode + "." + tmode +"." + ttype
 	    + "." + dcauStr + "." + protStr + "." + System.currentTimeMillis();
-	    
+
 	GridFTPClient client = new GridFTPClient(TestEnv.serverAHost,
 						 TestEnv.serverAPort);
 	client.setAuthorization(TestEnv.getAuthorization(TestEnv.serverASubject));
 
-	get(client, 
+	get(client,
 	    localServerMode,
 	    transferType,
 	    transferMode,
@@ -158,8 +158,8 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
 	    prot,
 	    fullLocalFile,
 	    fullRemoteFile);
-	
-	long size = client.getSize(fullRemoteFile); 
+
+	long size = client.getSize(fullRemoteFile);
 
 	client.close();
 
@@ -175,60 +175,60 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
     // test two stream binary and stream ascii
     protected void testPut(int localServerMode) throws Exception {
 	testPut(localServerMode,
-		Session.TYPE_IMAGE, 
+		Session.TYPE_IMAGE,
 		Session.MODE_STREAM);
 
 	testPut(localServerMode,
 		Session.TYPE_ASCII,
 		Session.MODE_STREAM);
     }
-    
+
     // test no dcau, dcau with clear, and dcau with safe
     protected void testPut(int localServerMode,
 			   int transferType,
 			   int transferMode) throws Exception {
-	
+
 	testPut(localServerMode, transferType, transferMode,
 		DataChannelAuthentication.NONE, GridFTPSession.PROTECTION_CLEAR);
-	
+
 	testPut(localServerMode, transferType, transferMode,
 		DataChannelAuthentication.SELF, GridFTPSession.PROTECTION_CLEAR);
-	
+
 	testPut(localServerMode, transferType, transferMode,
 		DataChannelAuthentication.SELF, GridFTPSession.PROTECTION_SAFE);
     }
-    
+
     protected void testPut(int localServerMode,
 			   int transferType,
 			   int transferMode,
 			   DataChannelAuthentication dcau,
 			   int prot) throws Exception {
-	
+
 	String smode = (localServerMode == Session.SERVER_PASSIVE)?
 	    "pasv" : "actv";
 	String tmode = (transferMode == Session.MODE_STREAM) ?
 	    "stream" : "eblock";
 	String ttype = (transferType == Session.TYPE_ASCII) ?
 	    "ascii" : "image";
-	String dcauStr = (dcau == DataChannelAuthentication.NONE) ? 
+	String dcauStr = (dcau == DataChannelAuthentication.NONE) ?
 	    "nodcau" : "dcau";
 	String protStr = (prot == GridFTPSession.PROTECTION_CLEAR) ?
 	    "clear" : "safe";
-	    
-	logger.info("with configuration: " + dcauStr + ", " + protStr);	    
+
+	logger.info("with configuration: " + dcauStr + ", " + protStr);
 
 	String fullLocalFile =  TestEnv.localSrcDir + "/" + TestEnv.localSrcFile;
-	
-	String fullRemoteFile = 
+
+	String fullRemoteFile =
 	    TestEnv.serverBDir +
-	    "/c2ptt.put." + smode + "." + tmode +"." + ttype 
+	    "/c2ptt.put." + smode + "." + tmode +"." + ttype
 	    + "." + dcauStr + "." + protStr + "." + System.currentTimeMillis();
 
 	GridFTPClient client = new GridFTPClient(TestEnv.serverBHost,
 						 TestEnv.serverBPort);
 	client.setAuthorization(TestEnv.getAuthorization(TestEnv.serverBSubject));
-	
-	put(client, 
+
+	put(client,
 	    localServerMode,
 	    transferType,
 	    transferMode,
@@ -253,14 +253,14 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
     /**
        This method performs the actual transfer
     **/
-    protected void get(GridFTPClient client, 
+    protected void get(GridFTPClient client,
 		       int localServerMode,
 		       int transferType,
 		       int transferMode,
 		       DataChannelAuthentication dcau,
 		       int prot,
 		       String fullLocalFile,
-		       String fullRemoteFile) 
+		       String fullRemoteFile)
 	throws Exception{
 	client.authenticate(getCredential()); /* use default cred */
 	client.setProtectionBufferSize(16384);
@@ -272,13 +272,13 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
 	    client.setPassive();
 	    client.setLocalActive();
 	} else {
-		client.setLocalPassive(); 
+		client.setLocalPassive();
 	    client.setActive();
 	}
 
 	DataSink sink = null;
 	if (transferMode == GridFTPSession.MODE_EBLOCK) {
-	    sink = new FileRandomIO(new RandomAccessFile(fullLocalFile, 
+	    sink = new FileRandomIO(new RandomAccessFile(fullLocalFile,
 							 "rw"));
 	} else {
 	    sink = new DataSinkStream(new FileOutputStream(fullLocalFile));
@@ -290,14 +290,14 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
     /**
        This method performs the actual transfer
      **/
-    protected void put(GridFTPClient client, 
+    protected void put(GridFTPClient client,
 		       int localServerMode,
 		       int transferType,
 		       int transferMode,
 		       DataChannelAuthentication dcau,
 		       int prot,
 		       String fullLocalFile,
-		       String fullRemoteFile) 
+		       String fullRemoteFile)
 	throws Exception{
 	client.authenticate(getCredential()); /* use default cred */
 	client.setProtectionBufferSize(16384);
@@ -310,14 +310,14 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
 	    client.setPassive();
 	    client.setLocalActive();
 	} else {
-		client.setLocalPassive(); 
+		client.setLocalPassive();
 	    client.setActive();
 	}
 
 	logger.debug("sending file " + fullLocalFile);
 	DataSource source = null;
 	if (transferMode == GridFTPSession.MODE_EBLOCK) {
-	    source = new FileRandomIO(new RandomAccessFile(fullLocalFile, 
+	    source = new FileRandomIO(new RandomAccessFile(fullLocalFile,
 							   "r"));
 	} else {
 	    source = new DataSourceStream(new FileInputStream(fullLocalFile));
@@ -325,9 +325,9 @@ public class GridFTPClient2PartyTransferTest extends TestCase {
 
 	client.put(fullRemoteFile, source, null);
     }
-    
+
     protected GSSCredential getCredential() throws Exception {
 	return ExtendedGSSManager.getInstance().createCredential(GSSCredential.INITIATE_AND_ACCEPT);
     }
-    
-} 
+
+}

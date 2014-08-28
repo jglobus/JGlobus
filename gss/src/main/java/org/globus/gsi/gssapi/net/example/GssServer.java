@@ -36,7 +36,7 @@ import java.net.ServerSocket;
 
 public class GssServer {
 
-    private static final String helpMsg = 
+    private static final String helpMsg =
 	"Where options are:\n" +
 	" -gss-mode mode\t\t\tmode is: 'ssl' or 'gsi' (default)\n" +
 	" -deleg-type type\t\ttype is: 'none', 'limited' (default), or 'full'\n" +
@@ -70,7 +70,7 @@ public class GssServer {
 	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
-	} 
+	}
     }
 
 }
@@ -81,13 +81,13 @@ class Client extends Thread {
     Socket s;
 
     private static GSSCredential cred;
-    
+
     public Client(Socket s, GetOpts opts) {
 	this.s = s;
 	this.opts = opts;
     }
 
-    private static GSSCredential getCredential(GSSManager manager) 
+    private static GSSCredential getCredential(GSSManager manager)
         throws Exception {
         // return null if needed to automatically reload the default creds
         if (cred == null) {
@@ -103,40 +103,40 @@ class Client extends Thread {
 	// to make sure we use right impl
 	GSSManager manager = new GlobusGSSManagerImpl();
 	ExtendedGSSContext context = null;
-	
+
 	try {
             GSSCredential credd = getCredential(manager);
 	    context = (ExtendedGSSContext)manager.createContext(credd);
 
 	    context.requestConf(opts.conf);
-	    
+
 	    context.setOption(GSSConstants.GSS_MODE,
-			      (opts.gsiMode) ? 
-			      GSIConstants.MODE_GSI : 
+			      (opts.gsiMode) ?
+			      GSIConstants.MODE_GSI :
 			      GSIConstants.MODE_SSL);
-	    
+
 	    context.setOption(GSSConstants.REJECT_LIMITED_PROXY,
 			      new Boolean(opts.rejectLimitedProxy));
-	    
+
 	    context.setOption(GSSConstants.REQUIRE_CLIENT_AUTH,
 			      new Boolean(!opts.anonymity));
-	    
+
 	    s = GssSocketFactory.getDefault().createSocket(s, null, 0, context);
-	    
+
 	    // server socket
 	    ((GssSocket)s).setUseClientMode(false);
 	    ((GssSocket)s).setWrapMode(opts.wrapMode);
-	    
+
 	    OutputStream out = s.getOutputStream();
 	    InputStream in = s.getInputStream();
-	    
+
 	    System.out.println("Context established.");
 	    System.out.println("Initiator : " + context.getSrcName());
-	    System.out.println("Acceptor  : " + context.getTargName());	    
+	    System.out.println("Acceptor  : " + context.getTargName());
 	    System.out.println("Lifetime  : " + context.getLifetime());
 	    System.out.println("Privacy   : " + context.getConfState());
-	    
-	    GlobusGSSCredentialImpl cred = 
+
+	    GlobusGSSCredentialImpl cred =
 		(GlobusGSSCredentialImpl)context.getDelegCred();
 	    System.out.println("Delegated credential :");
 	    if (cred != null) {
@@ -144,7 +144,7 @@ class Client extends Thread {
 	    } else {
 		System.out.println("None");
 	    }
-	    
+
 	    String line = null;
 	    BufferedReader r = new BufferedReader(new InputStreamReader(in));
 	    while ( (line = r.readLine()) != null ) {
@@ -153,13 +153,13 @@ class Client extends Thread {
 		}
 		System.out.println(line);
 	    }
-	    
-	    byte[] msg = 
+
+	    byte[] msg =
 		"HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n".getBytes();
-	    
+
 	    out.write(msg);
 	    out.flush();
-	    
+
 	} catch (Exception e) {
 	    e.printStackTrace();
 	} finally {

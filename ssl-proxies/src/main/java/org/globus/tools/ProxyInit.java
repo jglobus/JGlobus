@@ -67,7 +67,7 @@ import org.globus.util.Util;
  * Do not use it as a library.
  * ######################################################################## */
 
-/** 
+/**
  * Initializes/creates a new globus proxy. This is a command-line tool. Please
  * do not use it as a library.
  */
@@ -76,7 +76,7 @@ public abstract class ProxyInit {
     static {
         Security.addProvider(new GlobusProvider());
     }
-    
+
     public static final String GENERIC_POLICY_OID = "1.3.6.1.4.1.3536.1.1.1.8";
 
     private static final String message =
@@ -90,7 +90,7 @@ public abstract class ProxyInit {
     "    -verify\t\t\tPerforms proxy verification tests (default).\n" +
         "    -pwstdin\t\t\tAllows passphrase from stdin.\n" +
     "    -noverify\t\t\tDisables proxy verification tests.\n" +
-    "    -quiet | -q\t\t\tQuiet mode, minimal output\n" + 
+    "    -quiet | -q\t\t\tQuiet mode, minimal output\n" +
     "    -limited\t\t\tCreates a limited proxy.\n" +
         "    -independent\t\tCreates a independent globus proxy.\n" +
     "    -old\t\t\tCreates a legacy globus proxy.\n" +
@@ -107,15 +107,15 @@ public abstract class ProxyInit {
     "    -policy-language <oid>\tused in the policy file.\n" +
     "    -path-length <l>\t\tAllow a chain of at most l proxies to be \n" +
     "                    \t\tgenerated from this one\n" +
-    "    -cert <certfile>\t\tNon-standard location of user certificate\n" + 
-    "    -key <keyfile>\t\tNon-standard location of user key\n" + 
+    "    -cert <certfile>\t\tNon-standard location of user certificate\n" +
+    "    -key <keyfile>\t\tNon-standard location of user key\n" +
     "    -out <proxyfile>\t\tNon-standard location of new proxy cert.\n" +
     "    -pkcs11\t\t\tEnables the PKCS11 support module. The\n" +
     "           \t\t\t-cert and -key arguments are used as labels\n" +
     "           \t\t\tto find the credentials on the device.\n" +
         "    -rfc\t\t\tCreates RFC 3820 compliant proxy. (Default)\n" +
         "    -draft\t\t\tCreates RFC draft compliant proxy\n";
-    
+
     protected X509Certificate[] certificates;
     protected int bits  = 512;
     protected int lifetime = 3600 * 12;
@@ -156,7 +156,7 @@ public abstract class ProxyInit {
                 // ignore policy - this is just for proxy init case
                 System.out.println("Proxy verify: Ignoring proxy policy");
                 if (debug) {
-                    String policy = 
+                    String policy =
                     new String(proxyCertInfo.getProxyPolicy().getPolicy());
                     System.out.println("Policy:");
                     System.out.println(policy);
@@ -164,13 +164,13 @@ public abstract class ProxyInit {
               }
             });
         }
-    
+
         KeyStore keyStore = Stores.getDefaultTrustStore();
         CertStore crlStore = Stores.getDefaultCRLStore();
         ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
         X509ProxyCertPathParameters parameters = new X509ProxyCertPathParameters(keyStore, crlStore, sigPolStore, false, handlers);
-        X509ProxyCertPathValidator validator = new X509ProxyCertPathValidator();               
-        validator.engineValidate(CertificateUtil.getCertPath(proxy.getCertificateChain()), parameters);     
+        X509ProxyCertPathValidator validator = new X509ProxyCertPathValidator();
+        validator.engineValidate(CertificateUtil.getCertPath(proxy.getCertificateChain()), parameters);
     }
 
     public void setBits(int bits) {
@@ -208,7 +208,7 @@ public abstract class ProxyInit {
     public void setStdin(boolean stdin) {
     this.stdin = stdin;
     }
-    
+
     public void createProxy(String cert,
                 String key,
                 boolean verify,
@@ -216,7 +216,7 @@ public abstract class ProxyInit {
                 String proxyFile) {
 
     init(new String [] {cert, key});
-    
+
     loadCertificates(cert);
 
     if (!quiet) {
@@ -228,19 +228,19 @@ public abstract class ProxyInit {
         }
         System.out.println("Your identity: " + dn);
     }
-    
+
     loadKey(key);
-    
+
     if (debug) {
         System.out.println("Using " + bits + " bits for private key");
     }
-    
+
     if (!quiet) {
         System.out.println("Creating proxy, please wait...");
     }
-    
+
     sign();
-    
+
     if (verify) {
         try {
         verify();
@@ -257,9 +257,9 @@ public abstract class ProxyInit {
     if (debug) {
         System.out.println("Saving proxy to: " + proxyFile);
     }
-    
+
     if (!quiet) {
-        System.out.println("Your proxy is valid until " + 
+        System.out.println("Your proxy is valid until " +
                    proxy.getCertificateChain()[0].getNotAfter());
     }
 
@@ -274,9 +274,9 @@ public abstract class ProxyInit {
         // write the contents
         proxy.save(out);
         } catch (Exception e) {
-        System.err.println("Failed to save proxy to a file: " + 
+        System.err.println("Failed to save proxy to a file: " +
                    e.getMessage());
-        System.exit(-1);            
+        System.exit(-1);
     } finally {
         if (out != null) {
         try { out.close(); } catch(Exception e) {}
@@ -285,9 +285,9 @@ public abstract class ProxyInit {
 
     dispose();
     }
-    
+
     public static void main(String args[]) {
-    
+
     int bits         = 512;
     int lifetime     = 3600 * 12;
     boolean debug    = false;
@@ -303,14 +303,14 @@ public abstract class ProxyInit {
     String policyFile = null;
         boolean stdin     = false;
         boolean independent = false;
-   
+
     CoGProperties properties = CoGProperties.getDefault();
 
     boolean globusStyle = false;
     String proxyFile    = properties.getProxyFile();
     String keyFile      = null;
     String certFile     = null;
-    
+
     for (int i = 0; i < args.length; i++) {
         if (args[i].equalsIgnoreCase("-hours")) {
         if (i+1 >= args.length) {
@@ -403,11 +403,11 @@ public abstract class ProxyInit {
         break;
         }
     }
-    
+
     if (proxyFile == null) {
         error("Proxy file not specified.");
     }
-    
+
     boolean restricted = (policyFile != null || policyLanguage != null);
 
     if (independent) {
@@ -454,7 +454,7 @@ public abstract class ProxyInit {
             GSIConstants.CertificateType.GSI_4_LIMITED_PROXY :
                 GSIConstants.CertificateType.GSI_4_IMPERSONATION_PROXY;
             } else {
-        proxyType = (limited) ? 
+        proxyType = (limited) ?
             GSIConstants.CertificateType.GSI_2_LIMITED_PROXY :
                 GSIConstants.CertificateType.GSI_2_PROXY;
         }
@@ -474,7 +474,7 @@ public abstract class ProxyInit {
         }
         }
         try {
-        Class iClass = 
+        Class iClass =
             Class.forName("org.globus.pkcs11.tools.PKCS11ProxyInit");
         init = (ProxyInit)iClass.newInstance();
         } catch (ClassNotFoundException e) {
@@ -503,12 +503,12 @@ public abstract class ProxyInit {
         System.err.println("  user key  : " + ((keyFile == null) ? "none" : keyFile));
         System.err.println("  user cert : " + ((certFile == null) ? "none" : certFile));
     }
-    
+
     CertUtil.init();
 
     ProxyCertInfo proxyCertInfo = null;
 
-    if ((ProxyCertificateUtil.isGsi3Proxy(proxyType)) || 
+    if ((ProxyCertificateUtil.isGsi3Proxy(proxyType)) ||
             (ProxyCertificateUtil.isGsi4Proxy(proxyType))) {
         ProxyPolicy policy = null;
             if (ProxyCertificateUtil.isLimitedProxy(proxyType)) {
@@ -543,13 +543,13 @@ public abstract class ProxyInit {
         proxyCertInfo = new ProxyCertInfo(policy);
         }
     }
-    
+
         init.setBits(bits);
     init.setLifetime(lifetime);
 
     init.setProxyType(proxyType);
     init.setProxyCertInfo(proxyCertInfo);
-    
+
     init.setDebug(debug);
     init.setQuiet(quiet);
     init.setStdin(stdin);
@@ -560,7 +560,7 @@ public abstract class ProxyInit {
              globusStyle,
              proxyFile);
     }
-    
+
     private static void argError(String error) {
     System.err.println("Error: " + error);
     System.err.println();
@@ -574,8 +574,8 @@ public abstract class ProxyInit {
     System.err.println("Error: " + error);
     System.exit(1);
     }
-    
-    private static byte[] readPolicyFile(String file) 
+
+    private static byte[] readPolicyFile(String file)
     throws IOException {
     File f = new File(file);
     FileInputStream in = new FileInputStream(f);
@@ -599,32 +599,32 @@ public abstract class ProxyInit {
     }
     return data;
     }
-    
+
 }
 
 class DefaultProxyInit extends ProxyInit {
 
     private PrivateKey userKey = null;
-    
+
     public void init(String [] args) {
     verify(args[1], "User key");
     verify(args[0], "User certificate");
     }
-   
+
     public void verify() throws Exception {
     RSAPublicKey pkey = (RSAPublicKey)getCertificate().getPublicKey();
     RSAPrivateKey prkey = (RSAPrivateKey)userKey;
-    
+
     if (!pkey.getModulus().equals(prkey.getModulus())) {
         throw new Exception("Certificate and private key specified do not match");
     }
-    
+
     super.verify();
     }
 
     private static void verify(String file, String msg) {
     if (file == null) error(msg + " not specified.");
-    
+
     File f = new File(file);
     if (!f.exists() || f.isDirectory()) error(msg + " not found.");
     }
@@ -645,25 +645,25 @@ class DefaultProxyInit extends ProxyInit {
     public void loadKey(String arg) {
     try {
         OpenSSLKey key = new BouncyCastleOpenSSLKey(arg);
-        
+
         if (key.isEncrypted()) {
                 String prompt = (quiet) ?
                     "Enter GRID pass phrase: " :
                     "Enter GRID pass phrase for this identity: ";
-        
-                String pwd = (stdin) ?  
-                    Util.getInput(prompt) : 
+
+                String pwd = (stdin) ?
+                    Util.getInput(prompt) :
                     Util.getPrivateInput(prompt);
 
         if (pwd == null) {
             System.exit(1);
         }
-        
+
         key.decrypt(pwd);
         }
-        
+
         userKey = key.getPrivateKey();
-        
+
     } catch(IOException e) {
         System.err.println("Error: Failed to load key: " + arg);
         System.err.println("Error: " + e.getMessage());
@@ -677,7 +677,7 @@ class DefaultProxyInit extends ProxyInit {
         System.exit(-1);
     }
     }
-    
+
     public void sign() {
     try {
         BouncyCastleCertProcessingFactory factory =
@@ -706,5 +706,5 @@ class DefaultProxyInit extends ProxyInit {
         System.exit(-1);
     }
     }
-    
+
 }

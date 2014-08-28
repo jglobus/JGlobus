@@ -48,7 +48,7 @@ import org.junit.Test;
 
 /**
  * FILL ME
- * 
+ *
  * @author ranantha@mcs.anl.gov
  */
 public class TestFileBasedTrustStore {
@@ -64,7 +64,7 @@ public class TestFileBasedTrustStore {
 	@BeforeClass
 	public static void setUp() throws Exception {
 
-		// JGLOBUS-103 
+		// JGLOBUS-103
 		dir = new DirSetupUtil(new String[] { "testTrustStore/1c3f2ca8.0", "testTrustStore/b38b4d8c.0",
 				"testTrustStore/d1b603c3.0", "testTrustStore/1c3f2ca8.r0", "testTrustStore/d1b603c3.r0",
 				"testTrustStore/1c3f2ca8.signing_policy", "testTrustStore/b38b4d8c.signing_policy",
@@ -104,7 +104,7 @@ public class TestFileBasedTrustStore {
 
 		}
 
-		// JGLOBUS-103 
+		// JGLOBUS-103
 
 	}
 
@@ -178,7 +178,7 @@ public class TestFileBasedTrustStore {
 
 		}
 
-		// JGLOBUS-103 
+		// JGLOBUS-103
 	}
 
 	@Test
@@ -207,19 +207,19 @@ public class TestFileBasedTrustStore {
 			assert (policy.getAllowedDNs() != null);
 		}
 
-		// JGLOBUS-103 
+		// JGLOBUS-103
 	}
-	public static boolean deleteDir(File dir) { 
-		if (dir.isDirectory()) { 
-			String[] dirContent = dir.list(); 
-			for (int i=0; i<dirContent.length; i++){ 
-				boolean success = deleteDir(new File(dir, dirContent[i])); 
-				if (!success) { 
-					return false; 
-				} 
-			} 
-		} // The directory is now empty so delete it 
-		return dir.delete(); 
+	public static boolean deleteDir(File dir) {
+		if (dir.isDirectory()) {
+			String[] dirContent = dir.list();
+			for (int i=0; i<dirContent.length; i++){
+				boolean success = deleteDir(new File(dir, dirContent[i]));
+				if (!success) {
+					return false;
+				}
+			}
+		} // The directory is now empty so delete it
+		return dir.delete();
 	}
 	@AfterClass
 	public static void tearDown() throws Exception {

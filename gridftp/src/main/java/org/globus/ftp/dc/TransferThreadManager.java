@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import org.globus.ftp.vanilla.FTPServerFacade;
 
 public class TransferThreadManager {
 
-    static Log logger = 
+    static Log logger =
         LogFactory.getLog(TransferThreadManager.class.getName());
 
     protected SocketPool socketPool;
@@ -52,8 +52,8 @@ public class TransferThreadManager {
         this.dataChannelFactory = new GridFTPDataChannelFactory();
     }
 
-    /** 
-     * Act as the active side. Connect to the server and 
+    /**
+     * Act as the active side. Connect to the server and
      * store the newly connected sockets in the socketPool.
      */
     public void activeConnect(HostPort hp, int connections) {
@@ -68,14 +68,14 @@ public class TransferThreadManager {
                          + i
                          + "; total cached sockets = "
                          + socketPool.count());
-            
+
             Task task =
                 new GridFTPActiveConnectTask(
                                              hp,
                                              localControlChannel,
                                              sbox,
                                              gSession);
-            
+
             runTask(task);
         }
     }
@@ -84,7 +84,7 @@ public class TransferThreadManager {
     public void activeClose(TransferContext context, int connections) {
 
         try {
-            
+
             //this could be improved; for symmetry and performance,
             //make it a separate task class and pass to the taskThread
             for (int i = 0; i < connections; i++) {
@@ -101,36 +101,36 @@ public class TransferThreadManager {
                     sbox.setSocket(null);
                 }
             }
-            
+
         } catch (Exception e) {
             FTPServerFacade.exceptionToControlChannel(
                 e,
                 "closing of a reused connection failed",
-                localControlChannel);   
+                localControlChannel);
         }
     }
 
-    /** 
+    /**
      * This should be used once the remote active server connected to us.
      * This method starts transfer threads that will
      * read data from the source and send.
-     * 
+     *
      * @param reusable if set to false, the sockets will not be reused after
      *        the transfer
      */
     public synchronized void startTransfer(DataSource source,
                                            TransferContext context,
                                            int connections,
-                                           boolean reusable) 
+                                           boolean reusable)
         throws ServerException {
-                        
-        // things would get messed up if more than 1 file was transfered 
+
+        // things would get messed up if more than 1 file was transfered
         // simultaneously with the same transfer manager
         if (transferThreadCount != 0) {
             throw new ServerException(
                             ServerException.PREVIOUS_TRANSFER_ACTIVE);
         }
-        
+
         for (int i = 0; i < connections; i++) {
             logger.debug(
                          "checking out a socket; total cached sockets = "
@@ -154,25 +154,25 @@ public class TransferThreadManager {
                                             gSession,
                                             dataChannelFactory,
                                             context);
-            
+
             runTask(task);
         }
     }
 
-    /** 
+    /**
      * This should be used once the remote active server connected to us.
      * This method starts transfer threads that will
      * receive the data and store them in the sink.
      * Because of transfer direction, this method cannot be used with EBLOCK.
      * Therefore the number of connections is fixed at 1.
-     * 
+     *
      * @param reusable if set to false, the sockets will not be reused after
      *        the transfer
      */
     public synchronized void startTransfer(DataSink sink,
                                            TransferContext context,
                                            int connections,
-                                           boolean reusable) 
+                                           boolean reusable)
         throws ServerException {
 
         // things would get messed up if more than 1 file was transfered
@@ -206,25 +206,25 @@ public class TransferThreadManager {
                                             gSession,
                                             dataChannelFactory,
                                             context);
-            
+
             runTask(task);
         }
     }
-    
-    /** 
+
+    /**
      * Accept connections from the remote server,
      * and start transfer threads that will read incoming data and store
      * in the sink.
-     * 
+     *
      * @param connections the number of expected connections
      */
     public synchronized void passiveConnect(DataSink sink,
                                             TransferContext context,
                                             int connections,
-                                            ServerSocket serverSocket) 
+                                            ServerSocket serverSocket)
         throws ServerException {
 
-        // things would get messed up if more than 1 file was transfered 
+        // things would get messed up if more than 1 file was transfered
         // simultaneously with the same transfer manager
         if (transferThreadCount != 0) {
             throw new ServerException(
@@ -245,18 +245,18 @@ public class TransferThreadManager {
         }
     }
 
-    /** 
+    /**
      * Accept connection from the remote server
-     * and start transfer thread that will read incoming data and store in 
+     * and start transfer thread that will read incoming data and store in
      * the sink. This method, because of direction of transfer, cannot be
      * used with EBlock. Therefore it is fixed to create only 1 connection.
      */
     public synchronized void passiveConnect(DataSource source,
                                             TransferContext context,
-                                            ServerSocket serverSocket) 
+                                            ServerSocket serverSocket)
         throws ServerException {
-        
-        // things would get messed up if more than 1 file was transfered 
+
+        // things would get messed up if more than 1 file was transfered
         // simultaneously with the same transfer manager
         if (transferThreadCount != 0) {
             throw new ServerException(
@@ -273,23 +273,23 @@ public class TransferThreadManager {
                              (EBlockParallelTransferContext) context);
 
         runTask(task);
-        
+
     }
 
     public synchronized int getTransferThreadCount() {
         return transferThreadCount;
     }
-    
+
     public synchronized void transferThreadStarting() {
         transferThreadCount++;
-        logger.debug("one transfer started, total active = " + 
+        logger.debug("one transfer started, total active = " +
                      transferThreadCount);
     }
 
     public synchronized void transferThreadTerminating() {
         transferThreadCount--;
-        logger.debug("one transfer terminated, total active = " + 
-                     transferThreadCount);         
+        logger.debug("one transfer terminated, total active = " +
+                     transferThreadCount);
     }
 
     /**
@@ -312,9 +312,9 @@ public class TransferThreadManager {
             taskThread = null;
         }
     }
-    
+
     public void close() {
         stopTaskThread();
     }
-    
+
 }

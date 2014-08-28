@@ -163,7 +163,7 @@ public final class ProxyCertificateUtil {
      * Returns a string description of a specified proxy
      * type.
      *
-     * @param proxyType the proxy type to get the string 
+     * @param proxyType the proxy type to get the string
      *        description of.
      * @return the string description of the proxy type.
      */

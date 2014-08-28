@@ -22,9 +22,9 @@ import org.ietf.jgss.GSSName;
  * The authorization is performed once the connection was authenticated.
  */
 public abstract class Authorization {
-    
+
     /**
-     * Performes authorization checks. Throws 
+     * Performes authorization checks. Throws
      * <code>AuthorizationException</code> if the authorization fails.
      * Otherwise, the function completes normally.
      *
@@ -33,7 +33,7 @@ public abstract class Authorization {
      * @exception AuthorizationException if the peer is
      *            not authorized to access/use the resource.
      */
-    public abstract void authorize(GSSContext context, String host) 
+    public abstract void authorize(GSSContext context, String host)
 	throws AuthorizationException;
 
     protected void generateAuthorizationException(GSSName expected,
@@ -50,6 +50,6 @@ public abstract class Authorization {
 	    .append(target.toString())
 	    .append("\"");
 
-	throw new AuthorizationException(msg.toString());         
+	throw new AuthorizationException(msg.toString());
     }
 }

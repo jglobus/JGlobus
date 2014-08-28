@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@ package org.globus.rsl;
 import java.util.*;
 
 /**
- * This class represnts a variable definitions in the RSL string 
+ * This class represnts a variable definitions in the RSL string
  * (see rsl_substitution attribute)
  *
  */
@@ -44,7 +44,7 @@ public class Bindings extends NameValue {
      * match exactly to be removed (it is case sensitive).
      *
      * @param varName variable name to remove the definition of.
-     * @return true if the variable was successfully removed. 
+     * @return true if the variable was successfully removed.
      *         False, otherwise.
      */
     public boolean removeVariable(String varName) {
@@ -73,14 +73,14 @@ public class Bindings extends NameValue {
      * Evaluates the variable definitions as variable definitions
      * can reference each other against the symbol table.
      * The evaluation process updates the symbol table.
-     * 
+     *
      * @param symbolTable the symbol table to evalute the variables
      *        against.
      * @return a new evaluted variable definition.
-     * @exception RslEvaluationException If an error occured during 
+     * @exception RslEvaluationException If an error occured during
      *            rsl evaluation.
      */
-    public Bindings evaluate(Map symbolTable) 
+    public Bindings evaluate(Map symbolTable)
 	throws RslEvaluationException {
 	if (symbolTable == null) {
 	    throw new IllegalArgumentException("Symbol table must be initialized.");
@@ -93,18 +93,18 @@ public class Bindings extends NameValue {
 	    vl = iter.next();
 	    if (vl instanceof Binding) {
 		binding = ((Binding)vl).evaluate(symbolTable);
-		
+
 		// update symbol table
 		symbolTable.put(binding.getName(),
 				binding.getValue().getValue());
-		
+
 		newValues.add(binding);
 	    } else {
 		// error: only binding objects should be in the list
 		throw new RuntimeException("Invalid object in binding");
 	    }
 	}
-	
+
 	Bindings bind = new Bindings(getAttribute());
 	bind.setValues(newValues);
 	return bind;
@@ -130,5 +130,5 @@ public class Bindings extends NameValue {
 	}
 	buf.append(" )");
     }
-    
+
 }

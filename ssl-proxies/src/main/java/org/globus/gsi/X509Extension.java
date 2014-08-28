@@ -16,12 +16,12 @@ package org.globus.gsi;
 
 import org.globus.util.I18n;
 
-/** 
+/**
  * Represents an X.509 extension. It is used to create X.509 extensions
  * and pass them in a map during certificate generation.
  */
 public class X509Extension {
-   
+
     protected boolean critical;
     protected byte[] value;
     protected String oid;
@@ -45,7 +45,7 @@ public class X509Extension {
      * The extension is marked as noncritical.
      *
      * @param oid the oid of the extension
-     * @param value the actual value of the extension (not octet string 
+     * @param value the actual value of the extension (not octet string
      *        encoded). The value can be null.
      */
     public X509Extension(String oid, byte[] value) {
@@ -58,7 +58,7 @@ public class X509Extension {
      *
      * @param oid the oid of the extension
      * @param critical the critical value.
-     * @param value the actual value of the extension (not octet string 
+     * @param value the actual value of the extension (not octet string
      *        encoded). The value can be null.
      */
     public X509Extension(String oid, boolean critical, byte[] value) {
@@ -126,5 +126,5 @@ public class X509Extension {
      */
     public byte[] getValue() {
 	return this.value;
-    }    
+    }
 }

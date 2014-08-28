@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
-   Represents list of ranges of integers (ByteRange objects). 
+   Represents list of ranges of integers (ByteRange objects).
    The name reflects the fact that in FTP extended mode restart markers, such
    structure represent a list of ranges of transfered bytes.
    The list has following characteristic:
@@ -34,15 +34,15 @@ import org.apache.commons.logging.LogFactory;
    </ul>
    You cannot just add new ranges to the list, because that would violate
    the contract above. New ranges can be merge()d to the list.
-   @see GridFTPRestartMarker 
+   @see GridFTPRestartMarker
  **/
 public class ByteRangeList implements RestartData {
 
-    private static Log logger = 
+    private static Log logger =
         LogFactory.getLog(ByteRangeList.class.getName());
 
     /**
-       vector of ByteRanges. It is guaranteed 
+       vector of ByteRanges. It is guaranteed
        that any two ranges are not adjacent to each other,
        nor have a common subset.
        They are unordered, however.
@@ -52,7 +52,7 @@ public class ByteRangeList implements RestartData {
     public ByteRangeList() {
 	vector = new Vector();
     }
-    
+
     /**
        @return true if this list logically represents the same range list,
        although the object instances may be different.
@@ -60,7 +60,7 @@ public class ByteRangeList implements RestartData {
     public boolean equals(Object  other) {
         if (this == other) {
             return true;
-        } 
+        }
         if (other instanceof ByteRangeList) {
             ByteRangeList otherObj = (ByteRangeList)other;
             if (this.vector.size() != otherObj.vector.size()) {
@@ -112,7 +112,7 @@ public class ByteRangeList implements RestartData {
 	    vector.add(newRange);
 	    return;
 	}
-	
+
 	for (int i = 0; i < oldSize; i++) {
 
 	    int result = newRange.merge((ByteRange)vector.elementAt(index));
@@ -121,7 +121,7 @@ public class ByteRangeList implements RestartData {
 	    case ByteRange.THIS_ABOVE :
 		//last_below = index;
 		index ++;
-		break; 
+		break;
 	    case ByteRange.ADJACENT :
 	    case ByteRange.THIS_SUBSET :
 	    case ByteRange.THIS_SUPERSET :
@@ -142,14 +142,14 @@ public class ByteRangeList implements RestartData {
 		return;
 	    }
 	}
-	
+
 	if (merged == NOT_YET) {
 	    vector.add(newRange);
 	}
     }
 
     /**
-       Merge into this list all the ranges contained 
+       Merge into this list all the ranges contained
        in the given vector using merge(ByteRange).
        @param other the Vector of ByteRange objects
      **/
@@ -161,10 +161,10 @@ public class ByteRangeList implements RestartData {
 
 
     /**
-       Merge into this list all the ranges contained 
+       Merge into this list all the ranges contained
        in the given ByteRangeList using merge(ByteRange).
        The parameter object remains intact.
-       @param other the ByteRangeList to be merged into this 
+       @param other the ByteRangeList to be merged into this
      **/
     public void merge(final ByteRangeList other) {
 	merge(other.vector);

@@ -15,14 +15,14 @@
 package org.globus.gsi.gssapi.jaas;
 
 /**
- * An user name principal. Represents the user name (the account) the user 
+ * An user name principal. Represents the user name (the account) the user
  * is mapped in the gridmap file.
  */
-public class UserNamePrincipal 
+public class UserNamePrincipal
     extends SimplePrincipal {
-    
+
     public UserNamePrincipal(String username) {
 	super(username);
     }
-    
+
 }

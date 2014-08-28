@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,8 +51,8 @@ import java.io.ByteArrayOutputStream;
 import org.ietf.jgss.GSSCredential;
 
 public class GridFTPClientTest extends TestCase {
- 
-    private static Log logger = 
+
+    private static Log logger =
         LogFactory.getLog(GridFTPClientTest.class.getName());
 
     public GridFTPClientTest(String name) {
@@ -60,7 +60,7 @@ public class GridFTPClientTest extends TestCase {
     }
 
     public static void main (String[] args) throws Exception{
-        junit.textui.TestRunner.run(suite());   
+        junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
@@ -76,27 +76,27 @@ public class GridFTPClientTest extends TestCase {
 
     public void testControlChannelProtectionEnc() throws Exception {
         GridFTPClient client = null;
-        
+
         client = new GridFTPClient(TestEnv.serverAHost, TestEnv.serverAPort);
         client.setAuthorization(TestEnv.getAuthorization(TestEnv.serverASubject));
         client.setControlChannelProtection(GridFTPSession.PROTECTION_PRIVATE);
         client.authenticate(null);
-        
+
         client.getCurrentDir();
-        
+
         client.close();
     }
 
     public void testControlChannelProtectionSig() throws Exception {
         GridFTPClient client = null;
-        
+
         client = new GridFTPClient(TestEnv.serverAHost, TestEnv.serverAPort);
         client.setAuthorization(TestEnv.getAuthorization(TestEnv.serverASubject));
         client.setControlChannelProtection(GridFTPSession.PROTECTION_SAFE);
         client.authenticate(null);
-        
+
         client.getCurrentDir();
-        
+
         client.close();
     }
 
@@ -110,7 +110,7 @@ public class GridFTPClientTest extends TestCase {
 
     public void testSize() throws Exception {
         logger.info("getSize()");
-        
+
         GridFTPClient client = connect();
         client.changeDir(TestEnv.serverADir);
         assertEquals(true, client.exists(TestEnv.serverAFile));
@@ -123,10 +123,10 @@ public class GridFTPClientTest extends TestCase {
 
         client.close();
     }
-    
+
     public void testDir() throws Exception {
         logger.info("makeDir()");
-        
+
         GridFTPClient client = connect();
         String tmpDir = "abcdef";
         String baseDir = client.getCurrentDir();
@@ -146,7 +146,7 @@ public class GridFTPClientTest extends TestCase {
 
     public void testFeature() throws Exception {
         logger.info("getFeatureList()");
-        
+
         GridFTPClient client = connect();
         FeatureList fl = client.getFeatureList();
         assertEquals(true, fl.contains("DcaU"));
@@ -162,9 +162,9 @@ public class GridFTPClientTest extends TestCase {
         GridFTPClient client = connect();
         client.setType(Session.TYPE_IMAGE);
         client.changeDir(TestEnv.serverADir);
-        
+
         Reply r = client.quote("size " + TestEnv.serverAFile);
-        
+
         assertTrue(Reply.isPositiveCompletion(r));
         assertEquals(TestEnv.serverAFileSize, Long.parseLong(r.getMessage()));
 
@@ -173,9 +173,9 @@ public class GridFTPClientTest extends TestCase {
 
     public void testSite() throws Exception {
         GridFTPClient client = connect();
-        
-        Reply r = client.site("help"); 
-        
+
+        Reply r = client.site("help");
+
         assertTrue(Reply.isPositiveCompletion(r));
         assertTrue(r.getMessage().indexOf("PASV") != -1);
 
@@ -183,7 +183,7 @@ public class GridFTPClientTest extends TestCase {
     }
 
    public void testDirRename() throws Exception {
-        
+
         GridFTPClient client = connect();
 
         String tmpDir = "abcdef";
@@ -203,7 +203,7 @@ public class GridFTPClientTest extends TestCase {
 
     public void testOptions() throws Exception {
         logger.info("retrieveOptions()");
-        
+
         GridFTPClient client = connect();
         Options opts = new RetrieveOptions(3);
         client.setOptions(opts);
@@ -218,28 +218,28 @@ public class GridFTPClientTest extends TestCase {
         client.setRestartMarker(rm);
         client.close();
     }
-    
+
     public void testAllocate() throws Exception {
         GridFTPClient client = connect();
-        
+
         client.allocate(5);
-        
+
         client.close();
     }
 
     public void testChecksum() throws Exception {
         GridFTPClient client = connect();
-        
-        String checksum = 
-            client.checksum(ChecksumAlgorithm.MD5, 
+
+        String checksum =
+            client.checksum(ChecksumAlgorithm.MD5,
                             0, TestEnv.serverAFileSize,
                             TestEnv.serverADir + "/" + TestEnv.serverAFile);
 
         assertEquals(TestEnv.serverAFileChecksum, checksum.trim());
-        
+
         client.close();
     }
-    
+
     public void testListAscii() throws Exception {
         testList(Session.MODE_STREAM,
                  Session.TYPE_ASCII);
@@ -270,7 +270,7 @@ public class GridFTPClientTest extends TestCase {
 
     private void testList(int mode, int type) throws Exception {
         logger.info("show list output using GridFTPClient");
-        
+
         GridFTPClient client = connect();
         client.setType(type);
         client.setMode(mode);
@@ -278,7 +278,7 @@ public class GridFTPClientTest extends TestCase {
         Vector v = client.list(null, null);
         logger.debug("list received");
         while (! v.isEmpty()) {
-            FileInfo f = (FileInfo)v.remove(0); 
+            FileInfo f = (FileInfo)v.remove(0);
             logger.info(f.toString());
         }
         client.close();
@@ -288,7 +288,7 @@ public class GridFTPClientTest extends TestCase {
         testNList(Session.MODE_STREAM,
                   Session.TYPE_ASCII);
     }
-    
+
     public void testNListEblock() throws Exception {
         testNList(GridFTPSession.MODE_EBLOCK,
                   Session.TYPE_IMAGE);
@@ -296,7 +296,7 @@ public class GridFTPClientTest extends TestCase {
 
     private void testNList(int mode, int type) throws Exception {
         logger.info("show list output using GridFTPClient");
-        
+
         GridFTPClient client = connect();
         client.setType(type);
         client.setMode(mode);
@@ -304,7 +304,7 @@ public class GridFTPClientTest extends TestCase {
         Vector v = client.nlist();
         logger.debug("list received");
         while (! v.isEmpty()) {
-            FileInfo f = (FileInfo)v.remove(0); 
+            FileInfo f = (FileInfo)v.remove(0);
             logger.info(f.toString());
         }
         client.close();
@@ -322,7 +322,7 @@ public class GridFTPClientTest extends TestCase {
 
     private void testMList(int mode, int type) throws Exception {
         logger.info("show list output using GridFTPClient");
-        
+
         GridFTPClient client = connect();
         client.setType(type);
         client.setMode(mode);
@@ -330,7 +330,7 @@ public class GridFTPClientTest extends TestCase {
         Vector v = client.mlsd(null);
         logger.debug("list received");
         while (! v.isEmpty()) {
-            MlsxEntry f = (MlsxEntry)v.remove(0); 
+            MlsxEntry f = (MlsxEntry)v.remove(0);
             logger.info(f.toString());
         }
         client.close();
@@ -338,7 +338,7 @@ public class GridFTPClientTest extends TestCase {
 
     public void testList2() throws Exception {
         logger.info("test two consective list, using both list functions, using GridFTPClient");
-        
+
         GridFTPClient client = connect();
 
         String output1 = null;
@@ -351,7 +351,7 @@ public class GridFTPClientTest extends TestCase {
         logger.debug("list received");
         StringBuffer output1Buffer = new StringBuffer();
         while (! v.isEmpty()) {
-            FileInfo f = (FileInfo)v.remove(0); 
+            FileInfo f = (FileInfo)v.remove(0);
             output1Buffer.append(f.toString()).append("\n");
 
         }
@@ -368,7 +368,7 @@ public class GridFTPClientTest extends TestCase {
         // to "received" stream.
 
         client.list(null, null, new DataSink(){
-                public void write(Buffer buffer) 
+                public void write(Buffer buffer)
                     throws IOException{
                     logger.debug("received " + buffer.getLength() +
                                  " bytes of directory listing");
@@ -376,7 +376,7 @@ public class GridFTPClientTest extends TestCase {
                                    0,
                                    buffer.getLength());
                 }
-                public void close() 
+                public void close()
                     throws IOException{};
              });
 
@@ -390,12 +390,12 @@ public class GridFTPClientTest extends TestCase {
 
     public void testConnectionReset1() throws Exception {
         DataSink sink = (new DataSink() {
-                public void write(Buffer buffer) 
+                public void write(Buffer buffer)
                     throws IOException{
                     logger.debug("received " + buffer.getLength() +
                                  " bytes of directory listing");
                 }
-                public void close() 
+                public void close()
                     throws IOException{};
             });
 
@@ -420,15 +420,15 @@ public class GridFTPClientTest extends TestCase {
 
         client.close();
     }
-    
+
     public void testConnectionReset2() throws Exception {
         DataSink sink = (new DataSink() {
-                public void write(Buffer buffer) 
+                public void write(Buffer buffer)
                     throws IOException{
                     logger.debug("received " + buffer.getLength() +
                                  " bytes of directory listing");
                 }
-                public void close() 
+                public void close()
                     throws IOException{};
             });
 
@@ -448,25 +448,25 @@ public class GridFTPClientTest extends TestCase {
   //      client.nlist();
 
     //    assertEquals(pwd, client.getCurrentDir());
-        
+
         client.close();
     }
 
     public void testConnectionReset3() throws Exception {
         DataSink sink = (new DataSink() {
-                public void write(Buffer buffer) 
+                public void write(Buffer buffer)
                     throws IOException{
                     logger.debug("received " + buffer.getLength() +
                                  " bytes of directory listing");
                 }
-                public void close() 
+                public void close()
                     throws IOException{};
             });
 
         GridFTPClient client = connect();
 
-        client.setMode(GridFTPSession.MODE_EBLOCK);          
-        client.setType(Session.TYPE_IMAGE);       
+        client.setMode(GridFTPSession.MODE_EBLOCK);
+        client.setType(Session.TYPE_IMAGE);
 
         String pwd = client.getCurrentDir();
 
@@ -488,35 +488,35 @@ public class GridFTPClientTest extends TestCase {
                    source, null);
 
         assertEquals(pwd, client.getCurrentDir());
-        
+
         client.close();
     }
 
     // try third party transfer.  no exception should be thrown.
-    public void test3PartyModeE() 
+    public void test3PartyModeE()
         throws Exception {
-        
+
         logger.info("3 party mode E");
         try {
-            
+
             test3PartyModeE(
                             TestEnv.serverAHost,
                             TestEnv.serverAPort,
                             TestEnv.serverASubject,
                             TestEnv.serverADir + "/" + TestEnv.serverAFile,
-                            
+
                             TestEnv.serverBHost,
                             TestEnv.serverBPort,
                             TestEnv.serverBSubject,
                             TestEnv.serverBDir + "/" + TestEnv.serverBFile,
-                            
+
                             null // use default cred
                             );
-            
+
         } catch (Exception e) {
             logger.error("", e);
             fail(e.toString());
-        } 
+        }
     }
 
 
@@ -525,19 +525,19 @@ public class GridFTPClientTest extends TestCase {
         logger.info("3 party");
 
         try {
-                    
+
             test3Party(
                        TestEnv.serverAHost,
                        TestEnv.serverAPort,
                        TestEnv.serverASubject,
                        TestEnv.serverADir + "/" + TestEnv.serverAFile,
-                       
+
                        TestEnv.serverBHost,
                        TestEnv.serverBPort,
                        TestEnv.serverBSubject,
                        TestEnv.serverBDir + "/" + TestEnv.serverBFile,
 
-                       null // use default cred 
+                       null // use default cred
                        );
 
         } catch (Exception e) {
@@ -545,12 +545,12 @@ public class GridFTPClientTest extends TestCase {
             fail(e.toString());
         }
     }
- 
+
     // Try transferring file to and from bad port on existing server.
     // IOException should be thrown.
     public void test3PartyNoSuchPort() throws Exception{
         logger.info("3 party with bad port");
-        
+
         if (TestEnv.serverANoSuchPort == TestEnv.UNDEFINED) {
             logger.info("Omitting the test: test3Party_noSuchPort");
             logger.info("because some necessary properties are not defined.");
@@ -559,13 +559,13 @@ public class GridFTPClientTest extends TestCase {
         logger.debug("transfer FROM non existent port");
         boolean caughtOK = false;
         try {
-                    
+
             test3Party(
                        TestEnv.serverAHost,
                        TestEnv.serverANoSuchPort,
                        TestEnv.serverASubject,
                        TestEnv.serverADir + "/" + TestEnv.serverAFile,
-                       
+
                        TestEnv.serverBHost,
                        TestEnv.serverBPort,
                        TestEnv.serverBSubject,
@@ -588,17 +588,17 @@ public class GridFTPClientTest extends TestCase {
                 fail("Attempted to contact non existent server, but the expected exception has not been thrown.");
             }
         }
-        
+
         logger.debug("transfer TO non existent port");
         caughtOK = false;
         try {
-                    
+
             test3Party(
                        TestEnv.serverAHost,
                        TestEnv.serverAPort,
                        TestEnv.serverASubject,
                        TestEnv.serverADir + "/" + TestEnv.serverAFile,
-                       
+
                        TestEnv.serverAHost,
                        TestEnv.serverANoSuchPort,
                        TestEnv.serverASubject,
@@ -631,19 +631,19 @@ public class GridFTPClientTest extends TestCase {
         logger.debug("transfer FROM non existent server");
         boolean caughtOK = false;
         try {
-                    
+
             test3Party(
                        TestEnv.noSuchServer,
                        TestEnv.serverAPort,
                        TestEnv.serverASubject,
                        TestEnv.serverADir + "/" + TestEnv.serverAFile,
-                       
+
                        TestEnv.serverBHost,
                        TestEnv.serverBPort,
                        TestEnv.serverBSubject,
                        TestEnv.serverBDir + "/" + TestEnv.serverBFile,
-                       
-                       null // use default cred 
+
+                       null // use default cred
                        );
 
         } catch (Exception e) {
@@ -660,23 +660,23 @@ public class GridFTPClientTest extends TestCase {
                 fail("Attempted to contact non existent server, but the expected exception has not been thrown.");
             }
         }
-        
+
         logger.debug("transfer TO non existent server");
         caughtOK = false;
         try {
-                    
+
             test3Party(
                        TestEnv.serverAHost,
                        TestEnv.serverAPort,
                        TestEnv.serverASubject,
                        TestEnv.serverADir + "/" + TestEnv.serverAFile,
-                       
+
                        TestEnv.noSuchServer,
                        TestEnv.serverBPort,
                        TestEnv.serverBSubject,
                        TestEnv.serverBDir + "/" + TestEnv.serverBFile,
 
-                       null // use default cred 
+                       null // use default cred
                        );
 
         } catch (Exception e) {
@@ -706,7 +706,7 @@ public class GridFTPClientTest extends TestCase {
                        TestEnv.serverAPort,
                        TestEnv.serverASubject,
                        TestEnv.serverADir + "/" + TestEnv.serverANoSuchFile,
-                       
+
                        TestEnv.serverBHost,
                        TestEnv.serverBPort,
                        TestEnv.serverBSubject,
@@ -730,7 +730,7 @@ public class GridFTPClientTest extends TestCase {
             }
         }
     }
-    
+
 
     // try transferring file to non existent directory;
     // ServerException should be thrown.
@@ -743,7 +743,7 @@ public class GridFTPClientTest extends TestCase {
                        TestEnv.serverAPort,
                        TestEnv.serverASubject,
                        TestEnv.serverADir + "/" + TestEnv.serverAFile,
-                       
+
                        TestEnv.serverBHost,
                        TestEnv.serverBPort,
                        TestEnv.serverBSubject,
@@ -768,7 +768,7 @@ public class GridFTPClientTest extends TestCase {
         }
     }
 
-    private void test3Party(String host1, 
+    private void test3Party(String host1,
                             int port1,
                             String subject1,
                             String sourceFile,
@@ -792,22 +792,22 @@ public class GridFTPClientTest extends TestCase {
             client1.transfer(sourceFile, client2, destFile, false, null);
         } finally {
             if (client1 != null) {
-                try { 
-                    client1.close(true); 
+                try {
+                    client1.close(true);
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
             if (client2 != null) {
-                try { 
-                    client2.close(true); 
+                try {
+                    client2.close(true);
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
         }
     }
-    
+
     private void test3Party_setParams(GridFTPClient client, GSSCredential cred)
         throws Exception{
         client.authenticate(cred);
@@ -817,7 +817,7 @@ public class GridFTPClientTest extends TestCase {
     }
 
 
-    private void test3PartyModeE(String host1, 
+    private void test3PartyModeE(String host1,
                                  int port1,
                                  String subject1,
                                  String sourceFile,
@@ -834,34 +834,34 @@ public class GridFTPClientTest extends TestCase {
             source.setAuthorization(TestEnv.getAuthorization(subject1));
             dest = new GridFTPClient(host2, port2);
             dest.setAuthorization(TestEnv.getAuthorization(subject2));
-            
+
             test3PartyModeE_setParams(source, cred);
             test3PartyModeE_setParams(dest, cred);
             source.setOptions(new RetrieveOptions(TestEnv.parallelism));
             //long size = source.getSize(sourceFile);
-            
+
             HostPortList hpl = dest.setStripedPassive();
             source.setStripedActive(hpl);
 
             source.extendedTransfer(sourceFile, dest, destFile, null);
 	} finally {
             if (source != null) {
-                try { 
-                    source.close(true); 
+                try {
+                    source.close(true);
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
             if (dest != null) {
-                try { 
-                    dest.close(true); 
+                try {
+                    dest.close(true);
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
         }
     }
-    
+
     private void test3PartyModeE_setParams(GridFTPClient client, GSSCredential cred)
         throws Exception{
         client.authenticate(cred);
@@ -870,6 +870,6 @@ public class GridFTPClientTest extends TestCase {
         client.setMode(GridFTPSession.MODE_EBLOCK);
     }
 
-} 
+}
 
 

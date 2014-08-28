@@ -56,14 +56,14 @@ import java.io.IOException;
  * @deprecated
  */
 public class TrustedCertificates implements Serializable {
-    
+
     private static Log logger =
         LogFactory.getLog(TrustedCertificates.class.getName());
 
     static {
         new ProviderLoader();
     }
-    
+
     public static final CertFilter certFileFilter = new CertFilter();
     private static TrustedCertificates trustedCertificates = null;
 
@@ -82,17 +82,17 @@ public class TrustedCertificates implements Serializable {
 
     /**
      * Default signing policy suffix. The files are expected to be
-     * <caHash>.signing_policy in the same directory as the trusted 
+     * <caHash>.signing_policy in the same directory as the trusted
      * certificates.
      */
     public final static String SIGNING_POLICY_FILE_SUFFIX = ".signing_policy";
-    
+
     private static KeyStore ms_trustStore = null;
     private static CertStore ms_crlStore = null;
     private static ResourceSigningPolicyStore ms_sigPolStore = null;
-    
+
     protected TrustedCertificates() {}
-    
+
     public TrustedCertificates(X509Certificate [] certs) {
         this(certs, null);
     }
@@ -100,7 +100,7 @@ public class TrustedCertificates implements Serializable {
     public TrustedCertificates(X509Certificate [] certs,
                                SigningPolicy[] policies) {
 
-        // JGLOBUS-91 
+        // JGLOBUS-91
         this.certSubjectDNMap = new HashMap();
         for (int i=0;i<certs.length;i++) {
             if (certs[i] != null) {
@@ -108,9 +108,9 @@ public class TrustedCertificates implements Serializable {
                 this.certSubjectDNMap.put(dn,certs[i]);
             }
         }
-        
+
         if (policies != null) {
-            this.policyDNMap = new HashMap();        
+            this.policyDNMap = new HashMap();
             for (int i=0; i<policies.length; i++) {
                 if (policies[i] != null) {
                     this.policyDNMap.put(CertificateUtil.toGlobusID(policies[i].getCASubjectDN()), policies[i]);
@@ -129,7 +129,7 @@ public class TrustedCertificates implements Serializable {
         Collection certs = this.certSubjectDNMap.values();
         return (X509Certificate[]) certs.toArray(new X509Certificate[certs.size()]);
     }
-    
+
     public X509Certificate getCertificate(String subject) {
         if (this.certSubjectDNMap == null) {
             return null;
@@ -138,7 +138,7 @@ public class TrustedCertificates implements Serializable {
     }
 
     /**
-     * Returns all signing policies 
+     * Returns all signing policies
      */
     public SigningPolicy[] getSigningPolicies() {
         if (this.policyDNMap == null) {
@@ -150,27 +150,27 @@ public class TrustedCertificates implements Serializable {
 
     /**
      * Returns signing policy associated with the given CA subject.
-     * 
+     *
      * @param subject
      *        CA's subject DN for which signing policy is
      *        required. The DN should be in Globus format (with slashes) and
      *        not reversed. See CertificateUtil.toGlobusID();
-     * @return 
+     * @return
      *        Signing policy object associated with the CA's DN. Null
      *        if no policy was configured. SigningPolicy object might not
      *        have any applicable policy if none was configured or none was
      *        found in the policy file configured.
      */
     public SigningPolicy getSigningPolicy(String subject) {
-        
+
         if (this.policyDNMap == null) {
             return null;
         }
         return (SigningPolicy) this.policyDNMap.get(subject);
     }
 
-    /** 
-     * Loads X509 certificates and signing policy files from specified 
+    /**
+     * Loads X509 certificates and signing policy files from specified
      * locations. The locations can be either files or
      * directories. The directories will be automatically traversed
      * and all files in the form of <i>hashcode.number</i> and will be
@@ -180,13 +180,13 @@ public class TrustedCertificates implements Serializable {
      * not found, no error will be thrown, only path validation code
      * enforces the signing policy requirement.
      *
-     * @param locations a list of certificate files/directories to load 
-     *                  the certificates from. The locations are comma 
+     * @param locations a list of certificate files/directories to load
+     *                  the certificates from. The locations are comma
      *                  separated.
      *
-     * @return <code>java.security.cert.X509Certificate</code> an array 
+     * @return <code>java.security.cert.X509Certificate</code> an array
      *         of loaded certificates
-     */    
+     */
     public static X509Certificate[] loadCertificates(String locations) {
         TrustedCertificates tc = TrustedCertificates.load(locations);
         return (tc == null) ? null : tc.getCertificates();
@@ -201,13 +201,13 @@ public class TrustedCertificates implements Serializable {
     public static FilenameFilter getCertFilter() {
         return certFileFilter;
     }
-    
+
     public static class CertFilter implements FilenameFilter {
         public boolean accept(File dir, String file) {
             int length = file.length();
-            if (length > 2 && 
+            if (length > 2 &&
                 file.charAt(length-2) == '.' &&
-                file.charAt(length-1) >= '0' && 
+                file.charAt(length-1) >= '0' &&
                 file.charAt(length-1) <= '9') return true;
             return false;
         }
@@ -242,7 +242,7 @@ public class TrustedCertificates implements Serializable {
 
             try {
                 ms_trustStore = Stores.getTrustStore(caCertLocation + "/" + Stores.getDefaultCAFilesPattern());
-                
+
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
                 Iterator iter = caCerts.iterator();
                 while (iter.hasNext()) {
@@ -253,13 +253,13 @@ public class TrustedCertificates implements Serializable {
             } catch (Exception e) {
                 logger.warn("Failed to create trust store",e);
             }
-            
+
             try {
 				ms_sigPolStore = Stores.getSigningPolicyStore(caCertLocation + "/" + Stores.getDefaultSigningPolicyFilesPattern());
 			} catch (GeneralSecurityException e) {
 				logger.warn("Failed to create signing_policy store",e);
 			}
-                
+
             try {
             	ms_sigPolStore = Stores.getSigningPolicyStore(caCertLocation+ "/" + Stores.getDefaultSigningPolicyFilesPattern());
                 Collection<? extends Certificate> caCerts = KeyStoreUtil.getTrustedCertificates(ms_trustStore, new X509CertSelector());
@@ -294,7 +294,7 @@ public class TrustedCertificates implements Serializable {
                 logger.warn("Failed to create signing policy store",e);
             }
         }
-        
+
         this.changed = true;
         this.certSubjectDNMap = newCertSubjectDNMap;
         this.policyDNMap = newSigningDNMap;
@@ -324,7 +324,7 @@ public class TrustedCertificates implements Serializable {
      *
      * @return TrustedCertificates object.
      */
-    public static synchronized TrustedCertificates 
+    public static synchronized TrustedCertificates
         getDefaultTrustedCertificates() {
 
         return getDefault();
@@ -334,17 +334,17 @@ public class TrustedCertificates implements Serializable {
      * Sets the default set of trusted certificates to use.
      *
      * @param trusted the new set of trusted certificates to use.
-     */    
-    public static void 
+     */
+    public static void
         setDefaultTrustedCertificates(TrustedCertificates trusted) {
 
         trustedCertificates = trusted;
     }
-    
+
     /**
      * Obtains the default set of trusted certificates and signing policy
      *
-     * @return TrustedCertificates object. 
+     * @return TrustedCertificates object.
      */
     public static synchronized TrustedCertificates getDefault() {
         if (trustedCertificates == null) {
@@ -353,7 +353,7 @@ public class TrustedCertificates implements Serializable {
 
         return trustedCertificates;
     }
-    
+
     public static KeyStore getTrustStore() {
 		return ms_trustStore;
 	}
@@ -366,9 +366,9 @@ public class TrustedCertificates implements Serializable {
 		return ms_sigPolStore;
 	}
 
-	private static class DefaultTrustedCertificates 
+	private static class DefaultTrustedCertificates
         extends TrustedCertificates {
-        
+
         public void refresh() {
             reload(CoGProperties.getDefault().getCaCertLocations());
         }
@@ -381,7 +381,7 @@ public class TrustedCertificates implements Serializable {
         } else {
             returnStr = this.certSubjectDNMap.toString();
         }
-        
+
         if (this.policyDNMap == null) {
             returnStr = returnStr + "Signing policy list is empty.";
         } else {

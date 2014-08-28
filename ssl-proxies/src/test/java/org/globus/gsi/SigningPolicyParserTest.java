@@ -183,7 +183,7 @@ public class SigningPolicyParserTest {
         assertTrue(policy.isValidSubject(subject63));
     }
 
-    // JGLOBUS-103 
+    // JGLOBUS-103
     @Test
     public void testFileSuccess() throws Exception {
 

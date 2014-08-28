@@ -27,7 +27,7 @@ public class GSIGssOutputStream extends GssOutputStream {
 
     protected byte [] header;
     protected int mode;
-    
+
     public GSIGssOutputStream(OutputStream out, GSSContext context) {
 	this(out, context, GssSocket.SSL_MODE);
     }
@@ -38,7 +38,7 @@ public class GSIGssOutputStream extends GssOutputStream {
 	setWrapMode(mode);
     }
 
-    public void flush() 
+    public void flush()
 	throws IOException {
 	if (this.index == 0) return;
 	writeToken(wrap());
@@ -62,5 +62,5 @@ public class GSIGssOutputStream extends GssOutputStream {
 	this.out.write(token);
 	this.out.flush();
     }
-    
+
 }

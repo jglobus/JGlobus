@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class HostPortListTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(HostPortListTest.class.getName());
 
     private static String nl = System.getProperty("line.separator");
@@ -63,15 +63,15 @@ public class HostPortListTest extends TestCase {
     static final String BAD_REPLY_1 = "MODE E ok.";
 
     static final String BAD_REPLY_2 = "Extensions supported:" + nl +
-	space + "REST STREAM" + nl + 
-	space + "ESTO" + nl + 
-	space + "ERET" + nl + 
-	space + "MDTM" + nl + 
-	space + "SIZE" + nl + 
-	space + "PARALLEL" + nl + 
-	space + "DCAU" + nl + 
+	space + "REST STREAM" + nl +
+	space + "ESTO" + nl +
+	space + "ERET" + nl +
+	space + "MDTM" + nl +
+	space + "SIZE" + nl +
+	space + "PARALLEL" + nl +
+	space + "DCAU" + nl +
 	"211 END";
-    
+
     static final String hp5str = "127,0,0,1,100,0";
     static final String param5 = hp1str + space + hp2str + space + hp5str;
     static final String msg5 ="Entering Striped Passive Mode" + nl +
@@ -84,7 +84,7 @@ public class HostPortListTest extends TestCase {
     public static void main(String[] argv) {
 	junit.textui.TestRunner.run (suite());
     }
-    
+
     public static Test suite() {
 	return new TestSuite(HostPortListTest.class);
     }
@@ -130,7 +130,7 @@ public class HostPortListTest extends TestCase {
     }
 
     /**
-       make sure that message "msg" is properly converted 
+       make sure that message "msg" is properly converted
        to the SPOR command argument "arg"
     **/
     private void testString(String msg, String ftpCmdArg) {
@@ -139,11 +139,11 @@ public class HostPortListTest extends TestCase {
     }
 
     private void testObject(HostPortList hpl, String ftpCmdArg) {
-	String msg = hpl.toFtpCmdArgument(); 
+	String msg = hpl.toFtpCmdArgument();
 	assertEquals(ftpCmdArg, msg);
     }
 
-    /** 
+    /**
 	assume this is a bad argument to HostPortList constructor.
 	make sure the constructor throws an exception.
     **/
@@ -154,8 +154,8 @@ public class HostPortListTest extends TestCase {
 	    new HostPortList(msg);
 	} catch (IllegalArgumentException e) {
 	    threwOk = true;
-	} 
-	
+	}
+
 	if (! threwOk ) {
 	    fail("HostPortList constructor did not throw an exception when it should have");
 	}
@@ -167,10 +167,10 @@ public class HostPortListTest extends TestCase {
         HostPortList list = HostPortList.parseIPv4Format(msg2);
 
         assertEquals(2, list.size());
-        
+
         HostPort p1 = new HostPort(hp1str);
         HostPort p2 = new HostPort(hp2str);
-        
+
         assertEquals(p1.getHost(), list.get(0).getHost());
         assertEquals(p1.getPort(), list.get(0).getPort());
 
@@ -184,10 +184,10 @@ public class HostPortListTest extends TestCase {
         HostPortList list = HostPortList.parseIPv6Format(msg2_6);
 
         assertEquals(2, list.size());
-        
+
         HostPort6 p1 = new HostPort6(hp1str_6);
         HostPort6 p2 = new HostPort6(hp2str_6);
-        
+
         assertEquals(p1.getHost(), list.get(0).getHost());
         assertEquals(p1.getPort(), list.get(0).getPort());
         assertEquals(p1.getVersion(), ((HostPort6)list.get(0)).getVersion());

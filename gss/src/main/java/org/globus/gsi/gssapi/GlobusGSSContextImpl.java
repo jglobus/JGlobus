@@ -93,15 +93,15 @@ import org.globus.gsi.stores.Stores;
 
 /**
  * Implementation of SSL/GSI mechanism for Java GSS-API. The implementation
- * is based on JSSE (for SSL API) and the 
- * <a href="http://www.bouncycastle.org/">BouncyCastle library</a> 
+ * is based on JSSE (for SSL API) and the
+ * <a href="http://www.bouncycastle.org/">BouncyCastle library</a>
  * (for certificate processing API).
  * <BR>
  * The implementation is not designed to be thread-safe.
  */
 public class GlobusGSSContextImpl implements ExtendedGSSContext {
-    
-    private static Log logger = 
+
+    private static Log logger =
         LogFactory.getLog(GlobusGSSContextImpl.class.getName());
 
     private static I18n i18n =
@@ -113,7 +113,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     }
 
 /*DEL
-    private static Log sslLog = 
+    private static Log sslLog =
         LogFactory.getLog(SSLDebug.class.getName());
 */
 
@@ -125,15 +125,15 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
     private KeyPairCache keyPairCache = KeyPairCache.getKeyPairCache();
 
-    
-    /** Used to distinguish between a token created by 
+
+    /** Used to distinguish between a token created by
      * <code>wrap</code> with {@link GSSConstants#GSI_BIG
      * GSSConstants.GSI_BIG}
      * QoP and a regular token created by <code>wrap</code>. */
     public static final int GSI_WRAP = 26; /** SSL3_RT_GSSAPI_OPENSSL */
 
     private static final int GSI_SEQUENCE_SIZE = 8;
-    
+
     private static final int GSI_MESSAGE_DIGEST_PADDING = 12;
 
     private static final String [] ENABLED_PROTOCOLS = {"TLSv1", "SSLv3"};
@@ -153,16 +153,16 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 		{"SSL_RSA_WITH_3DES_EDE_CBC_SHA"};
     private static final String [] GRAM_NO_ENCRYPTION_CIPHER_SUITES =
 		{"SSL_RSA_WITH_NULL_SHA"};
-    
+
     private static final byte[] DELEGATION_TOKEN = new byte[] {GSIConstants.DELEGATION_CHAR};
-    
-    private static final int 
+
+    private static final int
         UNDEFINED = 0,
         INITIATE = 1,
         ACCEPT = 2;
 
     /** Handshake state */
-    protected int state = HANDSHAKE; 
+    protected int state = HANDSHAKE;
 
     /* handshake states */
     private static final int
@@ -221,10 +221,10 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                                       Boolean.FALSE;
 
     // *** implementation-specific variables ***
-    
+
     /** Credential of this context. Might be anonymous */
     protected GlobusGSSCredentialImpl ctxCred;
-    
+
     /** Expected target name. Used for authorization in initiator */
     protected GSSName expectedTargetName = null;
 
@@ -234,7 +234,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     protected SSLConfigurator sslConfigurator = null;
     protected SSLContext sslContext = null;
     protected SSLEngine sslEngine = null;
-    
+
 /*DEL
     protected SSLConn conn;
 */
@@ -253,7 +253,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     protected KeyPair keyPair;
 
     protected TrustedCertificates tc;
-    
+
     protected Map proxyPolicyHandlers;
 
     /** Limited peer credentials */
@@ -275,7 +275,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
         this.expectedTargetName = target;
         this.ctxCred = cred;
-        
+
 /*DEL
         this.context = new PureTLSContext();
 */
@@ -312,7 +312,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
 /*DEL
         CertVerifyPolicyInt certPolicy = PureTLSUtil.getDefaultCertVerifyPolicy();
-        
+
         this.policy = new SSLPolicyInt();
         this.policy.negotiateTLS(false);
         this.policy.waitOnClose(false);
@@ -383,12 +383,12 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
      * process. It is expected to be called in tandem with the
      * {@link #initSecContext(byte[], int, int) initSecContext} function.
      * <BR>
-     * The behavior of context establishment process can be modified by 
+     * The behavior of context establishment process can be modified by
      * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE}
-     * and {@link GSSConstants#REJECT_LIMITED_PROXY 
+     * and {@link GSSConstants#REJECT_LIMITED_PROXY
      * GSSConstants.REJECT_LIMITED_PROXY} context options. If the
-     * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE} 
-     * option is set to 
+     * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE}
+     * option is set to
      * {@link GSIConstants#MODE_SSL GSIConstants.MODE_SSL}
      * the context establishment process will be compatible with regular SSL
      * (no credential delegation support). If the option is set to
@@ -396,19 +396,19 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
      * credential delegation during context establishment process will be accepted.
      * If the {@link GSSConstants#REJECT_LIMITED_PROXY
      * GSSConstants.REJECT_LIMITED_PROXY} option is enabled, a peer
-     * presenting limited proxy credential will be automatically 
+     * presenting limited proxy credential will be automatically
      * rejected and the context establishment process will be aborted.
-     * 
+     *
      * @return a byte[] containing the token to be sent to the peer.
      *         null indicates that no token is generated (needs more data)
      */
-    public byte[] acceptSecContext(byte[] inBuff, int off, int len) 
+    public byte[] acceptSecContext(byte[] inBuff, int off, int len)
         throws GSSException {
         logger.debug("enter acceptSecContext");
 
         if (!this.conn) {
             this.role = ACCEPT;
-            
+
 	    logger.debug("enter initializing in acceptSecContext");
 
             if (this.ctxCred.getName().isAnonymous()) {
@@ -458,9 +458,9 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
         }
 
         switch (state) {
-            
+
         case HANDSHAKE:
-            
+
             try {
 		logger.debug("STATUS BEFORE: " +
 			this.sslEngine.getHandshakeStatus().toString());
@@ -490,7 +490,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
                     logger.debug("acceptSecContext handshake finished");
                     handshakeFinished();
-                    
+
                     // acceptor
                     for (X509Certificate cert : this.ctxCred.getCertificateChain()) {
                         setGoodUntil(cert.getNotAfter());
@@ -514,7 +514,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 /*DEL
                         X509Cert crt = (X509Cert)chain.elementAt(chain.size()-1);
                         setGoodUntil(crt.getValidityNotAfter());
-                        
+
                         String identity = verifyChain(chain);
 */
                         for (X509Certificate cert : (X509Certificate[])chain) {
@@ -547,7 +547,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             break;
 
         case SERVER_START_DEL:
-            
+
             try {
                 if (inByteBuff.remaining() <= 0) {
                     return null;
@@ -567,7 +567,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                     setDone();
                     break;
                 }
-                
+
 /*DEL
                 Vector chain = this.conn.getCertificateChain();
 */
@@ -578,7 +578,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
                     chain = null;
                 }
                 if (chain == null || chain.length == 0) {
-                    throw new GlobusGSSException(GSSException.FAILURE, 
+                    throw new GlobusGSSException(GSSException.FAILURE,
                                                  GlobusGSSException.DELEGATION_ERROR,
                                                  "noClientCert");
                 }
@@ -599,7 +599,7 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
             } catch (GeneralSecurityException e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
             }
-            
+
             this.state = SERVER_END_DEL;
             break;
 
@@ -630,12 +630,12 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 		}
 
                 if (logger.isTraceEnabled()) {
-                    logger.trace("Received delegated cert: " + 
+                    logger.trace("Received delegated cert: " +
                                certificate.toString());
                 }
 
                 verifyDelegatedCert(certificate);
-                
+
 /*DEL
                 Vector chain = this.conn.getCertificateChain();
 */
@@ -650,13 +650,13 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 		    newChain[i+1] = bcConvert((X509Certificate)chain[i]);
                 }
 
-                X509Credential proxy = 
+                X509Credential proxy =
                     new X509Credential(this.keyPair.getPrivate(), newChain);
 
-                this.delegCred = 
+                this.delegCred =
                     new GlobusGSSCredentialImpl(proxy,
                                                 GSSCredential.INITIATE_AND_ACCEPT);
-                
+
             } catch (GeneralSecurityException e) {
                 throw new GlobusGSSException(GSSException.FAILURE, e);
             } catch (IOException e) {
@@ -895,27 +895,27 @@ done:      do {
      * process. It is expected to be called in tandem with the
      * {@link #acceptSecContext(byte[], int, int) acceptSecContext} function.
      * <BR>
-     * The behavior of context establishment process can be modified by 
+     * The behavior of context establishment process can be modified by
      * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE},
      * {@link GSSConstants#DELEGATION_TYPE GSSConstants.DELEGATION_TYPE}, and
      * {@link GSSConstants#REJECT_LIMITED_PROXY GSSConstants.REJECT_LIMITED_PROXY}
-     * context options. If the {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE} 
+     * context options. If the {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE}
      * option is set to {@link GSIConstants#MODE_SSL GSIConstants.MODE_SSL}
      * the context establishment process will be compatible with regular SSL
      * (no credential delegation support). If the option is set to
      * {@link GSIConstants#MODE_GSI GSIConstants.GSS_MODE_GSI}
      * credential delegation during context establishment process will performed.
-     * The delegation type to be performed can be set using the 
+     * The delegation type to be performed can be set using the
      * {@link GSSConstants#DELEGATION_TYPE GSSConstants.DELEGATION_TYPE}
-     * context option. If the {@link GSSConstants#REJECT_LIMITED_PROXY 
-     * GSSConstants.REJECT_LIMITED_PROXY} option is enabled, 
-     * a peer presenting limited proxy credential will be automatically 
+     * context option. If the {@link GSSConstants#REJECT_LIMITED_PROXY
+     * GSSConstants.REJECT_LIMITED_PROXY} option is enabled,
+     * a peer presenting limited proxy credential will be automatically
      * rejected and the context establishment process will be aborted.
      *
      * @return a byte[] containing the token to be sent to the peer.
-     *         null indicates that no token is generated (needs more data). 
+     *         null indicates that no token is generated (needs more data).
      */
-    public byte[] initSecContext(byte[] inBuff, int off, int len) 
+    public byte[] initSecContext(byte[] inBuff, int off, int len)
         throws GSSException {
         logger.debug("enter initSecContext");
 
@@ -930,7 +930,7 @@ done:      do {
                 this.anonymity = false;
 
                 setCredential();
-                
+
                 if (this.ctxCred.getUsage() != GSSCredential.INITIATE_ONLY &&
                     this.ctxCred.getUsage() != GSSCredential.INITIATE_AND_ACCEPT) {
                     throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL,
@@ -938,7 +938,7 @@ done:      do {
                                                  "badCredUsage");
                 }
             }
-            
+
             if (getCredDelegState()) {
                 if (this.gssMode == GSIConstants.MODE_SSL) {
                     throw new GlobusGSSException(GSSException.FAILURE,
@@ -964,11 +964,11 @@ done:      do {
 
         // Unless explicitly disabled, check if delegation is
         // requested and expected target is null
-        logger.debug("Require authz with delegation: " 
+        logger.debug("Require authz with delegation: "
                      + this.requireAuthzWithDelegation);
         if (!Boolean.FALSE.equals(this.requireAuthzWithDelegation)) {
 
-            if (this.expectedTargetName == null && 
+            if (this.expectedTargetName == null &&
                 getCredDelegState()) {
                 throw new GlobusGSSException(GSSException.FAILURE,
                                              GlobusGSSException.BAD_ARGUMENT,
@@ -999,7 +999,7 @@ done:      do {
         }
 
         switch (state) {
-            
+
         case HANDSHAKE:
             try {
 
@@ -1063,7 +1063,7 @@ done:      do {
 			 " Target name is: " + this.targetName +
 			 " Limited Proxy: " + this.peerLimited.toString());
 
-                    // initiator 
+                    // initiator
                     if (this.anonymity) {
                         this.sourceName = new GlobusGSSName();
                     } else {
@@ -1072,7 +1072,7 @@ done:      do {
                         }
                         this.sourceName = this.ctxCred.getName();
                     }
-                    
+
                     // mutual authentication test
                     if (this.expectedTargetName != null &&
                         !this.expectedTargetName.equals(this.targetName)) {
@@ -1105,7 +1105,7 @@ done:      do {
             }
 
         case CLIENT_START_DEL:
-            
+
             logger.debug("CLIENT_START_DEL");
             // sanity check - might be invalid state
             if (this.state != CLIENT_START_DEL || this.outByteBuff.remaining() > 0) {
@@ -1166,7 +1166,7 @@ done:      do {
                 X509Certificate [] chain = this.ctxCred.getCertificateChain();
 
                 byteArrayInputStream = new ByteArrayInputStream(certReq);
-                X509Certificate cert = 
+                X509Certificate cert =
                     this.certFactory.createCertificate(byteArrayInputStream,
                                                        chain[0],
                                                        this.ctxCred.getPrivateKey(),
@@ -1244,7 +1244,7 @@ done:      do {
         }
     }
 
-    private void init(int how) 
+    private void init(int how)
         throws GSSException, SSLException {
 
 /*DEL
@@ -1258,7 +1258,7 @@ done:      do {
             cs = newCiphers;
         } else {
             // encryption not requested - accept only one cipher
-            // XXX: in the future might want to iterate through 
+            // XXX: in the future might want to iterate through
             // all cipher and enable only the null encryption ones
             cs = NO_ENCRYPTION;
         }
@@ -1267,19 +1267,19 @@ done:      do {
         this.policy.setAcceptNoClientCert(this.acceptNoClientCerts.booleanValue());
 
         setTrustedCertificates();
-        
+
         this.in = new TokenInputStream();
         this.out = new ByteArrayOutputStream();
 
         try {
-            this.conn = new SSLConn(null, 
+            this.conn = new SSLConn(null,
                                     this.in,
-                                    this.out, 
-                                    this.context, 
-                                    how); 
+                                    this.out,
+                                    this.context,
+                                    how);
         } catch (IOException e) {
             throw new GlobusGSSException(GSSException.FAILURE, e);
-        }       
+        }
 
         this.conn.init();
 */
@@ -1288,14 +1288,14 @@ done:      do {
 		if(this.tc == null){
 	        KeyStore trustStore = Stores.getDefaultTrustStore();
 	        sslConfigurator.setTrustAnchorStore(trustStore);
-	
-	        CertStore crlStore = Stores.getDefaultCRLStore(); 
+
+	        CertStore crlStore = Stores.getDefaultCRLStore();
 	        sslConfigurator.setCrlStore(crlStore);
-	
+
 	        ResourceSigningPolicyStore sigPolStore = Stores.getDefaultSigningPolicyStore();
 	        sslConfigurator.setPolicyStore(sigPolStore);
 		}
-        
+
 		this.sslConfigurator.setRejectLimitProxy(rejectLimitedProxy);
                 if (proxyPolicyHandlers != null)
                     sslConfigurator.setHandlers(proxyPolicyHandlers);
@@ -1366,9 +1366,9 @@ done:      do {
         String cs =
             this.sslEngine.getSession().getCipherSuite();
         this.encryption = !cs.contains("WITH_NULL");
-        logger.debug("encryption alg: " + cs); 
+        logger.debug("encryption alg: " + cs);
     }
-    
+
 /*DEL
     // allows bypass of PureTLS checks - since they were
     // already performed during SSL hashshake
@@ -1383,7 +1383,7 @@ done:      do {
 
     private String verifyChain(Vector peerCerts)
         throws GSSException {
-        
+
         X509Certificate[] peerChain = null;
         try {
             peerChain = PureTLSUtil.certificateChainToArray(peerCerts);
@@ -1400,7 +1400,7 @@ done:      do {
             ProxyPolicyHandler handler;
             while(iter.hasNext()) {
                 oid = (String)iter.next();
-                handler = 
+                handler =
                     (ProxyPolicyHandler)this.proxyPolicyHandlers.get(oid);
                 validator.setProxyPolicyHandler(oid, handler);
             }
@@ -1416,26 +1416,26 @@ done:      do {
             validator.validate(peerChain, this.tc, certRevList);
         } catch (ProxyPathValidatorException e) {
             // COMMENT FIXME we don't have an error code
-            if (e.getErrorCode() == 
+            if (e.getErrorCode() ==
                 ProxyPathValidatorException.LIMITED_PROXY_ERROR) {
-                throw new GlobusGSSException(GSSException.UNAUTHORIZED, 
+                throw new GlobusGSSException(GSSException.UNAUTHORIZED,
                                              e);
             } else {
                 throw new GlobusGSSException(GSSException.DEFECTIVE_CREDENTIAL,
                                              e);
             }
         }
-        
+
         // C code also sets a flag RECEIVED_LIMITED_PROXY
         // when recevied certs is a limited proxy
-        this.peerLimited = (validator.isLimited()) ? 
+        this.peerLimited = (validator.isLimited()) ?
             Boolean.TRUE : Boolean.FALSE;
-        
+
         return validator.getIdentity();
     }
 */
-    
-    private void setCredential() 
+
+    private void setCredential()
         throws GSSException {
         try {
 /*DEL
@@ -1481,7 +1481,7 @@ done:      do {
      * Wraps a message for integrity and protection.
      * A regular SSL-wrapped token is returned.
      */
-    public byte[] wrap(byte []inBuf, int off, int len, MessageProp prop) 
+    public byte[] wrap(byte []inBuf, int off, int len, MessageProp prop)
         throws GSSException {
 
         checkContext();
@@ -1497,11 +1497,11 @@ done:      do {
             }
             doGSIWrap = (!prop.getPrivacy() && prop.getQOP() == GSSConstants.GSI_BIG);
         }
-        
+
         if (doGSIWrap) {
             throw new GSSException(GSSException.UNAVAILABLE);
 /*DEL
-            
+
             byte [] mic = getMIC(inBuf, off, len, null);
 
             byte [] wtoken = new byte[5 + len + mic.length];
@@ -1523,12 +1523,12 @@ done:      do {
                 prop.setQOP(0);
             }
         }
-        
+
         logger.debug("exit wrap");
         return token;
     }
-    
-    private byte[] wrap(byte[] inBuf, int off, int len) 
+
+    private byte[] wrap(byte[] inBuf, int off, int len)
         throws GSSException {
         try {
 /*DEL
@@ -1561,11 +1561,11 @@ done:      do {
         return this.out.toByteArray();
 */
     }
-    
+
     /**
      * Unwraps a token generated by <code>wrap</code> method on the other side of the context.
      */
-    public byte[] unwrap(byte []inBuf, int off, int len, MessageProp prop) 
+    public byte[] unwrap(byte []inBuf, int off, int len, MessageProp prop)
         throws GSSException {
 
         checkContext();
@@ -1579,20 +1579,20 @@ done:      do {
          * one of ours made by wrap using get_mic
          */
         if (inBuf[off] == GSI_WRAP &&
-            inBuf[off+1] == 3 && 
+            inBuf[off+1] == 3 &&
             inBuf[off+2] == 0) {
             throw new GSSException(GSSException.UNAVAILABLE);
 /*DEL
-            
+
             int micLen = SSLUtil.toShort(inBuf[off+3], inBuf[off+4]);
             int msgLen = len - 5 - micLen;
 
             if (micLen > len-5 || msgLen < 0) {
                 throw new GSSException(GSSException.DEFECTIVE_TOKEN);
-            } 
-            
+            }
+
             verifyMIC(inBuf, off+5, micLen,
-                      inBuf, off+5+micLen, msgLen, 
+                      inBuf, off+5+micLen, msgLen,
                       null);
 
             if (prop != null) {
@@ -1604,21 +1604,21 @@ done:      do {
             token = new byte[msgLen];
             System.arraycopy(inBuf, off+5+micLen, token, 0, msgLen);
 */
-            
+
         } else {
             token = unwrap(inBuf, off, len);
-            
+
             if (prop != null) {
                 prop.setPrivacy(this.encryption);
                 prop.setQOP(0);
             }
         }
-        
+
         logger.debug("exit unwrap");
         return token;
     }
-    
-    private byte[] unwrap(byte[] inBuf, int off, int len) 
+
+    private byte[] unwrap(byte[] inBuf, int off, int len)
         throws GSSException {
 
 /*DEL
@@ -1650,7 +1650,7 @@ done:      do {
         } catch (Exception e) {
             throw new GlobusGSSException(GSSException.DEFECTIVE_TOKEN, e);
         }
-        
+
         return out.toByteArray();
 */
 	ByteBuffer inByteBuff;
@@ -1693,7 +1693,7 @@ done:      do {
 
     }
 
-    public void dispose() 
+    public void dispose()
         throws GSSException {
         // doesn't do anything right now
         logger.debug("dipose");
@@ -1710,8 +1710,8 @@ done:      do {
     public boolean getCredDelegState() {
         return this.credentialDelegation;
     }
-    
-    public boolean isInitiator() 
+
+    public boolean isInitiator()
         throws GSSException {
         if (this.role == UNDEFINED) {
             throw new GSSException(GSSException.FAILURE);
@@ -1723,7 +1723,7 @@ done:      do {
         return isEstablished();
     }
 
-    public void requestLifetime(int lifetime) 
+    public void requestLifetime(int lifetime)
         throws GSSException {
         if (lifetime == GSSContext.INDEFINITE_LIFETIME) {
             throw new GlobusGSSException(GSSException.FAILURE,
@@ -1754,7 +1754,7 @@ done:      do {
         return this.delegCred;
     }
 
-    public void requestConf(boolean state) 
+    public void requestConf(boolean state)
         throws GSSException {
         // enabled encryption
         this.encryption = state;
@@ -1768,10 +1768,10 @@ done:      do {
      * Returns a cryptographic MIC (message integrity check)
      * of a specified message.
      */
-    public byte[] getMIC(byte [] inBuf, 
+    public byte[] getMIC(byte [] inBuf,
                          int off,
                          int len,
-                         MessageProp prop) 
+                         MessageProp prop)
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
 /*TODO
@@ -1789,18 +1789,18 @@ done:      do {
         long sequence = this.conn.getWriteSequence();
 
         byte [] mic = new byte[GSI_MESSAGE_DIGEST_PADDING + cs.getDigestOutputLength()];
-        
+
         System.arraycopy(Util.toBytes(sequence), 0, mic, 0, GSI_SEQUENCE_SIZE);
         System.arraycopy(Util.toBytes(len, 4), 0, mic, GSI_SEQUENCE_SIZE, 4);
 
         this.conn.incrementWriteSequence();
 
         int pad_ct = (cs.getDigestOutputLength()==16) ? 48 : 40;
-        
+
         try {
-            MessageDigest md = 
+            MessageDigest md =
                 MessageDigest.getInstance(cs.getDigestAlg());
-        
+
             md.update(st.getMacKey());
             for(int i=0;i<pad_ct;i++) {
                 md.update(SSLHandshake.pad_1);
@@ -1814,24 +1814,24 @@ done:      do {
         } catch (NoSuchAlgorithmException e) {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
-        
+
         if (prop != null) {
             prop.setPrivacy(false);
             prop.setQOP(0);
         }
-        
+
         logger.debug("exit getMic");
         return mic;
 */
     }
-    
+
     /**
      * Verifies a cryptographic MIC (message integrity check)
      * of a specified message.
      */
     public void verifyMIC(byte[] inTok, int tokOff, int tokLen, // mic
                           byte[] inMsg, int msgOff, int msgLen, // real msg
-                          MessageProp prop) 
+                          MessageProp prop)
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
 /*TODO
@@ -1849,27 +1849,27 @@ done:      do {
             throw new GlobusGSSException(GSSException.DEFECTIVE_TOKEN,
                                          GlobusGSSException.TOKEN_FAIL,
                                          "tokenFail00",
-                                         new Object[] {new Integer(tokLen), 
-                                                       new Integer(GSI_MESSAGE_DIGEST_PADDING + 
+                                         new Object[] {new Integer(tokLen),
+                                                       new Integer(GSI_MESSAGE_DIGEST_PADDING +
                                                                    cs.getDigestOutputLength())});
         }
-        
+
         int bufLen = SSLUtil.toInt(inTok, tokOff+GSI_SEQUENCE_SIZE);
         if (bufLen != msgLen) {
-            throw new GlobusGSSException(GSSException.DEFECTIVE_TOKEN, 
+            throw new GlobusGSSException(GSSException.DEFECTIVE_TOKEN,
                                          GlobusGSSException.TOKEN_FAIL,
                                          "tokenFail01",
                                          new Object[] {new Integer(msgLen), new Integer(bufLen)});
         }
-        
+
         int pad_ct = (cs.getDigestOutputLength()==16) ? 48 : 40;
 
         byte [] digest = null;
-        
+
         try {
-            MessageDigest md = 
+            MessageDigest md =
                 MessageDigest.getInstance(cs.getDigestAlg());
-            
+
             md.update(st.getMacKey());
             for(int i=0;i<pad_ct;i++) {
                 md.update(SSLHandshake.pad_1);
@@ -1881,23 +1881,23 @@ done:      do {
         } catch (NoSuchAlgorithmException e) {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
-        
+
         byte [] token = new byte[tokLen-GSI_MESSAGE_DIGEST_PADDING];
         System.arraycopy(inTok, tokOff+GSI_MESSAGE_DIGEST_PADDING, token, 0, token.length);
 
         if (!Arrays.equals(digest, token)) {
-            throw new GlobusGSSException(GSSException.BAD_MIC, 
+            throw new GlobusGSSException(GSSException.BAD_MIC,
                                          GlobusGSSException.BAD_MIC,
                                          "tokenFail02");
         }
-        
+
         long tokSeq = SSLUtil.toLong(inTok, tokOff);
         long readSeq = this.conn.getReadSequence();
         long seqTest = tokSeq - readSeq;
 
         logger.debug("Token seq#   : " + tokSeq);
         logger.debug("Current seq# : " + readSeq);
-        
+
         if (seqTest > 0) {
             // gap token
             throw new GSSException(GSSException.GAP_TOKEN);
@@ -1912,7 +1912,7 @@ done:      do {
             prop.setPrivacy(false);
             prop.setQOP(0);
         }
-        
+
         logger.debug("exit verifyMic");
 */
     }
@@ -1920,7 +1920,7 @@ done:      do {
 
     /**
      * It works just like {@link #initSecContext(byte[], int, int) initSecContext} method.
-     * It reads one SSL token from input stream, calls 
+     * It reads one SSL token from input stream, calls
      * {@link #initSecContext(byte[], int, int) initSecContext} method and
      * writes the output token to the output stream (if any)
      * SSL token is not read on the initial call.
@@ -1948,7 +1948,7 @@ done:      do {
 
     /**
      * It works just like {@link #acceptSecContext(byte[], int, int) acceptSecContext}
-     * method. It reads one SSL token from input stream, calls 
+     * method. It reads one SSL token from input stream, calls
      * {@link #acceptSecContext(byte[], int, int) acceptSecContext}
      * method and writes the output token to the output stream (if any)
      */
@@ -1964,46 +1964,46 @@ done:      do {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
     }
-    
+
     public GSSName getSrcName() throws GSSException {
         return this.sourceName;
     }
-    
+
     public GSSName getTargName() throws GSSException {
         return this.targetName;
     }
 
-    public void requestInteg(boolean state) 
+    public void requestInteg(boolean state)
         throws GSSException {
         if (!state) {
-            throw new GlobusGSSException(GSSException.FAILURE, 
-                                         GlobusGSSException.BAD_OPTION, 
+            throw new GlobusGSSException(GSSException.FAILURE,
+                                         GlobusGSSException.BAD_OPTION,
                                          "integOn");
         }
     }
-    
+
     public boolean getIntegState() {
         return true; // it is always on with ssl
     }
 
-    public void requestSequenceDet(boolean state) 
+    public void requestSequenceDet(boolean state)
         throws GSSException {
         if (!state) {
-            throw new GlobusGSSException(GSSException.FAILURE, 
+            throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION,
                                          "seqDet");
         }
     }
-    
+
     public boolean getSequenceDetState() {
         return true; // it is always on with ssl
     }
 
-    public void requestReplayDet(boolean state) 
+    public void requestReplayDet(boolean state)
         throws GSSException {
         if (!state) {
             throw new GlobusGSSException(GSSException.FAILURE,
-                                         GlobusGSSException.BAD_OPTION, 
+                                         GlobusGSSException.BAD_OPTION,
                                          "replayDet");
         }
     }
@@ -2012,7 +2012,7 @@ done:      do {
         return true; // is is always on with ssl
     }
 
-    public void requestAnonymity(boolean state) 
+    public void requestAnonymity(boolean state)
         throws GSSException {
         this.anonymity = state;
     }
@@ -2021,27 +2021,27 @@ done:      do {
         return this.anonymity;
     }
 
-    public void requestMutualAuth(boolean state) 
+    public void requestMutualAuth(boolean state)
         throws GSSException {
         if (!state) {
-            throw new GlobusGSSException(GSSException.FAILURE, 
-                                         GlobusGSSException.BAD_OPTION, 
+            throw new GlobusGSSException(GSSException.FAILURE,
+                                         GlobusGSSException.BAD_OPTION,
                                          "mutualAuthOn");
         }
     }
-    
+
     public boolean getMutualAuthState() {
         return true; // always on with gsi i guess
     }
 
-    protected byte[] generateCertRequest(X509Certificate cert) 
+    protected byte[] generateCertRequest(X509Certificate cert)
         throws GeneralSecurityException {
 
-        int bits = 
+        int bits =
             ((RSAPublicKey)cert.getPublicKey()).getModulus().bitLength();
 
         this.keyPair = keyPairCache.getKeyPair(bits);
-        
+
         return this.certFactory.createCertificateRequest(cert, this.keyPair);
     }
 
@@ -2049,25 +2049,25 @@ done:      do {
         throws GeneralSecurityException {
         RSAPublicKey pubKey = (RSAPublicKey)certificate.getPublicKey();
         RSAPrivateKey privKey = (RSAPrivateKey)this.keyPair.getPrivate();
-                
+
         if (!pubKey.getModulus().equals(privKey.getModulus())) {
             throw new GeneralSecurityException(i18n.getMessage("keyMismatch"));
         }
     }
 
-    protected void checkContext() 
+    protected void checkContext()
         throws GSSException {
         if (!this.conn || !isEstablished()) {
             throw new GSSException(GSSException.NO_CONTEXT);
         }
-        
+
         if (this.checkContextExpiration.booleanValue() && getLifetime() <= 0) {
             throw new GSSException(GSSException.CONTEXT_EXPIRED);
         }
     }
 
 /*DEL
-    protected int getDelegationType(X509Certificate issuer) 
+    protected int getDelegationType(X509Certificate issuer)
         throws GeneralSecurityException, GSSException {
 
         // GSIConstants.CertificateType certType = BouncyCastleUtil.getCertificateType(issuer, this.tc);
@@ -2131,7 +2131,7 @@ done:      do {
 
     // -----------------------------------
 
-    protected void setGssMode(Object value) 
+    protected void setGssMode(Object value)
         throws GSSException {
         if (!(value instanceof Integer)) {
             throw new GlobusGSSException(GSSException.FAILURE,
@@ -2140,7 +2140,7 @@ done:      do {
                                          new Object [] {"GSS mode", Integer.class});
         }
         Integer v = (Integer)value;
-        if (v == GSIConstants.MODE_GSI || 
+        if (v == GSIConstants.MODE_GSI ||
             v == GSIConstants.MODE_SSL) {
             this.gssMode = v;
         } else {
@@ -2150,7 +2150,7 @@ done:      do {
         }
     }
 
-    protected void setDelegationType(Object value) 
+    protected void setDelegationType(Object value)
         throws GSSException {
         GSIConstants.DelegationType v;
         if (value instanceof GSIConstants.DelegationType)
@@ -2176,7 +2176,7 @@ done:      do {
         }
     }
 
-    protected void setCheckContextExpired(Object value) 
+    protected void setCheckContextExpired(Object value)
         throws GSSException {
         if (!(value instanceof Boolean)) {
             throw new GlobusGSSException(GSSException.FAILURE,
@@ -2187,7 +2187,7 @@ done:      do {
         this.checkContextExpiration = (Boolean)value;
     }
 
-    protected void setRejectLimitedProxy(Object value) 
+    protected void setRejectLimitedProxy(Object value)
         throws GSSException {
         if (!(value instanceof Boolean)) {
             throw new GlobusGSSException(GSSException.FAILURE,
@@ -2198,7 +2198,7 @@ done:      do {
         this.rejectLimitedProxy = (Boolean)value;
     }
 
-    protected void setRequireClientAuth(Object value) 
+    protected void setRequireClientAuth(Object value)
         throws GSSException {
         if (!(value instanceof Boolean)) {
             throw new GlobusGSSException(GSSException.FAILURE,
@@ -2209,9 +2209,9 @@ done:      do {
         this.requireClientAuth = (Boolean)value;
     }
 
-    protected void setRequireAuthzWithDelegation(Object value) 
+    protected void setRequireAuthzWithDelegation(Object value)
         throws GSSException {
-        
+
         if (!(value instanceof Boolean)) {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION_TYPE,
@@ -2245,13 +2245,13 @@ done:      do {
     }
 
 /*DEL
-    protected void setGrimPolicyHandler(Object value) 
+    protected void setGrimPolicyHandler(Object value)
         throws GSSException {
         if (!(value instanceof ProxyPolicyHandler)) {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION_TYPE,
                                          "badType",
-                                         new Object[] {"GRIM policy handler", 
+                                         new Object[] {"GRIM policy handler",
                                                        ProxyPolicyHandler.class});
         }
         if (this.proxyPolicyHandlers == null) {
@@ -2261,25 +2261,25 @@ done:      do {
     }
 */
 
-    protected void setProxyPolicyHandlers(Object value) 
+    protected void setProxyPolicyHandlers(Object value)
         throws GSSException {
         if (!(value instanceof Map)) {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION_TYPE,
                                          "badType",
-                                        new Object[] {"Proxy policy handlers", 
+                                        new Object[] {"Proxy policy handlers",
                                                       Map.class});
         }
         this.proxyPolicyHandlers = (Map)value;
     }
 
-    protected void setTrustedCertificates(Object value) 
+    protected void setTrustedCertificates(Object value)
         throws GSSException {
         if (!(value instanceof TrustedCertificates)) {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_OPTION_TYPE,
                                          "badType",
-                                         new Object[] {"Trusted certificates", 
+                                         new Object[] {"Trusted certificates",
                                                        TrustedCertificates.class});
         }
         this.tc = (TrustedCertificates) value;
@@ -2289,7 +2289,7 @@ done:      do {
         sslConfigurator.setPolicyStore(((TrustedCertificates)value).getsigPolStore());
     }
 
-    
+
     public void setOption(Oid option, Object value)
         throws GSSException {
         if (option == null) {
@@ -2302,7 +2302,7 @@ done:      do {
                                          GlobusGSSException.BAD_ARGUMENT,
                                          "nullOptionValue");
         }
-        
+
         if (option.equals(GSSConstants.GSS_MODE)) {
             setGssMode(value);
         } else if (option.equals(GSSConstants.DELEGATION_TYPE)) {
@@ -2330,21 +2330,21 @@ done:      do {
                      .FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM)) {
             setForceSslV3AndConstrainCipherSuitesForGram(value);
         } else {
-            throw new GlobusGSSException(GSSException.FAILURE, 
+            throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.UNKNOWN_OPTION,
                                          "unknownOption",
                                          new Object[] {option});
         }
     }
-    
-    public Object getOption(Oid option) 
+
+    public Object getOption(Oid option)
         throws GSSException {
         if (option == null) {
-            throw new GlobusGSSException(GSSException.FAILURE, 
+            throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_ARGUMENT,
                                          "nullOption");
         }
-        
+
         if (option.equals(GSSConstants.GSS_MODE)) {
             return this.gssMode;
         } else if (option.equals(GSSConstants.DELEGATION_TYPE)) {
@@ -2363,7 +2363,7 @@ done:      do {
         } else if (option.equals(GSSConstants.ACCEPT_NO_CLIENT_CERTS)) {
             return this.acceptNoClientCerts;
         }
-        
+
         return null;
     }
 
@@ -2375,18 +2375,18 @@ done:      do {
      * {@link #acceptDelegation(int, byte[], int, int) acceptDelegation}
      * function.
      * <BR>
-     * The behavior of this function can be modified by 
-     * {@link GSSConstants#DELEGATION_TYPE GSSConstants.DELEGATION_TYPE} 
-     * and 
+     * The behavior of this function can be modified by
+     * {@link GSSConstants#DELEGATION_TYPE GSSConstants.DELEGATION_TYPE}
+     * and
      * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE} context
-     * options. 
+     * options.
      * The {@link GSSConstants#DELEGATION_TYPE GSSConstants.DELEGATION_TYPE}
      * option controls delegation type to be performed. The
-     * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE} 
-     * option if set to 
+     * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE}
+     * option if set to
      * {@link GSIConstants#MODE_SSL GSIConstants.MODE_SSL}
      * results in tokens that are not wrapped.
-     * 
+     *
      * @param credential
      *        The credential to be delegated. May be null
      *        in which case the credential associated with the security
@@ -2395,16 +2395,16 @@ done:      do {
      *        The desired security mechanism. May be null.
      * @param lifetime
      *        The requested period of validity (seconds) of the delegated
-     *        credential. 
-     * @return A token that should be passed to <code>acceptDelegation</code> if 
+     *        credential.
+     * @return A token that should be passed to <code>acceptDelegation</code> if
      *         <code>isDelegationFinished</code> returns false. May be null.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
-    public byte[] initDelegation(GSSCredential credential, 
+    public byte[] initDelegation(GSSCredential credential,
                                  Oid mechanism,
                                  int lifetime,
-                                 byte[] buf, int off, int len) 
+                                 byte[] buf, int off, int len)
         throws GSSException {
 
         logger.debug("Enter initDelegation: " + delegationState);
@@ -2418,7 +2418,7 @@ done:      do {
             off = 0;
             len = buf.length;
         }
-        
+
         byte [] token = null;
 
         switch (delegationState) {
@@ -2432,7 +2432,7 @@ done:      do {
 
         case DELEGATION_SIGN_CERT:
 
-            
+
             if (credential == null) {
                 // get default credential
                 GSSManager manager = new GlobusGSSManagerImpl();
@@ -2443,18 +2443,18 @@ done:      do {
                 throw new GSSException(GSSException.DEFECTIVE_CREDENTIAL);
             }
 
-            X509Credential cred = 
+            X509Credential cred =
                 ((GlobusGSSCredentialImpl)credential).getX509Credential();
 
             X509Certificate [] chain = cred.getCertificateChain();
-            
+
             int time = (lifetime == GSSCredential.DEFAULT_LIFETIME) ? -1 : lifetime;
-            
+
             ByteArrayInputStream inData = null;
             ByteArrayOutputStream out = null;
             try {
             	inData = new ByteArrayInputStream(buf, off, len);
-                X509Certificate cert = 
+                X509Certificate cert =
                     this.certFactory.createCertificate(inData,
                                                        chain[0],
                                                        cred.getPrivateKey(),
@@ -2463,8 +2463,8 @@ done:      do {
                                                        getDelegationType(chain[0]));
 */
                                                        BouncyCastleCertProcessingFactory.decideProxyType(chain[0], this.delegationType));
-                
-                 
+
+
                 out = new ByteArrayOutputStream();
 
                 out.write(cert.getEncoded());
@@ -2491,7 +2491,7 @@ done:      do {
                     }
                 }
             }
-            
+
             this.delegationState = DELEGATION_START;
             this.delegationFinished = true;
             break;
@@ -2501,7 +2501,7 @@ done:      do {
         }
 
         logger.debug("Exit initDelegation");
-        
+
         if (this.gssMode != GSIConstants.MODE_SSL && token != null) {
             // XXX: Why wrap() only when not in MODE_SSL?
             return wrap(token, 0, token.length);
@@ -2515,23 +2515,23 @@ done:      do {
      *
      * This function drives the accepting side of the credential
      * delegation process. It is expected to be called in tandem with the
-     * {@link #initDelegation(GSSCredential, Oid, int, byte[], int, int) 
+     * {@link #initDelegation(GSSCredential, Oid, int, byte[], int, int)
      * initDelegation} function.
      * <BR>
-     * The behavior of this function can be modified by 
+     * The behavior of this function can be modified by
      * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE} context
      * option. The
-     * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE} 
-     * option if set to 
+     * {@link GSSConstants#GSS_MODE GSSConstants.GSS_MODE}
+     * option if set to
      * {@link GSIConstants#MODE_SSL GSIConstants.MODE_SSL}
      * results in tokens that are not wrapped.
      *
      * @param lifetime
      *        The requested period of validity (seconds) of the delegated
-     *        credential. 
-     * @return A token that should be passed to <code>initDelegation</code> if 
+     *        credential.
+     * @return A token that should be passed to <code>initDelegation</code> if
      *        <code>isDelegationFinished</code> returns false. May be null.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
     public byte[] acceptDelegation(int lifetime,
@@ -2539,7 +2539,7 @@ done:      do {
         throws GSSException {
 
         logger.debug("Enter acceptDelegation: " + delegationState);
-        
+
         if (this.gssMode != GSIConstants.MODE_SSL && buf != null && len > 0) {
             buf = unwrap(buf, off, len);
             off = 0;
@@ -2560,7 +2560,7 @@ done:      do {
                                              "delegError00",
                                              new Object[] {new Character((char)buf[off])});
             }
-            
+
             try {
 /*DEL
                 Vector certChain = this.conn.getCertificateChain();
@@ -2572,12 +2572,12 @@ done:      do {
                     certChain = null;
                 }
                 if (certChain == null || certChain.length == 0) {
-                    throw new GlobusGSSException(GSSException.FAILURE, 
+                    throw new GlobusGSSException(GSSException.FAILURE,
                                                  GlobusGSSException.DELEGATION_ERROR,
                                                  "noClientCert");
                 }
-            
-                X509Certificate tmpCert = 
+
+                X509Certificate tmpCert =
 /*DEL
                     PureTLSUtil.convertCert((X509Cert)certChain.lastElement());
 */
@@ -2590,7 +2590,7 @@ done:      do {
 
             this.delegationState = DELEGATION_COMPLETE_CRED;
             break;
-            
+
         case DELEGATION_COMPLETE_CRED:
 
             ByteArrayInputStream in = null;
@@ -2621,11 +2621,11 @@ done:      do {
                 }
             }
 
-            X509Credential proxy = 
+            X509Credential proxy =
                 new X509Credential(this.keyPair.getPrivate(), chain);
 
-            this.delegatedCred = 
-                new GlobusGSSCredentialImpl(proxy, 
+            this.delegatedCred =
+                new GlobusGSSCredentialImpl(proxy,
                                             GSSCredential.INITIATE_AND_ACCEPT);
 
             this.delegationState = DELEGATION_START;
@@ -2649,7 +2649,7 @@ done:      do {
     public GSSCredential getDelegatedCredential() {
         return this.delegatedCred;
     }
-    
+
     public boolean isDelegationFinished() {
         return this.delegationFinished;
     }
@@ -2665,17 +2665,17 @@ done:      do {
      *
      * @param oid the oid of the information desired.
      * @return the information desired. Might be null.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
-    public Object inquireByOid(Oid oid) 
+    public Object inquireByOid(Oid oid)
         throws GSSException {
         if (oid == null) {
-            throw new GlobusGSSException(GSSException.FAILURE, 
+            throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.BAD_ARGUMENT,
                                          "nullOption");
         }
-        
+
         if (oid.equals(GSSConstants.X509_CERT_CHAIN)) {
             if (isEstablished()) {
                 // converting certs is slower but keeping coverted certs
@@ -2708,7 +2708,7 @@ done:      do {
         } else if (oid.equals(GSSConstants.RECEIVED_LIMITED_PROXY)) {
             return this.peerLimited;
         }
-        
+
         return null;
     }
 
@@ -2722,12 +2722,12 @@ done:      do {
     // ==================================================================
     // Not implemented below
     // ==================================================================
-    
+
     /**
      * Currently not implemented.
      */
     public int getWrapSizeLimit(int qop, boolean confReq,
-                                int maxTokenSize) 
+                                int maxTokenSize)
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
     }
@@ -2736,7 +2736,7 @@ done:      do {
      * Currently not implemented.
      */
     public void wrap(InputStream inStream, OutputStream outStream,
-                     MessageProp msgProp) 
+                     MessageProp msgProp)
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
     }
@@ -2745,7 +2745,7 @@ done:      do {
      * Currently not implemented.
      */
     public void unwrap(InputStream inStream, OutputStream outStream,
-                       MessageProp msgProp) 
+                       MessageProp msgProp)
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
     }
@@ -2754,16 +2754,16 @@ done:      do {
      * Currently not implemented.
      */
     public void getMIC(InputStream inStream, OutputStream outStream,
-                       MessageProp msgProp) 
+                       MessageProp msgProp)
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
     }
- 
+
     /**
      * Currently not implemented.
      */
     public void verifyMIC(InputStream tokStream, InputStream msgStream,
-                          MessageProp msgProp) 
+                          MessageProp msgProp)
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
     }
@@ -2771,15 +2771,7 @@ done:      do {
     /**
      * Currently not implemented.
      */
-    public void setChannelBinding(ChannelBinding cb) 
-        throws GSSException {
-        throw new GSSException(GSSException.UNAVAILABLE);
-    }
- 
-    /**
-     * Currently not implemented.
-     */
-    public boolean isTransferable() 
+    public void setChannelBinding(ChannelBinding cb)
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
     }
@@ -2787,9 +2779,17 @@ done:      do {
     /**
      * Currently not implemented.
      */
-    public byte [] export() 
+    public boolean isTransferable()
         throws GSSException {
         throw new GSSException(GSSException.UNAVAILABLE);
     }
-    
+
+    /**
+     * Currently not implemented.
+     */
+    public byte [] export()
+        throws GSSException {
+        throw new GSSException(GSSException.UNAVAILABLE);
+    }
+
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,8 +34,8 @@ import java.io.RandomAccessFile;
 import org.ietf.jgss.GSSCredential;
 
 public class MultipleTransfersTest extends TestCase {
- 
-    private static Log logger = 
+
+    private static Log logger =
 	LogFactory.getLog(MultipleTransfersTest.class.getName());
 
     public MultipleTransfersTest(String name) {
@@ -43,14 +43,14 @@ public class MultipleTransfersTest extends TestCase {
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
 	return new TestSuite(MultipleTransfersTest.class);
     }
 
-    public void test2PartyMultipleTransfers() 
+    public void test2PartyMultipleTransfers()
 	throws Exception {
 	logger.info("GridFTP client - client-server - multiple files - stream mode");
 
@@ -85,7 +85,7 @@ public class MultipleTransfersTest extends TestCase {
 
     /* do not reuse data channels
      */
-    public void test2PartyMultipleTransfersModeE() 
+    public void test2PartyMultipleTransfersModeE()
 	throws Exception {
 	logger.info("GridFTP client - client-server - multiple files - stream mode - no d.c. reuse");
 
@@ -129,16 +129,16 @@ public class MultipleTransfersTest extends TestCase {
       Does not check if files get transferred correctly.
       Check the server logs to see that no unnecessary commands are sent.
      */
-    public void test3PartyMultipleTransfers() 
+    public void test3PartyMultipleTransfers()
 	throws Exception {
-	
+
 	logger.info("GridFTP client - 3 party - multiple files - stream mode");
 
         GridFTPClient source = null;
         GridFTPClient dest = null;
 
 	try {
-	    source = new GridFTPClient(TestEnv.serverAHost, 
+	    source = new GridFTPClient(TestEnv.serverAHost,
                                        TestEnv.serverAPort);
 	    source.setAuthorization(TestEnv.getAuthorization(TestEnv.serverASubject));
 
@@ -172,15 +172,15 @@ public class MultipleTransfersTest extends TestCase {
 	    fail(e.toString());
 	} finally {
             if (source != null) {
-                try { 
-                    source.close(); 
+                try {
+                    source.close();
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
             if (dest != null) {
-                try { 
-                    dest.close(); 
+                try {
+                    dest.close();
                 } catch (Exception e) {
                     logger.error("", e);
                 }
@@ -201,16 +201,16 @@ public class MultipleTransfersTest extends TestCase {
     /** try third party transfer.
        no exception should be thrown.
     **/
-    public void test3PartyMultipleTransfersModeE() 
+    public void test3PartyMultipleTransfersModeE()
 	throws Exception {
-	
+
 	logger.info("GridFTPClient - 3 party - multiple files - mode E");
 
         GridFTPClient source = null;
         GridFTPClient dest = null;
 
 	try {
-	    source = new GridFTPClient(TestEnv.serverAHost, 
+	    source = new GridFTPClient(TestEnv.serverAHost,
                                        TestEnv.serverAPort);
 	    source.setAuthorization(TestEnv.getAuthorization(TestEnv.serverASubject));
 
@@ -218,7 +218,7 @@ public class MultipleTransfersTest extends TestCase {
 	    String SrcFile2 = TestEnv.serverADir + "/" + TestEnv.serverAFile;
 	    String SrcFile3 = TestEnv.serverADir + "/" + TestEnv.serverAFile;
 
-	    dest = new GridFTPClient(TestEnv.serverBHost, 
+	    dest = new GridFTPClient(TestEnv.serverBHost,
                                      TestEnv.serverBPort);
 	    dest.setAuthorization(TestEnv.getAuthorization(TestEnv.serverBSubject));
 
@@ -241,15 +241,15 @@ public class MultipleTransfersTest extends TestCase {
 	    fail(e.toString());
 	} finally {
             if (source != null) {
-                try { 
-                    source.close(); 
+                try {
+                    source.close();
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
             if (dest != null) {
-                try { 
-                    dest.close(); 
+                try {
+                    dest.close();
                 } catch (Exception e) {
                     logger.error("", e);
                 }

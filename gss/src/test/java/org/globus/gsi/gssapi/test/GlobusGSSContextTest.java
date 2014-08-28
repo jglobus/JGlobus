@@ -54,10 +54,10 @@ public class GlobusGSSContextTest extends TestCase {
     private static final byte [] MSG = "this is a test 1 2 3".getBytes();
 
     private Log logger = LogFactory.getLog(GlobusGSSContextTest.class);
-    
+
     GSSContext clientContext;
     GSSContext serverContext;
-    
+
     protected void setUp() throws Exception {
 
 	System.setProperty("org.globus.gsi.gssapi.provider",
@@ -76,16 +76,16 @@ public class GlobusGSSContextTest extends TestCase {
 
 	GSSManager manager = getGSSManager();
 
-        GSSCredential gssCred = 
+        GSSCredential gssCred =
 	    manager.createCredential(GSSCredential.INITIATE_ONLY);
 
         GSSName gssName = gssCred.getName();
 
 	serverContext = manager.createContext((GSSCredential)null);
-	
+
 	clientContext = manager.createContext(gssName,
 					      GSSConstants.MECH_OID,
-					      null, 
+					      null,
 					      GSSContext.DEFAULT_LIFETIME);
     }
 
@@ -117,38 +117,38 @@ public class GlobusGSSContextTest extends TestCase {
 
 	while (!clientContext.isEstablished()) {
             if (inToken == null || inToken == empty) {
-	        outToken = 
+	        outToken =
 		    clientContext.initSecContext(inToken, 0, inToken.length);
             } else {
-	        outToken = 
+	        outToken =
 		    clientContext.initSecContext(inToken, 0, inToken.length/2);
 	        assertTrue(outToken == null);
-	        outToken = 
+	        outToken =
 		    clientContext.initSecContext(inToken, inToken.length/2,
                                       inToken.length - inToken.length/2);
             }
-	    
+
 	    if (outToken == null || outToken.length == 0) {
 		fail("bad token");
 	    }
 
             if (outToken == null || outToken == empty) {
-	        inToken = 
+	        inToken =
 		    serverContext.acceptSecContext(outToken, 0, outToken.length);
             } else {
-	        inToken = 
+	        inToken =
 		    serverContext.acceptSecContext(outToken, 0, outToken.length/2);
                 assertTrue(inToken == null);
-	        inToken = 
+	        inToken =
 		    serverContext.acceptSecContext(outToken, outToken.length/2,
                                        outToken.length - outToken.length/2);
             }
-	    
+
 	    if (inToken == null && !clientContext.isEstablished()) {
 		fail("bad token");
 	    }
 	}
-	
+
 	assertTrue("client ctx not established.", clientContext.isEstablished());
 	assertTrue("server ctx not established.", serverContext.isEstablished());
     }
@@ -169,19 +169,19 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(false);
-	
+
 	establishContext();
 
 	Object tmp = null;
 	X509Certificate[] chain = null;
-	
+
 	// should get server's chain
 	tmp = cc.inquireByOid(GSSConstants.X509_CERT_CHAIN);
 	assertTrue(tmp != null);
 	assertTrue(tmp instanceof X509Certificate[]);
 	chain = (X509Certificate[])tmp;
 	assertTrue(chain.length > 0);
-	
+
 	// should be null since client auth disabled
 	tmp = sc.inquireByOid(GSSConstants.X509_CERT_CHAIN);
 	assertTrue(tmp == null);
@@ -198,19 +198,19 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestCredDeleg(false);
 	assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(false);
-	
+
 	establishContext();
 
 	Object tmp = null;
 	X509Certificate[] chain = null;
-	
+
 	// should get server's chain
 	tmp = cc.inquireByOid(GSSConstants.X509_CERT_CHAIN);
 	assertTrue(tmp != null);
 	assertTrue(tmp instanceof X509Certificate[]);
 	chain = (X509Certificate[])tmp;
 	assertTrue(chain.length > 0);
-	
+
 	// should get client's chain
 	tmp = sc.inquireByOid(GSSConstants.X509_CERT_CHAIN);
 	assertTrue(tmp != null);
@@ -236,7 +236,7 @@ public class GlobusGSSContextTest extends TestCase {
 		      Boolean.TRUE);
 
 	establishContext();
-	
+
 	ExtendedGSSCredential cred = null;
 
 	cred = (ExtendedGSSCredential)serverContext.getDelegCred();
@@ -246,16 +246,16 @@ public class GlobusGSSContextTest extends TestCase {
 	proxy = ((GlobusGSSCredentialImpl)cred).getX509Credential();
 	assertTrue(proxy != null);
 	assertTrue( (proxy.getProxyType() == CertificateType.GSI_2_PROXY) ||
-		    (proxy.getProxyType() == 
+		    (proxy.getProxyType() ==
                      CertificateType.GSI_3_IMPERSONATION_PROXY) ||
-                    (proxy.getProxyType() == 
+                    (proxy.getProxyType() ==
                      CertificateType.GSI_4_IMPERSONATION_PROXY));
 
 	logger.debug(proxy);
-	
+
 	GSSManager manager = getGSSManager();
 
-        GSSCredential gssCred = 
+        GSSCredential gssCred =
 	    manager.createCredential(GSSCredential.INITIATE_ONLY);
 
 	// create server ctx using delegated cred
@@ -273,13 +273,13 @@ public class GlobusGSSContextTest extends TestCase {
 
 	cred = (ExtendedGSSCredential)serverContext.getDelegCred();
 	assertTrue(cred != null);
-	
+
 	proxy = ((GlobusGSSCredentialImpl)cred).getX509Credential();
 	assertTrue(proxy != null);
 	assertTrue( (proxy.getProxyType() == CertificateType.GSI_2_LIMITED_PROXY)
-                    || (proxy.getProxyType() == 
-                        CertificateType.GSI_3_LIMITED_PROXY) || 
-                    (proxy.getProxyType() == 
+                    || (proxy.getProxyType() ==
+                        CertificateType.GSI_3_LIMITED_PROXY) ||
+                    (proxy.getProxyType() ==
                      CertificateType.GSI_4_LIMITED_PROXY));
 	logger.debug(proxy);
     }
@@ -289,7 +289,7 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(true);
-	
+
 	establishContext();
 	int i=0;
 
@@ -334,14 +334,14 @@ public class GlobusGSSContextTest extends TestCase {
 	    input = sr.acceptDelegation(0, output, 0, output.length);
 	    i++;
 	} while (!cl.isDelegationFinished());
-	
+
 	assertTrue("client ctx not established.", cl.isDelegationFinished());
 	assertTrue("server ctx not established.", sr.isDelegationFinished());
 
 	cred = (ExtendedGSSCredential)sr.getDelegatedCredential();
 	assertTrue(cred != null);
 
-	X509Credential globusCred = 
+	X509Credential globusCred =
 	    ((GlobusGSSCredentialImpl)cred).getX509Credential();
 	Date notAfter = globusCred.getCertificateChain()[0].getNotAfter();
 	Date notBefore = globusCred.getCertificateChain()[0].getNotBefore();
@@ -352,7 +352,7 @@ public class GlobusGSSContextTest extends TestCase {
 	assertEquals("lifetime", reqLifetime, seconds);
     }
 
-    
+
     public void testContextExpiration() throws Exception {
 	// disable delegation
 	int time = 15; // 15 seconds;
@@ -362,7 +362,7 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestConf(true);
 
 	// request short context life time
-	clientContext.requestLifetime(time); 
+	clientContext.requestLifetime(time);
 
 	// enable context expiration checking
 	ExtendedGSSContext ctx = (ExtendedGSSContext)clientContext;
@@ -376,9 +376,9 @@ public class GlobusGSSContextTest extends TestCase {
 	assertTrue(clientContext.getLifetime() > 0);
 
 	Thread.sleep((int)(time * 1.3 * 1000));
-	
+
 	assertTrue(clientContext.getLifetime() < 0);
-	
+
 	try {
 	    clientContext.wrap(MSG, 0, MSG.length, null);
 	    fail("Wrap() did not throw exeption as expected");
@@ -421,16 +421,16 @@ public class GlobusGSSContextTest extends TestCase {
 	    }
 	}
 */
-	
+
     }
 
     public void testLimitedProxyChecking() throws Exception {
 	clientContext.requestCredDeleg(true);
         assertTrue(clientContext.getCredDelegState());
 	clientContext.requestConf(true);
-	
+
 	establishContext();
-	
+
 	ExtendedGSSCredential cred = null;
 
 	cred = (ExtendedGSSCredential)serverContext.getDelegCred();
@@ -440,9 +440,9 @@ public class GlobusGSSContextTest extends TestCase {
 	proxy = ((GlobusGSSCredentialImpl)cred).getX509Credential();
 	assertTrue(proxy != null);
 	assertTrue( (proxy.getProxyType() == CertificateType.GSI_2_LIMITED_PROXY)
-                    || (proxy.getProxyType() == 
-                        CertificateType.GSI_3_LIMITED_PROXY) || 
-                    (proxy.getProxyType() == 
+                    || (proxy.getProxyType() ==
+                        CertificateType.GSI_3_LIMITED_PROXY) ||
+                    (proxy.getProxyType() ==
                      CertificateType.GSI_4_LIMITED_PROXY));
 
 	GSSManager manager = getGSSManager();
@@ -451,17 +451,17 @@ public class GlobusGSSContextTest extends TestCase {
 	serverContext = manager.createContext((GSSCredential)null);
 
 	// create client ctx using default creds
-	clientContext = manager.createContext(null, 
+	clientContext = manager.createContext(null,
 					      GSSConstants.MECH_OID,
 					      cred,
 					      GSSContext.DEFAULT_LIFETIME);
-	
+
 	ExtendedGSSContext sr = (ExtendedGSSContext)serverContext;
 	sr.setOption(GSSConstants.REJECT_LIMITED_PROXY,
 		     Boolean.TRUE);
 	assertTrue(sr.getOption(GSSConstants.REJECT_LIMITED_PROXY) ==
 		     Boolean.TRUE);
-	
+
 	try {
 	    establishContext();
 	    fail("establishContext() did not throw exception as expected");
@@ -470,17 +470,17 @@ public class GlobusGSSContextTest extends TestCase {
 
 	// create server ctx using delegated cred
 	serverContext = manager.createContext(cred);
-	
+
 	// create client ctx using default creds
-	clientContext = manager.createContext(null, 
+	clientContext = manager.createContext(null,
 					      GSSConstants.MECH_OID,
 					      null,
 					      GSSContext.DEFAULT_LIFETIME);
-	
+
 	ExtendedGSSContext cl = (ExtendedGSSContext)clientContext;
 	cl.setOption(GSSConstants.REJECT_LIMITED_PROXY,
 		     Boolean.TRUE);
-	
+
 	try {
 	    establishContext();
 	    fail("establishContext() did not throw exception as expected");
@@ -492,19 +492,19 @@ public class GlobusGSSContextTest extends TestCase {
     public void testAnonymousClient1() throws Exception {
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
-	
+
 	// request anonymity
 	clientContext.requestAnonymity(true);
-	
+
 	// without this handshake will fail
 	ExtendedGSSContext sr = (ExtendedGSSContext)serverContext;
 	sr.setOption(GSSConstants.REQUIRE_CLIENT_AUTH,
 		     Boolean.FALSE);
 	assertTrue(sr.getOption(GSSConstants.REQUIRE_CLIENT_AUTH) ==
 		     Boolean.FALSE);
-	
+
 	establishContext();
-	
+
 	assertTrue(clientContext.getSrcName().isAnonymous());
 	assertTrue(clientContext.getAnonymityState());
 	assertTrue(!clientContext.getTargName().isAnonymous());
@@ -526,16 +526,16 @@ public class GlobusGSSContextTest extends TestCase {
 	assertTrue(anonCred.getName().isAnonymous());
 
 	// client ctx initalized with anon cred
-	clientContext = manager.createContext(null, 
+	clientContext = manager.createContext(null,
 					      GSSConstants.MECH_OID,
-					      anonCred, 
+					      anonCred,
 					      GSSContext.DEFAULT_LIFETIME);
 
 	// without this handshake will fail
 	ExtendedGSSContext sr = (ExtendedGSSContext)serverContext;
 	sr.setOption(GSSConstants.REQUIRE_CLIENT_AUTH,
 		     Boolean.FALSE);
-	
+
 	establishContext();
 
 	assertTrue(clientContext.getSrcName().isAnonymous());
@@ -551,7 +551,7 @@ public class GlobusGSSContextTest extends TestCase {
 
 	// request anonymity - this should have no baring on server context
 	serverContext.requestAnonymity(true);
-	
+
 	establishContext();
 
 	// should be false - client is not anonymous
@@ -563,24 +563,24 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestAnonymity(true);
-	
+
 	// request anonymity - this should have no baring on server context
 	serverContext.requestAnonymity(true);
-	
+
 	// without this handshake will fail
 	ExtendedGSSContext sr = (ExtendedGSSContext)serverContext;
 	sr.setOption(GSSConstants.REQUIRE_CLIENT_AUTH,
 		     Boolean.FALSE);
-	
+
 	establishContext();
-	
+
 	// should be true - client is anonymous
 	assertTrue(serverContext.getAnonymityState());
     }
-    
+
     /* checks if server will catch an error where the cred is anonymous */
     public void testAnonymousServer3() throws Exception {
-	
+
 	GSSManager manager = getGSSManager();
 
 	GSSName anonName = manager.createName((String)null, null);
@@ -608,16 +608,16 @@ public class GlobusGSSContextTest extends TestCase {
 
     public void testBadUsage1() throws Exception {
 	GSSManager manager = getGSSManager();
-	
+
 	GSSCredential cred = manager.createCredential(null,
 						      GSSCredential.DEFAULT_LIFETIME,
 						      (Oid)null,
 						      GSSCredential.INITIATE_ONLY);
-	
-	// creates an accepter context with credential that is 
+
+	// creates an accepter context with credential that is
 	// supposed to be used for initiators
 	serverContext = manager.createContext(cred);
-	
+
 	try {
 	    establishContext();
 	    fail("establishContext() did not throw exception as expected.");
@@ -631,19 +631,19 @@ public class GlobusGSSContextTest extends TestCase {
 
     public void testBadUsage2() throws Exception {
 	GSSManager manager = getGSSManager();
-	
+
 	GSSCredential cred = manager.createCredential(null,
 						      GSSCredential.DEFAULT_LIFETIME,
 						      (Oid)null,
 						      GSSCredential.ACCEPT_ONLY);
-	
-	// creates an initiator context with credential that is 
+
+	// creates an initiator context with credential that is
 	// supposed to be used for acceptor
-	clientContext = manager.createContext(null, 
+	clientContext = manager.createContext(null,
 					      GSSConstants.MECH_OID,
 					      cred,
 					      GSSContext.DEFAULT_LIFETIME);
-	
+
 	try {
 	    establishContext();
 	    fail("establishContext() did not throw exception as expected.");
@@ -704,7 +704,7 @@ public class GlobusGSSContextTest extends TestCase {
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(false);
 	establishContext();
-	
+
 	runMicTests();
     }
 
@@ -713,7 +713,7 @@ public class GlobusGSSContextTest extends TestCase {
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(true);
 	establishContext();
-	
+
 	runMicTests();
     }
 
@@ -721,7 +721,7 @@ public class GlobusGSSContextTest extends TestCase {
 
 	assertTrue("client ctx not established.", clientContext.isEstablished());
 	assertTrue("server ctx not established.", serverContext.isEstablished());
-	
+
 	int [] msgSize = {10, 100, 1000, 10000, 16384, 100000};
 
 	for (int i=0;i<msgSize.length;i++) {
@@ -729,14 +729,14 @@ public class GlobusGSSContextTest extends TestCase {
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    DataOutputStream dout = new DataOutputStream(out);
 
-	    while ( dout.size() < msgSize[i] ) { 
+	    while ( dout.size() < msgSize[i] ) {
 		dout.writeLong(System.currentTimeMillis());
 	    }
-	    
+
 	    byte [] msg = out.toByteArray();
-	    
+
 	    byte [] wToken = clientContext.getMIC(msg, 0, msg.length, null);
-	    
+
 	    serverContext.verifyMIC(wToken, 0, wToken.length,
 				    msg, 0, msg.length, null);
 	}
@@ -755,17 +755,17 @@ public class GlobusGSSContextTest extends TestCase {
     }
 
     private void runBadMicTest(int off, int expectedError) throws Exception {
-	
+
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(true);
-	
+
 	establishContext();
-	
+
 	byte [] mic = clientContext.getMIC(MSG, 0, MSG.length, null);
-	
+
 	mic[off] = 5;
-	
+
 	try {
 	    serverContext.verifyMIC(mic, 0, mic.length,
 				    MSG, 0, MSG.length, null);
@@ -777,21 +777,21 @@ public class GlobusGSSContextTest extends TestCase {
 	    }
 	}
     }
-    
+
     public void testOldToken() throws Exception {
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(true);
-	
+
 	establishContext();
-	
+
 	byte [] mic1 = clientContext.getMIC(MSG, 0, MSG.length, null);
-	
+
 	byte [] mic2 = clientContext.getMIC(MSG, 0, MSG.length, null);
-	
+
 	serverContext.verifyMIC(mic1, 0, mic1.length,
 				MSG, 0, MSG.length, null);
-	
+
 	serverContext.verifyMIC(mic2, 0, mic2.length,
 				MSG, 0, MSG.length, null);
 
@@ -811,15 +811,15 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(true);
-	
+
 	establishContext();
-	
+
 	byte [] mic = null;
-	
+
 	mic = clientContext.getMIC(MSG, 0, MSG.length, null);
-	
+
 	mic = clientContext.getMIC(MSG, 0, MSG.length, null);
-	
+
 	try {
 	    serverContext.verifyMIC(mic, 0, mic.length,
 				    MSG, 0, MSG.length, null);
@@ -832,7 +832,7 @@ public class GlobusGSSContextTest extends TestCase {
 	}
     }
 */
-    
+
     // basic wrap/unwrap tests
 
      public void testWrap1() throws Exception {
@@ -841,10 +841,10 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestConf(false);
 	serverContext.requestConf(true);
 	establishContext();
-	
+
 	runWrapTests(true, false, 0);
 	runWrapTests(true, true, 0);
-	
+
 /* GSI_BIG NOT SUPPORTED ANY LONGER
 	// tests GSI_BIG mode
 	runWrapTests(false, false, GSSConstants.GSI_BIG);
@@ -857,7 +857,7 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestConf(true);
 	serverContext.requestConf(true);
 	establishContext();
-	
+
 	runWrapTests(true, false, 0);
 	runWrapTests(true, true, 0);
     }
@@ -868,7 +868,7 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestConf(true);
 	serverContext.requestConf(false);
 	establishContext();
-	
+
 	runWrapTests(true, false, 0);
 	runWrapTests(true, true, 0);
     }
@@ -879,7 +879,7 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestConf(false);
 	serverContext.requestConf(false);
 	establishContext();
-	
+
 	runWrapTests(false, false, 0);
 	runWrapTests(false, true, 0);
     }
@@ -888,7 +888,7 @@ public class GlobusGSSContextTest extends TestCase {
 
 	assertTrue("client ctx not established.", clientContext.isEstablished());
 	assertTrue("server ctx not established.", serverContext.isEstablished());
-	
+
 	int [] msgSize = {10, 100, 1000, 10000, 16384, 100000};
 
 	for (int i=0;i<msgSize.length;i++) {
@@ -896,10 +896,10 @@ public class GlobusGSSContextTest extends TestCase {
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    DataOutputStream dout = new DataOutputStream(out);
 
-	    while ( dout.size() < msgSize[i] ) { 
+	    while ( dout.size() < msgSize[i] ) {
 		dout.writeLong(System.currentTimeMillis());
 	    }
-	    
+
 	    byte [] msg = out.toByteArray();
 
 	    MessageProp wProp = new MessageProp(qop, reqConf);
@@ -924,7 +924,7 @@ public class GlobusGSSContextTest extends TestCase {
 	    assertEquals(qop, uwProp.getQOP());
 
 	    assertEquals(msg.length, ((uwToken1 != null)?uwToken1.length:0) + uwToken2.length);
-	    
+
             if (uwToken1 != null) {
 	        for (int j=0;j<uwToken1.length;j++) {
 	       	    assertEquals(msg[j], uwToken1[j]);
@@ -934,20 +934,20 @@ public class GlobusGSSContextTest extends TestCase {
 		assertEquals(msg[((uwToken1 != null)?uwToken1.length:0) + j],
                                           uwToken2[j]);
 	    }
-	    
+
 	}
-    }    
+    }
 
     public void testBadUnwrap1() throws Exception {
 
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(true);
-	
+
 	establishContext();
 
 	byte [] wToken = clientContext.wrap(MSG, 0, MSG.length, null);
-	
+
 	wToken[7]++;
 
 	try {
@@ -966,11 +966,11 @@ public class GlobusGSSContextTest extends TestCase {
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(true);
-	
+
 	establishContext();
 
 	byte [] wToken = clientContext.wrap(MSG, 0, MSG.length, null);
-	
+
 	wToken[4] = 5;
 
 	try {
@@ -985,22 +985,22 @@ public class GlobusGSSContextTest extends TestCase {
     }
 
     public void testBadUnwrap3() throws Exception {
-	
+
 	clientContext.requestCredDeleg(false);
         assertTrue(!clientContext.getCredDelegState());
 	clientContext.requestConf(false);
 
 	establishContext();
-	
+
 	byte [] wToken = clientContext.wrap(MSG, 0, MSG.length, null);
-	
+
 	byte pByte = wToken[4];
 	wToken[4] = 5;
 
 	// because this fails the context is invalidated
 
 	try {
-	    byte [] uwToken = 
+	    byte [] uwToken =
 		serverContext.unwrap(wToken, 0, wToken.length, null);
 	    fail("unwrap did not fail as excepted");
 	} catch (GSSException e) {
@@ -1009,13 +1009,13 @@ public class GlobusGSSContextTest extends TestCase {
 	    }
 	}
 
-	// even if this is unwrap() is ok the context is invalidated 
+	// even if this is unwrap() is ok the context is invalidated
 	// and this will throw an exception
 
 	wToken[4] = pByte;
 
 	try {
-	    byte [] uwToken = 
+	    byte [] uwToken =
 		serverContext.unwrap(wToken, 0, wToken.length, null);
 	    fail("unwrap did not fail as excepted");
 	} catch (GSSException e) {
@@ -1025,16 +1025,16 @@ public class GlobusGSSContextTest extends TestCase {
 		fail("Unexpected GSSException");
 	    }
 	}
-	
+
     }
 
     public void testStreamInitAcceptContext() throws Exception {
 
-	assertTrue("client ctx already established.", 
+	assertTrue("client ctx already established.",
 		   !clientContext.isEstablished());
-	assertTrue("server ctx already established.", 
+	assertTrue("server ctx already established.",
 		   !serverContext.isEstablished());
-	
+
 	clientContext.requestCredDeleg(true);
         assertTrue(clientContext.getCredDelegState());
 	clientContext.requestConf(false);
@@ -1055,17 +1055,17 @@ public class GlobusGSSContextTest extends TestCase {
 	    clientContext.initSecContext(in, out);
 	    out.flush();
 	}
-	
+
 	// make sure the thread is complete
 	serverThread.join();
-	
+
 	client.close();
 	serverSocket.close();
-	
+
 	if (serverThread.getException() != null) {
 	    throw serverThread.getException();
 	}
-	
+
 	assertTrue("client ctx not established.", clientContext.isEstablished());
 	assertTrue("server ctx not established.", serverContext.isEstablished());
 
@@ -1083,7 +1083,7 @@ public class GlobusGSSContextTest extends TestCase {
 	    _serverSocket = s;
 	    _serverContext = context;
 	}
-	
+
 	public void run() {
 	    Socket server = null;
 	    try {
@@ -1095,7 +1095,7 @@ public class GlobusGSSContextTest extends TestCase {
 		    _serverContext.acceptSecContext(in, out);
 		    out.flush();
 		}
-		
+
 	    } catch (Exception e) {
 		_exception = e;
 	    } finally {

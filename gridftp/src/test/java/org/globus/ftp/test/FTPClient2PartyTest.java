@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ import java.io.FileInputStream;
  **/
 public class FTPClient2PartyTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(FTPClient2PartyTest.class.getName());
 
     protected FTPClient src = null;
@@ -52,7 +52,7 @@ public class FTPClient2PartyTest extends TestCase {
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
@@ -99,7 +99,7 @@ public class FTPClient2PartyTest extends TestCase {
 		TestEnv.localSrcFile);
     }
 
-    /** 
+    /**
 	Try transferring file to and from bad port on existing server.
 	IOException should be thrown.
     **/
@@ -136,7 +136,7 @@ public class FTPClient2PartyTest extends TestCase {
 		fail("Attempted to contact non existent server, but the expected exception has not been thrown.");
 	    }
 	}
-	
+
 	logger.info("put to non existent port");
 	caughtOK = false;
 	try {
@@ -148,7 +148,7 @@ public class FTPClient2PartyTest extends TestCase {
 		    TestEnv.serverGDir,
 		    TestEnv.localSrcDir,
 		    TestEnv.localSrcFile);
-	    
+
 	} catch (Exception e) {
 	    if (e instanceof IOException) {
 		logger.debug(e.toString());
@@ -165,7 +165,7 @@ public class FTPClient2PartyTest extends TestCase {
 	}
     }
 
-    /** 
+    /**
 	Try transferring file to and from non existent server.
 	IOException should be thrown.
     **/
@@ -196,11 +196,11 @@ public class FTPClient2PartyTest extends TestCase {
 		fail("Attempted to contact non existent server, but the expected exception has not been thrown.");
 	    }
 	}
-	
+
 	logger.info("put to non existent server");
 	caughtOK = false;
 	try {
-	    	    
+
 	    testPut(TestEnv.noSuchServer,
 		    TestEnv.serverFPort,
 		    TestEnv.serverFUser,
@@ -225,14 +225,14 @@ public class FTPClient2PartyTest extends TestCase {
 	}
     }
 
-    /** 
+    /**
 	try transferring non existent file;
 	ServerException should be thrown
     **/
-    
+
     public void testGetNoSuchSrcFile() throws Exception{
 	logger.info("get with bad src file");
-	
+
 	try {
 	    testGet(TestEnv.serverFHost,
 		    TestEnv.serverFPort,
@@ -242,7 +242,7 @@ public class FTPClient2PartyTest extends TestCase {
 		    TestEnv.serverFNoSuchFile,
 		    TestEnv.localDestDir);
 	} catch (ServerException e) {
-	    logger.debug("Test passed: ServerException properly thrown.", 
+	    logger.debug("Test passed: ServerException properly thrown.",
 			 e);
 	}
     }
@@ -281,32 +281,32 @@ public class FTPClient2PartyTest extends TestCase {
 	throws Exception{
 
 	logger.info("active, image, stream");
-	testGet(host, port, user, password, remoteDir  + "/" + remoteFile, 
+	testGet(host, port, user, password, remoteDir  + "/" + remoteFile,
 		localDir,
-		Session.SERVER_ACTIVE, 
-		Session.TYPE_IMAGE, 
+		Session.SERVER_ACTIVE,
+		Session.TYPE_IMAGE,
 		Session.MODE_STREAM);
 	logger.info("active, ascii, stream");
-	testGet(host, port, user, password, remoteDir + "/" + remoteFile, 
-		localDir,		
-		Session.SERVER_ACTIVE, 
-		Session.TYPE_ASCII, 
+	testGet(host, port, user, password, remoteDir + "/" + remoteFile,
+		localDir,
+		Session.SERVER_ACTIVE,
+		Session.TYPE_ASCII,
 		Session.MODE_STREAM);
 	logger.info("pasive, image, stream");
-	testGet(host, port, user, password, remoteDir  + "/" + remoteFile, 
+	testGet(host, port, user, password, remoteDir  + "/" + remoteFile,
 		localDir,
-		Session.SERVER_PASSIVE, 
-		Session.TYPE_IMAGE, 
+		Session.SERVER_PASSIVE,
+		Session.TYPE_IMAGE,
 		Session.MODE_STREAM);
 	logger.info("pasive, ascii, stream");
 	testGet(host, port, user, password, remoteDir + "/" + remoteFile,
-		localDir, 
-		Session.SERVER_PASSIVE, 
-		Session.TYPE_ASCII, 
+		localDir,
+		Session.SERVER_PASSIVE,
+		Session.TYPE_ASCII,
 		Session.MODE_STREAM);
     }
 
-    private void testGet(String host, 
+    private void testGet(String host,
 			 int port,
 			 String user,
 			 String password,
@@ -323,14 +323,14 @@ public class FTPClient2PartyTest extends TestCase {
 	    "stream" : "eblok";
 	String ttype = (transferType == Session.TYPE_ASCII) ?
 	    "ascii" : "image";
- 	String fullLocalFile = 
-	    localDestDir + "/test.get." 
+ 	String fullLocalFile =
+	    localDestDir + "/test.get."
 	    + smode + "." + tmode +"." + ttype +"."
 	    + System.currentTimeMillis();
 	logger.debug("will write to: " + fullLocalFile);
 	FTPClient client = new FTPClient(host, port);
-	testGet_setParams(client, 
-			  user, 
+	testGet_setParams(client,
+			  user,
 			  password,
 			  localServerMode,
 			  transferType,
@@ -341,13 +341,13 @@ public class FTPClient2PartyTest extends TestCase {
 		   null);
 	client.close();
     }
-    
-    protected void testGet_setParams(FTPClient client, 
+
+    protected void testGet_setParams(FTPClient client,
 				      String user,
 				      String password,
 				   int localServerMode,
 				   int transferType,
-				   int transferMode) 
+				   int transferMode)
 	throws Exception{
     	//System.out.println("USER = "+ user + "PAssword="+ password);
     	client.authorize(user, password);
@@ -374,34 +374,34 @@ public class FTPClient2PartyTest extends TestCase {
 	throws Exception{
 
 	logger.info("active, image, stream");
-	testPut(host, port, user, password, remoteDir, localFile, 
+	testPut(host, port, user, password, remoteDir, localFile,
 		localDir,
-		Session.SERVER_ACTIVE, 
-		Session.TYPE_IMAGE, 
+		Session.SERVER_ACTIVE,
+		Session.TYPE_IMAGE,
 		Session.MODE_STREAM);
 	logger.info("active, ascii, stream");
-	testPut(host, port, user, password, remoteDir, localFile, 
-		localDir,		
-		Session.SERVER_ACTIVE, 
-		Session.TYPE_ASCII, 
+	testPut(host, port, user, password, remoteDir, localFile,
+		localDir,
+		Session.SERVER_ACTIVE,
+		Session.TYPE_ASCII,
 		Session.MODE_STREAM);
 	logger.info("pasive, image, stream");
-	testPut(host, port, user, password, remoteDir, localFile, 
+	testPut(host, port, user, password, remoteDir, localFile,
 		localDir,
-		Session.SERVER_PASSIVE, 
-		Session.TYPE_IMAGE, 
+		Session.SERVER_PASSIVE,
+		Session.TYPE_IMAGE,
 		Session.MODE_STREAM);
 	logger.info("pasive, ascii, stream");
 	testPut(host, port, user, password, remoteDir, localFile,
-		localDir, 
-		Session.SERVER_PASSIVE, 
-		Session.TYPE_ASCII, 
+		localDir,
+		Session.SERVER_PASSIVE,
+		Session.TYPE_ASCII,
 		Session.MODE_STREAM);
     }
 
 
 
-    private void testPut(String host, 
+    private void testPut(String host,
 			 int port,
 			 String user,
 			 String password,
@@ -414,8 +414,8 @@ public class FTPClient2PartyTest extends TestCase {
 			 int transferMode)
 	throws Exception {
 	FTPClient client = new FTPClient(host, port);
-	testPut_setParams(client, 
-			  user, 
+	testPut_setParams(client,
+			  user,
 			  password,
 			  localServerMode,
 			  transferType,
@@ -428,13 +428,13 @@ public class FTPClient2PartyTest extends TestCase {
 		   null);
 	client.close();
     }
-    
-    protected void testPut_setParams(FTPClient client, 
+
+    protected void testPut_setParams(FTPClient client,
 				   String user,
 				   String password,
 				   int localServerMode,
 				   int transferType,
-				   int transferMode) 
+				   int transferMode)
 	throws Exception{
 	client.authorize(user, password);
 	// secure server: client.setProtectionBufferSize(16384);
@@ -450,6 +450,6 @@ public class FTPClient2PartyTest extends TestCase {
     }
 
 
-} 
+}
 
 

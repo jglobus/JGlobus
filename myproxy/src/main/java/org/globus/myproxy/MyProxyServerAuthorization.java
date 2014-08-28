@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,7 @@ import org.globus.gsi.gssapi.auth.AuthorizationException;
  */
 public class MyProxyServerAuthorization
     extends Authorization {
-    
+
     private HostAuthorization authzHostService, authzMyProxyService;
 
     public MyProxyServerAuthorization() {
@@ -48,7 +48,7 @@ public class MyProxyServerAuthorization
      * @exception AuthorizationException if the peer is
      *            not authorized to access/use the resource.
      */
-    public void authorize(GSSContext context, String host) 
+    public void authorize(GSSContext context, String host)
         throws AuthorizationException {
         try {
             this.authzMyProxyService.authorize(context, host);

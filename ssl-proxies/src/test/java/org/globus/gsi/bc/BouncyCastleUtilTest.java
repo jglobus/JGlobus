@@ -77,7 +77,7 @@ public class BouncyCastleUtilTest extends TestCase {
 	// EEC, CA
 	chain = new X509Certificate[] {goodCertsArr[1], goodCertsArr[0]};
 	assertEquals(goodCertsArr[1], BouncyCastleUtil.getIdentityCertificate(chain));
-	
+
 	// proxy, EEC, CA
 	chain = new X509Certificate[] {goodCertsArr[2], goodCertsArr[1], goodCertsArr[0]};
 	assertEquals(goodCertsArr[1], BouncyCastleUtil.getIdentityCertificate(chain));
@@ -87,7 +87,7 @@ public class BouncyCastleUtilTest extends TestCase {
 	assertEquals(goodCertsArr[1], BouncyCastleUtil.getIdentityCertificate(chain));
 
 	// double limited proxy, limited proxy, EEC, CA
-	chain = new X509Certificate[] {goodCertsArr[4], goodCertsArr[3], 
+	chain = new X509Certificate[] {goodCertsArr[4], goodCertsArr[3],
 				       goodCertsArr[1], goodCertsArr[0]};
 	assertEquals(goodCertsArr[1], BouncyCastleUtil.getIdentityCertificate(chain));
     }
@@ -112,24 +112,24 @@ public class BouncyCastleUtilTest extends TestCase {
 	// GSI 3 PC restricted, EEC, CA
 	chain = new X509Certificate[] {goodCertsArr[8], goodCertsArr[1], goodCertsArr[0]};
 	assertEquals(goodCertsArr[8], BouncyCastleUtil.getIdentityCertificate(chain));
-	
+
 	// GSI 3 PC impersonation, GSI 3 PC limited impersonation, EEC, CA
-	chain = new X509Certificate[] {goodCertsArr[9], goodCertsArr[7], 
+	chain = new X509Certificate[] {goodCertsArr[9], goodCertsArr[7],
 				       goodCertsArr[1], goodCertsArr[0]};
 	assertEquals(goodCertsArr[1], BouncyCastleUtil.getIdentityCertificate(chain));
 
 	// GSI 3 PC impersonation, GSI 3 PC impersonation, EEC, CA
-	chain = new X509Certificate[] {goodCertsArr[9], goodCertsArr[5], 
+	chain = new X509Certificate[] {goodCertsArr[9], goodCertsArr[5],
 				       goodCertsArr[1], goodCertsArr[0]};
 	assertEquals(goodCertsArr[1], BouncyCastleUtil.getIdentityCertificate(chain));
 
 	// GSI 3 PC indepedent, GSI 3 PC independent, EEC, CA
-	chain = new X509Certificate[] {goodCertsArr[10], goodCertsArr[6], 
+	chain = new X509Certificate[] {goodCertsArr[10], goodCertsArr[6],
 				       goodCertsArr[1], goodCertsArr[0]};
 	assertEquals(goodCertsArr[10], BouncyCastleUtil.getIdentityCertificate(chain));
 
 	// GSI 3 PC impersonation, GSI 3 PC independent, EEC, CA
-	chain = new X509Certificate[] {goodCertsArr[9], goodCertsArr[6], 
+	chain = new X509Certificate[] {goodCertsArr[9], goodCertsArr[6],
 				       goodCertsArr[1], goodCertsArr[0]};
 	assertEquals(goodCertsArr[6], BouncyCastleUtil.getIdentityCertificate(chain));
     }

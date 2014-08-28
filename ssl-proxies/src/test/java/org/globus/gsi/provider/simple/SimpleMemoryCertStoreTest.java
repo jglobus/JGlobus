@@ -20,7 +20,7 @@ public class SimpleMemoryCertStoreTest {
    private static X509Certificate cert;
    private static X509CRL crl;
    private SimpleMemoryCertStore store;
-    
+
     @BeforeClass
     public static void loadBouncyCastleProvider() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
@@ -66,7 +66,7 @@ public class SimpleMemoryCertStoreTest {
         X509CertSelector certSelector = new X509CertSelector();
         certSelector.setSubject("CN=non-existent");
         assertEquals(0, store.engineGetCertificates(certSelector).size());
-        
+
     }
 
 }

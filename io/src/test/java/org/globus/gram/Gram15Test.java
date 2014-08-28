@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ public class Gram15Test {
     }
 
     public static boolean test1(String contact, boolean cancelCall) {
-	
+
 	GramJob job = new GramJob("&(executable=/bin/sleep)(arguments=100)(twoPhase=yes)");
 
 	job.addListener(getListener("Job Test 1"));
@@ -62,13 +62,13 @@ public class Gram15Test {
 	    e.printStackTrace();
 	    return false;
 	}
-	
+
 	System.out.println("Sleeping...");
 	try {
 	    Thread.sleep(2000);
 	} catch(Exception e) {
 	}
-	
+
 	try {
 	    if (cancelCall) {
 		System.out.println("Canceling job... (cancel call)");
@@ -95,11 +95,11 @@ public class Gram15Test {
 
 	return true;
     }
-    
+
     public static boolean test2(String contact) {
-	
+
 	GramJob job = new GramJob("&(executable=/bin/sleep)(arguments=20)(twoPhase=yes)");
-	
+
 	job.addListener(getListener("Job Test 2"));
 
 	System.out.println("Submitting job...");
@@ -121,7 +121,7 @@ public class Gram15Test {
 	    e.printStackTrace();
 	    return false;
 	}
-	
+
 	System.out.println("Waiting for timeout...");
 	try {
 	    Thread.sleep(75000);
@@ -142,7 +142,7 @@ public class Gram15Test {
      * Restart example.
      */
     public static boolean test3(String contact) {
-	
+
 	String rsl = "&(executable=/bin/sleep)(arguments=50)(saveState=yes)(twoPhase=yes)";
 
         GramJob job = new GramJob(rsl);
@@ -176,7 +176,7 @@ public class Gram15Test {
 	    e.printStackTrace();
 	    return false;
 	}
-	
+
 	System.out.println("Restarting the job...");
 	job = new GramJob(rsl + "(restart=" + job.getIDAsString() + ")");
 	job.addListener(getListener("Job Test 3"));
@@ -198,7 +198,7 @@ public class Gram15Test {
 	    e.printStackTrace();
 	    return false;
 	}
-	
+
 	try {
 	    Thread.sleep(5000);
 	    System.out.println("Cancelling job...");
@@ -215,10 +215,10 @@ public class Gram15Test {
             ee.printStackTrace();
             return false;
         }
-	
+
 	return true;
     }
-    
+
 
     public static boolean test4(String contact) {
 
@@ -237,13 +237,13 @@ public class Gram15Test {
 
 	System.out.println("Gass server running at: " + url);
         String exe = url + "/" + System.getProperty("user.dir") + "/tests/test.sh";
-	
+
         System.out.println(exe);
 
         GramJob job = new GramJob("&(saveState=yes)(twoPhase=yes)(executable=" + exe + ")(stdout=" + url + "/dev/stdout)(stderr=" + url + "/dev/stderr)");
-	
+
         job.addListener(getListener("Job Test 4"));
-	
+
 	try {
             job.request(contact);
             System.out.println("job submitted : " +  job.getIDAsString() );
@@ -278,12 +278,12 @@ public class Gram15Test {
         } catch(Exception e) {
             e.printStackTrace();
         }
-	
+
 
 	try {
             Thread.sleep(2000);
         } catch(Exception e) {}
-	
+
 	System.out.println("Cancelling job...");
         try {
 	    job.cancel();
@@ -295,12 +295,12 @@ public class Gram15Test {
             ee.printStackTrace();
             return false;
         }
-	
+
         return true;
     }
 
     public static boolean test5(String contact) {
-	
+
 	String url = null;
 	GassServer s = null;
 	try {
@@ -311,14 +311,14 @@ public class Gram15Test {
 	    e.printStackTrace();
 	    return false;
 	}
-	
+
 	System.out.println("Gass server running at: " + url);
 	String exe = url + "/" + System.getProperty("user.dir") + "/tests/test.sh";
 
 	System.out.println(exe);
 
         GramJob job = new GramJob("&(twoPhase=yes)(executable=" + exe + ")(stdout=" + url + "/dev/stdout)(stderr=" + url + "/dev/stderr)");
-	
+
         job.addListener(getListener("Job Test 4"));
 
         System.out.println("Submitting job...");
@@ -361,7 +361,7 @@ public class Gram15Test {
     }
 
     public static void main(String [] args) {
-    
+
 	String contact = null;
 
 	if (args.length == 0) {
@@ -389,7 +389,7 @@ public class Gram15Test {
 		Thread.sleep(2000);
 	    }
 	} catch(Exception e) {}
-	
+
         Deactivator.deactivateAll();
     }
 }

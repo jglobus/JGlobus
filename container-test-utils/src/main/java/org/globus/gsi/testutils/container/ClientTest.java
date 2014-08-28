@@ -36,14 +36,14 @@ public abstract class ClientTest {
 	static{
 		Security.addProvider(new GlobusProvider());
 	}
-	
+
 	public static int getPort() {
 		return 5082;
 	}
 
 	/**
 	 * Test client with invalid credentials.
-	 * 
+	 *
 	 * @throws Exception
 	 *             This should happen.
 	 */
@@ -89,7 +89,7 @@ public abstract class ClientTest {
 
 	/**
 	 * Test a client using valid credentials
-	 * 
+	 *
 	 * @throws Exception
 	 *             if this happens, the test fails.
 	 */

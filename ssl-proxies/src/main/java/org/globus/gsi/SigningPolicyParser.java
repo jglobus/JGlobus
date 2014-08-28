@@ -183,7 +183,7 @@ public class SigningPolicyParser {
                     // check for neg or pos rights with restrictions
                     checkRights(policies, bufferedReader, caDN, usefulEntry, posNegRights);
                 }
-                // JGLOBUS-94 
+                // JGLOBUS-94
             }
         } catch (IOException exp) {
             throw new SigningPolicyException("", exp);

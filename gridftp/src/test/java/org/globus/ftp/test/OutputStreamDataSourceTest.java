@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,13 +30,13 @@ import org.apache.commons.logging.LogFactory;
 
 public class OutputStreamDataSourceTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(OutputStreamDataSourceTest.class.getName());
 
     public static void main(String[] argv) {
 	junit.textui.TestRunner.run (suite());
     }
-    
+
     public static Test suite() {
 	return new TestSuite(OutputStreamDataSourceTest.class);
     }
@@ -92,7 +92,7 @@ public class OutputStreamDataSourceTest extends TestCase {
     }
 
     class Thread1 extends Thread {
-	
+
 	private Buffer buf;
 	private Exception exception;
 	private OutputStreamDataSource sr;
@@ -104,7 +104,7 @@ public class OutputStreamDataSourceTest extends TestCase {
 	public Buffer getBuffer() {
 	    return buf;
 	}
-	
+
 	public Exception getException() {
 	    return exception;
 	}
@@ -123,7 +123,7 @@ public class OutputStreamDataSourceTest extends TestCase {
     public void testCloseDataSourceStream() throws Exception {
 
 	OutputStreamDataSource sr = new OutputStreamDataSource(512);
-	
+
 	OutputStream out = sr.getOutputStream();
 
 	Thread2 t = new Thread2(out);
@@ -141,7 +141,7 @@ public class OutputStreamDataSourceTest extends TestCase {
     }
 
     class Thread2 extends Thread {
-	
+
 	private Exception exception1, exception2;
 	private OutputStream sr;
 
@@ -187,7 +187,7 @@ public class OutputStreamDataSourceTest extends TestCase {
     public void testCloseStream() throws Exception {
 
 	OutputStreamDataSource sr = new OutputStreamDataSource(512);
-	
+
 	OutputStream out = sr.getOutputStream();
 
 	out.write(1);
@@ -216,7 +216,7 @@ public class OutputStreamDataSourceTest extends TestCase {
     public void testCloseStreamThead() throws Exception {
 
 	OutputStreamDataSource sr = new OutputStreamDataSource(512);
-	
+
 	Thread3 t = new Thread3(sr);
 	t.start();
 
@@ -237,7 +237,7 @@ public class OutputStreamDataSourceTest extends TestCase {
     }
 
     class Thread3 extends Thread {
-	 
+
 	private Exception exception;
 	private OutputStreamDataSource sr;
 	private int count;

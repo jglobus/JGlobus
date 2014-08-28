@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,10 +30,10 @@ import org.apache.commons.logging.LogFactory;
 
 public class TransferMonitor implements Runnable {
 
-    public final static int 
+    public final static int
         LOCAL = 1,
         REMOTE = 2;
-    private int side; // source or dest 
+    private int side; // source or dest
 
     private Log logger = null;
 
@@ -51,14 +51,14 @@ public class TransferMonitor implements Runnable {
 
     private Thread thread;
 
-    public TransferMonitor(BasicClientControlChannel controlChannel, 
-                           TransferState transferState, 
+    public TransferMonitor(BasicClientControlChannel controlChannel,
+                           TransferState transferState,
                            MarkerListener mListener,
                            int maxWait,
                            int ioDelay,
                            int side) {
-        logger =  LogFactory.getLog(TransferMonitor.class.getName() + 
-                                    ((side == LOCAL) ? ".Local" : ".Remote")); 
+        logger =  LogFactory.getLog(TransferMonitor.class.getName() +
+                                    ((side == LOCAL) ? ".Local" : ".Remote"));
         this.controlChannel = controlChannel;
         this.transferState = transferState;
         this.mListener = mListener;
@@ -72,7 +72,7 @@ public class TransferMonitor implements Runnable {
     /**
        In this class, each instance gets a separate logger which is
        assigned the name in the constructor.
-       This name is in the form "...GridFTPClient.thread host:port". 
+       This name is in the form "...GridFTPClient.thread host:port".
        @return the logger name.
      **/
     public String getLoggerName() {
@@ -84,18 +84,18 @@ public class TransferMonitor implements Runnable {
     }
 
     /**
-     * Abort the tpt transfer 
+     * Abort the tpt transfer
      * but do not close resources
      */
     public synchronized void abort() {
         logger.debug("abort");
-        
+
         if (!this.abortable) {
             return;
         }
 
         controlChannel.abortTransfer();
-        
+
         aborted.flag = true;
     }
 
@@ -115,7 +115,7 @@ public class TransferMonitor implements Runnable {
     }
 
     public void run() {
-        
+
         try {
             // if the other thread had already terminated
             // with an error, behave as if it happened just now.
@@ -124,7 +124,7 @@ public class TransferMonitor implements Runnable {
                 throw new InterruptedException();
             }
 
-            logger.debug("waiting for 1st reply;  maxWait = " + 
+            logger.debug("waiting for 1st reply;  maxWait = " +
                          maxWait + ", ioDelay = " + ioDelay);
             this.controlChannel.waitFor(aborted,
                                         ioDelay,
@@ -141,7 +141,7 @@ public class TransferMonitor implements Runnable {
                 logger.debug("first reply OK: " + firstReply.toString());
 
                 for(;;) {
-          
+
                     logger.debug("reading next reply");
                     this.controlChannel.waitFor(aborted,
                                                 ioDelay,
@@ -152,7 +152,7 @@ public class TransferMonitor implements Runnable {
                     //perf marker
                     if (nextReply.getCode() == 112) {
                         logger.debug("marker arrived: " + nextReply.toString());
-                        if (mListener != null) {   
+                        if (mListener != null) {
                             mListener.markerArrived(
                                     new PerfMarker(nextReply.getMessage()));
                         }
@@ -169,26 +169,26 @@ public class TransferMonitor implements Runnable {
                         }
                         continue;
                     }
-                    
+
                     //226 Transfer complete
                     if (nextReply.getCode() == 226) {
                         abortable = false;
                         logger.debug("transfer complete: " + nextReply.toString());
                         break;
                     }
-                 
+
                     // any other reply
                     logger.debug("unexpected reply: " + nextReply.toString());
                     logger.debug("exiting the transfer thread");
                     ServerException e = ServerException.embedUnexpectedReplyCodeException(
                             new UnexpectedReplyCodeException(nextReply),
                             "Server reported transfer failure");
-                    
+
                     transferState.transferError(e);
                     other.abort();
                     break;
                 }
-                
+
             } else {    //first reply negative
                 logger.debug("first reply bad: " + firstReply.toString());
                 logger.debug("category: " + firstReply.getCategory());
@@ -202,7 +202,7 @@ public class TransferMonitor implements Runnable {
 
             logger.debug("thread dying naturally");
 
-        } catch (InterruptedException td) { 
+        } catch (InterruptedException td) {
             //other transfer thread called abort()
             logger.debug("thread dying of InterruptedException.");
             transferState.transferError(td);

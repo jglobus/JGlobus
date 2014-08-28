@@ -21,8 +21,8 @@ public class HTTPRequestParser extends HTTPParser {
 
     protected String _requestType;
     protected String _service;
-    
-    public HTTPRequestParser(InputStream is) 
+
+    public HTTPRequestParser(InputStream is)
 	throws IOException {
 	super(is);
     }
@@ -30,27 +30,27 @@ public class HTTPRequestParser extends HTTPParser {
     public String getService() {
 	return _service;
     }
-    
+
     public void setService(String service) {
 	_service = service;
     }
 
-    public void parseHead(String line) 
+    public void parseHead(String line)
 	throws IOException {
 	int st = line.indexOf(" ");
 	if (st == -1) {
 	    throw new IOException("Bad HTTP header");
 	}
 	_requestType = line.substring(0, st);
-	
+
 	st++;
 	int et = line.indexOf(" ", st);
 	if (et == -1) {
 	    throw new IOException("Bad HTTP header");
 	}
 	_service = line.substring(st, et);
-	
+
 	et++;
     }
-    
+
 }

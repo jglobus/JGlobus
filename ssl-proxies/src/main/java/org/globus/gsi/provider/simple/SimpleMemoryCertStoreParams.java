@@ -18,8 +18,8 @@ public class SimpleMemoryCertStoreParams implements CertStoreParameters {
         this.certs = certs;
         this.crls = crls;
     }
-    
-    
+
+
     public X509Certificate[] getCerts() {
         return certs;
     }

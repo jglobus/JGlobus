@@ -22,7 +22,7 @@ public class SimpleMemorySigningPolicyStore implements SigningPolicyStore {
 
 
     private Map<String, SigningPolicy> store;
-    
+
     public SimpleMemorySigningPolicyStore(SigningPolicy[] policies) {
         store = new ConcurrentHashMap<String,SigningPolicy>();
         int numPolicies = 0;

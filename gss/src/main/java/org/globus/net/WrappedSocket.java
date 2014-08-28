@@ -24,7 +24,7 @@ import java.io.OutputStream;
 public class WrappedSocket extends Socket {
 
     protected Socket socket;
-    
+
     protected WrappedSocket() {}
 
     public WrappedSocket(Socket socket) {
@@ -36,21 +36,21 @@ public class WrappedSocket extends Socket {
         return this.socket;
     }
 
-    public OutputStream getOutputStream() 
+    public OutputStream getOutputStream()
 	throws IOException {
         return this.socket.getOutputStream();
     }
-    
-    public synchronized InputStream getInputStream() 
+
+    public synchronized InputStream getInputStream()
 	throws IOException {
 	return this.socket.getInputStream();
     }
 
-    public void close() 
+    public void close()
 	throws IOException {
         this.socket.close();
     }
-    
+
     public InetAddress getInetAddress() {
 	return this.socket.getInetAddress();
     }
@@ -67,7 +67,7 @@ public class WrappedSocket extends Socket {
     public int getLocalPort() {
 	return this.socket.getLocalPort();
     }
-    
+
     public int getPort() {
 	return this.socket.getPort();
     }
@@ -111,13 +111,13 @@ public class WrappedSocket extends Socket {
 	throws SocketException {
 	this.socket.setSendBufferSize(size);
     }
-    
+
     public void setSoLinger(boolean on,
 			    int linger)
 	throws SocketException {
 	this.socket.setSoLinger(on, linger);
     }
-    
+
     public void setSoTimeout(int timeout)
 	throws SocketException {
 	this.socket.setSoTimeout(timeout);

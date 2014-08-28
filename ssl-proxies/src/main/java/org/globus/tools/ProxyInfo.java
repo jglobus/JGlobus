@@ -68,52 +68,52 @@ public class ProxyInfo {
     private static final int IDENTITY = 128;
     private static final int PATH     = 256;
     private static final int PATH_LENGTH = 512;
-    
+
     private static final String message =
-	"\n" + 
+	"\n" +
 	"Syntax: java ProxyInfo [options]\n" +
 	"        java ProxyInfo -help\n\n" +
 	"\tOptions:\n" +
-	"\t-help | usage\n" + 
+	"\t-help | usage\n" +
 	"\t\tDisplays usage.\n" +
-	"\t-file <proxyfile>  (-f)\n" + 
+	"\t-file <proxyfile>  (-f)\n" +
 	"\t\tNon-standard location of proxy.\n" +
-	"\t[printoptions]\n" + 
+	"\t[printoptions]\n" +
 	"\t\tPrints information about proxy.\n" +
-	"\t-exists [options]  (-e) \n" + 
+	"\t-exists [options]  (-e) \n" +
 	"\t\tReturns 0 if valid proxy exists, 1 otherwise.\n" +
-	"\t-globus \n" + 
+	"\t-globus \n" +
 	"\t\tPrints information in globus format\n\n" +
 	"\t[printoptions]\n" +
-	"\t-subject\n" + 
+	"\t-subject\n" +
 	"\t\tDistinguished name (DN) of subject.\n" +
-	"\t-issuer\n" + 
+	"\t-issuer\n" +
 	"\t\tDN of issuer (certificate signer).\n" +
-	"\t-identity \n" + 
+	"\t-identity \n" +
 	"\t\tDN of the identity represented by the proxy.\n" +
-	"\t-type \n" + 
+	"\t-type \n" +
 	"\t\tType of proxy.\n" +
-	"\t-timeleft\n" + 
+	"\t-timeleft\n" +
 	"\t\tTime (in seconds) until proxy expires.\n" +
-	"\t-strength\n" + 
+	"\t-strength\n" +
 	"\t\tKey size (in bits)\n " +
-	"\t-all\n" + 
+	"\t-all\n" +
 	"\t\tAll above options in a human readable format.\n" +
-	"\t-text\n" + 
+	"\t-text\n" +
 	"\t\tAll of the certificate.\n" +
-	"\t-path\n" + 
+	"\t-path\n" +
 	"\t\tPathname of proxy file.\n" +
 	"\n" +
 	"\t[options to -exists] (if none are given, H = B = 0 are assumed)\n" +
-	"\t-hours H     (-h) \n" + 
+	"\t-hours H     (-h) \n" +
 	"\t\ttime requirement for proxy to be valid.\n" +
-	"\t-bits  B     (-b) \n" + 
+	"\t-bits  B     (-b) \n" +
 	"\t\tstrength requirement for proxy to be valid\n" +
     "\t-length\n" +
     "\t\tpath length of the proxy\n\n";
-    
+
     public static void main(String args[]) {
-    
+
 	String file         = null;
 	int options         = 0;
 	int bits            = 0;
@@ -121,9 +121,9 @@ public class ProxyInfo {
 	boolean globusStyle = false;
 	boolean exists      = false;
 	boolean debug       = false;
-	
+
 	for (int i = 0; i < args.length; i++) {
-	    if (args[i].equalsIgnoreCase("-f") || 
+	    if (args[i].equalsIgnoreCase("-f") ||
 		args[i].equalsIgnoreCase("-file")) {
 		if (i+1 >= args.length) {
 		    error("-file argument missing");
@@ -176,7 +176,7 @@ public class ProxyInfo {
 		break;
 	    }
 	}
-	
+
 	GlobusCredential proxy = null;
 
 	try {
@@ -188,13 +188,13 @@ public class ProxyInfo {
 	    System.err.println("Unable to load the user proxy : " + e.getMessage());
 	    System.exit(1);
 	}
-    
+
 	if (exists) {
 	    if (bits > 0 && proxy.getStrength() < bits) System.exit(1);
 	    if (hours > 0 && (proxy.getTimeLeft()/3600) < hours) System.exit(1);
 	    System.exit(0);
 	}
-    
+
 	if (options == 0) {
 	    options |= Integer.MAX_VALUE;
 	    options ^= TEXT;
@@ -202,14 +202,14 @@ public class ProxyInfo {
 	}
 
 	if ((options & SUBJECT) != 0) {
-	    String dn = (globusStyle) ? 
-		CertificateUtil.toGlobusID(proxy.getCertificateChain()[0].getSubjectDN()) : 
+	    String dn = (globusStyle) ?
+		CertificateUtil.toGlobusID(proxy.getCertificateChain()[0].getSubjectDN()) :
 		proxy.getSubject();
 	    System.out.println("subject    : " + dn);
 	}
-    
+
 	if ((options & ISSUER) != 0) {
-	    String dn = (globusStyle) ? 
+	    String dn = (globusStyle) ?
 		CertificateUtil.toGlobusID(proxy.getCertificateChain()[0].getIssuerDN()) :
 		proxy.getIssuer();
 	    System.out.println("issuer     : " + dn);
@@ -227,7 +227,7 @@ public class ProxyInfo {
             }
 	    System.out.println("identity   : " + dn);
 	}
-    
+
 	if ((options & TYPE) != 0) {
 	    GSIConstants.CertificateType type = GSIConstants.CertificateType.get(proxy.getProxyType());
             String typeStr = (type == GSIConstants.CertificateType.UNDEFINED) ?
@@ -245,12 +245,12 @@ public class ProxyInfo {
 	}
 
 	if ((options & TIME) != 0) {
-	    String tm = (globusStyle) ? 
+	    String tm = (globusStyle) ?
 		formatTimeSecGlobus(proxy.getTimeLeft()) :
 		Util.formatTimeSec(proxy.getTimeLeft());
 	    System.out.println("timeleft   : " + tm);
 	}
-	
+
 	if ((options & TEXT) != 0) {
 	    System.out.println(proxy.getCertificateChain()[0]);
 	}
@@ -277,7 +277,7 @@ public class ProxyInfo {
     private static String formatTimeSecGlobus(long time) {
 	StringBuffer str = new StringBuffer();
 	long tt;
-	
+
 	tt = (time / 3600);
 	if (tt == 0) {
 	    str.append("00");
@@ -286,9 +286,9 @@ public class ProxyInfo {
 	    str.append(tt);
 	    time -= tt*3600;
 	}
-	
+
 	str.append(":");
-	
+
 	tt = (time / 60);
 	if (tt == 0) {
 	    str.append("00");
@@ -297,16 +297,16 @@ public class ProxyInfo {
 	    str.append(tt);
 	    time -= tt*60;
 	}
-	
+
 	str.append(":");
-	
+
 	if (tt == 0) {
 	    str.append("00");
 	} else {
 	    if (time < 10) str.append("0");
 	    str.append(time);
 	}
-	
+
 	return str.toString();
     }
 

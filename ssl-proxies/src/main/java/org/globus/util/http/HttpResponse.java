@@ -50,27 +50,27 @@ public class HttpResponse {
     protected String readLine(InputStream in) throws IOException {
 	StringBuffer buf = new StringBuffer();
 	int c, length = 0;
-	
+
 	while(true) {
 	    c = in.read();
-	    
+
 	    if (c == -1 || c == '\n' || length > 512) {
 		charsRead++;
 		break;
-	    } else if (c == '\r') { 
-		in.read(); 
+	    } else if (c == '\r') {
+		in.read();
 		charsRead+=2;
 		break;
-	    } else {	    
+	    } else {
 		buf.append((char)c);
-		length++;	
+		length++;
 	    }
 	}
-	
+
 	charsRead += length;
 	return buf.toString();
-    } 
-    
+    }
+
     public static String getRest(String line) {
 	int pos = line.indexOf(":");
 	if (pos == -1) {
@@ -78,19 +78,19 @@ public class HttpResponse {
 	} else
 	    return line.substring(pos+1).trim();
     }
-    
+
     public void parseHttp(String line) {
-	
+
 	int p1 = line.indexOf(" ");
 	if (p1 == -1) {
 	    return;
 	}
 	httpType = line.substring(0,p1);
-	
+
 	int p2 = line.indexOf(" ",p1+1);
-	
+
 	String tmp;
-	
+
 	if (p2 == -1) {
 	    tmp = line.substring(p2);
 	} else {
@@ -102,19 +102,19 @@ public class HttpResponse {
 
     private void parse() throws IOException {
 	String line, tmp;
-	
+
 	line = readLine(input);
 	if (logger.isTraceEnabled()) {
 	    logger.trace(line);
 	}
 	parseHttp(line);
-	
+
 	while ( (line=readLine(input)).length() != 0 ) {
 	    if (logger.isTraceEnabled()) {
 		logger.trace(line);
 	    }
 	    tmp = getRest(line);
-	    
+
 	    if (line.startsWith(HTTPProtocol.CONNECTION)) {
 		connection = tmp;
 	    } else if (line.startsWith(HTTPProtocol.SERVER)) {
@@ -132,12 +132,12 @@ public class HttpResponse {
     }
 
     /** Generates a string representation of the http header
-     * 
+     *
      * @return <code>String</code> a string representation of the http header
      */
     public String toString() {
 	StringBuffer buf = new StringBuffer();
-	
+
 	buf.append("Http    : " + httpType + "\n");
 	buf.append("Message : " + httpMsg + "\n");
 	buf.append("Code    : " + httpCode + "\n");
@@ -149,7 +149,7 @@ public class HttpResponse {
 	buf.append("Length  : " + contentLength + "\n");
 	buf.append("Chunked : " + chunked + "\n");
 	buf.append("Type    : " + contentType + "\n");
-	
+
 	if (connection != null) {
 	    buf.append("Connection   : " + connection + "\n");
 	}
@@ -157,8 +157,8 @@ public class HttpResponse {
 	if (location != null) {
 	    buf.append("Location     : " + location + "\n");
 	}
-	
+
 	return buf.toString();
     }
-    
+
 }

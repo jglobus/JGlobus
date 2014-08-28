@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@ package org.globus.rsl;
 import java.util.*;
 
 /**
- * This class represents a single variable definition in RSL 
+ * This class represents a single variable definition in RSL
  * (see rsl_substitution attribute)
  */
 public class Binding {
@@ -35,7 +35,7 @@ public class Binding {
 	_name = name;
 	_value = new Value(value);
     }
-    
+
     /**
      * Returns the name of the variable.
      *
@@ -44,7 +44,7 @@ public class Binding {
     public String getName() {
 	return _name;
     }
-    
+
     /**
      * Returns the variable value.
      *
@@ -53,18 +53,18 @@ public class Binding {
     public Value getValue() {
 	return _value;
     }
-    
+
     /**
-     * Evaluates the variable definition with the specified 
+     * Evaluates the variable definition with the specified
      * symbol table.
      *
      * @param symbolTable the symbol table to evaluate
      *        the value against.
      * @return an evaluated string.
-     * @exception RslEvaluationException If an error occured during 
+     * @exception RslEvaluationException If an error occured during
      *            rsl evaluation.
      */
-    public Binding evaluate(Map symbolTable) 
+    public Binding evaluate(Map symbolTable)
 	throws RslEvaluationException {
 	String strValue = _value.evaluate(symbolTable);
 	return new Binding(getName(), new Value(strValue));
@@ -82,7 +82,7 @@ public class Binding {
 	toRSL(buf, explicitConcat);
 	return buf.toString();
     }
-    
+
     /**
      * Produces a RSL representation of this variable definition.
      *
@@ -97,9 +97,9 @@ public class Binding {
         getValue().toRSL(buf, explicitConcat);
 	buf.append(")");
     }
-    
+
     public String toString() {
 	return toRSL(true);
     }
-    
+
 }

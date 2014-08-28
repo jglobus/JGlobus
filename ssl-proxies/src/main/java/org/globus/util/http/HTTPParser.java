@@ -32,8 +32,8 @@ public abstract class HTTPParser {
     protected long _contentLength;
     protected boolean _chunked;
     protected LineReader _reader;
-    
-    public HTTPParser(InputStream is) 
+
+    public HTTPParser(InputStream is)
 	throws IOException {
 	_contentLength = -1;
 	_chunked = false;
@@ -52,25 +52,25 @@ public abstract class HTTPParser {
     public boolean isChunked() {
 	return _chunked;
     }
-    
+
     public LineReader getReader() {
 	return _reader;
     }
-    
+
     public void setInputStream(InputStream in) {
 	_reader = new LineReader(in);
     }
-    
-    public abstract void parseHead(String line) 
+
+    public abstract void parseHead(String line)
 	throws IOException;
-    
+
     /**
      * Parses the typical HTTP header.
      * @exception IOException if a connection fails or bad/incomplete request
      */
-    protected void parse() 
+    protected void parse()
 	throws IOException {
-	
+
 	String line;
 	line = _reader.readLine();
 	if (logger.isTraceEnabled()) {
@@ -82,7 +82,7 @@ public abstract class HTTPParser {
 	    if (logger.isTraceEnabled()) {
 		logger.trace(line);
 	    }
-	    
+
 	    if (line.startsWith(HTTPProtocol.CONNECTION)) {
 		_connection = getRest(line, HTTPProtocol.CONNECTION.length());
 	    } else if (line.startsWith(HTTPProtocol.SERVER)) {
@@ -90,19 +90,19 @@ public abstract class HTTPParser {
 	    } else if (line.startsWith(HTTPProtocol.CONTENT_TYPE)) {
 		_contentType = getRest(line, HTTPProtocol.CONTENT_TYPE.length());
 	    } else if (line.startsWith(HTTPProtocol.CONTENT_LENGTH)) {
-		_contentLength = Long.parseLong(getRest(line, 
+		_contentLength = Long.parseLong(getRest(line,
 							HTTPProtocol.CONTENT_LENGTH.length()));
 	    } else if (line.startsWith(HTTPProtocol.HOST)){
 		_host = getRest(line, HTTPProtocol.HOST.length());
 	    } else if (line.startsWith(HTTPProtocol.CHUNKED)) {
 		_chunked = true;
 	    }
-	    
+
 	}
     }
-    
+
     protected static final String getRest(String line, int index) {
 	return line.substring(index).trim();
     }
-    
+
 }

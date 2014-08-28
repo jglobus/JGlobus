@@ -41,7 +41,7 @@ public class KeyStoreConvert {
 	"Syntax: java KeyStoreConvert [options]\n" +
 	"        java KeyStoreConvert -help\n\n" +
 	"\tConverts Globus credentials (user key and certificate) into \n" +
-	"\tJava keystore format (JKS format supported by Sun).\n\n" + 
+	"\tJava keystore format (JKS format supported by Sun).\n\n" +
 	"\tOptions\n" +
 	"\t-help | -usage\n" +
 	"\t\tDisplays usage.\n" +
@@ -60,9 +60,9 @@ public class KeyStoreConvert {
 	"\t-out      <keystorefile>\n" +
 	"\t\tLocation of the Java keystore file. Defaults to\n" +
 	"\t\t'" + DEFAULT_KEYSTORE_FILE + "'\n\n";
-    
+
     public static void main(String args[]) {
-	
+
 	CoGProperties props = CoGProperties.getDefault();
 
 	boolean error       = false;
@@ -99,7 +99,7 @@ public class KeyStoreConvert {
 		error = true;
 	    }
 	}
-	
+
 	if (error) return;
 
 	if (keyStoreFile == null) {
@@ -121,19 +121,19 @@ public class KeyStoreConvert {
 	    System.err.println("Error: Output file (" + keyStoreFile + ") already exists.");
 	    return;
 	}
-	
+
 	int rs = createKeyStore(certFile,
 				keyFile,
 				alias,
 				password,
 				keyStoreFile,
 				debug);
-	
+
 	// Workaround to fix JNI bug (noticeable on some RedHat 6.1 and 7.1 systems)
 	// for a description of the bug see http://java.sun.com/j2se/1.3/relnotes.html
 	// and there grep for "ERROR REPORT"
 	// gavin McCance <mccance@a5.ph.gla.ac.uk>
-	
+
 	System.exit(rs);
     }
 
@@ -143,33 +143,33 @@ public class KeyStoreConvert {
 				      String password,
 				      String keyStoreFile,
 				      boolean debug) {
-	
+
 	X509Certificate [] certs = new X509Certificate[1];
 	PrivateKey key = null;
-	
+
 	try {
 	    certs[0] = CertificateLoadUtil.loadCertificate(certFile);
 	} catch(Exception e) {
 	    System.err.println("Failed to load certificate: " + e.getMessage());
 	    return -1;
 	}
-	
+
 	try {
 	    OpenSSLKey sslkey = new BouncyCastleOpenSSLKey(keyFile);
-	    
+
 	    if (sslkey.isEncrypted()) {
 		String pwd = Util.getPrivateInput("Enter pass phrase: ");
-		
+
 		if (pwd == null) {
 		    // user canceled
 		    return -2;
 		}
-		
+
 		sslkey.decrypt(pwd);
 	    }
-	    
+
 	    key = sslkey.getPrivateKey();
-	    
+
 	} catch(IOException e) {
 	    System.err.println("Failed to load key: " + e.getMessage());
 	    return -1;
@@ -180,11 +180,11 @@ public class KeyStoreConvert {
 	    }
 	    return -1;
 	}
-	
+
 	System.out.println("Creating Java keystore...");
 
 	FileOutputStream out = null;
-	
+
 	try {
 	    KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 	    ks.load(null, null);
@@ -200,11 +200,11 @@ public class KeyStoreConvert {
 		try { out.close(); } catch(IOException ee) {}
 	    }
 	}
-	
-	System.out.println("Java keystore file (" + keyStoreFile + 
+
+	System.out.println("Java keystore file (" + keyStoreFile +
 			   ") successfully created.");
 
 	return 0;
     }
-    
+
 }

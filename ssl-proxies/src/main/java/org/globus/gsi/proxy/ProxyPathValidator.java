@@ -58,11 +58,11 @@ public class ProxyPathValidator {
     static {
         Security.addProvider(new SimpleMemoryProvider());
     }
-    
+
     private static I18n i18n = I18n.getI18n("org.globus.gsi.proxy.errors",
                          ProxyPathValidator.class.getClassLoader());
 
-    private static Log logger = 
+    private static Log logger =
     LogFactory.getLog(ProxyPathValidator.class.getName());
 
     private X509ProxyCertPathValidator validator = new X509ProxyCertPathValidator();
@@ -81,7 +81,7 @@ public class ProxyPathValidator {
     public boolean isLimited() {
     return this.limited;
     }
-    
+
     /**
      * Returns the identity certificate. The first certificates in the
      * path that is not an impersonation proxy, e.g. it could be a
@@ -95,9 +95,9 @@ public class ProxyPathValidator {
 
     /**
      * Returns the subject name of the identity certificate (in the
-     * Globus format) 
+     * Globus format)
      * @see #getIdentityCertificate
-     * @return the subject name of the identity certificate in the 
+     * @return the subject name of the identity certificate in the
      *         Globus format
      */
     public String getIdentity() {
@@ -108,7 +108,7 @@ public class ProxyPathValidator {
      * Removes a restricted proxy policy handler.
      *
      * @param id the Oid of the policy handler to remove.
-     * @return <code>ProxyPolicyHandler</code> the removed handler, or 
+     * @return <code>ProxyPolicyHandler</code> the removed handler, or
      *         null if there is no handler registered under that
      *         id.
      */
@@ -120,13 +120,13 @@ public class ProxyPathValidator {
 
     /**
      * Sets a restricted proxy policy handler.
-     * 
+     *
      * @param id the Oid of the proxy policy to install the handler for.
      * @param handler the proxy policy handler.
-     * @return <code>ProxyPolicyHandler</code> the previous handler 
+     * @return <code>ProxyPolicyHandler</code> the previous handler
      *        installed under the specified id. Usually, will be null.
      */
-    public ProxyPolicyHandler setProxyPolicyHandler(String id, 
+    public ProxyPolicyHandler setProxyPolicyHandler(String id,
                             ProxyPolicyHandler handler) {
     if (id == null) {
         throw new IllegalArgumentException(i18n.getMessage("proxyPolicyId"));
@@ -146,7 +146,7 @@ public class ProxyPathValidator {
      *
      * @param id the Oid of the proxy policy to get the handler for.
      * @return <code>ProxyPolicyHandler</code> the policy handler
-     *         registered for the given id or null if none is 
+     *         registered for the given id or null if none is
      *         registered.
      */
     public ProxyPolicyHandler getProxyPolicyHandler(String id) {
@@ -164,52 +164,52 @@ public class ProxyPathValidator {
     this.limited = false;
     this.identityCert = null;
     }
-    
+
     /**
      * If set, the validate rejects certificate chain if limited proxy if found
      */
     public void setRejectLimitedProxyCheck(boolean rejectLimProxy) {
     this.rejectLimitedProxyCheck = rejectLimProxy;
     }
-        
+
     /**
      * Performs <B>all</B> certificate path validation including
-     * checking of the signatures, validity of the certificates, 
+     * checking of the signatures, validity of the certificates,
      * extension checking, etc.<BR>
      * It uses the PureTLS code to do basic cert signature checking
      * checking and then calls {@link #validate(X509Certificate[],
      * TrustedCertificates) validate} for further checks.
-     * 
+     *
      * @param certPath the certificate path to validate.
      * @param trustedCerts the trusted (CA) certificates.
      * @exception ProxyPathValidatorException if certificate
      *            path validation fails.
      */
-    public void validate(X509Certificate[] certPath, 
+    public void validate(X509Certificate[] certPath,
              X509Certificate[] trustedCerts)
     throws ProxyPathValidatorException {
     validate(certPath, trustedCerts, null);
     }
 
-    public void validate(X509Certificate[] certPath, 
+    public void validate(X509Certificate[] certPath,
              X509Certificate[] trustedCerts,
              CertificateRevocationLists crls)
     throws ProxyPathValidatorException {
         validate(certPath, trustedCerts, crls, null);
     }
 
-    public void validate(X509Certificate[] certPath, 
+    public void validate(X509Certificate[] certPath,
              X509Certificate[] trustedCerts,
                          CertificateRevocationLists crls,
                          SigningPolicy[] signingPolicies)
     throws ProxyPathValidatorException {
-    
+
         validate(certPath, trustedCerts, crls, signingPolicies, null);
     }
-    
-    public void validate(X509Certificate[] certPath, 
+
+    public void validate(X509Certificate[] certPath,
              X509Certificate[] trustedCerts,
-             CertificateRevocationLists crls, 
+             CertificateRevocationLists crls,
                          SigningPolicy[] signingPolicies,
                          Boolean enforceSigningPolicy)
     throws ProxyPathValidatorException {
@@ -225,35 +225,35 @@ public class ProxyPathValidator {
         trustedCertificates = new TrustedCertificates(trustedCerts,
                                                           signingPolicies);
     }
-        
+
     validate(certPath, trustedCertificates, crls, enforceSigningPolicy);
     }
 
     /**
      * Performs certificate path validation. Does <B>not</B> check
-     * the cert signatures but it performs all other checks like 
+     * the cert signatures but it performs all other checks like
      * the extension checking, validity checking, restricted policy
      * checking, CRL checking, etc.
-     * 
+     *
      * @param certPath the certificate path to validate.
      * @exception ProxyPathValidatorException if certificate
      *            path validation fails.
      */
-    protected void validate(X509Certificate [] certPath) 
+    protected void validate(X509Certificate [] certPath)
     throws ProxyPathValidatorException {
-    validate(certPath, 
-         (TrustedCertificates)null, 
+    validate(certPath,
+         (TrustedCertificates)null,
          (CertificateRevocationLists)null);
     }
 
     /**
      * Performs certificate path validation. Does <B>not</B> check
-     * the cert signatures but it performs all other checks like 
+     * the cert signatures but it performs all other checks like
      * the extension checking, validity checking, restricted policy
      * checking, CRL checking, etc.
-     * 
+     *
      * @param certPath the certificate path to validate.
-     * @param trustedCerts the trusted (CA) certificates. If null, 
+     * @param trustedCerts the trusted (CA) certificates. If null,
      *            the default trusted certificates will be used.
      * @exception ProxyPathValidatorException if certificate
      *            path validation fails.
@@ -263,10 +263,10 @@ public class ProxyPathValidator {
     throws ProxyPathValidatorException {
     validate(certPath, trustedCerts, null);
     }
-    
+
     protected void validate(X509Certificate [] certPath,
                 TrustedCertificates trustedCerts,
-                CertificateRevocationLists crlsList) 
+                CertificateRevocationLists crlsList)
     throws ProxyPathValidatorException {
 
     validate(certPath, trustedCerts, crlsList, null);
@@ -274,14 +274,14 @@ public class ProxyPathValidator {
 
     /**
      * Performs certificate path validation. Does <B>not</B> check
-     * the cert signatures but it performs all other checks like 
+     * the cert signatures but it performs all other checks like
      * the extension checking, validity checking, restricted policy
      * checking, CRL checking, etc.
-     * 
+     *
      * @param certPath the certificate path to validate.
-     * @param trustedCerts the trusted (CA) certificates. If null, 
+     * @param trustedCerts the trusted (CA) certificates. If null,
      *            the default trusted certificates will be used.
-     * @param crlsList the certificate revocation list. If null, 
+     * @param crlsList the certificate revocation list. If null,
      *            the default certificate revocation list will be used.
      * @exception ProxyPathValidatorException if certificate
      *            path validation fails.
@@ -291,7 +291,7 @@ public class ProxyPathValidator {
                 CertificateRevocationLists crlsList,
                 Boolean enforceSigningPolicy)
     throws ProxyPathValidatorException {
-    
+
         if (certPath == null) {
             throw new IllegalArgumentException(i18n.getMessage("certsNull"));
         }

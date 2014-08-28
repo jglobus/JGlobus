@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ import java.io.IOException;
 
 public class FTPClientTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(FTPClientTest.class.getName());
 
     public FTPClientTest(String name) {
@@ -41,7 +41,7 @@ public class FTPClientTest extends TestCase {
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
@@ -62,7 +62,7 @@ public class FTPClientTest extends TestCase {
 
     public void testSize() throws Exception {
 	logger.info("getSize()");
-	FTPClient src = new FTPClient(TestEnv.serverFHost, 
+	FTPClient src = new FTPClient(TestEnv.serverFHost,
 				      TestEnv.serverFPort);
 	src.authorize(TestEnv.serverFUser, TestEnv.serverFPassword);
 
@@ -87,14 +87,14 @@ public class FTPClientTest extends TestCase {
 
 	src.close();
     }
-    
+
     public void testDir() throws Exception {
 	logger.info("makeDir()");
 
 	if (skipTest(TestEnv.serverGHost, "serverGHost undefined")) {
 	    return;
 	}
-	
+
 	FTPClient dest = new FTPClient(TestEnv.serverGHost,
 				       TestEnv.serverGPort);
 	dest.authorize(TestEnv.serverGUser, TestEnv.serverGPassword);
@@ -126,11 +126,11 @@ public class FTPClientTest extends TestCase {
     }
     */
 
-    
+
     public void testModes() throws Exception {
 	logger.info("setActive()/setPassive()");
 
-	FTPClient src = new FTPClient(TestEnv.serverFHost, 
+	FTPClient src = new FTPClient(TestEnv.serverFHost,
 				      TestEnv.serverFPort);
 	src.authorize(TestEnv.serverFUser, TestEnv.serverFPassword);
 
@@ -142,7 +142,7 @@ public class FTPClientTest extends TestCase {
 
 	src.close();
     }
-    
+
 
     /* do not run: the server might not support OPTS
 
@@ -155,10 +155,10 @@ public class FTPClientTest extends TestCase {
     public void testRestartMarker() throws Exception {
 	logger.info("setRestartMarker()");
 
-	FTPClient src = new FTPClient(TestEnv.serverFHost, 
+	FTPClient src = new FTPClient(TestEnv.serverFHost,
 				      TestEnv.serverFPort);
 	src.authorize(TestEnv.serverFUser, TestEnv.serverFPassword);
-	
+
 	StreamModeRestartMarker rm = new StreamModeRestartMarker(12345);
 	src.setRestartMarker(rm);
 
@@ -181,7 +181,7 @@ public class FTPClientTest extends TestCase {
 		   TestEnv.serverFUser,
 		   TestEnv.serverFPassword,
 		   TestEnv.serverFDir + "/" + TestEnv.serverFFile,
-		   
+
 		   TestEnv.serverGHost,
 		   TestEnv.serverGPort,
 		   TestEnv.serverGUser,
@@ -204,14 +204,14 @@ public class FTPClientTest extends TestCase {
 	logger.debug("transfer FROM non existent port");
 	boolean caughtOK = false;
 	try {
-	    	    
+
 	    test3Party(
 		       TestEnv.serverAHost,
 		       TestEnv.serverANoSuchPort,
 		       TestEnv.serverFUser,
 		       TestEnv.serverFPassword,
 		       TestEnv.serverFDir + "/" + TestEnv.serverFFile,
-		       
+
 		       TestEnv.serverGHost,
 		       TestEnv.serverGPort,
 		       TestEnv.serverGUser,
@@ -233,18 +233,18 @@ public class FTPClientTest extends TestCase {
 		fail("Attempted to contact non existent server, but the expected exception has not been thrown.");
 	    }
 	}
-	
+
 	logger.debug("transfer TO non existent port");
 	caughtOK = false;
 	try {
-	    	    
+
 	    test3Party(
 		       TestEnv.serverFHost,
 		       TestEnv.serverFPort,
 		       TestEnv.serverFUser,
 		       TestEnv.serverFPassword,
 		       TestEnv.serverFDir + "/" + TestEnv.serverFFile,
-		       
+
 		       TestEnv.serverAHost,
 		       TestEnv.serverANoSuchPort,
 		       TestEnv.serverGUser,
@@ -274,7 +274,7 @@ public class FTPClientTest extends TestCase {
     public void test3Party_noSuchServer1() throws Exception {
 	logger.info("3 party with bad server");
 	logger.debug("transfer FROM non existent server");
-	
+
 	try {
 	    test3Party(
 		       TestEnv.noSuchServer,
@@ -282,7 +282,7 @@ public class FTPClientTest extends TestCase {
 		       TestEnv.serverFUser,
 		       TestEnv.serverFPassword,
 		       TestEnv.serverFDir + "/" + TestEnv.serverFFile,
-		       
+
 		       TestEnv.serverGHost,
 		       TestEnv.serverGPort,
 		       TestEnv.serverGUser,
@@ -309,7 +309,7 @@ public class FTPClientTest extends TestCase {
 		       TestEnv.serverFUser,
 		       TestEnv.serverFPassword,
 		       TestEnv.serverFDir + "/" + TestEnv.serverFFile,
-		       
+
 		       TestEnv.noSuchServer,
 		       21,
 		       TestEnv.serverGUser,
@@ -325,7 +325,7 @@ public class FTPClientTest extends TestCase {
     /** try transferring non existent file;
 	 ServerException should be thrown
     **/
-    
+
     public void test3Party_noSuchSrcFile() throws Exception {
 	logger.info("3 party with bad src file");
 
@@ -340,7 +340,7 @@ public class FTPClientTest extends TestCase {
 		       TestEnv.serverFUser,
 		       TestEnv.serverFPassword,
 		       TestEnv.serverFDir + "/" + TestEnv.serverFNoSuchFile,
-		       
+
 		       TestEnv.serverGHost,
 		       TestEnv.serverGPort,
 		       TestEnv.serverGUser,
@@ -364,7 +364,7 @@ public class FTPClientTest extends TestCase {
        if (skipTest(TestEnv.serverGHost, "serverGHost undefined")) {
 	   return;
        }
-       
+
        try {
 	    test3Party(
 		       TestEnv.serverFHost,
@@ -372,7 +372,7 @@ public class FTPClientTest extends TestCase {
 		       TestEnv.serverFUser,
 		       TestEnv.serverFPassword,
 		       TestEnv.serverFDir + "/" + TestEnv.serverFFile,
-		       
+
 		       TestEnv.serverGHost,
 		       TestEnv.serverGPort,
 		       TestEnv.serverGUser,
@@ -381,7 +381,7 @@ public class FTPClientTest extends TestCase {
 		       );
 
        } catch (ServerException e) {
-	   logger.debug("Test passed: ServerException properly thrown.", 
+	   logger.debug("Test passed: ServerException properly thrown.",
 			e);
        }
     }
@@ -389,7 +389,7 @@ public class FTPClientTest extends TestCase {
     /**
        This method implements the actual transfer.
      **/
-    private void test3Party(String host1, 
+    private void test3Party(String host1,
 			    int port1,
 			    String user1,
 			    String password1,
@@ -408,10 +408,10 @@ public class FTPClientTest extends TestCase {
 	client1.close();
 	client2.close();
     }
-    
-    private void test3Party_setParams(FTPClient client, 
+
+    private void test3Party_setParams(FTPClient client,
 				      String user,
-				      String password) 
+				      String password)
 	throws Exception{
 	client.authorize(user, password);
 	// secure server: client.setProtectionBufferSize(16384);
@@ -420,7 +420,7 @@ public class FTPClientTest extends TestCase {
     }
 
     public void testPortCreationRace()
-        throws Exception 
+        throws Exception
     {
 
         String host = "localhost";
@@ -437,10 +437,10 @@ public class FTPClientTest extends TestCase {
             client.setLocalActive();
             client.close();
 
-          
+
         }
     }
 
-} 
+}
 
 

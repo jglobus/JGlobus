@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,13 +35,13 @@ public class TransferSourceThread extends TransferThread {
 
     protected static Log logger =
 	LogFactory.getLog(TransferSourceThread.class.getName());
-    
+
     protected DataChannelWriter writer;
     protected DataSource source;
     protected BasicServerControlChannel localControlChannel;
     protected TransferContext context;
     protected SocketBox socketBox = null;
-    
+
     public TransferSourceThread(AbstractDataChannel dataChannel,
 				SocketBox socketBox,
 				DataSource source,
@@ -65,14 +65,14 @@ public class TransferSourceThread extends TransferThread {
 
 	try {
 	    startup();
-			
+
 	    try {
 		while ((buf = source.read()) != null) {
 		    transferred += buf.getLength();
 		    writer.write(buf);
 		}
 
-		logger.debug("finished sending data; sent " + 
+		logger.debug("finished sending data; sent " +
 			     transferred + " bytes");
 
 	    } catch (Exception e) {
@@ -85,7 +85,7 @@ public class TransferSourceThread extends TransferThread {
 	    }
 
 	    Object quitToken = shutdown();
-	    
+
 	    if (!error && (quitToken != null)) {
 		//226 Transfer complete
 		localControlChannel.write(new LocalReply(226));
@@ -112,21 +112,21 @@ public class TransferSourceThread extends TransferThread {
 
 	// close the socket
 	writer.close();
-	
+
 	// garbage collect the socket
 	socketBox.setSocket(null);
 
 	// attempt to obtain permission to close data source
 	Object quitToken = context.getQuitToken();
-	
+
 	// data source is shared by all data channels,
 	// so should be closed by the last one exiting
 	if (quitToken != null) {
 	    source.close();
 	}
-	
+
 	return quitToken;
     }
-    
-    
+
+
 }

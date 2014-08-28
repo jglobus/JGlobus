@@ -32,7 +32,7 @@ import org.ietf.jgss.GSSException;
 public class JaasGssUtil {
 
     /**
-     * Creates a new <code>Subject</code> object from specified 
+     * Creates a new <code>Subject</code> object from specified
      * <code>GSSCredential</code>. The GSSCredential is added
      * to the private credential set of the Subject object.
      * Also, if the GSSCredential.getName() is of type <code>
@@ -40,27 +40,27 @@ public class JaasGssUtil {
      * a <code>org.globus.gsi.jaas.GlobusPrincipal</code>
      * is added to the principals set of the Subject object.
      */
-    public static Subject createSubject(GSSCredential cred) 
+    public static Subject createSubject(GSSCredential cred)
 	throws GSSException {
 	return createSubject(null, cred);
     }
 
     /**
-     * Creates a new <code>Subject</code> object from specified 
+     * Creates a new <code>Subject</code> object from specified
      * <code>GSSCredential</code> and <code>GSSName</code>.
      * If the GSSCredential is specified it is added
      * to the private credential set of the Subject object.
      * Also, if the GSSCredential.getName() is of type <code>
      * org.globus.gsi.gssapi.GlobusGSSName</code> and the
-     * GSSName parameter was not specified a 
+     * GSSName parameter was not specified a
      * <code>org.globus.gsi.jaas.GlobusPrincipal</code>
      * is added to the principals set of the Subject object.
      * If the GSSName parameter was specified of type
-     * <code>org.globus.gsi.gssapi.GlobusGSSName</code> a 
+     * <code>org.globus.gsi.gssapi.GlobusGSSName</code> a
      * <code>org.globus.gsi.jaas.GlobusPrincipal</code>
      * is added to the principals set of the Subject object.
      */
-    public static Subject createSubject(GSSName name, GSSCredential cred) 
+    public static Subject createSubject(GSSName name, GSSCredential cred)
 	throws GSSException {
 	if (cred == null && name == null) {
 	    return null;
@@ -84,8 +84,8 @@ public class JaasGssUtil {
     /**
      * Converts the specified GSSName to GlobusPrincipal.
      * The GSSName is converted into the GlobusPrincipal
-     * only if the GSSName is of type 
-     * <code>org.globus.gsi.gssapi.GlobusGSSName</code> 
+     * only if the GSSName is of type
+     * <code>org.globus.gsi.gssapi.GlobusGSSName</code>
      * and the name is not anonymous.
      */
     public static GlobusPrincipal toGlobusPrincipal(GSSName name) {
@@ -97,7 +97,7 @@ public class JaasGssUtil {
 
     /**
      * Retrieves the first <code>GSSCredential</code> from the
-     * private credential set of the specified <code>Subject</code> 
+     * private credential set of the specified <code>Subject</code>
      * object.
      *
      * @return the <code>GSSCredential</code>. Might be null.
@@ -115,5 +115,5 @@ public class JaasGssUtil {
 	    (GSSCredential)iter.next() :
 	    null;
     }
-    
+
 }

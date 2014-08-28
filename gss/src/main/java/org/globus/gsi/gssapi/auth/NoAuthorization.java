@@ -32,7 +32,7 @@ public class NoAuthorization extends GSSAuthorization {
 	LogFactory.getLog(NoAuthorization.class.getName());
 
     private static NoAuthorization authorization;
-    
+
     /**
      * Returns a single instance of this class.
      *
@@ -44,11 +44,11 @@ public class NoAuthorization extends GSSAuthorization {
 	}
 	return authorization;
     }
-    
+
     /**
      * Always returns null.
      */
-    public GSSName getExpectedName(GSSCredential cred, String host) 
+    public GSSName getExpectedName(GSSCredential cred, String host)
 	throws GSSException {
         return null;
     }
@@ -62,5 +62,5 @@ public class NoAuthorization extends GSSAuthorization {
 	throws AuthorizationException {
 	logger.debug("Authorization: NONE");
     }
-    
+
 }

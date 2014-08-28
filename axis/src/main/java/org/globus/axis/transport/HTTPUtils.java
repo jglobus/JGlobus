@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +23,8 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 
 public class HTTPUtils {
-    
-    public static final String DISABLE_CHUNKING = 
+
+    public static final String DISABLE_CHUNKING =
         "transport.http.disableChunking";
 
     /**
@@ -57,7 +57,7 @@ public class HTTPUtils {
             headers.remove(HTTPConstants.HEADER_CONNECTION);
         }
     }
-    
+
     /**
      * Sets on option on the stub to control what HTTP protocol
      * version should be used.
@@ -80,8 +80,8 @@ public class HTTPUtils {
      */
     public static void setHTTPVersion(Stub stub, boolean http10) {
         stub._setProperty(MessageContext.HTTP_TRANSPORT_VERSION,
-                          (http10) 
-                          ? HTTPConstants.HEADER_PROTOCOL_V10 
+                          (http10)
+                          ? HTTPConstants.HEADER_PROTOCOL_V10
                           : HTTPConstants.HEADER_PROTOCOL_V11);
     }
 
@@ -106,8 +106,8 @@ public class HTTPUtils {
      *                will be performed (if HTTP 1.1 will be used).
      */
     public static void setDisableChunking(Stub stub, boolean disable) {
-        stub._setProperty(DISABLE_CHUNKING, 
-                          (disable) 
+        stub._setProperty(DISABLE_CHUNKING,
+                          (disable)
                           ? Boolean.TRUE
                           : Boolean.FALSE);
         Hashtable headers = getRequestHeaders(stub);
@@ -116,7 +116,7 @@ public class HTTPUtils {
     }
 
     private static Hashtable getRequestHeaders(Stub stub) {
-        Hashtable headers = 
+        Hashtable headers =
             (Hashtable)stub._getProperty(HTTPConstants.REQUEST_HEADERS);
         if (headers == null) {
             headers = new Hashtable();

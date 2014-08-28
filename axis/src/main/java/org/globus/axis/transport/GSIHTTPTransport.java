@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import org.globus.axis.gsi.GSIConstants;
 public class GSIHTTPTransport extends Transport implements GSIConstants
 {
     public static final String DEFAULT_TRANSPORT_NAME = "httpg";
-    
+
     /**
      * HTTP properties
      */
@@ -44,11 +44,11 @@ public class GSIHTTPTransport extends Transport implements GSIConstants
     private String cookie;
     private String cookie2;
     private String action;
-    
+
     public GSIHTTPTransport () {
         transportName = DEFAULT_TRANSPORT_NAME;
     }
-    
+
     /**
      * helper constructor
      */
@@ -58,7 +58,7 @@ public class GSIHTTPTransport extends Transport implements GSIConstants
         this.url = url;
         this.action = action;
     }
-    
+
     /**
      * Set up any transport-specific derived properties in the message context.
      * @param mc the context to set up

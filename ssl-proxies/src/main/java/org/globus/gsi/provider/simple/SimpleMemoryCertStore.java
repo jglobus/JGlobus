@@ -23,9 +23,9 @@ public class SimpleMemoryCertStore extends CertStoreSpi {
 
     private List<X509CRL> crlStore;
     private List<X509Certificate> certStore;
-    
+
     public SimpleMemoryCertStore(CertStoreParameters params) throws InvalidAlgorithmParameterException {
-        
+
         super(params);
         if (params == null) {
             throw new InvalidAlgorithmParameterException();
@@ -53,7 +53,7 @@ public class SimpleMemoryCertStore extends CertStoreSpi {
             }
         }
     }
-    
+
 
     @Override
     public Collection<? extends CRL> engineGetCRLs(CRLSelector selector) throws CertStoreException {

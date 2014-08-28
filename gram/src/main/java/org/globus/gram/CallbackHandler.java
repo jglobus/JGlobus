@@ -4,13 +4,13 @@
 
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,7 @@ public class CallbackHandler extends BaseServer {
      * Construct a GRAM callback handler with default user
      * credentials. Port will be dynamically assigned.
      */
-    public CallbackHandler() 
+    public CallbackHandler()
 	throws IOException {
 	super(null, 0);
 	init();
@@ -64,11 +64,11 @@ public class CallbackHandler extends BaseServer {
      * @param cred
      *         credentials to use. if null default
      *         user credentials will be used
-     * @param port 
+     * @param port
      *         server port to listen on. if set to 0
      *         the port will be dynamically assigned
      */
-    public CallbackHandler(GSSCredential cred, int port) 
+    public CallbackHandler(GSSCredential cred, int port)
 	throws IOException {
 	super(cred, port);
 	init();
@@ -88,7 +88,7 @@ public class CallbackHandler extends BaseServer {
 	String id = job.getIDAsString();
 	_jobs.put(id, job);
     }
-    
+
     /**
      * Unregisters gram job from listening to status updates
      * @param job gram job
@@ -101,7 +101,7 @@ public class CallbackHandler extends BaseServer {
     protected GramJob getJob(String url) {
 	return (GramJob)_jobs.get(url);
     }
-  
+
     /**
      * Returns number of registered jobs
      * @return int number of jobs
@@ -126,11 +126,11 @@ public class CallbackHandler extends BaseServer {
     }
 
     protected void handleConnection(Socket socket) {
-	GramCallbackHandler gcb = new GramCallbackHandler(this, 
+	GramCallbackHandler gcb = new GramCallbackHandler(this,
 							  socket);
 	(new Thread(gcb)).start();
     }
-    
+
 }
 
 class GramCallbackHandler implements Runnable {
@@ -140,13 +140,13 @@ class GramCallbackHandler implements Runnable {
 
     private CallbackHandler handler;
     private Socket socket;
-    
-    public GramCallbackHandler(CallbackHandler handler, 
+
+    public GramCallbackHandler(CallbackHandler handler,
 			       Socket socket) {
 	this.handler = handler;
 	this.socket = socket;
     }
-    
+
     /**
      * Listen on the server socket for a client, start another thread to
      * keep listening on the server socket, then deal with the client.
@@ -159,16 +159,16 @@ class GramCallbackHandler implements Runnable {
 	    out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 	    try {
 
-		CallbackResponse hd = 
+		CallbackResponse hd =
 		    new CallbackResponse( socket.getInputStream() );
-		
+
 		if (hd.protocolVersion != GRAMProtocol.GRAM_PROTOCOL_VERSION) {
 		    throw new Exception("Gram callback protocol version mismatch");
 		}
 
 		GramJob job = handler.getJob( hd.jobManagerUrl );
 		if (job == null) {
-		    throw new Exception("Not registered with this handler: " + 
+		    throw new Exception("Not registered with this handler: " +
 					hd.jobManagerUrl);
 		}
 
@@ -178,12 +178,12 @@ class GramCallbackHandler implements Runnable {
 		// notification
 		job.setExitCode ( hd.exitCode );
 		job.setStatus( hd.status );
-		
-		if (job.getStatus() == GramJob.STATUS_DONE || 
+
+		if (job.getStatus() == GramJob.STATUS_DONE ||
 		    job.getStatus() == GramJob.STATUS_FAILED) {
 		    handler.unregisterJob(job);
 		}
-	    
+
 		try {
 		    out.write(GRAMProtocol.OKReply());
 		    out.flush();
@@ -208,5 +208,5 @@ class GramCallbackHandler implements Runnable {
 	    } catch (IOException e) { }
 	}
     }
-    
+
 }

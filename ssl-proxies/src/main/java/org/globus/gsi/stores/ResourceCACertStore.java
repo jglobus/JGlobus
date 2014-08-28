@@ -34,7 +34,7 @@ import org.globus.util.GlobusResource;
  * To change this template use File | Settings | File Templates.
  */
 public class ResourceCACertStore extends ResourceSecurityWrapperStore<ResourceTrustAnchor, TrustAnchor> {
-    
+
     private static FilenameFilter filter = new TrustAnchorFilter();
     private Log logger = LogFactory.getLog(getClass().getCanonicalName());
 

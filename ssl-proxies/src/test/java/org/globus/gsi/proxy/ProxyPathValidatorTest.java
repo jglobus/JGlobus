@@ -175,7 +175,7 @@ public class ProxyPathValidatorTest extends TestCase {
                 + "w/H6JB4heiVGMeydMlSJHyI7J/s5l8k39G/KVrBGT9tRJwIBETANBgkqhkiG9w0B\n"
                 + "AQQFAAOBgQCRRvTdW6Ddn1curWm515l/GoAoJ76XBFJWfusIZ9TdwE8hlkRpK9Bd\n"
                 + "Rrao4Z2YO+e3UItn45Hs+8gzx+jBB1AduTUor603Z8AXaNbF/c+gz62lBWlcmZ2Y\n"
-                + "LzuUWgwZLd9HdA2YBgCcT3B9VFmBxcnPjGOwWT29ZUtyy2GXFtzcDw==\n" 
+                + "LzuUWgwZLd9HdA2YBgCcT3B9VFmBxcnPjGOwWT29ZUtyy2GXFtzcDw==\n"
                 + "-----END CERTIFICATE-----" };
 
     public static String[] testCerts = {
@@ -192,7 +192,7 @@ public class ProxyPathValidatorTest extends TestCase {
                 + "++u0Fw2iNrTjswu4hvqYZn+LoSGchH2XyCUssuOWCbW4IkN8/Xzfre2oC2EieECC\n"
                 + "w+jjGhcqPrxvkHh8xXYroqA0Sg==\n"
                 + "-----END CERTIFICATE-----",
-            "-----BEGIN CERTIFICATE-----\n" 
+            "-----BEGIN CERTIFICATE-----\n"
                 + "MIIDLDCCAhSgAwIBAgICAbowDQYJKoZIhvcNAQEFBQAwdTETMBEGCgmSJomT8ixk\n"
                 + "ARkWA25ldDESMBAGCgmSJomT8ixkARkWAmVzMSAwHgYDVQQLExdDZXJ0aWZpY2F0\n"
                 + "ZSBBdXRob3JpdGllczEZMBcGA1UECxMQRE9FIFNjaWVuY2UgR3JpZDENMAsGA1UE\n"
@@ -438,7 +438,7 @@ public class ProxyPathValidatorTest extends TestCase {
         chain = new X509Certificate[] { goodCertsArr[3], goodCertsArr[15], goodCertsArr[16] };
         //validateChain(chain, trustedCerts, goodCertsArr[15], true);
         validateError(chain, trustedCerts, ProxyPathValidatorException.PATH_LENGTH_EXCEEDED);
-        
+
         // GSI 3 PC, EEC, CA (pathlen=0)
         chain = new X509Certificate[] { goodCertsArr[17], goodCertsArr[15], goodCertsArr[16] };
         validateChain(chain, trustedCerts, goodCertsArr[15], false);
@@ -488,7 +488,7 @@ public class ProxyPathValidatorTest extends TestCase {
         // certArr[2] - has key usage and certSign is on
         chain = new X509Certificate[] { certsArr[0], certsArr[1], certsArr[2] };
         validateChain(chain, trustedCAs, certsArr[1], false);
-        
+
         TestProxyPathValidator v = new TestProxyPathValidator();
         v.validate(chain, new TrustedCertificates(trustedCAs));
         assertEquals(false, v.isLimited());
@@ -504,29 +504,29 @@ public class ProxyPathValidatorTest extends TestCase {
         //chain = new X509Certificate[] { goodCertsArr[1], goodCertsArr[1], goodCertsArr[0] };
         chain = new X509Certificate[] { goodCertsArr[15], goodCertsArr[15], goodCertsArr[16] };
         //validateChain(chain, trustedCerts, goodCertsArr[15], false);
-        
+
         validateChain(chain, trustedCAs);
-       
+
 
         TestProxyPathValidator v = new TestProxyPathValidator();
         TrustedCertificates trustedCert = new TrustedCertificates(new X509Certificate[] { goodCertsArr[16] },
             new SigningPolicy[] { new SigningPolicy(new X500Principal("CN=foo"), new String[] { "CN=foo" }) });
-        
+
         //X509Certificate[] trustedCerts = new X509Certificate[] { goodCertsArr[1] };
         chain = new X509Certificate[] { goodCertsArr[16], goodCertsArr[16], goodCertsArr[0] };
         // this makes the PathValidator think the chain is:
         // CA, CA, CA - which is ok. irrelevant to signing policy.
         try {
-         
+
             v.validate(chain, trustedCert);
-            
+
         } catch (ProxyPathValidatorException e) {
             e.printStackTrace();
             fail("Unexpected exception: " + e.getMessage());
         }
     }
 
-    //JGLOBUS-103 
+    //JGLOBUS-103
     public void testCrlsChecks() throws Exception {
 
         TestProxyPathValidator tvalidator = new TestProxyPathValidator();
@@ -711,7 +711,7 @@ public class ProxyPathValidatorTest extends TestCase {
             super.validate(certPath, trustedCerts, crlsList, enforceSigningPolicy);
         }
     }
-    
+
     // for testing only to disable validity checking
 
     public class MockProxyCertPathValidator extends X509ProxyCertPathValidator {

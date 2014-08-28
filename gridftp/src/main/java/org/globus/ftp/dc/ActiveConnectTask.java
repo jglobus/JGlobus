@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ public class ActiveConnectTask extends Task {
     protected Session session;
     protected DataChannelFactory factory;
     protected TransferContext context;
-    
+
     public ActiveConnectTask(HostPort hostPort,
                              DataSink sink,
                              BasicServerControlChannel control,
@@ -54,7 +54,7 @@ public class ActiveConnectTask extends Task {
         this.sink = sink;
         init(hostPort, control, session, factory, context);
     }
-    
+
     public ActiveConnectTask(HostPort hostPort,
                              DataSource source,
                              BasicServerControlChannel control,
@@ -123,20 +123,20 @@ public class ActiveConnectTask extends Task {
     **/
     protected SocketBox openSocket() throws Exception {
         SocketBox sBox = new SimpleSocketBox();
-        
+
         SocketFactory factory = SocketFactory.getDefault();
-        Socket mySocket = factory.createSocket(this.hostPort.getHost(), 
+        Socket mySocket = factory.createSocket(this.hostPort.getHost(),
                                                this.hostPort.getPort());
         sBox.setSocket(mySocket);
-        
+
         return sBox;
     }
-    
+
     private void close() {
         // server will by closed by the FTPServerFacade.
         //try { server.close(); } catch (Exception ignore) {}
     }
-    
+
     public void stop() {
         close();
     }

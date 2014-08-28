@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ public class HTTPSender
 
     static {
         // install protocol handler
-        Protocol protocol = 
+        Protocol protocol =
             new Protocol("http", new CommonsSocketFactory(), 80);
         Protocol.registerProtocol("http", protocol);
 
@@ -57,7 +57,7 @@ public class HTTPSender
         this.connectionManager = globalConnectionManager;
     }
 
-    protected HostConfiguration getHostConfiguration(HttpClient client, 
+    protected HostConfiguration getHostConfiguration(HttpClient client,
                                                      MessageContext context,
                                                      URL targetURL) {
         HostConfiguration hc = super.getHostConfiguration(client, context, targetURL);
@@ -69,5 +69,5 @@ public class HTTPSender
         }
         return hc;
     }
-    
+
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ public abstract class Params
     protected String passphrase;
     /** Defaults to DEFAULT_LIFETIME (12 hours). */
     protected int lifetime = DEFAULT_LIFETIME;
-    
+
     public Params(int command) {
         setCommand(command);
     }
@@ -40,7 +40,7 @@ public abstract class Params
         setUserName(username);
         setPassphrase(passphrase);
     }
-    
+
     protected void setCommand(int command) {
         this.command = command;
     }
@@ -48,7 +48,7 @@ public abstract class Params
     public void setUserName(String username) {
         this.username = username;
     }
-    
+
     public String getUserName() {
         return this.username;
     }
@@ -65,7 +65,7 @@ public abstract class Params
     public void setLifetime(int seconds) {
         this.lifetime = seconds;
     }
-        
+
     public int getLifetime() {
         return this.lifetime;
     }
@@ -76,7 +76,7 @@ public abstract class Params
         }
         if (passphrase.length() < MIN_PASSWORD_LENGTH) {
             throw new IllegalArgumentException("Password must be at least " +
-                                               MIN_PASSWORD_LENGTH + 
+                                               MIN_PASSWORD_LENGTH +
                                                " characters long");
         }
     }
@@ -113,7 +113,7 @@ public abstract class Params
 
         return buf.toString();
     }
-    
+
     protected void add(StringBuffer buf, String prefix, String value) {
         if (value == null) {
             return;
@@ -124,5 +124,5 @@ public abstract class Params
     public String toString() {
         return makeRequest(false);
     }
-    
+
 }

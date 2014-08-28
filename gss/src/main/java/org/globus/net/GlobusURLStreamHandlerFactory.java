@@ -17,7 +17,7 @@ package org.globus.net;
 import java.net.URLStreamHandlerFactory;
 import java.net.URLStreamHandler;
 
-public class GlobusURLStreamHandlerFactory 
+public class GlobusURLStreamHandlerFactory
     implements URLStreamHandlerFactory {
 
     public URLStreamHandler createURLStreamHandler(String protocol) {
@@ -26,5 +26,5 @@ public class GlobusURLStreamHandlerFactory
 	}
 	return null;
     }
-    
+
 }

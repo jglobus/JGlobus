@@ -75,7 +75,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Returns an instance of this class..
-     * 
+     *
      * @return <code>BouncyCastleCertProcessingFactory</code> instance.
      */
     public static synchronized BouncyCastleCertProcessingFactory getDefault() {
@@ -87,7 +87,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Creates a proxy certificate from the certificate request.
-     * 
+     *
      * @see #createCertificate(InputStream, X509Certificate, PrivateKey, int, int, X509ExtensionSet, String)
      *      createCertificate
      * @deprecated
@@ -100,7 +100,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Creates a proxy certificate from the certificate request.
-     * 
+     *
      * @see #createCertificate(InputStream, X509Certificate, PrivateKey, int, int, X509ExtensionSet, String)
      *      createCertificate
      * @deprecated
@@ -114,7 +114,7 @@ public class BouncyCastleCertProcessingFactory {
     /**
      * Creates a proxy certificate from the certificate request. (Signs a certificate request creating a new
      * certificate)
-     * 
+     *
      * @see #createProxyCertificate(X509Certificate, PrivateKey, PublicKey, int, int, X509ExtensionSet,
      *      String) createProxyCertificate
      * @param certRequestInputStream
@@ -166,7 +166,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Creates a new proxy credential from the specified certificate chain and a private key.
-     * 
+     *
      * @see #createCredential(X509Certificate[], PrivateKey, int, int, int, X509ExtensionSet, String)
      *      createCredential
      * @deprecated
@@ -178,7 +178,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Creates a new proxy credential from the specified certificate chain and a private key.
-     * 
+     *
      * @see #createCredential(X509Certificate[], PrivateKey, int, int, int, X509ExtensionSet, String)
      *      createCredential
      * @deprecated
@@ -192,7 +192,7 @@ public class BouncyCastleCertProcessingFactory {
      * Creates a new proxy credential from the specified certificate chain and a private key. A set of X.509
      * extensions can be optionally included in the new proxy certificate. This function automatically creates
      * a "RSA"-based key pair.
-     * 
+     *
      * @see #createProxyCertificate(X509Certificate, PrivateKey, PublicKey, int, int, X509ExtensionSet,
      *      String) createProxyCertificate
      * @param certs
@@ -253,9 +253,9 @@ public class BouncyCastleCertProcessingFactory {
      * randomly. If the issuing certificate contains a <i>KeyUsage</i> extension, the extension will be copied
      * into the proxy certificate with <i>keyCertSign</i> and <i>nonRepudiation</i> bits turned off. No other
      * extensions are currently copied.
-     * 
+     *
      * The methods defaults to creating GSI 4 proxy
-     * 
+     *
      * @param issuerCert_
      *            the issuing certificate
      * @param issuerKey
@@ -269,7 +269,7 @@ public class BouncyCastleCertProcessingFactory {
      * @param proxyType
      *            can be one of {@link GSIConstants#DELEGATION_LIMITED GSIConstants.DELEGATION_LIMITED},
      *            {@link GSIConstants#DELEGATION_FULL GSIConstants.DELEGATION_FULL},
-     * 
+     *
      *            {@link GSIConstants#GSI_2_LIMITED_PROXY GSIConstants.GSI_2_LIMITED_PROXY},
      *            {@link GSIConstants#GSI_2_PROXY GSIConstants.GSI_2_PROXY},
      *            {@link GSIConstants#GSI_3_IMPERSONATION_PROXY GSIConstants.GSI_3_IMPERSONATION_PROXY},
@@ -280,18 +280,18 @@ public class BouncyCastleCertProcessingFactory {
      *            {@link GSIConstants#GSI_4_LIMITED_PROXY GSIConstants.GSI_3_LIMITED_PROXY},
      *            {@link GSIConstants#GSI_4_INDEPENDENT_PROXY GSIConstants.GSI_4_INDEPENDENT_PROXY},
      *            {@link GSIConstants#GSI_4_RESTRICTED_PROXY GSIConstants.GSI_4_RESTRICTED_PROXY}.
-     * 
+     *
      *            If {@link GSIConstants#DELEGATION_LIMITED GSIConstants.DELEGATION_LIMITED} and if
      *            {@link VersionUtil#isGsi2Enabled() CertUtil.isGsi2Enabled} returns true then a GSI-2 limited
      *            proxy will be created. Else if {@link VersionUtil#isGsi3Enabled() CertUtil.isGsi3Enabled}
      *            returns true then a GSI-3 limited proxy will be created. If not, a GSI-4 limited proxy will
      *            be created.
-     * 
+     *
      *            If {@link GSIConstants#DELEGATION_FULL GSIConstants.DELEGATION_FULL} and if
      *            {@link VersionUtil#isGsi2Enabled() CertUtil.isGsi2Enabled} returns true then a GSI-2 full proxy
      *            will be created. Else if {@link VersionUtil#isGsi3Enabled() CertUtil.isGsi3Enabled} returns
      *            true then a GSI-3 full proxy will be created. If not, a GSI-4 full proxy will be created.
-     * 
+     *
      * @param extSet
      *            a set of X.509 extensions to be included in the new proxy certificate. Can be null. If
      *            delegation mode is {@link GSIConstants#GSI_3_RESTRICTED_PROXY
@@ -299,7 +299,7 @@ public class BouncyCastleCertProcessingFactory {
      *            GSIConstants.GSI_4_RESTRICTED_PROXY} then
      *            {@link org.globus.gsi.proxy.ext.ProxyCertInfoExtension ProxyCertInfoExtension} must be
      *            present in the extension set.
-     * 
+     *
      * @param cnValue
      *            the value of the CN component of the subject of the new certificate. If null, the defaults
      *            will be used depending on the proxy certificate type created.
@@ -359,7 +359,7 @@ public class BouncyCastleCertProcessingFactory {
         BigInteger serialNum = null;
         String delegDN = null;
 
-        if (ProxyCertificateUtil.isGsi3Proxy(GSIConstants.CertificateType.get(proxyType)) || 
+        if (ProxyCertificateUtil.isGsi3Proxy(GSIConstants.CertificateType.get(proxyType)) ||
             ProxyCertificateUtil.isGsi4Proxy(GSIConstants.CertificateType.get(proxyType))) {
             Random rand = new Random();
             delegDN = String.valueOf(Math.abs(rand.nextInt()));
@@ -505,14 +505,14 @@ public class BouncyCastleCertProcessingFactory {
             certGen.setNotAfter(date.getTime());
         }
 
-        
+
 
         return certGen.generateX509Certificate(issuerKey);
     }
 
     /**
      * Creates a proxy certificate from the certificate request.
-     * 
+     *
      * @see #createCertificate(InputStream, X509Certificate, PrivateKey, int, int, X509ExtensionSet, String)
      *      createCertificate
      */
@@ -525,7 +525,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Creates a proxy certificate from the certificate request.
-     * 
+     *
      * @see #createCertificate(InputStream, X509Certificate, PrivateKey, int, GSIConstants.CertificateType, X509ExtensionSet, String)
      *      createCertificate
      */
@@ -538,7 +538,7 @@ public class BouncyCastleCertProcessingFactory {
     /**
      * Creates a proxy certificate from the certificate request. (Signs a certificate request creating a new
      * certificate)
-     * 
+     *
      * @see #createProxyCertificate(X509Certificate, PrivateKey, PublicKey, int, int, X509ExtensionSet,
      *      String) createProxyCertificate
      * @param certRequestInputStream
@@ -588,7 +588,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Creates a new proxy credential from the specified certificate chain and a private key.
-     * 
+     *
      * @see #createCredential(X509Certificate[], PrivateKey, int, int, GSIConstants.CertificateType, X509ExtensionSet, String)
      *      createCredential
      */
@@ -599,7 +599,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Creates a new proxy credential from the specified certificate chain and a private key.
-     * 
+     *
      * @see #createCredential(X509Certificate[], PrivateKey, int, int, GSIConstants.CertificateType, X509ExtensionSet, String)
      *      createCredential
      */
@@ -612,7 +612,7 @@ public class BouncyCastleCertProcessingFactory {
      * Creates a new proxy credential from the specified certificate chain and a private key. A set of X.509
      * extensions can be optionally included in the new proxy certificate. This function automatically creates
      * a "RSA"-based key pair.
-     * 
+     *
      * @see #createProxyCertificate(X509Certificate, PrivateKey, PublicKey, int, int, X509ExtensionSet,
      *      String) createProxyCertificate
      * @param certs
@@ -709,9 +709,9 @@ public class BouncyCastleCertProcessingFactory {
      * randomly. If the issuing certificate contains a <i>KeyUsage</i> extension, the extension will be copied
      * into the proxy certificate with <i>keyCertSign</i> and <i>nonRepudiation</i> bits turned off. No other
      * extensions are currently copied.
-     * 
+     *
      * The methods defaults to creating GSI 4 proxy
-     * 
+     *
      * @param issuerCert_
      *            the issuing certificate
      * @param issuerKey
@@ -733,7 +733,7 @@ public class BouncyCastleCertProcessingFactory {
      *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_LIMITED_PROXY GSIConstants.CertificateType.GSI_3_LIMITED_PROXY},
      *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_INDEPENDENT_PROXY GSIConstants.CertificateType.GSI_4_INDEPENDENT_PROXY},
      *            {@link org.globus.gsi.GSIConstants.CertificateType#GSI_4_RESTRICTED_PROXY GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY}.
-     * 
+     *
      * @param extSet
      *            a set of X.509 extensions to be included in the new proxy certificate. Can be null. If
      *            delegation mode is {@link org.globus.gsi.GSIConstants.CertificateType#GSI_3_RESTRICTED_PROXY
@@ -741,7 +741,7 @@ public class BouncyCastleCertProcessingFactory {
      *            GSIConstants.CertificateType.GSI_4_RESTRICTED_PROXY} then
      *            {@link org.globus.gsi.proxy.ext.ProxyCertInfoExtension ProxyCertInfoExtension} must be
      *            present in the extension set.
-     * 
+     *
      * @param cnValue
      *            the value of the CN component of the subject of the new certificate. If null, the defaults
      *            will be used depending on the proxy certificate type created.
@@ -907,14 +907,14 @@ public class BouncyCastleCertProcessingFactory {
             certGen.setNotAfter(date.getTime());
         }
 
-        
+
         return certGen.generateX509Certificate(issuerKey);
     }
 
     /**
      * Loads a X509 certificate from the specified input stream. Input stream must contain DER-encoded
      * certificate.
-     * 
+     *
      * @param in
      *            the input stream to read the certificate from.
      * @return <code>X509Certificate</code> the loaded certificate.
@@ -931,7 +931,7 @@ public class BouncyCastleCertProcessingFactory {
     /**
      * Creates a certificate request from the specified subject DN and a key pair. The
      * <I>"MD5WithRSAEncryption"</I> is used as the signing algorithm of the certificate request.
-     * 
+     *
      * @param subject
      *            the subject of the certificate request
      * @param keyPair
@@ -950,7 +950,7 @@ public class BouncyCastleCertProcessingFactory {
      * DN with <I>"CN=proxy"</I> name component appended to the subject is used as the subject of the
      * certificate request. Also the certificate's signing algorithm is used as the certificate request
      * signing algorithm.
-     * 
+     *
      * @param cert
      *            the certificate to create the certificate request from.
      * @param keyPair
@@ -969,7 +969,7 @@ public class BouncyCastleCertProcessingFactory {
 
     /**
      * Creates a certificate request from the specified subject name, signing algorithm, and a key pair.
-     * 
+     *
      * @param subjectDN
      *            the subject name of the certificate request.
      * @param sigAlgName

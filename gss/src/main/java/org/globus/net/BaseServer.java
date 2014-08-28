@@ -51,41 +51,41 @@ public abstract class BaseServer implements Runnable {
 
     private static Log logger =
 	LogFactory.getLog(BaseServer.class.getName());
-    
-    /** Socket timeout in milliseconds. */ 
+
+    /** Socket timeout in milliseconds. */
     public static final int SO_TIMEOUT = 5*60*1000;
-    
+
     protected boolean accept;
     protected ServerSocket _server = null;
     private boolean secure = true;
     protected String url = null;
     private Thread serverThread = null;
-    
+
     protected GSSCredential credentials = null;
     protected Authorization authorization = null;
     protected Integer gssMode = GSIConstants.MODE_SSL;
 
     protected int timeout = SO_TIMEOUT;
 
-    public BaseServer() 
+    public BaseServer()
 	throws IOException {
 	this(null, 0);
     }
-  
-    public BaseServer(int port) 
+
+    public BaseServer(int port)
 	throws IOException {
 	this(null, port);
     }
-  
-    public BaseServer(GSSCredential cred, int port) 
+
+    public BaseServer(GSSCredential cred, int port)
 	throws IOException {
 	this.credentials = cred;
 	this._server = ServerSocketFactory.getDefault().createServerSocket(port);
 	this.secure = true;
 	initialize();
     }
-    
-    public BaseServer(boolean secure, int port) 
+
+    public BaseServer(boolean secure, int port)
 	throws IOException {
 	this.credentials = null;
 	this._server = ServerSocketFactory.getDefault().createServerSocket(port);
@@ -101,7 +101,7 @@ public abstract class BaseServer implements Runnable {
 	setAuthorization(SelfAuthorization.getInstance());
 	start();
     }
-    
+
     /**
      * Starts the server.
      */
@@ -112,7 +112,7 @@ public abstract class BaseServer implements Runnable {
 	    serverThread.start();
 	}
     }
-    
+
     /**
      * Sets timeout for the created sockets.
      * By default if not set, 5 minute timeout is used.
@@ -120,7 +120,7 @@ public abstract class BaseServer implements Runnable {
     public void setTimeout(int timeout) {
 	this.timeout = timeout;
     }
-    
+
     public int getTimeout() {
 	return this.timeout;
     }
@@ -134,7 +134,7 @@ public abstract class BaseServer implements Runnable {
 	try {
 	    _server.close();
 	} catch(Exception e) {}
-	// this is a hack to ensue the server socket is 
+	// this is a hack to ensue the server socket is
 	// unblocked from accpet()
 	// but this is not guaranteed to work still
         SocketFactory factory = SocketFactory.getDefault();
@@ -154,11 +154,11 @@ public abstract class BaseServer implements Runnable {
         serverThread = null;
         _server = null;
     }
-    
+
     public GSSCredential getCredentials() {
 	return this.credentials;
     }
-    
+
     public String getProtocol() {
 	return (secure) ? "https" : "http";
     }
@@ -180,7 +180,7 @@ public abstract class BaseServer implements Runnable {
 	}
 	return url;
     }
-  
+
     /**
      * Returns port of this server
      *
@@ -189,7 +189,7 @@ public abstract class BaseServer implements Runnable {
     public int getPort() {
 	return _server.getLocalPort();
     }
-    
+
     /**
      * Returns hostname of this server
      *
@@ -200,9 +200,9 @@ public abstract class BaseServer implements Runnable {
     }
 
     /**
-     * Returns hostname of this server. The format of the host conforms 
-     * to RFC 2732, i.e. for a literal IPv6 address, this method will 
-     * return the IPv6 address enclosed in square brackets ('[' and ']'). 
+     * Returns hostname of this server. The format of the host conforms
+     * to RFC 2732, i.e. for a literal IPv6 address, this method will
+     * return the IPv6 address enclosed in square brackets ('[' and ']').
      *
      * @return hostname
      */
@@ -215,12 +215,12 @@ public abstract class BaseServer implements Runnable {
 	    return host;
 	}
     }
-    
+
     public void run() {
 	Socket socket = null ;
 
 	while(accept) {
-	    
+
 	    try {
 		socket = _server.accept();
 		if (!accept) {
@@ -230,7 +230,7 @@ public abstract class BaseServer implements Runnable {
 	    } catch(IOException e) {
 		if (accept) { // display error message
 		    logger.error("Server died: " + e.getMessage(), e);
-		} 
+		}
 		break;
 	    }
 
@@ -242,19 +242,19 @@ public abstract class BaseServer implements Runnable {
 		    break;
 		}
 	    }
-	    
+
 	    handleConnection(socket);
 	}
-	
+
 	logger.debug("server thread stopped");
     }
 
-    protected Socket wrapSocket(Socket socket) 
+    protected Socket wrapSocket(Socket socket)
 	throws GSSException {
-	
+
 	GSSManager manager = ExtendedGSSManager.getInstance();
 
-	ExtendedGSSContext context = 
+	ExtendedGSSContext context =
 	    (ExtendedGSSContext)manager.createContext(credentials);
 
 	context.setOption(GSSConstants.GSS_MODE, gssMode);
@@ -262,11 +262,11 @@ public abstract class BaseServer implements Runnable {
 	GssSocketFactory factory = GssSocketFactory.getDefault();
 
 	GssSocket gsiSocket = (GssSocket)factory.createSocket(socket, null, 0, context);
-	    
+
 	// server socket
 	gsiSocket.setUseClientMode(false);
 	gsiSocket.setAuthorization(this.authorization);
-	
+
 	return gsiSocket;
     }
 
@@ -299,32 +299,32 @@ public abstract class BaseServer implements Runnable {
 	}
 	Deactivator.registerDeactivation(deactivator);
     }
-    
+
     /**
-     * Unregisters a default deactivation handler. 
+     * Unregisters a default deactivation handler.
      */
     public void unregisterDefaultDeactivator() {
 	if (deactivator == null) return;
 	Deactivator.unregisterDeactivation(deactivator);
     }
-    
+
     /**
      * A handler for the deactivation framework.
      */
     protected AbstractServerDeactivator deactivator = null;
-    
+
 }
 
 class AbstractServerDeactivator implements DeactivationHandler {
-    
+
     private BaseServer server = null;
-    
+
     public AbstractServerDeactivator(BaseServer server) {
         this.server = server;
     }
-    
+
     public void deactivate() {
         if (server != null) server.shutdown();
     }
-    
+
 }

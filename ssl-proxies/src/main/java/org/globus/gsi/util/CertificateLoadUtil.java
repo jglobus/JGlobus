@@ -164,7 +164,7 @@ public final class CertificateLoadUtil {
             //i18n
             //                                 .getMessage("certFileNull"));
         }
-        
+
         List<X509Certificate> list = new ArrayList<X509Certificate>();
         BufferedReader reader = new BufferedReader(new FileReader(file));
         X509Certificate cert = readCertificate(reader);

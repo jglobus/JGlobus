@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ public class HTTPInputStream extends GlobusInputStream {
     protected InputStream input;
     protected Socket socket;
     protected long size = -1;
-    
+
     /**
      * Private constructor used by subclasses.
      */
@@ -54,43 +54,43 @@ public class HTTPInputStream extends GlobusInputStream {
      */
     public HTTPInputStream(String host,
 			   int port,
-			   String file) 
+			   String file)
 	throws IOException {
 	get(host, port, file);
     }
-    
+
     // subclasses should overwrite this function
-    protected Socket openSocket(String host, int port) 
+    protected Socket openSocket(String host, int port)
 	throws IOException {
         return SocketFactory.getDefault().createSocket(host, port);
     }
 
     protected void get(String host, int port, String file)
  	throws IOException {
-	
+
 	HttpResponse hd = null;
 
 	while(true) {
 	    this.socket = openSocket(host, port);
 	    this.input = this.socket.getInputStream();
 	    OutputStream out = socket.getOutputStream();
-	
+
 	    String msg = GASSProtocol.GET(file, host + ":" + port);
 
 	    try {
 		out.write( msg.getBytes() );
 		out.flush();
-	    
+
 		if (logger.isTraceEnabled()) {
 		    logger.trace("SENT: " + msg);
 		}
-	    
+
 		hd = new HttpResponse(input);
 	    } catch(IOException e) {
 		abort();
 		throw e;
 	    }
-	
+
 	    if (hd.httpCode == 200) {
 		break;
 	    } else {
@@ -110,7 +110,7 @@ public class HTTPInputStream extends GlobusInputStream {
 		    break;
 		default:
 		     throw new IOException(
-                            "Failed to retrieve file from server. " + 
+                            "Failed to retrieve file from server. " +
 			    " Server returned error: " + hd.httpMsg +
 			    " (" + hd.httpCode + ")"
                     );
@@ -124,18 +124,18 @@ public class HTTPInputStream extends GlobusInputStream {
 	    size = hd.contentLength;
 	}
     }
-    
+
     public void abort() {
-	try { 
+	try {
 	    close();
 	} catch (Exception e) {}
     }
-    
+
     public long getSize() {
 	return size;
     }
-    
-    public void close() 
+
+    public void close()
 	throws IOException {
 	if (this.input != null) {
 	    this.input.close();
@@ -144,13 +144,13 @@ public class HTTPInputStream extends GlobusInputStream {
 	    this.socket.close();
 	}
     }
-    
+
     public int read(byte [] msg)
 	throws IOException {
 	return input.read(msg);
     }
-    
-    public int read(byte [] buf, int off, int len) 
+
+    public int read(byte [] buf, int off, int len)
 	throws IOException {
 	return input.read(buf, off, len);
     }
@@ -159,11 +159,11 @@ public class HTTPInputStream extends GlobusInputStream {
         throws IOException {
         return input.read();
     }
-    
+
     public int available()
         throws IOException {
         return input.available();
     }
-    
+
 }
 

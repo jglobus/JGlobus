@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,17 +30,17 @@ import org.apache.commons.logging.LogFactory;
 
 public class InputStreamDataSinkTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(InputStreamDataSinkTest.class.getName());
 
     public static void main(String[] argv) {
 	junit.textui.TestRunner.run (suite());
     }
-    
+
     public static Test suite() {
 	return new TestSuite(InputStreamDataSinkTest.class);
     }
-    
+
     public InputStreamDataSinkTest(String name) {
 	super(name);
     }
@@ -63,7 +63,7 @@ public class InputStreamDataSinkTest extends TestCase {
 	}
 
 	InputStream in = sr.getInputStream();
-	
+
 	assertEquals('a', in.read());
 	assertEquals('b', in.read());
 	assertEquals('c', in.read());
@@ -89,7 +89,7 @@ public class InputStreamDataSinkTest extends TestCase {
 	assertEquals(n, t.getCounter());
 
 	InputStream in = sr.getInputStream();
-	
+
 	for (int i=0;i<n;i++) {
 	    assertEquals(i, in.read());
 	}
@@ -104,7 +104,7 @@ public class InputStreamDataSinkTest extends TestCase {
     }
 
     class Thread1 extends Thread {
-	
+
 	private Exception exception;
 	private InputStreamDataSink sr;
 	private int count = 0;
@@ -116,7 +116,7 @@ public class InputStreamDataSinkTest extends TestCase {
 	public int getCounter() {
 	    return count;
 	}
-	
+
 	public Exception getException() {
 	    return exception;
 	}
@@ -160,7 +160,7 @@ public class InputStreamDataSinkTest extends TestCase {
     }
 
     class Thread2 extends Thread {
-	
+
 	private Exception exception1, exception2;
 	private InputStream sr;
 	private int read1, read2;
@@ -200,7 +200,7 @@ public class InputStreamDataSinkTest extends TestCase {
 	}
     }
 
-    // input stream is closed 
+    // input stream is closed
     public void testCloseStream() throws Exception {
 
 	InputStreamDataSink sr = new InputStreamDataSink();
@@ -249,9 +249,9 @@ public class InputStreamDataSinkTest extends TestCase {
 	assertTrue(t.getException() == null);
 	assertEquals(1, t.getCount());
     }
-    
+
     class Thread4 extends Thread {
-	 
+
 	private Exception exception;
 	private InputStream sr;
 	private int count;
@@ -267,7 +267,7 @@ public class InputStreamDataSinkTest extends TestCase {
 	public int getCount() {
 	    return count;
 	}
-	
+
 	public void run() {
 	    try {
 		while ( sr.read() != -1 ) {
@@ -278,5 +278,5 @@ public class InputStreamDataSinkTest extends TestCase {
 	    }
 	}
     }
-    
+
 }

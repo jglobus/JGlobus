@@ -23,7 +23,7 @@ public class SimpleMemoryKeyStoreTest {
 
     private static X509Certificate cert;
     private SimpleMemoryKeyStore store;
-    
+
     @BeforeClass
     public static void loadBouncyCastleProvider() throws Exception {
         Security.addProvider(new BouncyCastleProvider());

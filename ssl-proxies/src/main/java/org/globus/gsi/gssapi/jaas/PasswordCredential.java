@@ -19,15 +19,15 @@ import java.io.Serializable;
 public class PasswordCredential implements Serializable {
 
     private char[] password;
-    
+
     public PasswordCredential(String password) {
 	this.password = password.toCharArray();
     }
-    
+
     public String getPassword() {
 	return new String(this.password);
     }
-    
+
     public boolean equals(Object another) {
 	if (!(another instanceof PasswordCredential)) {
 	    return false;
@@ -39,7 +39,7 @@ public class PasswordCredential implements Serializable {
 	    return (new String(this.password)).equals(pass);
 	}
     }
-    
+
     public String toString() {
 	return getPassword();
     }

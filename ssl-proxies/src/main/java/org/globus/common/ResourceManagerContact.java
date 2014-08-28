@@ -18,14 +18,14 @@ import java.util.StringTokenizer;
 
 /**
  * The purpose of this class is to parse resource manager contact strings.
- * It can handle literal IPv6 addresses enclosed in square brackets 
- * ('[' and ']'). 
+ * It can handle literal IPv6 addresses enclosed in square brackets
+ * ('[' and ']').
  */
 public class ResourceManagerContact {
-  
+
     public final static String DEFAULT_SERVICE = "/jobmanager";
     public final static int DEFAULT_PORT       = 2119;
-    
+
     protected String hostName    = null;
     protected int portNumber     = -1;
     protected String serviceName = null;
@@ -43,9 +43,9 @@ public class ResourceManagerContact {
 
 	char c;
 	int i;
-	
+
 	i = getHostToken(contact);
-    
+
 	if (i == -1) {
 	    hostName = contact;
 	    return;
@@ -53,11 +53,11 @@ public class ResourceManagerContact {
 
 	hostName = contact.substring(0, i);
 	c        = contact.charAt(i);
-	
+
 	if (c == '/') {
 	    parseService(contact, i);
 	} else {
-	    
+
 	    int j = getToken(contact, i+1);
 	    if (j == -1) {
 		portNumber = parsePort(contact.substring(i+1));
@@ -98,15 +98,15 @@ public class ResourceManagerContact {
 	int len = contact.length();
 	char c;
 	int i;
-	
+
 	for (i=from;i<len;i++) {
 	    c = contact.charAt(i);
-	    
+
 	    if (c == '/' || c == ':') {
 		return i;
 	    }
 	}
-	
+
 	return -1;
     }
 
@@ -128,7 +128,7 @@ public class ResourceManagerContact {
 
     public static String convertDN(String globusDN) {
 	if (globusDN == null) return null;
-	
+
 	StringTokenizer tokens = new StringTokenizer(globusDN, "/");
 	StringBuffer buf = new StringBuffer();
 	while( tokens.hasMoreTokens() ) {
@@ -136,14 +136,14 @@ public class ResourceManagerContact {
 	    if (tokens.hasMoreTokens())
 		buf.insert(0, ", ");
 	}
-	
+
 	return buf.toString();
     }
 
     public String getHostName() {
 	return hostName;
     }
-    
+
     public int getPortNumber() {
 	if (portNumber == -1) {
 	    return DEFAULT_PORT;
@@ -151,7 +151,7 @@ public class ResourceManagerContact {
 	    return portNumber;
 	}
     }
-    
+
     public String getServiceName() {
 	if (serviceName == null) {
 	    return DEFAULT_SERVICE;
@@ -159,27 +159,27 @@ public class ResourceManagerContact {
 	    return serviceName;
 	}
     }
-    
+
     public String getSubject() {
 	return globusDN;
     }
-    
+
     public String getGlobusDN() {
 	return globusDN;
     }
-    
+
     public String getDN() {
 	return globusDN;
     }
-    
+
     public String toString() {
 	StringBuffer buf = new StringBuffer();
-	
+
 	buf.append("Host name   : " + hostName + "\n");
 	buf.append("Port number : " + getPortNumber() + "\n");
 	buf.append("Service     : " + getServiceName() + "\n");
 	buf.append("DN          : " + getGlobusDN() + "\n");
-	
+
 	return buf.toString();
     }
 

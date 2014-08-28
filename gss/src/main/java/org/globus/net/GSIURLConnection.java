@@ -27,7 +27,7 @@ import org.ietf.jgss.GSSException;
 
 public abstract class GSIURLConnection extends URLConnection {
 
-    public static final String GSS_MODE_PROPERTY = 
+    public static final String GSS_MODE_PROPERTY =
         "gssMode";
 
     protected GSSCredential credentials;
@@ -49,7 +49,7 @@ public abstract class GSIURLConnection extends URLConnection {
     public void setGSSMode(Integer mode) {
         this.gssMode = mode;
     }
-    
+
     public Integer getGSSMode() {
         return this.gssMode;
     }
@@ -69,7 +69,7 @@ public abstract class GSIURLConnection extends URLConnection {
     public Authorization getAuthorization() {
         return authorization;
     }
-    
+
     public void setDelegationType(int delegationType) {
 	this.delegationType = delegationType;
     }
@@ -101,6 +101,6 @@ public abstract class GSIURLConnection extends URLConnection {
             super.setRequestProperty(key, value);
         }
     }
-    
-    
+
+
 }

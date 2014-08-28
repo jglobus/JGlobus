@@ -29,19 +29,19 @@ public class TimestampEntry implements Serializable {
         this.value = value;
         this.lastModified = lastModified;
     }
-    
+
     public Object getValue() {
         return this.value;
     }
-    
+
     public void setValue(Object value) {
         this.value = value;
     }
-    
+
     public String getDescription() {
         return this.description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -49,7 +49,7 @@ public class TimestampEntry implements Serializable {
     public long getLastModified() {
         return this.lastModified;
     }
-    
+
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }

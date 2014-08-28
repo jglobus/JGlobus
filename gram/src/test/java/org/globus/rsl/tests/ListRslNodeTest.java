@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,20 +41,20 @@ public class ListRslNodeTest extends TestCase {
 
     public void setUp() {
 	String rsl = "&(exECutable=/bin/ls)(arGUments=-arg1 -arg2 \"  -arg3 \")(directory=/home/vijay/gram)(stdin=https://localhost:9999/test)(environment=(v1 value1/$(JAREK)/value2 ) (v2 $(GLOBUS)) (v3 $(HOME)/data # /bin))";
-	
+
 	try {
 	    rslTree = (ListRslNode)RSLParser.parse(ListRslNode.class, rsl);
 	} catch(Exception e) {
 	    fail("Failed to parse rsl");
 	}
     }
-    
+
     public void testMerge() {
 
 	ListRslNode node = null;
 
 	String rsl2 = "&(rslSubSTitution=(var1 value1))(arguments=\" -end\")(stdout=stdout.file)";
-	
+
 	try {
 	    node = (ListRslNode)RSLParser.parse(ListRslNode.class, rsl2);
 	} catch(Exception e) {
@@ -71,23 +71,23 @@ public class ListRslNodeTest extends TestCase {
 	values = nv.getValues();
 
         assertEquals("arg size",
-                     4, 
+                     4,
 		     values.size());
 
         assertEquals("arg 1",
-                     "-arg1", 
+                     "-arg1",
 		     ((Value)values.get(0)).getValue() );
 
         assertEquals("arg 2",
-                     "-arg2", 
+                     "-arg2",
 		     ((Value)values.get(1)).getValue() );
 
         assertEquals("arg 3",
-                     "  -arg3 ", 
+                     "  -arg3 ",
 		     ((Value)values.get(2)).getValue() );
 
         assertEquals("arg 4",
-                     " -end", 
+                     " -end",
 		     ((Value)values.get(3)).getValue() );
 
 
@@ -134,20 +134,20 @@ public class ListRslNodeTest extends TestCase {
 
 	// two executables!
 
-	rslTree.add(new NameOpValue("executable", 
-				    NameOpValue.EQ, 
+	rslTree.add(new NameOpValue("executable",
+				    NameOpValue.EQ,
 				    "/usr/local/bin/ls"));
 
 	rslTree.add(new NameOpValue("executable",
 				    NameOpValue.EQ,
 				    "/bin/ls"));
 
-	rslTree.add(new NameOpValue("myMemory", 
-				    NameOpValue.LTEQ, 
+	rslTree.add(new NameOpValue("myMemory",
+				    NameOpValue.LTEQ,
 				    "5"));
-	
-	rslTree.add(new NameOpValue("arguments", 
-				    NameOpValue.EQ, 
+
+	rslTree.add(new NameOpValue("arguments",
+				    NameOpValue.EQ,
 				    new String [] {"-l", "-p", " -o "}));
 
 	bindings = new Bindings("rsl_substitution");
@@ -156,20 +156,20 @@ public class ListRslNodeTest extends TestCase {
 	bindings.add(new Binding("var3", "value3"));
 
 	rslTree.add(bindings);
-	
+
 	// test stuff
-	
+
         nv = rslTree.getParam("ARGUMENTS");
         values = nv.getValues();
-	
+
         assertEquals("arg size",
                      3,
                      values.size());
-	
+
         assertEquals("arg 1",
                      "-l",
                      ((Value)values.get(0)).getValue() );
-	
+
         assertEquals("arg 2",
                      "-p",
                      ((Value)values.get(1)).getValue() );
@@ -179,10 +179,10 @@ public class ListRslNodeTest extends TestCase {
                      ((Value)values.get(2)).getValue() );
 
 	// remove some args...
-	
+
 	assertEquals("remove arg",
 		     false, nv.remove(new Value("-p ")));
-	
+
 	assertEquals("remove arg2",
 		     true, nv.remove(new Value("-p")));
 
@@ -191,7 +191,7 @@ public class ListRslNodeTest extends TestCase {
         assertEquals("arg size",
                      2,
                      values.size());
-	
+
         assertEquals("arg 1",
                      "-l",
                      ((Value)values.get(0)).getValue() );
@@ -199,17 +199,17 @@ public class ListRslNodeTest extends TestCase {
         assertEquals("arg 2",
                      " -o ",
                      ((Value)values.get(1)).getValue() );
-	
+
 	// test the executable.. - returns the first one only!
 
 	nv = rslTree.getParam("EXECUTABLE");
-	
+
 	assertEquals("executable",
 		     "/usr/local/bin/ls",
 		     ((Value)nv.getFirstValue()).getValue() );
-	
+
         nv = rslTree.getParam("MY_MEMORY");
-	
+
         assertEquals("myMemory",
                      "5",
                      ((Value)nv.getFirstValue()).getValue() );
@@ -228,15 +228,15 @@ public class ListRslNodeTest extends TestCase {
         assertEquals("bind size",
                      3,
                      values.size());
-	
+
         assertEquals("bind 1",
                      "var1",
                      ((Binding)values.get(0)).getName() );
-	
+
         assertEquals("bind 2",
                      "var2",
                      ((Binding)values.get(1)).getName() );
-	
+
         assertEquals("bind 3",
                      "var3",
                      ((Binding)values.get(2)).getName() );
@@ -246,44 +246,44 @@ public class ListRslNodeTest extends TestCase {
     public void testRemove() {
 
         ListRslNode node = null;
-	
+
         String rsl2 = "&(rsl_SubSTitution=(var1 value1))(arguments=\" -end\")(stdout=stdout.file)(stdout=ptys)";
-	
+
         try {
             node = (ListRslNode)RSLParser.parse(ListRslNode.class, rsl2);
         } catch(Exception e) {
             fail("Failed to parse rsl");
         }
-	
+
         NameOpValue nv = null;
         Bindings bindings = null;
         List values;
-	
+
         nv = node.removeParam("stdout");
         values = nv.getValues();
-	
+
         assertEquals("stdout",
                      "stdout.file",
                      ((Value)values.get(0)).getValue() );
 
 	nv = node.removeParam("stdout");
         values = nv.getValues();
-	
+
         assertEquals("stdout",
                      "ptys",
                      ((Value)values.get(0)).getValue() );
-	
+
         assertEquals("stdout",
                      null,
                      node.removeParam("stdout"));
-	
+
         bindings = node.removeBindings("rslsubstitutION");
         values = bindings.getValues();
-	
+
         assertEquals("rsl subst.",
                      "var1",
                      ((Binding)values.get(0)).getName() );
-	
+
         assertEquals("rsl subst.",
                      null,
                      node.removeBindings("rsl_substiTution"));
@@ -291,7 +291,7 @@ public class ListRslNodeTest extends TestCase {
 
     public void testEvaluate() {
 
-	String rsl = 
+	String rsl =
 	    " + " +
 	    "(& " +
 	    "(directory = $(TOPDIR))" +
@@ -312,7 +312,7 @@ public class ListRslNodeTest extends TestCase {
 	    "(environment = (DATADIR $(DATADIR)))" +
 	    "(count = 1)" +
 	    ")";
-	
+
 	ListRslNode tree = null;
 	try {
 	    tree = (ListRslNode)RSLParser.parse(ListRslNode.class, rsl);
@@ -326,7 +326,7 @@ public class ListRslNodeTest extends TestCase {
 	Properties p = new Properties();
 	p.put("VAR1", "testValue1");
 	p.put("TOPDIR", "/home/gawor");
-	
+
 	AbstractRslNode finalRsl = null;
 
 	try {
@@ -334,15 +334,15 @@ public class ListRslNodeTest extends TestCase {
 	} catch (RslEvaluationException e) {
 	    fail("failed to evaluate rsl!");
 	}
-	
+
 	System.out.println();
 	System.out.println( finalRsl.toRSL(true) );
 
 	NameOpValue nv = null;
 	List values    = null;
-	
+
 	List specs = finalRsl.getSpecifications();
-	
+
 	// this should be the first one...
 	finalRsl = (ListRslNode)specs.get(0);
 
@@ -362,7 +362,7 @@ public class ListRslNodeTest extends TestCase {
 	assertEquals("directory",
 		     "/home/gawor",
 		     ((Value)values.get(0)).getValue());
-	
+
 	// this should be the second one...
 	finalRsl = (ListRslNode)specs.get(1);
 
@@ -381,7 +381,7 @@ public class ListRslNodeTest extends TestCase {
         assertEquals("directory",
                      "/home/vijay/gram",
                      ((Value)values.get(0)).getValue());
-	
+
 	nv = finalRsl.getParam("arguments");
         values = nv.getValues();
 
@@ -415,7 +415,7 @@ public class ListRslNodeTest extends TestCase {
 	assertTrue("bindings null", (bindings != null));
 
 	values = bindings.getValues();
-	
+
 	assertEquals("bind1: name",
 		     "TOPDIR",
 		     ((Binding)values.get(0)).getName());
@@ -441,7 +441,7 @@ public class ListRslNodeTest extends TestCase {
                      ((Binding)values.get(2)).getValue().getValue());
 
     }
-    
+
 }
 
 

@@ -23,25 +23,25 @@ import javax.security.auth.Subject;
 import junit.framework.TestCase;
 
 public class GlobusSubjectTest extends TestCase {
-    
+
     private static final String CRED = "testCred1";
     private static final String CRED2 = "testCred2";
 
     public void testSubject() throws Exception {
-	
+
 	Subject subject = new Subject();
 	subject.getPublicCredentials().add(CRED);
 
 	TestAction action = new TestAction();
 	JaasSubject.doAs(subject, action);
-	
+
 	assertEquals(subject, action.subject1);
 	assertEquals(subject, action.innerSubject);
 	assertEquals(subject, action.subject2);
     }
-    
+
     class TestAction implements PrivilegedAction {
-	
+
 	Subject subject1, innerSubject, subject2;
 
 	public Object run() {
@@ -57,7 +57,7 @@ public class GlobusSubjectTest extends TestCase {
     }
 
     public void testNestedSubject() throws Exception {
-	
+
 	Subject subject = new Subject();
 	subject.getPublicCredentials().add(CRED);
 
@@ -66,17 +66,17 @@ public class GlobusSubjectTest extends TestCase {
 
 	NestedTestAction action = new NestedTestAction(anotherSubject);
 	JaasSubject.doAs(subject, action);
-	
+
 	assertEquals(subject, action.subject1);
 	assertEquals(subject, action.subject2);
-	
+
 	assertEquals(anotherSubject, action.innerSubject1);
 	assertEquals(anotherSubject, action.innerSubject2);
 	assertEquals(anotherSubject, action.innerInnerSubject);
     }
 
     class NestedTestAction implements PrivilegedAction {
-	
+
 	Subject subject1, subject2;
 	Subject innerSubject1, innerSubject2, innerInnerSubject;
 
@@ -102,14 +102,14 @@ public class GlobusSubjectTest extends TestCase {
     }
 
     public void testGetSubjectSameThread() throws Exception {
-	
+
 	Subject subject = new Subject();
 	subject.getPublicCredentials().add(CRED);
-	
+
 	SimpleTestAction action = new SimpleTestAction();
-	Subject returnedSubject = 
+	Subject returnedSubject =
 	    (Subject)JaasSubject.doAs(subject, action);
-	
+
 	assertEquals(subject, returnedSubject);
     }
 
@@ -120,14 +120,14 @@ public class GlobusSubjectTest extends TestCase {
     }
 
     public void testGetSubjectInheritThread() throws Exception {
-	
+
 	Subject subject = new Subject();
 	subject.getPublicCredentials().add(CRED);
 
 	ThreadTestAction action = new ThreadTestAction();
-	Subject returnedSubject = 
+	Subject returnedSubject =
 	    (Subject)JaasSubject.doAs(subject, action);
-	
+
 	assertEquals(subject, returnedSubject);
     }
 

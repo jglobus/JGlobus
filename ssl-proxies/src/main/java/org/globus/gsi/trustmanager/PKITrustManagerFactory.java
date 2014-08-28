@@ -33,7 +33,7 @@ import javax.net.ssl.TrustManagerFactorySpi;
 
 /**
  * This factory creates trust managers which support the Globus SSL library.
- * 
+ *
  * @version ${version}
  * @since 1.0
  */
@@ -44,7 +44,7 @@ public class PKITrustManagerFactory extends TrustManagerFactorySpi {
 	/**
 	 * Initializes this factory with a source of certificate authorities and
 	 * related trust material.
-	 * 
+	 *
 	 * @param keyStore
 	 *            The key store or null
 	 * @throws KeyStoreException
@@ -72,7 +72,7 @@ public class PKITrustManagerFactory extends TrustManagerFactorySpi {
 	 * information.
 	 * <p/>
 	 * This implementation requires X509ProxyCertPathParameters.
-	 * 
+	 *
 	 * @param managerFactoryParameters
 	 *            The X509ProxyCertPathParameters which are used to create
 	 *            TrustManagers.
@@ -97,7 +97,7 @@ public class PKITrustManagerFactory extends TrustManagerFactorySpi {
 
 	/**
 	 * Returns one trust manager for each type of trust material.
-	 * 
+	 *
 	 * @return The collection of TrustManagers
 	 */
 	@Override

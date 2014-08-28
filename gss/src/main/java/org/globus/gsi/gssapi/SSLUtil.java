@@ -25,7 +25,7 @@ public class SSLUtil {
 
     /**
      * Reads some number of bytes from the input stream.
-     * This function reads maximum data available on the 
+     * This function reads maximum data available on the
      * stream.
      *
      * @param in the input stream to read the bytes from.
@@ -46,10 +46,10 @@ public class SSLUtil {
         }
         return len;
     }
-    
+
     /**
      * Reads some number of bytes from the input stream.
-     * This function blocks until all data is read or an I/O 
+     * This function blocks until all data is read or an I/O
      * error occurs.
      *
      * @param in the input stream to read the bytes from.
@@ -78,7 +78,7 @@ public class SSLUtil {
      * @return the byte array containing the SSL message
      * @exception IOException if I/O error occurs.
      */
-    public static byte[] readSslMessage(InputStream in) 
+    public static byte[] readSslMessage(InputStream in)
         throws IOException {
         byte [] header = new byte[5];
         readFully(in, header, 0, header.length);
@@ -95,7 +95,7 @@ public class SSLUtil {
         readFully(in, inToken, header.length, length);
         return inToken;
     }
-    
+
     /**
      * Determines if a given header is a SSL packet
      * (has a SSL header)
@@ -105,7 +105,7 @@ public class SSLUtil {
     public static final boolean isSSLPacket(byte[] header) {
         return ( isSSLv3Packet(header) || isSSLv2HelloPacket(header) );
     }
-    
+
     /**
      * Determines if a given header is a SSLv3 packet
      * (has a SSL header) or a backward compatible version of TLS
@@ -117,11 +117,11 @@ public class SSLUtil {
         return header[0] >= 20 && header[0] <= 26 &&
             (header[1] == 3 || (header[1] == 2 && header[2] == 0));
     }
-    
+
     /**
      * Determines if a given header is a SSLv2 client or server hello packet
      *
-     * @return true if the header is such a SSLv2 client or server hello 
+     * @return true if the header is such a SSLv2 client or server hello
      *         packet. False, otherwise.
      */
     public static final boolean isSSLv2HelloPacket(byte[] header) {
@@ -155,12 +155,12 @@ public class SSLUtil {
     }
 
     /**
-     * Converts 4 bytes to an <code>int</code> at 
+     * Converts 4 bytes to an <code>int</code> at
      * the specified offset in the given byte array.
      *
      * @param buf the byte array containing the 4 bytes
      *        to be converted to an <code>int</code>.
-     * @param off offset in the byte array 
+     * @param off offset in the byte array
      * @return the <code>int</code> value of the 4 bytes.
      */
     public static int toInt(byte[] buf, int off) {
@@ -180,7 +180,7 @@ public class SSLUtil {
      * @param v the int value to convert into 4 bytes.
      * @param buf the byte array to put the resulting
      *        4 bytes.
-     * @param off offset in the byte array 
+     * @param off offset in the byte array
      */
     public static void writeInt(int v, byte[] buf, int off) {
         buf[off] = (byte)((v >>> 24) & 0xFF);
@@ -188,14 +188,14 @@ public class SSLUtil {
         buf[off+2] = (byte)((v >>>  8) & 0xFF);
         buf[off+3] = (byte)((v >>>  0) & 0xFF);
     }
-    
+
     /**
      * Converts 8 bytes to a <code>long</code> at the
      * specified offset in the given byte array.
      *
      * @param buf the byte array containing the 8 bytes
      *        to be converted to a <code>long</code>.
-     * @param off offset in the byte array 
+     * @param off offset in the byte array
      * @return the <code>long</code> value of the 8 bytes.
      */
     public static long toLong(byte[]buf, int off) {

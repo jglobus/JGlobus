@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ import java.io.RandomAccessFile;
 /**
    Test GridFTPClient.stripedGet() and stripedPut()
  **/
-public class GridFTPClient2PartyStripingTest 
+public class GridFTPClient2PartyStripingTest
     extends GridFTPClient2PartyParallelTest {
 
     public GridFTPClient2PartyStripingTest(String name) {
@@ -46,7 +46,7 @@ public class GridFTPClient2PartyStripingTest
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
@@ -65,14 +65,14 @@ public class GridFTPClient2PartyStripingTest
     /**
        This demonstrates striped file storage.
      **/
-    protected void get(GridFTPClient client, 
+    protected void get(GridFTPClient client,
 		       int localServerMode,
 		       int transferType,
 		       int transferMode,
 		       DataChannelAuthentication dcau,
 		       int prot,
 		       String fullLocalFile,
-		       String fullRemoteFile) 
+		       String fullRemoteFile)
 	throws Exception{
 	client.authenticate(null); /* use default cred */
 	client.setProtectionBufferSize(16384);
@@ -90,21 +90,21 @@ public class GridFTPClient2PartyStripingTest
 	HostPortList hpl = null;
 
     /*
-        seems like the same problem.  there will be port 
+        seems like the same problem.  there will be port
         collissions this way.  usign an unset port number only
 	if (TestEnv.localServerPort == TestEnv.UNDEFINED) {
-	    hpl = client.setLocalStripedPassive(); 
+	    hpl = client.setLocalStripedPassive();
 	} else {
-	    hpl = client.setLocalStripedPassive(TestEnv.localServerPort, 
+	    hpl = client.setLocalStripedPassive(TestEnv.localServerPort,
 						FTPServerFacade.DEFAULT_QUEUE);
 	}
     */
-    hpl = client.setLocalStripedPassive(); 
+    hpl = client.setLocalStripedPassive();
 	client.setStripedActive(hpl);
 
 	DataSink sink = null;
 	if (transferMode == GridFTPSession.MODE_EBLOCK) {
-	    sink = new FileRandomIO(new RandomAccessFile(fullLocalFile, 
+	    sink = new FileRandomIO(new RandomAccessFile(fullLocalFile,
 							 "rw"));
 	} else {
 	    sink = new DataSinkStream(new FileOutputStream(fullLocalFile));
@@ -112,18 +112,18 @@ public class GridFTPClient2PartyStripingTest
 
 	client.get(fullRemoteFile, sink, null);
     }
-    
+
     /**
        This demonstrates striped file retrieval.
      **/
-    protected void put(GridFTPClient client, 
+    protected void put(GridFTPClient client,
 		       int localServerMode,
 		       int transferType,
 		       int transferMode,
 		       DataChannelAuthentication dcau,
 		       int prot,
 		       String fullLocalFile,
-		       String fullRemoteFile) 
+		       String fullRemoteFile)
 	throws Exception{
 	client.authenticate(null); /* use default cred */
 	client.setProtectionBufferSize(16384);
@@ -143,7 +143,7 @@ public class GridFTPClient2PartyStripingTest
 	logger.debug("sending file " + fullLocalFile);
 	DataSource source = null;
 	if (transferMode == GridFTPSession.MODE_EBLOCK) {
-	    source = new FileRandomIO(new RandomAccessFile(fullLocalFile, 
+	    source = new FileRandomIO(new RandomAccessFile(fullLocalFile,
 							   "r"));
 	} else {
 	    source = new DataSourceStream(new FileInputStream(fullLocalFile));
@@ -151,5 +151,5 @@ public class GridFTPClient2PartyStripingTest
 
 	client.put(fullRemoteFile, source, null);
     }
-    
+
 }

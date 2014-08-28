@@ -62,7 +62,7 @@ import org.globus.gsi.util.CertificateIOUtil;
  * certificates stored in PEM format and proxy certificates stored in PEM
  * format. It reads trusted certificates from multiple directories and a proxy
  * certificate from a file.
- * 
+ *
  * @version ${version}
  * @since 1.0
  */
@@ -92,7 +92,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 	private File defaultDirectory;
 	private ResourceSecurityWrapperStore<ResourceTrustAnchor, TrustAnchor> caDelegate = new ResourceCACertStore();
 	private ResourceSecurityWrapperStore<ResourceProxyCredential, X509Credential> proxyDelegate = new ResourceProxyCredentialStore();
-	
+
 	private boolean inMemoryOnly = false;
 
 	public void setCACertStore(
@@ -125,7 +125,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Get the key referenced by the specified alias.
-	 * 
+	 *
 	 * @param s
 	 *            The key's alias.
 	 * @param chars
@@ -160,7 +160,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Does the supplied alias refer to a key in this key store.
-	 * 
+	 *
 	 * @param s
 	 *            The alias.
 	 * @return True if the alias refers to a key.
@@ -175,7 +175,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 	 * associated with it, the object will be persisted to that path. Otherwise
 	 * it will be stored in the default certificate directory. As a result, the
 	 * parameters of this method are ignored.
-	 * 
+	 *
 	 * @param outputStream
 	 *            This parameter is ignored.
 	 * @param chars
@@ -200,7 +200,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Get the creation date for the object referenced by the alias.
-	 * 
+	 *
 	 * @param s
 	 *            The alias of the security object.
 	 * @return The creation date of the security object.
@@ -226,7 +226,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Get the alias associated with the supplied certificate.
-	 * 
+	 *
 	 * @param certificate
 	 *            The certificate to query
 	 * @return The certificate's alias or null if the certificate is not present
@@ -239,7 +239,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Get the certificateChain for the key referenced by the alias.
-	 * 
+	 *
 	 * @param s
 	 *            The key alias.
 	 * @return The key's certificate chain or a 0 length array if the key is not
@@ -262,7 +262,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Get the certificate referenced by the supplied alias.
-	 * 
+	 *
 	 * @param s
 	 *            The alias.
 	 * @return The Certificate or null if the alias does not exist in the
@@ -284,7 +284,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 	/**
 	 * Load the keystore based on parameters in the LoadStoreParameter. The
 	 * parameter object must be an instance of FileBasedKeyStoreParameters.
-	 * 
+	 *
 	 * @param loadStoreParameter
 	 *            The parameters to load.
 	 * @throws IOException
@@ -316,7 +316,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 	 * implementation), the input stream does not hold the keystore objects.
 	 * Instead, it must be a properties file defining the locations of the
 	 * keystore objects. The password is not used.
-	 * 
+	 *
 	 * @param inputStream
 	 *            An input stream to the properties file.
 	 * @param chars
@@ -361,10 +361,10 @@ public class PEMKeyStore extends KeyStoreSpi {
 			}
 		}
 	}
-	
+
 	/**
-	 * Initialize resources from filename, proxyfile name 
-	 * 
+	 * Initialize resources from filename, proxyfile name
+	 *
 	 * @param defaultDirectoryString
 	 *            Name of the default directory name as:
 	 *            "file: directory name"
@@ -372,7 +372,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 	 * @param proxyFilename
 	 * @param certFilename
 	 * @param keyFilename
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws CertificateException
 	 */
@@ -380,7 +380,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 			String directoryListString, String proxyFilename,
 			String certFilename, String keyFilename) throws IOException,
 			CertificateException {
-		
+
 		if (defaultDirectoryString != null) {
 			defaultDirectory = new GlobusPathMatchingResourcePatternResolver().getResource(defaultDirectoryString).getFile();
 			if (!defaultDirectory.exists()) {
@@ -498,7 +498,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Delete a security object from this keystore.
-	 * 
+	 *
 	 * @param s
 	 *            The alias of the object to delete.
 	 * @throws KeyStoreException
@@ -542,7 +542,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Get an enumertion of all of the aliases in this keystore.
-	 * 
+	 *
 	 * @return An enumeration of the aliases in this keystore.
 	 */
 	@Override
@@ -553,7 +553,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Add a new private key to the keystore.
-	 * 
+	 *
 	 * @param s
 	 *            The alias for the object.
 	 * @param key
@@ -650,7 +650,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * currently unsupported.
-	 * 
+	 *
 	 * @param s
 	 *            The key's alias
 	 * @param bytes
@@ -663,12 +663,12 @@ public class PEMKeyStore extends KeyStoreSpi {
 	public void engineSetKeyEntry(String s, byte[] bytes,
 			Certificate[] certificates) throws KeyStoreException {
 		throw new UnsupportedOperationException();
-		// JGLOBUS-91 
+		// JGLOBUS-91
 	}
 
 	/**
 	 * Does the specified alias exist in this keystore?
-	 * 
+	 *
 	 * @param s
 	 *            The alias.
 	 * @return True if the alias refers to a security object in the keystore.
@@ -680,7 +680,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Get the number of security objects stored in this keystore.
-	 * 
+	 *
 	 * @return The number of security objects.
 	 */
 	@Override
@@ -690,7 +690,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Does the supplied alias refer to a certificate in this keystore?
-	 * 
+	 *
 	 * @param s
 	 *            The alias.
 	 * @return True if this store contains a certificate with the specified
@@ -703,7 +703,7 @@ public class PEMKeyStore extends KeyStoreSpi {
 
 	/**
 	 * Add a certificate to the keystore.
-	 * 
+	 *
 	 * @param alias
 	 *            The certificate alias.
 	 * @param certificate

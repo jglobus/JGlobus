@@ -32,7 +32,7 @@ import java.net.Socket;
 
 public class GssClient {
 
-    private static final String helpMsg = 
+    private static final String helpMsg =
 	"Where options are:\n" +
 	" -gss-mode mode\t\t\tmode is: 'ssl' or 'gsi' (default)\n" +
 	" -deleg-type type\t\ttype is: 'none', 'limited' (default), or 'full'\n" +
@@ -53,7 +53,7 @@ public class GssClient {
 	GetOpts opts = new GetOpts(usage, helpMsg);
 
 	int pos = opts.parse(args);
-	
+
 	if (pos + 2 > args.length) {
 	    System.err.println(usage);
 	    return;
@@ -61,7 +61,7 @@ public class GssClient {
 
 	String host = args[pos];
 	int port = Integer.parseInt(args[pos+1]);
-	
+
 	// to make sure we use right impl
 	GSSManager manager = new GlobusGSSManagerImpl();
 
@@ -73,7 +73,7 @@ public class GssClient {
 
 	    OutputStream out = s.getOutputStream();
 	    InputStream in = s.getInputStream();
-	    
+
 	    byte [] inToken = new byte[0];
 	    byte [] outToken = null;
 
@@ -90,21 +90,21 @@ public class GssClient {
 
 	    context = (ExtendedGSSContext)manager.createContext(targetName,
 								GSSConstants.MECH_OID,
-								null, 
+								null,
 								opts.lifetime);
-	    
+
 	    context.requestCredDeleg(opts.deleg);
 	    context.requestConf(opts.conf);
 	    context.requestAnonymity(opts.anonymity);
 
 	    context.setOption(GSSConstants.GSS_MODE,
-			      (opts.gsiMode) ? 
-			      GSIConstants.MODE_GSI : 
+			      (opts.gsiMode) ?
+			      GSIConstants.MODE_GSI :
 			      GSIConstants.MODE_SSL);
 
 	    if (opts.deleg) {
 		context.setOption(GSSConstants.DELEGATION_TYPE,
-				  (opts.limitedDeleg) ? 
+				  (opts.limitedDeleg) ?
 				  GSIConstants.DELEGATION_TYPE_LIMITED :
 				  GSIConstants.DELEGATION_TYPE_FULL);
 	    }
@@ -114,14 +114,14 @@ public class GssClient {
 
 	    // Loop while there still is a token to be processed
 	    while (!context.isEstablished()) {
-		outToken 
+		outToken
 		    = context.initSecContext(inToken, 0, inToken.length);
 
 		if (outToken != null) {
 		    out.write(outToken);
 		    out.flush();
 		}
-		
+
 		if (!context.isEstablished()) {
 		    inToken = SSLUtil.readSslMessage(in);
 		}
@@ -134,7 +134,7 @@ public class GssClient {
 	    System.out.println("Privacy   : " + context.getConfState());
 	    System.out.println("Anonymity : " + context.getAnonymityState());
 
-	    String msg = 
+	    String msg =
 		"POST ping/jobmanager HTTP/1.1\r\n" +
 		"Host: " + host + "\r\n" +
 		"Content-Type: application/x-globus-gram\r\n" +
@@ -146,13 +146,13 @@ public class GssClient {
 
 	    out.write(outToken);
 	    out.flush();
-	    
+
 	    inToken = SSLUtil.readSslMessage(in);
 
 	    outToken = context.unwrap(inToken, 0, inToken.length, null);
 
 	    System.out.println(new String(outToken));
-    
+
 	} catch (Exception e) {
 	    e.printStackTrace();
 	} finally {

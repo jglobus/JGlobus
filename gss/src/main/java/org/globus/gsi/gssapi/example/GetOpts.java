@@ -29,7 +29,7 @@ public class GetOpts {
 
     protected String usage;
     protected String helpMsg;
-    
+
     public GetOpts(String usage, String helpMsg) {
 	this.usage = usage;
 	this.helpMsg = helpMsg;

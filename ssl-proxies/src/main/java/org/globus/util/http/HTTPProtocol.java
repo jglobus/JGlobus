@@ -15,7 +15,7 @@
 package org.globus.util.http;
 
 public class HTTPProtocol {
-    
+
     public static final String CRLF             = "\r\n";
     public static final String HTTP_VERSION     = "HTTP/1.1";
     public static final String METHOD           = "POST ";
@@ -27,7 +27,7 @@ public class HTTPProtocol {
     public static final String CONNECTION       = "Connection: ";
     public static final String LOCATION         = "Location: ";
     public static final String CHUNKED          = "Transfer-Encoding: chunked";
-    
+
     public static final String CONNECTION_CLOSE = "Connection: close\r\n";
     public static final String CHUNKING         = CHUNKED + CRLF;
 
@@ -37,7 +37,7 @@ public class HTTPProtocol {
 					     String hostname,
 					     String application,
 					     StringBuffer msg) {
-	
+
 	StringBuffer head = new StringBuffer();
 	head.append("POST ").append(service).append(" ").append(HTTP_VERSION).append(CRLF);
 	head.append(HOST).append(hostname).append(CRLF);
@@ -45,7 +45,7 @@ public class HTTPProtocol {
 	head.append(CONTENT_LENGTH).append(String.valueOf(msg.length())).append(CRLF);
 	head.append(CRLF);
 	head.append(msg);
-	
+
 	return head.toString();
     }
 
@@ -53,27 +53,27 @@ public class HTTPProtocol {
     public static String createGETHeader(String path,
 					 String host,
 					 String user_agent) {
-	
+
 	StringBuffer head = new StringBuffer();
 	head.append("GET " + path + " " + HTTP_VERSION + CRLF);
 	head.append(HOST + host + CRLF);
 	head.append(CONNECTION_CLOSE);
 	head.append(USER_AGENT + user_agent + CRLF);
 	head.append(CRLF);
-	
+
 	return head.toString();
     }
 
     /* Used for GASS PUT */
-    public static String createPUTHeader(String path, 
-					 String host, 
+    public static String createPUTHeader(String path,
+					 String host,
 					 String user_agent,
-					 String type, 
-					 long length, 
+					 String type,
+					 long length,
 					 boolean append) {
-	
+
 	StringBuffer head = new StringBuffer();
-	
+
 	if (append) {
 	    head.append("POST ");
 	} else {
@@ -90,11 +90,11 @@ public class HTTPProtocol {
 	if (length == -1) {
 	    head.append(CHUNKING);
 	} else {
-	    head.append(CONTENT_LENGTH + length + CRLF); 
+	    head.append(CONTENT_LENGTH + length + CRLF);
 	}
-	
+
 	head.append(CRLF);
-	
+
 	return head.toString();
     }
 
@@ -107,7 +107,7 @@ public class HTTPProtocol {
 
     public static String getErrorReply(int error, String message) {
 	StringBuffer head = new StringBuffer();
-	
+
 	head.append(HTTP_VERSION)
 	    .append(" ")
 	    .append(String.valueOf(error))
@@ -116,10 +116,10 @@ public class HTTPProtocol {
 	    .append(CRLF)
 	    .append(CONNECTION_CLOSE)
 	    .append(CRLF);
-	
+
 	return head.toString();
     }
-    
+
     public static String getBadRequestErrorReply() {
 	return getErrorReply(400, "BAD REQUEST");
     }
@@ -135,14 +135,14 @@ public class HTTPProtocol {
     public static String getForbiddenErrorReply() {
 	return getErrorReply(403, "FORBIDDEN");
     }
-    
+
     public static String getOKReply(String application) {
 	return getOKReply(application, null);
     }
 
     public static String getOKReply(String application, String msg) {
 	StringBuffer head = new StringBuffer();
-	
+
 	head.append(HTTP_VERSION)
 	    .append(" 200 OK")
 	    .append(CRLF)
@@ -156,13 +156,13 @@ public class HTTPProtocol {
 	} else {
 	    head.append(msg.length());
 	}
-	
+
 	head.append(CRLF).append(CRLF);
-	
+
 	if (msg != null) {
 	    head.append(msg);
 	}
-	
+
 	return head.toString();
     }
 }

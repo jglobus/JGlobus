@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ public class InputStreamDataSink implements DataSink {
 	this.in = new DataInputStream();
     }
 
-    public void write(Buffer buffer) 
+    public void write(Buffer buffer)
 	throws IOException {
 	if (isClosed()) {
 	    throw new EOFException();
@@ -51,7 +51,7 @@ public class InputStreamDataSink implements DataSink {
 	}
     }
 
-    public void close() 
+    public void close()
 	throws IOException {
 	// will let get run until it returns null
 	// and will throe EOFException on next put call
@@ -78,11 +78,11 @@ public class InputStreamDataSink implements DataSink {
 	protected int index;
 	protected int length;
 
-	public synchronized int read(byte [] data) 
+	public synchronized int read(byte [] data)
 	    throws IOException {
 	    return read(data, 0, data.length);
 	}
-	
+
 	public synchronized int read(byte[] data, int off, int len)
 	    throws IOException {
 	    if (!ensureData()) {
@@ -93,7 +93,7 @@ public class InputStreamDataSink implements DataSink {
 	    index += max;
 	    return max;
 	}
-	
+
 	public synchronized int read()
 	    throws IOException {
 	    if (!ensureData()) {
@@ -101,13 +101,13 @@ public class InputStreamDataSink implements DataSink {
 	    }
 	    return buff[index++] & 0xff;
 	}
-	
+
 	public void close()
 	    throws IOException {
 	    buffers.interruptBoth();
 	}
 
-	protected synchronized boolean ensureData() 
+	protected synchronized boolean ensureData()
 	    throws IOException {
 	    if (buffers.isGetInterrupted()) {
 		return false;
@@ -128,6 +128,6 @@ public class InputStreamDataSink implements DataSink {
 	    }
 	    return true;
 	}
-	
+
     }
 }

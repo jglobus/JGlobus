@@ -20,7 +20,7 @@ public class GlobusSSLSocket extends SSLSocket {
 	public GlobusSSLSocket(SSLSocket socket){
 		this.socket = socket;
 	}
-	
+
 	public void addHandshakeCompletedListener(HandshakeCompletedListener listener) {
 		socket.addHandshakeCompletedListener(listener);
 	}
@@ -268,8 +268,8 @@ public class GlobusSSLSocket extends SSLSocket {
 	public void startHandshake() throws IOException {
 		socket.startHandshake();
 	}
-	
-	
-		
-	
+
+
+
+
 }

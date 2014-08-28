@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,11 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
-   Represents GridFTP restart marker, which contains unordered set 
-   of byte ranges representing transferred data. 
-   The ranges are preserved exactly as received 
-   from the server, which may not be very useful. 
-   For additional processing on byte ranges, 
+   Represents GridFTP restart marker, which contains unordered set
+   of byte ranges representing transferred data.
+   The ranges are preserved exactly as received
+   from the server, which may not be very useful.
+   For additional processing on byte ranges,
    use ByteRangeList.
    Typical usage:
    <pre>
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class GridFTPRestartMarker implements Marker {
 
-    private static Log logger = 
+    private static Log logger =
         LogFactory.getLog(GridFTPRestartMarker.class.getName());
 
     Vector vector;
@@ -58,7 +58,7 @@ public class GridFTPRestartMarker implements Marker {
 
 	vector = new Vector();
 	StringTokenizer tokens = new StringTokenizer(msg);
-	
+
 	if (! tokens.hasMoreTokens()) {
 	    badMsg("message empty", msg);
 	}
@@ -98,7 +98,7 @@ public class GridFTPRestartMarker implements Marker {
 	    } catch(IllegalArgumentException iae) {
 		// to < from
 		badMsg("range beginning > range end", msg);
-	    }   
+	    }
 	}
 	//vector now contains all ranges
 	if (vector.size() == 0 ) {
@@ -124,5 +124,5 @@ public class GridFTPRestartMarker implements Marker {
     public Vector toVector() {
 	return vector;
     };
-    
+
 }

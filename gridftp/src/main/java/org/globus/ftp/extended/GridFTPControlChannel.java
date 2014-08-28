@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,7 +49,7 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class GridFTPControlChannel extends FTPControlChannel {
 
-    private static Log logger = 
+    private static Log logger =
         LogFactory.getLog(GridFTPControlChannel.class.getName());
 
     protected static final int TIMEOUT = 120000;
@@ -57,11 +57,11 @@ public class GridFTPControlChannel extends FTPControlChannel {
     //maybe this is useless
     protected GSSCredential credentials = null;
 
-    protected Authorization authorization = 
+    protected Authorization authorization =
         HostAuthorization.getInstance();
 
     protected int protection = GridFTPSession.PROTECTION_PRIVATE;
-    
+
     public GridFTPControlChannel(String host, int port) {
         super(host,port);
     }
@@ -73,7 +73,7 @@ public class GridFTPControlChannel extends FTPControlChannel {
     /**
      * Sets data channel protection level.
      *
-     * @param protection should be 
+     * @param protection should be
      *             {@link GridFTPSession#PROTECTION_CLEAR CLEAR},
      *             {@link GridFTPSession#PROTECTION_SAFE SAFE}, or
      *             {@link GridFTPSession#PROTECTION_PRIVATE PRIVATE}, or
@@ -89,18 +89,18 @@ public class GridFTPControlChannel extends FTPControlChannel {
         case GridFTPSession.PROTECTION_CONFIDENTIAL:
         case GridFTPSession.PROTECTION_PRIVATE:
             break;
-        default: 
+        default:
             throw new IllegalArgumentException("Bad protection: " +
                                                protection);
         }
-        
+
         this.protection = protection;
     }
-    
+
     /**
      * Returns control channel protection level.
-     * 
-     * @return control channel protection level: 
+     *
+     * @return control channel protection level:
      *             {@link GridFTPSession#PROTECTION_CLEAR CLEAR},
      *             {@link GridFTPSession#PROTECTION_SAFE SAFE}, or
      *             {@link GridFTPSession#PROTECTION_PRIVATE PRIVATE}, or
@@ -121,7 +121,7 @@ public class GridFTPControlChannel extends FTPControlChannel {
 
     /**
      * Returns authorization method for the control channel.
-     * 
+     *
      * @return authorization method performed on the control channel.
      */
     public Authorization getAuthorization() {
@@ -152,9 +152,9 @@ public class GridFTPControlChannel extends FTPControlChannel {
     public void authenticate(GSSCredential credential,
                              String username)
         throws IOException, ServerException {
-        
+
         setCredentials( credential );
-         
+
         write(new Command("AUTH", "GSSAPI"));
 
         Reply reply0 = null;
@@ -169,7 +169,7 @@ public class GridFTPControlChannel extends FTPControlChannel {
         if (! Reply.isPositiveIntermediate(reply0)) {
            close();
            throw ServerException.embedUnexpectedReplyCodeException(
-                                  new UnexpectedReplyCodeException(reply0),   
+                                  new UnexpectedReplyCodeException(reply0),
                                   "Server refused GSSAPI authentication.");
         }
 
@@ -195,19 +195,19 @@ public class GridFTPControlChannel extends FTPControlChannel {
                                             credential,
                                             GSSContext.DEFAULT_LIFETIME);
             context.requestCredDeleg(true);
-            context.requestConf(this.protection == 
+            context.requestConf(this.protection ==
                                 GridFTPSession.PROTECTION_PRIVATE);
-            
+
             gssout = new GridFTPOutputStream(ftpOut, context);
             gssin = new GridFTPInputStream(rawFtpIn, context);
 
             byte [] inToken = new byte[0];
             byte [] outToken = null;
-            
+
             while( !context.isEstablished() ) {
-                
+
                 outToken = context.initSecContext(inToken, 0, inToken.length);
-                
+
                 if (outToken != null) {
                     gssout.writeHandshakeToken(outToken);
                 }
@@ -241,21 +241,21 @@ public class GridFTPControlChannel extends FTPControlChannel {
                                       "Received faulty reply to authentication");
 
         }
-        
+
         if ( ! Reply.isPositiveCompletion(reply1)) {
             close();
             throw ServerException.embedUnexpectedReplyCodeException(
                                     new UnexpectedReplyCodeException(reply1),
                                     "GSSAPI authentication failed.");
         }
-        
+
         // enter secure mode - send MIC commands
         setInputStream(gssin);
         setOutputStream(gssout);
         //from now on, the commands and replies
         //are protected and pass through gsi wrapped socket
 
-        write(new Command("USER", 
+        write(new Command("USER",
                           (username == null) ? ":globus-mapping:" : username));
 
         Reply reply2 = null;

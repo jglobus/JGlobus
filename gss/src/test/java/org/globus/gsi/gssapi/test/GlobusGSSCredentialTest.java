@@ -55,7 +55,7 @@ public class GlobusGSSCredentialTest extends TestCase {
 
     private static final X500Principal SELF_SIGNED_DN =
                 new X500Principal("DC=self-signed,DC=example,DC=org");
-    
+
     private ExtendedGSSManager manager;
     private Log logger = LogFactory.getLog(GlobusGSSCredentialTest.class);
     private X509V3CertificateGenerator certificateGenerator;
@@ -76,7 +76,7 @@ public class GlobusGSSCredentialTest extends TestCase {
 
     public void testImportBadFile() throws Exception {
 	String handle = "PROXY = /a/b/c";
-	
+
 	try {
 	    manager.createCredential(handle.getBytes(),
 				     ExtendedGSSCredential.IMPEXP_MECH_SPECIFIC,
@@ -87,12 +87,12 @@ public class GlobusGSSCredentialTest extends TestCase {
 	} catch (GSSException e) {
 	    // TODO: check for specific major/minor code
 	}
-	
+
     }
 
     public void testImportBadOption() throws Exception {
 	String handle = "PROXY = /a/b/c";
-	
+
 	try {
 	    manager.createCredential(handle.getBytes(),
 				     3,
@@ -107,21 +107,21 @@ public class GlobusGSSCredentialTest extends TestCase {
 		fail("Unexpected exception");
 	    }
 	}
-	
+
     }
 
     public void testImportExportOpaque() throws Exception {
-	
-	GlobusGSSCredentialImpl cred = 
+
+	GlobusGSSCredentialImpl cred =
 	    (GlobusGSSCredentialImpl)manager.createCredential(GSSCredential.ACCEPT_ONLY);
 	assertTrue(cred != null);
-	
+
 	byte [] data = cred.export(ExtendedGSSCredential.IMPEXP_OPAQUE);
 	assertTrue(data != null);
 
 	logger.debug(new String(data));
-	
-	GlobusGSSCredentialImpl cred2 = 
+
+	GlobusGSSCredentialImpl cred2 =
 	    (GlobusGSSCredentialImpl)manager.createCredential(data,
 							      ExtendedGSSCredential.IMPEXP_OPAQUE,
 							      GSSCredential.DEFAULT_LIFETIME,
@@ -130,20 +130,20 @@ public class GlobusGSSCredentialTest extends TestCase {
 	assertTrue(cred2 != null);
 	assertEquals(cred.getPrivateKey(), cred2.getPrivateKey());
     }
-    
+
     public void testImportExportMechSpecific() throws Exception {
-	
-	GlobusGSSCredentialImpl cred = 
+
+	GlobusGSSCredentialImpl cred =
 	    (GlobusGSSCredentialImpl)manager.createCredential(GSSCredential.ACCEPT_ONLY);
 	assertTrue(cred != null);
-	
+
 	byte [] data = cred.export(ExtendedGSSCredential.IMPEXP_MECH_SPECIFIC);
 	assertTrue(data != null);
 
 	String handle = new String(data);
 	logger.debug(handle);
-	
-	GlobusGSSCredentialImpl cred2 = 
+
+	GlobusGSSCredentialImpl cred2 =
 	    (GlobusGSSCredentialImpl)manager.createCredential(data,
 							      ExtendedGSSCredential.IMPEXP_MECH_SPECIFIC,
 							      GSSCredential.DEFAULT_LIFETIME,
@@ -164,7 +164,7 @@ public class GlobusGSSCredentialTest extends TestCase {
 
 	Object tmp = null;
 	X509Certificate[] chain = null;
-	
+
 	tmp = cred.inquireByOid(GSSConstants.X509_CERT_CHAIN);
 	assertTrue(tmp != null);
 	assertTrue(tmp instanceof X509Certificate[]);
@@ -203,20 +203,20 @@ public class GlobusGSSCredentialTest extends TestCase {
         assertThat(cred1, not(equalTo(cred2)));
         assertThat(cred2, not(equalTo(cred1)));
     }
-    
+
     public void testEqualsForEqualX509Credential() throws Exception {
         X509Credential x509 = buildSelfSigned();
-        
+
         GSSCredential cred1 =
                 buildCredential(x509, GSSCredential.DEFAULT_LIFETIME);
-        
+
         GSSCredential cred2 =
                 buildCredential(x509, GSSCredential.DEFAULT_LIFETIME);
-        
+
         assertThat(cred1, equalTo(cred2));
         assertThat(cred2, equalTo(cred1));
     }
-    
+
     public void testEqualsForDifferentX509Credentials() throws Exception {
         GSSCredential cred1 =
                 buildSelfSigned(GSSCredential.DEFAULT_LIFETIME);
@@ -226,14 +226,14 @@ public class GlobusGSSCredentialTest extends TestCase {
         assertThat(cred1, not(equalTo(cred2)));
         assertThat(cred2, not(equalTo(cred1)));
     }
-    
+
     private GSSCredential buildSelfSigned(int usage) throws GeneralSecurityException, GSSException {
         return buildCredential(buildSelfSigned(), usage);
     }
 
     private GSSCredential buildCredential(X509Credential credential, int usage) throws GSSException {
         X509Credential.setDefaultCredential(credential);
-        return manager.createCredential(usage);        
+        return manager.createCredential(usage);
     }
 
     private X509Credential buildSelfSigned() throws GeneralSecurityException {

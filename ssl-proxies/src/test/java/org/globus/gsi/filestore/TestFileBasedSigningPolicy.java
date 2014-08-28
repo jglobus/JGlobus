@@ -37,7 +37,7 @@ public class TestFileBasedSigningPolicy {
     @Before
     public void setUp() throws Exception {
 
-        // JGLOBUS-103 
+        // JGLOBUS-103
         this.testPolicy1 =
                 new FileSetupUtil(
                         "certificateUtilTest/validPolicy1.signing_policy");

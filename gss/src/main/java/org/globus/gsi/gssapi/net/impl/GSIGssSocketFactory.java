@@ -22,19 +22,19 @@ import org.ietf.jgss.GSSContext;
 import org.globus.gsi.gssapi.net.GssSocketFactory;
 
 public class GSIGssSocketFactory extends GssSocketFactory {
-  
-    public Socket createSocket(Socket s, 
+
+    public Socket createSocket(Socket s,
 			       String host,
-			       int port, 
+			       int port,
 			       GSSContext context) {
 	return new GSIGssSocket(s, context);
     }
 
-    public Socket createSocket(String host, 
-			       int port, 
+    public Socket createSocket(String host,
+			       int port,
 			       GSSContext context)
 	throws IOException {
 	return new GSIGssSocket(host, port, context);
     }
-    
+
 }

@@ -15,13 +15,13 @@
 package org.globus.util;
 
 public class CircularBuffer {
-	
+
     protected Object[] buf;
     protected int in = 0;
     protected int out= 0;
     protected int count= 0;
     protected int size;
-    
+
     protected boolean interruptPut = false;
     protected boolean interruptGet = false;
     protected boolean closePut = false;
@@ -30,12 +30,12 @@ public class CircularBuffer {
 	this.size = size;
 	buf = new Object[size];
     }
-    
+
     public synchronized boolean isEmpty() {
 	return (this.count == 0);
     }
 
-    public synchronized boolean put(Object o) 
+    public synchronized boolean put(Object o)
 	throws InterruptedException {
 	if (this.interruptPut) {
 	    return false;
@@ -52,8 +52,8 @@ public class CircularBuffer {
 	notify();
 	return true;
     }
-    
-    public synchronized Object get() 
+
+    public synchronized Object get()
 	throws InterruptedException {
 	if (this.interruptGet) {
 	    return null;
@@ -74,7 +74,7 @@ public class CircularBuffer {
 	notify();
 	return (o);
     }
-    
+
     public synchronized void closePut() {
 	this.closePut = true;
 	notifyAll();
@@ -89,7 +89,7 @@ public class CircularBuffer {
 	this.interruptPut = true;
 	notifyAll();
     }
-    
+
     public synchronized void interruptGet() {
 	this.interruptGet = true;
 	notifyAll();
@@ -107,5 +107,5 @@ public class CircularBuffer {
     public synchronized boolean isPutInterrupted() {
 	return this.interruptPut;
     }
-    
+
 }

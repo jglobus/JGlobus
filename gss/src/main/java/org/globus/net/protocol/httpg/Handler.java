@@ -24,14 +24,14 @@ public class Handler extends URLStreamHandler {
     private static final String CLASS =
         "org.globus.net.GSIHttpURLConnection";
 
-    private static final Class[] PARAMS = 
+    private static final Class[] PARAMS =
         new Class[] { URL.class };
-        
+
     private static Constructor constructor = null;
 
     private static synchronized Constructor initConstructor() {
         if (constructor == null) {
-            ClassLoader loader = 
+            ClassLoader loader =
                 Thread.currentThread().getContextClassLoader();
             try {
                 Class clazz = Class.forName(CLASS, true, loader);
@@ -43,7 +43,7 @@ public class Handler extends URLStreamHandler {
         }
         return constructor;
     }
-    
+
     protected URLConnection openConnection(URL u) {
         if (constructor == null) {
             initConstructor();
@@ -55,7 +55,7 @@ public class Handler extends URLStreamHandler {
                                        e.getMessage());
         }
     }
-    
+
     protected int getDefaultPort() {
 	return 8443;
     }

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,12 +51,12 @@ public class MarkerTest extends TestCase {
 
 	public ByteRangeList list;
 	MarkerTest enclosing;
-	
+
 	public MarkerListenerImpl() {
 	    list = new ByteRangeList();
 	    enclosing = MarkerTest.this;
 	}
-	
+
 	public void markerArrived(Marker m) {
 	    if (m instanceof GridFTPRestartMarker) {
 		restartMarkerArrived((GridFTPRestartMarker) m);
@@ -66,13 +66,13 @@ public class MarkerTest extends TestCase {
 		enclosing.fail("Received unsupported marker type");
 	    }
 	};
-	
+
 	private void restartMarkerArrived(GridFTPRestartMarker marker) {
 	    logger.info("--> restart marker arrived:");
 	    list.merge(marker.toVector());
 	    logger.info("Current transfer state: " + list.toFtpCmdArgument());
 	}
-	
+
 	private void perfMarkerArrived(PerfMarker marker) {
 	    logger.info("--> perf marker arrived");
 	    // time stamp
@@ -88,7 +88,7 @@ public class MarkerTest extends TestCase {
 	    }else {
 		logger.info("Stripe index: not present");
 	    }
-	    
+
 	    // stripe bytes transferred
 	    if (marker.hasStripeBytesTransferred()) {
 		try {
@@ -100,11 +100,11 @@ public class MarkerTest extends TestCase {
 	    }else {
 		logger.info("Stripe Bytes Transferred: not present");
 	    }
-	    
+
 	    // total stripe count
 	    if (marker.hasTotalStripeCount()) {
 		try {
-		    logger.info("Total stripe count = " 
+		    logger.info("Total stripe count = "
 				 + marker.getTotalStripeCount());
 		} catch (PerfMarkerException e) {
 		    enclosing.fail(e.toString());
@@ -112,11 +112,11 @@ public class MarkerTest extends TestCase {
 	    }else {
 		logger.info("Total stripe count: not present");
 	    }
-	}//PerfMarkerArrived   
+	}//PerfMarkerArrived
     }//class MarkerListenerImpl
-    
 
-    private static Log logger = 
+
+    private static Log logger =
 	LogFactory.getLog(MarkerTest.class.getName());
 
     public MarkerTest(String name) {
@@ -124,22 +124,22 @@ public class MarkerTest extends TestCase {
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
 	return new TestSuite(MarkerTest.class);
     }
-    
-    public void testModeEMarkers() 
+
+    public void testModeEMarkers()
 	   throws Exception {
 
 	MarkerListenerImpl listener = new MarkerListenerImpl();
-	
+
         GridFTPClient source = null;
         GridFTPClient dest = null;
 	try {
-	    source = new GridFTPClient(TestEnv.serverAHost, 
+	    source = new GridFTPClient(TestEnv.serverAHost,
                                        TestEnv.serverAPort);
 	    source.setAuthorization(TestEnv.getAuthorization(TestEnv.serverASubject));
 	    String sourceFile = TestEnv.serverADir + "/" + TestEnv.serverALargeFile;
@@ -148,7 +148,7 @@ public class MarkerTest extends TestCase {
                                      TestEnv.serverBPort);
 	    dest.setAuthorization(TestEnv.getAuthorization(TestEnv.serverBSubject));
 	    String destFile = TestEnv.serverBDir + "/" + TestEnv.serverBFile;
-	    
+
 	    setParams(source, null);
 	    setParams(dest, null);
 
@@ -158,8 +158,8 @@ public class MarkerTest extends TestCase {
 	    source.setStripedActive(hpl);
 
 	    source.extendedTransfer(sourceFile, dest, destFile, listener);
-       
-	    logger.info("--> most recent byte range list: " 
+
+	    logger.info("--> most recent byte range list: "
 			+ listener.list.toFtpCmdArgument());
 
 	} catch (Exception e) {
@@ -167,22 +167,22 @@ public class MarkerTest extends TestCase {
 	    fail(e.toString());
 	} finally {
             if (source != null) {
-                try { 
-                    source.close(); 
+                try {
+                    source.close();
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
             if (dest != null) {
-                try { 
-                    dest.close(); 
+                try {
+                    dest.close();
                 } catch (Exception e) {
                     logger.error("", e);
                 }
             }
         }
     }
-    
+
     private void setParams(GridFTPClient client, GSSCredential cred)
 	throws Exception{
 	client.authenticate(cred);
@@ -191,5 +191,5 @@ public class MarkerTest extends TestCase {
 	client.setMode(GridFTPSession.MODE_EBLOCK);
     }
 
-} 
+}
 

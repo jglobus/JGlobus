@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 public abstract class GssOutputStream extends OutputStream {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(GssOutputStream.class.getName());
 
     protected OutputStream out;
@@ -62,20 +62,20 @@ public abstract class GssOutputStream extends OutputStream {
 	if (this.index == this.buff.length) {
 	    flushData();
 	}
-	
+
         buff[index++] = (byte)b;
 
         if (this.autoFlush) {
             flushData();
         }
     }
-    
+
     public void write(byte[] data)
 	throws IOException {
 	write(data, 0, data.length);
     }
-    
-    public void write(byte [] data, int off, int len) 
+
+    public void write(byte [] data, int off, int len)
 	throws IOException {
 	int max;
 	while (len > 0) {
@@ -106,7 +106,7 @@ public abstract class GssOutputStream extends OutputStream {
 	}
     }
 
-    public abstract void flush() 
+    public abstract void flush()
 	throws IOException;
 
     private void flushData()
@@ -114,7 +114,7 @@ public abstract class GssOutputStream extends OutputStream {
 	flush();
 	this.index = 0;
     }
-    
+
     public void close()
 	throws IOException {
 	logger.debug("close");

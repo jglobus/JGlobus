@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class UrlCopy implements Runnable {
 
-    private static Log logger = 
+    private static Log logger =
         LogFactory.getLog(UrlCopy.class.getName());
 
     /** maximum buffer size to read or write when putting and getting files */
@@ -77,12 +77,12 @@ public class UrlCopy implements Runnable {
     protected boolean canceled         = false;
     protected boolean thirdParty       = true;
     protected List listeners           = null;
-    
+
     protected long sourceOffset      = 0;
     protected long destinationOffset = 0;
     protected long sourceLength      = Long.MAX_VALUE;
     protected int  tcpBufferSize     = 0;
-    
+
     protected boolean disableAllo    = false;
 
 
@@ -96,7 +96,7 @@ public class UrlCopy implements Runnable {
 
     /**
      * Sets credentials to use for both sides.
-     * 
+     *
      * @param credentials user credentials
      */
     public void setCredentials(GSSCredential credentials) {
@@ -141,9 +141,9 @@ public class UrlCopy implements Runnable {
     }
 
     /**
-     * Returns credentials used for authenticating 
+     * Returns credentials used for authenticating
      * the source side for the url copy.
-     * If no source credentials are set, the default 
+     * If no source credentials are set, the default
      * user credentials will used.
      *
      * @return source credentials.
@@ -165,7 +165,7 @@ public class UrlCopy implements Runnable {
     }
 
     /**
-     * Returns authorization type for 
+     * Returns authorization type for
      * the source side for the url copy.
      * If no authorization type is set, the default
      * authorization will be performed for a given protocol.
@@ -177,7 +177,7 @@ public class UrlCopy implements Runnable {
     }
 
     /**
-     * Returns authorization type for 
+     * Returns authorization type for
      * the destination side for the url copy.
      * If no authorization type is set, the default
      * authorization will be performed for a given protocol.
@@ -187,7 +187,7 @@ public class UrlCopy implements Runnable {
     public Authorization getDestinationAuthorization() {
         return this.dstAuth;
     }
-    
+
     /**
      * Adds url copy listener.
      *
@@ -197,7 +197,7 @@ public class UrlCopy implements Runnable {
         if (listeners == null) listeners = new LinkedList();
         listeners.add(listener);
     }
-    
+
     /**
      * Remove url copy listener
      *
@@ -207,7 +207,7 @@ public class UrlCopy implements Runnable {
         if (listeners == null) return;
         listeners.remove(listener);
     }
-    
+
     /**
      * Sets buffer size for transfering data.
      * It does not set the TCP buffers.
@@ -217,7 +217,7 @@ public class UrlCopy implements Runnable {
     public void setBufferSize(int size) {
         bufferSize = size;
     }
-    
+
     /**
      * Returns buffer size used for transfering
      * data.
@@ -239,7 +239,7 @@ public class UrlCopy implements Runnable {
         }
         this.tcpBufferSize = size;
     }
-    
+
     /**
      * Returns TCP buffer size used for transfers
      * data.
@@ -253,13 +253,13 @@ public class UrlCopy implements Runnable {
     /**
      * Enables/disables append mode.
      *
-     * @param appendMode if true, destination file 
+     * @param appendMode if true, destination file
      *                   will be appended.
      */
     public void setAppendMode(boolean appendMode) {
         this.appendMode = appendMode;
     }
-    
+
     /**
      * Checks if append mode is enabled.
      *
@@ -269,83 +269,83 @@ public class UrlCopy implements Runnable {
     public boolean isAppendMode() {
         return appendMode;
     }
-    
-       
+
+
     /**
      * Gets the offset in the destination file from which data starts
      * to be written
-     * 
+     *
      * @return a value indicating the offset in bytes
      */
     public long getDestinationOffset() {
         return this.destinationOffset;
     }
-    
+
     /**
      * Sets the offset in the destination file from which data starts
      * to be written. The default offset is 0 (the beginning of the file)
-     * 
+     *
      * @param destinationOffset the offset in bytes
      */
     public void setDestinationOffset(long destinationOffset) {
         this.destinationOffset = destinationOffset;
     }
-    
+
     /**
      * Gets the maximum data size that will be transfered.
-     * 
+     *
      * @return the size in bytes
      */
     public long getSourceLength() {
         return this.sourceLength;
     }
-    
+
     /**
-     * Allows a partial transfer by setting the maximum number of bytes 
-     * that will be transfered. By default the entire source file is 
+     * Allows a partial transfer by setting the maximum number of bytes
+     * that will be transfered. By default the entire source file is
      * transfered.
-     * 
+     *
      * @param sourceLength the size of the transfer in bytes
      */
     public void setSourceFileLength(long sourceLength) {
         this.sourceLength = sourceLength;
     }
-    
+
     /**
      * Gets the offset in the source file from which data starts
      * to be read
-     * 
+     *
      * @return a value indicating the offset in bytes
      */
     public long getSourceOffset() {
         return this.sourceOffset;
     }
-    
+
     /**
      * Sets the offset in the source file from which data starts
      * to be read. The default offset is 0 (the beginning of the file)
-     * 
+     *
      * @param sourceOffset the offset in bytes
      */
     public void setSourceFileOffset(long sourceOffset) {
         this.sourceOffset = sourceOffset;
-    }    
-    
-    private void checkUrl(GlobusURL url) 
+    }
+
+    private void checkUrl(GlobusURL url)
         throws UrlCopyException {
         String urlPath = url.getPath();
         if (urlPath == null || urlPath.length() == 0) {
-            throw new UrlCopyException("The '" + url.getURL() + 
+            throw new UrlCopyException("The '" + url.getURL() +
                                        "' url does not specify the file location.");
         }
     }
-    
+
     /**
      * Sets source url.
      *
      * @param source source url.
      */
-    public void setSourceUrl(GlobusURL source) 
+    public void setSourceUrl(GlobusURL source)
         throws UrlCopyException {
         if (source == null) {
             throw new IllegalArgumentException("Source url cannot be null");
@@ -353,7 +353,7 @@ public class UrlCopy implements Runnable {
         checkUrl(source);
         srcUrl = source;
     }
-    
+
     /**
      * Returns source url.
      *
@@ -362,13 +362,13 @@ public class UrlCopy implements Runnable {
     public GlobusURL getSourceUrl() {
         return srcUrl;
     }
-    
+
     /**
      * Sets destination url.
      *
      * @param dest destination url
      */
-    public void setDestinationUrl(GlobusURL dest) 
+    public void setDestinationUrl(GlobusURL dest)
         throws UrlCopyException {
         if (dest == null) {
             throw new IllegalArgumentException("Desitination url cannot be null");
@@ -376,7 +376,7 @@ public class UrlCopy implements Runnable {
         checkUrl(dest);
         dstUrl = dest;
     }
-    
+
     /**
      * Returns destination url.
      *
@@ -394,15 +394,15 @@ public class UrlCopy implements Runnable {
     public void setUseThirdPartyCopy(boolean thirdParty) {
         this.thirdParty  = thirdParty;
     }
-    
+
     /**
-     * Can be used to query whether the use of the ALLO command 
-     * with GridFTP uploads is disabled. 
+     * Can be used to query whether the use of the ALLO command
+     * with GridFTP uploads is disabled.
      */
     public boolean getDisableAllo() {
         return disableAllo;
     }
-    
+
     /**
      * Allows disabling of the use of ALLO with GridFTP
      * uploads
@@ -411,7 +411,7 @@ public class UrlCopy implements Runnable {
     public void setDisableAllo(boolean disableAllo) {
         this.disableAllo = disableAllo;
     }
-    
+
 
     /**
      * Cancels the transfer in progress. If no transfer
@@ -420,7 +420,7 @@ public class UrlCopy implements Runnable {
     public void cancel() {
         canceled = true;
     }
-  
+
     /**
      * Checks if the transfer was canceled.
      *
@@ -429,17 +429,17 @@ public class UrlCopy implements Runnable {
     public boolean isCanceled() {
         return canceled;
     }
-    
+
     /**
      * This method is an implementation of the {@link Runnable} interface
      * and can be used to perform the copy in a separate thread.
      * <p>
-     * This method will perform the transfer and signal completion and 
-     * errors through the {@link UrlCopyListener#transferCompleted()} and 
+     * This method will perform the transfer and signal completion and
+     * errors through the {@link UrlCopyListener#transferCompleted()} and
      * {@link UrlCopyListener#transferError(Exception)} of any registered listeners
-     * (see {@link #addUrlCopyListener(UrlCopyListener)}). 
-     *  
-     */     
+     * (see {@link #addUrlCopyListener(UrlCopyListener)}).
+     *
+     */
     public void run() {
         try {
             copy();
@@ -459,7 +459,7 @@ public class UrlCopy implements Runnable {
             }
         }
     }
-    
+
     /**
      * Performs the copy function.
      * Source and destination urls must be specified otherwise
@@ -471,51 +471,51 @@ public class UrlCopy implements Runnable {
      * This method does not cause the {@link UrlCopyListener#transferCompleted()}
      * and {@link UrlCopyListener#transferError(Exception)} to be called. If you want
      * completion/failures to be signaled asynchronously, either call the
-     * {@link #run} method or wrap this object in a {@link Thread}. 
-     * 
+     * {@link #run} method or wrap this object in a {@link Thread}.
+     *
      * @throws UrlCopyException in case of an error.
      */
-    public void copy() 
+    public void copy()
         throws UrlCopyException {
-        
+
         if (srcUrl == null) {
             throw new UrlCopyException("Source url is not specified");
         }
-        
+
         if (dstUrl == null) {
             throw new UrlCopyException("Destination url is not specified");
         }
-         
+
         String fromP  = srcUrl.getProtocol();
         String toP    = dstUrl.getProtocol();
-        
+
         if (thirdParty && fromP.endsWith("ftp") && toP.endsWith("ftp")) {
             thirdPartyTransfer();
             return;
         }
-         
+
         GlobusInputStream in   = null;
         GlobusOutputStream out = null;
         boolean rs             = false;
-        
+
         try {
             in = getInputStream();
-           
+
             long size = in.getSize();
-           
+
             if (size == -1) {
                 logger.debug("Source size: unknown");
             } else {
                 logger.debug("Source size: " + size);
             }
-           
+
             out = getOutputStream(size);
-           
+
             rs = transfer(size, in, out);
-           
+
             in.close();
             out.close();
-           
+
         } catch(Exception e) {
             if (out != null) out.abort();
             if (in  != null) in.abort();
@@ -526,18 +526,18 @@ public class UrlCopy implements Runnable {
             throw new UrlCopyException("Transfer Aborted");
         }
     }
-    
-    
+
+
     /**
      * Returns input stream based on the source url
      */
-    protected GlobusInputStream getInputStream() 
+    protected GlobusInputStream getInputStream()
         throws Exception {
-        
+
         GlobusInputStream in = null;
         String fromP         = srcUrl.getProtocol();
         String fromFile      = srcUrl.getPath();
-        
+
         if (fromP.equalsIgnoreCase("file")) {
             fromFile = URLDecoder.decode(fromFile);
             in = new GlobusFileInputStream(fromFile);
@@ -561,13 +561,13 @@ public class UrlCopy implements Runnable {
                                         srcUrl.getPort(),
                                         fromFile,
                                         getDCAU());
-            
+
         } else if (fromP.equalsIgnoreCase("https")) {
             Authorization auth = getSourceAuthorization();
             if (auth == null) {
                 auth = SelfAuthorization.getInstance();
             }
-            in = new GassInputStream(getSourceCredentials(), 
+            in = new GassInputStream(getSourceCredentials(),
                                      auth,
                                      srcUrl.getHost(),
                                      srcUrl.getPort(),
@@ -577,23 +577,23 @@ public class UrlCopy implements Runnable {
                                      srcUrl.getPort(),
                                      fromFile);
         } else {
-            throw new Exception("Source protocol: " + fromP + 
+            throw new Exception("Source protocol: " + fromP +
                                 " not supported!");
         }
-        
+
         return in;
     }
-    
+
     /**
      * Returns output stream based on the destination url.
      */
-    protected GlobusOutputStream getOutputStream(long size) 
+    protected GlobusOutputStream getOutputStream(long size)
         throws Exception {
 
         GlobusOutputStream out = null;
         String toP             = dstUrl.getProtocol();
         String toFile          = dstUrl.getPath();
-        
+
         if (toP.equalsIgnoreCase("file")) {
             toFile = URLDecoder.decode(toFile);
             out = new GlobusFileOutputStream(toFile, appendMode);
@@ -639,62 +639,62 @@ public class UrlCopy implements Runnable {
                                        size,
                                        appendMode);
         } else {
-            throw new Exception("Destination protocol: " + toP + 
+            throw new Exception("Destination protocol: " + toP +
                                 " not supported!");
         }
-        
+
         return out;
     }
-    
+
     /**
      * This function performs the actual transfer.
      */
-    private boolean transfer(long total, 
-                             GlobusInputStream in, 
+    private boolean transfer(long total,
+                             GlobusInputStream in,
                              GlobusOutputStream out)
         throws IOException {
-        
+
         byte [] buffer       = new byte[bufferSize];
         int bytes            = 0;
         long totalBytes      = total;
         long transferedBytes = 0;
-        
+
         if (total == -1) {
             while( (bytes = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytes);
                 out.flush();
-                
+
                 if (listeners != null) {
                     transferedBytes += bytes;
-                    fireUrlTransferProgressEvent(totalBytes, 
+                    fireUrlTransferProgressEvent(totalBytes,
                                                  transferedBytes);
                 }
                 if (isCanceled()) return false;
             }
         } else {
-            while ( total != 0 ) {                     
-                
+            while ( total != 0 ) {
+
                 bytes = bufferSize;
                 if (total < bufferSize) bytes = (int)total;
-                
+
                 bytes = in.read(buffer);
                 out.write(buffer, 0, bytes);
                 out.flush();
                 total -= bytes;
-                
+
                 if (listeners != null) {
                     transferedBytes += bytes;
-                    fireUrlTransferProgressEvent(totalBytes, 
+                    fireUrlTransferProgressEvent(totalBytes,
                                                  transferedBytes);
                 }
                 if (isCanceled()) return false;
             }
         }
-        
+
         return true;
     }
-    
-    private void fireUrlTransferProgressEvent(long totalBytes, 
+
+    private void fireUrlTransferProgressEvent(long totalBytes,
                                               long transferedBytes) {
         Iterator iter = listeners.iterator();
         while(iter.hasNext()) {
@@ -702,54 +702,54 @@ public class UrlCopy implements Runnable {
                                                     totalBytes);
         }
     }
-    
+
     /**
      * This performs thrid party transfer only if source and destination urls
      * are ftp urls.
      */
-    private void thirdPartyTransfer() 
+    private void thirdPartyTransfer()
         throws UrlCopyException {
-        
+
         logger.debug("Trying third party transfer...");
-        
+
         FTPClient srcFTP = null;
         FTPClient dstFTP = null;
-        
+
         try {
             srcFTP = createFTPConnection(srcUrl, true);
-            
+
             dstFTP = createFTPConnection(dstUrl, false);
 
             negotiateDCAU(srcFTP, dstFTP);
-            
+
             srcFTP.setType(Session.TYPE_IMAGE);
             dstFTP.setType(Session.TYPE_IMAGE);
-        
+
             if (listeners != null) {
                 fireUrlTransferProgressEvent(-1, -1);
             }
-            
-            if (this.sourceOffset == 0 && 
-                this.destinationOffset == 0 && 
+
+            if (this.sourceOffset == 0 &&
+                this.destinationOffset == 0 &&
                 this.sourceLength == Long.MAX_VALUE) {
-                
+
                 srcFTP.setMode(Session.MODE_STREAM);
                 dstFTP.setMode(Session.MODE_STREAM);
-                   
-                srcFTP.transfer(srcUrl.getPath(), 
-                                dstFTP, 
-                                dstUrl.getPath(), 
-                                false, 
+
+                srcFTP.transfer(srcUrl.getPath(),
+                                dstFTP,
+                                dstUrl.getPath(),
+                                false,
                                 null);
-            } else if (srcFTP instanceof GridFTPClient && 
+            } else if (srcFTP instanceof GridFTPClient &&
                        dstFTP instanceof GridFTPClient) {
-                
+
                 GridFTPClient srcGridFTP = (GridFTPClient) srcFTP;
                 GridFTPClient dstGridFTP = (GridFTPClient) dstFTP;
-                                        
+
                 srcGridFTP.setMode(GridFTPSession.MODE_EBLOCK);
                 dstGridFTP.setMode(GridFTPSession.MODE_EBLOCK);
-                                        
+
                 srcGridFTP.extendedTransfer(srcUrl.getPath(),
                                             this.sourceOffset,
                                             this.sourceLength,
@@ -759,7 +759,7 @@ public class UrlCopy implements Runnable {
                                             null);
             } else {
                 throw new UrlCopyException("Partial 3rd party transfers not supported " +
-                                           "by FTP client. Use GridFTP for both source and destination.");                             
+                                           "by FTP client. Use GridFTP for both source and destination.");
             }
         } catch(Exception e) {
             throw new UrlCopyException("UrlCopy third party transfer failed.",
@@ -772,13 +772,13 @@ public class UrlCopy implements Runnable {
                 try { dstFTP.close(); } catch (Exception ee) {}
             }
         }
-    }   
+    }
 
     /*
      * This could replaced later with something more inteligent
      * where the user would set if dcau is required or not, etc.
      */
-    protected void negotiateDCAU(FTPClient src, FTPClient dst) 
+    protected void negotiateDCAU(FTPClient src, FTPClient dst)
         throws IOException, FTPException {
         if (src instanceof GridFTPClient) {
             // src: dcau can be on or off
@@ -789,16 +789,16 @@ public class UrlCopy implements Runnable {
 
                 if (src.isFeatureSupported("DCAU") &&
                     dst.isFeatureSupported("DCAU")) {
-                    
+
                     setDCAU(s, getDCAU());
                     setDCAU(d, getDCAU());
-                    
+
                 } else {
                     setDCAU(s, false);
                     setDCAU(d, false);
                     setDCAU(false);
                 }
-                
+
             } else {
                 // dst: no dcau supported - disable src
                 setDCAU((GridFTPClient)src, false);
@@ -817,7 +817,7 @@ public class UrlCopy implements Runnable {
         }
     }
 
-    private static void setDCAU(GridFTPClient c, boolean dcau) 
+    private static void setDCAU(GridFTPClient c, boolean dcau)
         throws IOException, FTPException {
         if (c.isFeatureSupported("DCAU")) {
             if (!dcau) {
@@ -837,19 +837,19 @@ public class UrlCopy implements Runnable {
         String protocol = ftpURL.getProtocol();
 
         if (protocol.equalsIgnoreCase("ftp")) {
-            
+
             FTPClient ftp = new FTPClient(ftpURL.getHost(),
                                           ftpURL.getPort());
             ftp.authorize(ftpURL.getUser(),
                           ftpURL.getPwd());
-            
+
             return ftp;
-            
+
         } else {
-            
+
             GridFTPClient ftp = new GridFTPClient(ftpURL.getHost(),
                                                   ftpURL.getPort());
-            
+
             if (srcSide) {
                 Authorization auth = getSourceAuthorization();
                 if (auth == null) {
@@ -865,13 +865,13 @@ public class UrlCopy implements Runnable {
                 ftp.setAuthorization(auth);
                 ftp.authenticate(getDestinationCredentials());
             }
-            
+
             if (tcpBufferSize != 0) {
                 ftp.setTCPBufferSize(tcpBufferSize);
             }
-            
+
             return ftp;
         }
     }
-    
+
 }

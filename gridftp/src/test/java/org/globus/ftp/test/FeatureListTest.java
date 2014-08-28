@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class FeatureListTest extends TestCase{
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(FeatureListTest.class.getName());
 
     public FeatureListTest(String name) {
@@ -59,7 +59,7 @@ public class FeatureListTest extends TestCase{
 	" PARALLEL" + nl +
 	" DCAU" + nl +
 	"211 END";
-    
+
     //should contain
     private static final int Y = 1;
     //should not contain
@@ -90,13 +90,13 @@ public class FeatureListTest extends TestCase{
 
 
     }
-    
+
     private void testContains(
 			      FeatureList fl,
 			      String feature,
 			      int expectedResult) {
 	switch (expectedResult) {
-	case Y: 	    
+	case Y:
 	    assertTrue(fl.contains(feature));
 	    logger.info("okay, contains " + feature);
 	    break;
@@ -110,7 +110,7 @@ public class FeatureListTest extends TestCase{
 		fl.contains(feature);
 	    } catch (IllegalArgumentException e) {
 		threwOk = true;
-	    } 
+	    }
 
 	    if (! threwOk ) {
 		fail("FeatureList.contains() did not throw an exception when it should have");

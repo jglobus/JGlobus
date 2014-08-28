@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,18 +46,18 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
 
     private String [] hostConfigurationParams;
     private HashMap hostPoolMap;
-    private long idleTime = 1000 * 60 * 2; 
+    private long idleTime = 1000 * 60 * 2;
     private boolean staleChecking = true;
-    
-    private HttpConnectionManagerParams params = 
-        new HttpConnectionManagerParams(); 
+
+    private HttpConnectionManagerParams params =
+        new HttpConnectionManagerParams();
 
     public CommonsHttpConnectionManager(String [] hostConfigurationParams) {
         this.hostConfigurationParams = hostConfigurationParams;
         this.hostPoolMap = new HashMap();
         IDLE_THREAD.addConnectionManager(this);
     }
-    
+
     public void setConnectionIdleTime(long time) {
         this.idleTime = time;
     }
@@ -69,26 +69,26 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
     public void setStaleCheckingEnabled(boolean staleChecking) {
         this.staleChecking = staleChecking;
     }
-    
+
     public boolean isStaleCheckingEnabled() {
         return this.staleChecking;
     }
-    
+
     public HttpConnection getConnection(HostConfiguration hostConfiguration) {
         return getConnectionWithTimeout(hostConfiguration, 0);
     }
 
-    public HttpConnection getConnection(HostConfiguration hostConfiguration, 
+    public HttpConnection getConnection(HostConfiguration hostConfiguration,
                                         long timeout) {
         return getConnectionWithTimeout(hostConfiguration, timeout);
     }
 
     public HttpConnection getConnectionWithTimeout(
                    HostConfiguration hostConfiguration, long timeout) {
-        ExtendedHostConfiguration extendedHostConfiguration = 
-            new ExtendedHostConfiguration(hostConfiguration, 
+        ExtendedHostConfiguration extendedHostConfiguration =
+            new ExtendedHostConfiguration(hostConfiguration,
                                           this.hostConfigurationParams);
-        
+
         ConnectionPool pool = getConnectionPool(extendedHostConfiguration);
         ExtendedHttpConnection httpConnection = pool.getPooledConnection();
         if (httpConnection == null) {
@@ -111,12 +111,12 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
 
     private ExtendedHttpConnection getNewConnection(
                            HostConfiguration hostConfiguration) {
-        ExtendedHttpConnection httpConnection = 
+        ExtendedHttpConnection httpConnection =
             new ExtendedHttpConnection(hostConfiguration, this.staleChecking);
         httpConnection.setHttpConnectionManager(this);
         HttpConnectionParams connectionParams = httpConnection.getParams();
         connectionParams.setDefaults(this.params);
-        
+
         if (this.hostConfigurationParams != null) {
             HostParams hostParams = hostConfiguration.getParams();
             for (int i=0;i<this.hostConfigurationParams.length;i++) {
@@ -153,11 +153,11 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
         // we only maintain list of opened connections
         // so ignore the connections that are closed
         if (conn.isOpen()) {
-            ExtendedHttpConnection extendedHostConfiguration = 
+            ExtendedHttpConnection extendedHostConfiguration =
                 (ExtendedHttpConnection)conn;
-            HostConfiguration hostConfiguration = 
+            HostConfiguration hostConfiguration =
                 extendedHostConfiguration.getHostConfiguration();
-            
+
             ConnectionPool pool = getConnectionPool(hostConfiguration);
             if (pool != null) {
                 pool.releaseConnection(conn);
@@ -179,7 +179,7 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
         }
         this.params = params;
     }
-    
+
     public void closeIdleConnections(long idleTimeout) {
         logger.debug("checking for idle connections");
         synchronized(this.hostPoolMap) {
@@ -204,10 +204,10 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
         this.hostPoolMap.clear();
         logger.debug("done shutting down connections");
     }
-    
+
     public static void setStaleCheckingEnabled(
                                    CommonsHttpConnectionManager manager) {
-        String staleCheckProp = 
+        String staleCheckProp =
             System.getProperty("org.globus.transport.stalecheck");
         if ("off".equalsIgnoreCase(staleCheckProp)) {
             // no stale connection checking
@@ -234,7 +234,7 @@ public class CommonsHttpConnectionManager implements HttpConnectionManager {
 
     public static void setConnectionIdleTime(
                                    CommonsHttpConnectionManager manager) {
-        String idleTimeoutProp = 
+        String idleTimeoutProp =
             System.getProperty("org.globus.transport.idleTime");
         if (idleTimeoutProp != null) {
             manager.setConnectionIdleTime(Long.parseLong(idleTimeoutProp));

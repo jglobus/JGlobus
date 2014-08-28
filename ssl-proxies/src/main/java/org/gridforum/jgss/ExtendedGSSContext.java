@@ -20,19 +20,19 @@ import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.Oid;
 
 /**
- * Defines Java API for setting and getting context options and delegation extensions as defined in the 
+ * Defines Java API for setting and getting context options and delegation extensions as defined in the
  * <a href="http://www.gridforum.org/security/gsi/draft-ggf-gss-extensions-08.pdf">GSS-API Extensions document</a>.
- * Some of the functions might not specify all the parameters as in the document. 
+ * Some of the functions might not specify all the parameters as in the document.
  * <BR><BR>Notes:
  * <UL>
  * <LI>Extensions are not supported in initDelegation and acceptDelegation</LI>
  * </UL>
  * <BR>
- * Here is a sample code showing how the delegation API might be used: 
+ * Here is a sample code showing how the delegation API might be used:
  * <pre>
  * ExtendedGSSContext client = ....
  * ExtendedGSSContext server = ....
- * 
+ *
  * byte [] input = new byte[0];
  * byte [] output = null;
  * do {
@@ -44,46 +44,46 @@ import org.ietf.jgss.Oid;
  * ...
  * </pre>
  * Because delegation can be performed multiple times on the same contexts, the <code>do { ... } while ();</code>
- * block should be used to properly reset the delegation state (The state of <code>isDelegationFinished</code> 
+ * block should be used to properly reset the delegation state (The state of <code>isDelegationFinished</code>
  * is reset on the initial call to <code>initDelegation</code> or <code>acceptDelegation</code>.
  */
 public interface ExtendedGSSContext extends GSSContext {
-    
+
     /**
      * Sets a context option. It can be called by context initiator or acceptor
      * but prior to the first call to initSecContext, acceptSecContext, initDelegation
-     * or acceptDelegation. 
+     * or acceptDelegation.
      *
-     * @param option 
+     * @param option
      *        option type.
-     * @param value 
+     * @param value
      *        option value.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
     public void setOption(Oid option, Object value)
 	throws GSSException;
-    
+
     /**
      * Gets a context option. It can be called by context initiator or acceptor.
      *
      * @param option option type.
      * @return value option value. Maybe be null.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
-    public Object getOption(Oid option) 
+    public Object getOption(Oid option)
 	throws GSSException;
-    
+
     /**
      * Initiate the delegation of a credential.
      *
      * This functions drives the initiating side of the credential
      * delegation process. It is expected to be called in tandem with the
      * <code>acceptDelegation</code> function.
-     * 
-     * 
-     * @param cred  
+     *
+     *
+     * @param cred
      *        The credential to be delegated. May be null
      *        in which case the credential associated with the security
      *        context is used.
@@ -91,16 +91,16 @@ public interface ExtendedGSSContext extends GSSContext {
      *        The desired security mechanism. May be null.
      * @param lifetime
      *        The requested period of validity (seconds) of the delegated
-     *        credential. 
-     * @return A token that should be passed to <code>acceptDelegation</code> if 
+     *        credential.
+     * @return A token that should be passed to <code>acceptDelegation</code> if
      *         <code>isDelegationFinished</code> returns false. May be null.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
-    public byte[] initDelegation(GSSCredential cred, 
+    public byte[] initDelegation(GSSCredential cred,
 				 Oid mechanism,
 				 int lifetime,
-				 byte[] buf, int off, int len) 
+				 byte[] buf, int off, int len)
 	throws GSSException;
 
     /**
@@ -112,16 +112,16 @@ public interface ExtendedGSSContext extends GSSContext {
      *
      * @param lifetime
      *        The requested period of validity (seconds) of the delegated
-     *        credential. 
-     * @return A token that should be passed to <code>initDelegation</code> if 
+     *        credential.
+     * @return A token that should be passed to <code>initDelegation</code> if
      *         <code>isDelegationFinished</code> returns false. May be null.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
     public byte[] acceptDelegation(int lifetime,
 				   byte[] but, int off, int len)
 	throws GSSException;
-    
+
     /**
      * Returns the delegated credential that was delegated using
      * the <code>initDelegation</code> and <code>acceptDelegation</code>
@@ -132,20 +132,20 @@ public interface ExtendedGSSContext extends GSSContext {
      *         delegation is not finished.
      */
     public GSSCredential getDelegatedCredential();
-    
+
     /**
      * Used during delegation to determine the state of the delegation.
      *
      * @return true if delegation was completed, false otherwise.
      */
     public boolean isDelegationFinished();
- 
+
     /**
      * Retrieves arbitrary data about this context.
      *
      * @param oid the oid of the information desired.
      * @return the information desired. Might be null.
-     * @exception GSSException containing the following major error codes: 
+     * @exception GSSException containing the following major error codes:
      *            <code>GSSException.FAILURE</code>
      */
     public Object inquireByOid(Oid oid) throws GSSException;

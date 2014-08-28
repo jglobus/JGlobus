@@ -16,9 +16,9 @@ import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
 
 public class GramClient {
-	
+
 	public static void main(String argv[]) {
-        
+
 		String port = "ubuntu:50000:";
 		String DN ="/O=Grid/OU=GlobusTest/OU=simpleCA-ubuntu/CN=Vijay Anand";
 		try {
@@ -50,7 +50,7 @@ class LocalCredentialHelper {
     }
 
     public GSSCredential getCredential(File proxyFile) throws IOException, GSSException {
-        
+
         byte[] proxyBytes = new byte[(int) proxyFile.length()];
         FileInputStream in = new FileInputStream(proxyFile);
         in.read(proxyBytes);

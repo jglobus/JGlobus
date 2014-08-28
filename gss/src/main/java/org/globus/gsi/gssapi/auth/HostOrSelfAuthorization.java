@@ -28,7 +28,7 @@ public class HostOrSelfAuthorization extends GSSAuthorization {
 	LogFactory.getLog(HostOrSelfAuthorization.class.getName());
 
     private static HostOrSelfAuthorization authorization;
-    
+
     private HostAuthorization hostAuthz;
     /**
      * Returns a single instance of this class.
@@ -50,7 +50,7 @@ public class HostOrSelfAuthorization extends GSSAuthorization {
     }
 
     // returning null for now.
-    public GSSName getExpectedName(GSSCredential cred, String host) 
+    public GSSName getExpectedName(GSSCredential cred, String host)
 	throws GSSException {
         return null;
     }
@@ -61,11 +61,11 @@ public class HostOrSelfAuthorization extends GSSAuthorization {
     public void authorize(GSSContext context, String host)
 	throws AuthorizationException {
 	logger.debug("Authorization: HOST/SELF");
-	
+
 	try {
-            
+
             GSSName expected = this.hostAuthz.getExpectedName(null, host);
-            
+
             GSSName target = null;
             if (context.isInitiator()) {
                 target = context.getTargName();
@@ -73,10 +73,10 @@ public class HostOrSelfAuthorization extends GSSAuthorization {
                 target = context.getSrcName();
             }
 
-            if (!expected.equals(target)) { 
-                logger.debug("Host authorization failed. Expected " 
+            if (!expected.equals(target)) {
+                logger.debug("Host authorization failed. Expected "
                              + expected + " target is " + target);
-                
+
                 if (!context.getSrcName().equals(context.getTargName())) {
                     if (context.isInitiator()) {
                         expected = context.getSrcName();
@@ -90,5 +90,5 @@ public class HostOrSelfAuthorization extends GSSAuthorization {
 	    throw new AuthorizationException("Authorization failure", e);
 	}
     }
-    
+
 }

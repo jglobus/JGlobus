@@ -20,7 +20,7 @@ import java.util.Enumeration;
  * This class is not thread safe.
  */
 public class QuotedStringTokenizer implements Enumeration {
-    
+
     private int limit;
     private int start;
     private String str;
@@ -71,7 +71,7 @@ public class QuotedStringTokenizer implements Enumeration {
 		}
 	    }
 	}
-	
+
 	return buf.toString();
     }
 
@@ -83,7 +83,7 @@ public class QuotedStringTokenizer implements Enumeration {
 	while ((start < limit) && (str.charAt(start) <= ' ')) {
 	    start++;	// eliminate leading whitespace
 	}
-	
+
 	return (start != limit);
     }
 
@@ -91,10 +91,10 @@ public class QuotedStringTokenizer implements Enumeration {
 	int localStart = start;
 	int i = 0;
 	while( nextToken() != null ) {
-	    i++; 
+	    i++;
 	}
 	start = localStart;
 	return i;
     }
-    
+
 }

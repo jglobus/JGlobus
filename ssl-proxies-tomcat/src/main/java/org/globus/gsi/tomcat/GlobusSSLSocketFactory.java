@@ -92,7 +92,7 @@ public class GlobusSSLSocketFactory extends JSSESocketFactory {
         return new TrustManager[]{trustManager};
     }
 
-	
+
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		// TODO Auto-generated method stub
@@ -101,7 +101,7 @@ public class GlobusSSLSocketFactory extends JSSESocketFactory {
 
 
 	@Override
-	public ServerSocket createSocket(int port, int backlog, InetAddress ifAddress) throws IOException {		
+	public ServerSocket createSocket(int port, int backlog, InetAddress ifAddress) throws IOException {
 		return new GlobusSSLSocketWrapper((SSLServerSocket) super.createSocket(port, backlog, ifAddress));
 	}
 

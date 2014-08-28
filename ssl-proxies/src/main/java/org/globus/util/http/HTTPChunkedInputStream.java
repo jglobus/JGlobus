@@ -24,30 +24,30 @@ public class HTTPChunkedInputStream extends InputStream {
     protected int _max;
     protected boolean _eof;
     protected InputStream _in;
-    
+
     public HTTPChunkedInputStream(InputStream in) {
 	_in = in;
 	// initial buf size - will adjust automatically
-	_buf = new byte[2048]; 
+	_buf = new byte[2048];
 	_index = 0;
 	_max = 0;
 	_eof = false;
     }
-    
+
     /* only called when the buffer is empty */
-    private void readChunk() 
+    private void readChunk()
 	throws IOException {
 
 	String line = readLine(_in).trim();
 	int length  = Integer.parseInt(line, 16);
 
 	if (length > 0) {
-	    
+
 	    // make sure the chunk will fit into the buffer
-	    
+
 	    if (length > _buf.length) {
 		_buf = new byte[length];
-	    } 
+	    }
 
 	    int bytesLeft = length;
 	    int reqBytes = 0;
@@ -66,17 +66,17 @@ public class HTTPChunkedInputStream extends InputStream {
 
 	    _max = off;
 	    _index = 0;
-	    
+
 	} else {
 	    // end of data indicated
 	    _eof = true;
 	}
-	
+
 	_in.read(); // skip CR
 	_in.read(); // skip LF
-	
+
     }
-    
+
     /**
      * Read a line of text from the given Stream and return it
      * as a String.  Assumes lines end in CRLF.
@@ -84,28 +84,28 @@ public class HTTPChunkedInputStream extends InputStream {
     private String readLine(InputStream in) throws IOException {
 	StringBuffer buf = new StringBuffer();
 	int c, length = 0;
-    
+
 	while(true) {
 	    c = in.read();
 	    if (c == -1 || c == '\n' || length > 512) {
 		break;
-	    } else if (c == '\r') { 
-		in.read(); 
+	    } else if (c == '\r') {
+		in.read();
 		return buf.toString();
-	    } else {      
+	    } else {
 		buf.append((char)c);
-		length++;       
+		length++;
 	    }
-      
+
 	}
 	return buf.toString();
     }
 
-    public int read(byte [] buffer, int off, int len) 
+    public int read(byte [] buffer, int off, int len)
 	throws IOException {
 	if (_eof) return -1;
 	if (_max == _index) readChunk();
-	
+
 	if (_index + len <= _max) {
 	    // that's easy
 	    System.arraycopy(_buf, _index, buffer, off, len);
@@ -123,7 +123,7 @@ public class HTTPChunkedInputStream extends InputStream {
 	    }
 	}
     }
-    
+
     public int read()
 	throws IOException {
 	if (_eof) return -1;
@@ -135,10 +135,10 @@ public class HTTPChunkedInputStream extends InputStream {
         throws IOException {
         return _in.available();
     }
-    
-    public void close() 
+
+    public void close()
 	throws IOException {
 	_in.close();
     }
-    
+
 }

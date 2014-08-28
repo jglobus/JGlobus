@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
    Use getter methods to access its parameters.
  **/
 public class PerfMarker implements Marker {
-    
+
     private static Log logger = LogFactory.getLog(PerfMarker.class.getName());
 
     protected final String nl = System.getProperty("line.separator");
@@ -49,7 +49,7 @@ public class PerfMarker implements Marker {
     /**
        @param msg an FTP reply message containing the perf marker (not the reply itself!)
      **/
-    public PerfMarker(String msg) 
+    public PerfMarker(String msg)
     throws IllegalArgumentException{
 	StringTokenizer tokens = new StringTokenizer(msg, nl);
 	if (! tokens.nextToken().trim().equals("Perf Marker")) {
@@ -58,12 +58,12 @@ public class PerfMarker implements Marker {
 	if (! tokens.hasMoreTokens()) {
 	    badMsg("No parameters", msg);
 	}
-	
+
 	//traverse lines
 	while(tokens.hasMoreTokens()) {
 
 	    //line = "name : value"
-	    StringTokenizer line = new StringTokenizer(tokens.nextToken(), 
+	    StringTokenizer line = new StringTokenizer(tokens.nextToken(),
 						       ":");
 	    if (! line.hasMoreTokens()) {
 		badMsg("one of lines empty", msg);
@@ -108,7 +108,7 @@ public class PerfMarker implements Marker {
 		} catch ( NumberFormatException e) {
 		    badMsg("Not long value:" + value, msg);
 		}
-		
+
 	    } else if (name.equals("Stripe Bytes Transferred")) {
 
 		try {

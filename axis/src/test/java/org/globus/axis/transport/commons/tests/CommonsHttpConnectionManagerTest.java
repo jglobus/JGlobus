@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,12 +64,12 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
     }
 
     public void testConnectionReuseWithoutParams() throws Exception {
-        CommonsHttpConnectionManager manager = 
+        CommonsHttpConnectionManager manager =
             new CommonsHttpConnectionManager(null);
-        
+
         HostConfiguration h1 = new HostConfiguration();
         h1.setHost(address, server1.getLocalPort());
-        
+
         HttpConnection c1 = manager.getConnection(h1);
 
         // new connection
@@ -77,12 +77,12 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
 
         c1.open();
         c1.releaseConnection();
-        
+
         HostConfiguration h2 = new HostConfiguration();
         h2.setHost(address,  server1.getLocalPort());
 
         HttpConnection c2 = manager.getConnection(h2);
-        
+
         // connection should have been released
         // so c2 is c1
         assertTrue(h2.equals(h1));
@@ -117,15 +117,15 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
     }
 
     public void testConnectionReuseWithParams() throws Exception {
-        CommonsHttpConnectionManager manager = 
+        CommonsHttpConnectionManager manager =
             new CommonsHttpConnectionManager(PARAMS);
-        
+
         HostConfiguration h1 = new HostConfiguration();
         h1.setHost(address, server1.getLocalPort());
         h1.getParams().setParameter("A", "foo");
         h1.getParams().setParameter("B", "bar");
         h1.getParams().setParameter("C", "fff");
-        
+
         HttpConnection c1 = manager.getConnection(h1);
 
         assertTrue(!c1.isOpen());
@@ -160,9 +160,9 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
         // this one does not have params
         HostConfiguration h4 = new HostConfiguration();
         h4.setHost(address, server1.getLocalPort());
-        
+
         HttpConnection c4 = manager.getConnection(h4);
-        
+
         // new connection
         assertTrue(c4 != c1);
         assertTrue(c4 != c2);
@@ -176,9 +176,9 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
         HostConfiguration h5 = new HostConfiguration();
         h5.setHost(address, server1.getLocalPort());
         h5.getParams().setParameter("B", "bar");
-        
+
         HttpConnection c5 = manager.getConnection(h5);
-        
+
         // also a new connection
         assertTrue(c5 != c1);
         assertTrue(c5 != c2);
@@ -194,9 +194,9 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
         h6.setHost(address, server1.getLocalPort());
         h6.getParams().setParameter("A", "fooo");
         h6.getParams().setParameter("B", "bar");
-        
+
         HttpConnection c6 = manager.getConnection(h6);
-        
+
         assertTrue(c6 != c1);
         assertTrue(c6 != c2);
         assertTrue(c6 != c3);
@@ -209,21 +209,21 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
     }
 
     public void testIdleConnectionSweeper() throws Exception {
-        CommonsHttpConnectionManager manager = 
+        CommonsHttpConnectionManager manager =
             new CommonsHttpConnectionManager(null);
         manager.setConnectionIdleTime(1000 * 2);
 
         HostConfiguration h1 = new HostConfiguration();
         h1.setHost(address, server1.getLocalPort());
-        
+
         HttpConnection c1 = manager.getConnection(h1);
 
         // new connection
         assertTrue(!c1.isOpen());
         c1.open();
-        
+
         Thread.sleep(1000);
-        
+
         c1.releaseConnection();
 
         assertTrue(c1 == manager.getConnection(h1));
@@ -238,14 +238,14 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
     }
 
     public void testMultipleConnectionRelease() throws Exception {
-        CommonsHttpConnectionManager manager = 
+        CommonsHttpConnectionManager manager =
             new CommonsHttpConnectionManager(null);
 
         HostConfiguration h1 = new HostConfiguration();
         h1.setHost(address, server1.getLocalPort());
-        
+
         HttpConnection c1 = manager.getConnection(h1);
-        
+
         assertTrue(!c1.isOpen());
         c1.open();
 
@@ -266,18 +266,18 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
         config.setHost(address, server1.getLocalPort());
 
         HttpClient httpClient = new HttpClient();
-        
+
         PostMethod method = new PostMethod("/foo/bar");
         method.setRequestBody("helloworld\r\n\r\n");
 
-        int returnCode = 
+        int returnCode =
             httpClient.executeMethod(config, method, null);
 
         assertEquals(200, returnCode);
     }
 
     private static class Server implements Runnable {
-        
+
         private ServerSocket server;
         private boolean stop = false;
 
@@ -296,7 +296,7 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
             this.stop = true;
             // this is to wake it up for sure
             try {
-                Socket s = new Socket("localhost", 
+                Socket s = new Socket("localhost",
                                       getLocalPort());
                 s.getInputStream();
                 s.close();
@@ -322,17 +322,17 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
                         }
                         System.out.println("HEADER: " + line);
                     }
-                    
+
                     out.write("HTTP/1.1 100 Continue\r\n\r\n".getBytes());
                     out.flush();
-                    
+
                     while( (line = reader.readLine()) != null ) {
                         if (line.length() == 0) {
                             break;
                         }
                         System.out.println("BODY: " + line);
                     }
-                    
+
                     out.write("HTTP/1.1 200 Ok\r\nConnection: close\r\n\r\n".getBytes());
                     out.flush();
 
@@ -342,9 +342,9 @@ public class CommonsHttpConnectionManagerTest extends TestCase {
                 e.printStackTrace();
             }
         }
-        
+
 
     }
-    
+
 }
 

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ import org.globus.ftp.vanilla.TransferState;
  * <br><b>Note:</b> If using with GridFTP servers operations like
  * {@link #setMode(int) setMode()}, {@link #setType(int) setType()} that
  * affect data channel settings <b>must</b> be called before passive
- * or active data channel mode is set. 
+ * or active data channel mode is set.
  **/
 public class  FTPClient {
 
@@ -67,15 +67,15 @@ public class  FTPClient {
     // represents the state of interaction with remote server
     protected Session session;
     protected FTPControlChannel controlChannel;
-    
+
     // the local server handles data channels
     protected FTPServerFacade localServer;
-    
+
     /* needed for last modified command */
     protected SimpleDateFormat dateFormat = null;
 
     protected String username = null;
-    
+
     /**
      * Whether to use ALLO with put()/asyncPut() or not
      */
@@ -90,7 +90,7 @@ public class  FTPClient {
     /* for subclasses */
     protected FTPClient() {
     }
-    
+
     /**
      * Constructs client and connects it to the remote server.
      * @param host remote server host
@@ -99,28 +99,28 @@ public class  FTPClient {
     public FTPClient(String host, int port)
         throws IOException, ServerException {
         session = new Session();
-        
+
         controlChannel = new FTPControlChannel(host, port);
         controlChannel.open();
-        
+
         localServer = new FTPServerFacade(controlChannel);
         localServer.authorize();
     }
-    
-    /* 
+
+    /*
      * @return host
      */
     public String getHost() {
         return this.controlChannel.getHost();
     }
-    
-    /* 
+
+    /*
      * @return port
      */
     public int getPort() {
         return this.controlChannel.getPort();
     }
-    
+
     /**
      * Returns the last reply received from the server. This could
      * be used immediately after the call to the constructor to
@@ -135,10 +135,10 @@ public class  FTPClient {
      *
      * @param     filename filename get the size for.
      * @return    size of the file.
-     * @exception ServerException if the file does not exist or 
+     * @exception ServerException if the file does not exist or
      *            an error occured.
      */
-    public long getSize(String filename) 
+    public long getSize(String filename)
         throws IOException, ServerException {
         if (filename == null) {
             throw new IllegalArgumentException("Required argument missing");
@@ -203,7 +203,7 @@ public class  FTPClient {
     /**
      * Checks if given file/directory exists on the server.
      *
-     * @param  filename 
+     * @param  filename
      *         file or directory name
      * @return true if the file exists, false otherwise.
      */
@@ -233,7 +233,7 @@ public class  FTPClient {
     /**
      * Changes the remote current working directory.
      */
-    public void changeDir(String dir) 
+    public void changeDir(String dir)
         throws IOException, ServerException {
         if (dir == null) {
             throw new IllegalArgumentException("Required argument missing");
@@ -253,7 +253,7 @@ public class  FTPClient {
     /**
      * Deletes the remote directory.
      */
-    public void deleteDir(String dir) 
+    public void deleteDir(String dir)
         throws IOException, ServerException {
         if (dir == null) {
             throw new IllegalArgumentException("Required argument missing");
@@ -293,7 +293,7 @@ public class  FTPClient {
     /**
      * Creates remote directory.
      */
-    public void makeDir(String dir) 
+    public void makeDir(String dir)
         throws IOException, ServerException {
         if (dir == null) {
             throw new IllegalArgumentException("Required argument missing");
@@ -383,7 +383,7 @@ public class  FTPClient {
         public ByteArrayDataSink() {
             this.received = new ByteArrayOutputStream(1000);
         }
-        
+
         public void write(Buffer buffer) throws IOException {
             if (logger.isDebugEnabled()) {
                 logger.debug(
@@ -396,7 +396,7 @@ public class  FTPClient {
 
         public void close() throws IOException {
         }
-        
+
         public ByteArrayOutputStream getData() {
             return this.received;
         }
@@ -405,14 +405,14 @@ public class  FTPClient {
     /**
      * Performs remote directory listing. Sends 'LIST -d *' command.
      *
-     * <br><b>Note</b>:<i> 
+     * <br><b>Note</b>:<i>
      *       This function can only parse Unix ls -d like output. Please
-     *       note that the LIST output is unspecified in the FTP standard and 
-     *       each server might return slightly different output causing the 
+     *       note that the LIST output is unspecified in the FTP standard and
+     *       each server might return slightly different output causing the
      *       parsing to fail.
-     *       Also, if the ftp server does not accept -d option or support 
+     *       Also, if the ftp server does not accept -d option or support
      *       wildcards, this method might fail. For example, this command will
-     *       fail on GridFTP server distributed with GT 4.0.0. 
+     *       fail on GridFTP server distributed with GT 4.0.0.
      *       It is strongly recommended to use {@link #mlsd() mlsd()}
      *       function instead.</i>
      *
@@ -425,17 +425,17 @@ public class  FTPClient {
     }
 
     /**
-     * Performs remote directory listing with the specified filter. 
+     * Performs remote directory listing with the specified filter.
      * Sends 'LIST -d &lt;filter&gt;' command.
      *
      * <br><b>Note</b>: <i>
      *       This function can only parse Unix ls -d like output. Please
-     *       note that the LIST output is unspecified in the FTP standard and 
-     *       each server might return slightly different output causing the 
+     *       note that the LIST output is unspecified in the FTP standard and
+     *       each server might return slightly different output causing the
      *       parsing to fail.
-     *       Also, if the ftp server does not accept -d option or support 
+     *       Also, if the ftp server does not accept -d option or support
      *       wildcards, this method might fail. For example, this command will
-     *       fail on GridFTP server distributed with GT 4.0.0. 
+     *       fail on GridFTP server distributed with GT 4.0.0.
      *       It is strongly recommended to use {@link #mlsd(String) mlsd()}
      *       function instead. </i>
      *
@@ -448,15 +448,15 @@ public class  FTPClient {
         throws ServerException, ClientException, IOException {
         return list(filter, "-d");
     }
-    
+
     /**
-     * Performs remote directory listing with the specified filter and 
-     * modifier. Sends 'LIST &lt;modifier&gt; &lt;filter&gt;' command. 
+     * Performs remote directory listing with the specified filter and
+     * modifier. Sends 'LIST &lt;modifier&gt; &lt;filter&gt;' command.
      *
      * <br><b>Note</b>: <i>
      *       This function can only parse Unix ls -d like output. Please
-     *       note that the LIST output is unspecified in the FTP standard and 
-     *       each server might return slightly different output causing the 
+     *       note that the LIST output is unspecified in the FTP standard and
+     *       each server might return slightly different output causing the
      *       parsing to fail.
      *       Also, please keep in mind that the ftp server might not
      *       recognize or support all the different modifiers or filters.
@@ -476,17 +476,17 @@ public class  FTPClient {
         throws ServerException, ClientException, IOException {
 
         ByteArrayDataSink sink = new ByteArrayDataSink();
-        
+
         list(filter, modifier, sink);
-        
+
         ByteArrayOutputStream received = sink.getData();
 
         // transfer done. Data is in received stream.
         // convert it to a vector.
-        
+
         BufferedReader reader =
             new BufferedReader(new StringReader(received.toString()));
-        
+
         Vector fileList = new Vector();
         FileInfo fileInfo = null;
         String line = null;
@@ -518,7 +518,7 @@ public class  FTPClient {
     }
 
     /**
-     * Performs directory listing and writes the result 
+     * Performs directory listing and writes the result
      * to the supplied data sink.
      * This method is allowed in ASCII mode only.
      *
@@ -530,7 +530,7 @@ public class  FTPClient {
      *       (strict RFC 959 compliance).
      *       It is strongly recommended to use {@link #mlsd(String,DataSink)
      *       mlsd()} function instead.</i>
-     * 
+     *
      * @param filter remote list command file filter, eg. "*"
      * @param modifier remote list command modifier, eg. "-d"
      * @param sink data destination
@@ -541,11 +541,11 @@ public class  FTPClient {
 
         if (modifier != null) {
             arg = modifier;
-        } 
+        }
         if (filter != null) {
             arg = (arg == null) ? filter : arg + " " + filter;
         }
-        
+
         Command cmd = new Command("LIST", arg);
 
         performTransfer(cmd, sink);
@@ -553,7 +553,7 @@ public class  FTPClient {
 
     /**
      * Performs remote directory listing of the current directory.
-     * Sends 'NLST' command. 
+     * Sends 'NLST' command.
      *
      * @return Vector list of {@link FileInfo FileInfo} objects, representing
      *         remote files
@@ -565,32 +565,32 @@ public class  FTPClient {
 
     /**
      * Performs remote directory listing on the given path.
-     * Sends 'NLST &lt;path&gt;' command. 
+     * Sends 'NLST &lt;path&gt;' command.
      *
      * @param path directory to perform listing of. If null, listing
      *        of current directory will be performed.
      * @return Vector list of {@link FileInfo FileInfo} objects, representing
      *         remote files
      */
-    public Vector nlist(String path) 
+    public Vector nlist(String path)
         throws ServerException, ClientException, IOException {
 
         ByteArrayDataSink sink = new ByteArrayDataSink();
-        
+
         nlist(path, sink);
-        
+
         ByteArrayOutputStream received = sink.getData();
 
         // transfer done. Data is in received stream.
         // convert it to a vector.
-        
+
         BufferedReader reader =
             new BufferedReader(new StringReader(received.toString()));
-        
+
         Vector fileList = new Vector();
         FileInfo fileInfo = null;
         String line = null;
-        
+
         while ((line = reader.readLine()) != null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("line ->" + line);
@@ -608,18 +608,18 @@ public class  FTPClient {
 
     /**
      * Performs remote directory listing on the given path.
-     * Sends 'NLST &lt;path&gt;' command. 
+     * Sends 'NLST &lt;path&gt;' command.
      *
      * @param path directory to perform listing of. If null, listing
      *        of current directory will be performed.
      * @param sink sink to which the listing data will be written.
      */
-    public void nlist(String path, DataSink sink) 
+    public void nlist(String path, DataSink sink)
         throws ServerException, ClientException, IOException {
         Command cmd = (path == null) ?
             new Command("NLST") :
             new Command("NLST", path);
-        
+
         performTransfer(cmd, sink);
     }
 
@@ -666,19 +666,19 @@ public class  FTPClient {
 
     /**
      * Performs remote directory listing of the current directory.
-     * Sends 'MLSD' command. 
+     * Sends 'MLSD' command.
      *
      * @return Vector list of {@link MlsxEntry MlsxEntry} objects, representing
      *         remote files
      */
-    public Vector mlsd() 
+    public Vector mlsd()
         throws ServerException, ClientException, IOException {
         return mlsd(null);
     }
 
     /**
      * Performs remote directory listing on the given path.
-     * Sends 'MLSD &lt;path&gt;' command. 
+     * Sends 'MLSD &lt;path&gt;' command.
      *
      * @param path directory to perform listing of. If null, listing
      *        of current directory will be performed.
@@ -691,7 +691,7 @@ public class  FTPClient {
         ByteArrayDataSink sink = new ByteArrayDataSink();
 
         mlsd(path, sink);
-        
+
         ByteArrayOutputStream received = sink.getData();
 
         // transfer done. Data is in received stream.
@@ -722,14 +722,14 @@ public class  FTPClient {
             }
 
             fileList.addElement(entry);
-            
+
         }
         return fileList;
     }
 
     /**
      * Performs remote directory listing on the given path.
-     * Sends 'MLSD &lt;path&gt;' command. 
+     * Sends 'MLSD &lt;path&gt;' command.
      *
      * @param path directory to perform listing of. If null, listing
      *        of current directory will be performed.
@@ -740,7 +740,7 @@ public class  FTPClient {
         Command cmd = (path == null) ?
             new Command("MLSD") :
             new Command("MLSD", path);
-        
+
         performTransfer(cmd, sink);
     }
 
@@ -759,18 +759,18 @@ public class  FTPClient {
         throws ServerException, IOException, ClientException {
         checkTransferParams();
     }
-    
+
     protected void checkTransferParamsPut()
         throws ServerException, IOException, ClientException {
         checkTransferParams();
     }
-    
+
     protected void checkTransferParams()
         throws ServerException, IOException, ClientException {
         Session localSession = localServer.getSession();
         session.matches(localSession);
-        
-        // if transfer modes have not been defined, 
+
+        // if transfer modes have not been defined,
         // set this (dest) as active
         if (session.serverMode == Session.SERVER_DEFAULT) {
             // resulting HostPort stored in session
@@ -784,7 +784,7 @@ public class  FTPClient {
         throws ServerException, ClientException, IOException {
         listCheck();
         checkTransferParamsGet();
-        
+
         controlChannel.write(cmd);
         localServer.store(sink);
 
@@ -818,7 +818,7 @@ public class  FTPClient {
         default :
             throw new IllegalArgumentException("Bad type: " + type);
         }
-        
+
         Command cmd = new Command("TYPE", typeStr);
         try {
             controlChannel.execute(cmd);
@@ -829,7 +829,7 @@ public class  FTPClient {
                                 urce,
                                 "Server refused changing transfer mode");
         }
-        
+
         this.session.transferType = type;
     }
 
@@ -844,7 +844,7 @@ public class  FTPClient {
             throw new IllegalArgumentException("Bad mode: " + mode);
         }
     }
-        
+
     /**
      * Sets transfer mode.
      * @param mode should be {@link Session#MODE_STREAM MODE_STREAM},
@@ -856,7 +856,7 @@ public class  FTPClient {
 
     protected void actualSetMode(int mode, String modeStr)
         throws IOException, ServerException {
-        
+
         localServer.setTransferMode(mode);
         Command cmd = new Command("MODE", modeStr);
         try {
@@ -868,7 +868,7 @@ public class  FTPClient {
                                 urce,
                                 "Server refused changing transfer mode");
         }
-        
+
         this.session.transferMode = mode;
     }
 
@@ -877,11 +877,11 @@ public class  FTPClient {
      */
     public void setProtectionBufferSize(int size)
         throws IOException, ServerException {
-        
+
         if (size <= 0) {
             throw new IllegalArgumentException("size <= 0");
         }
-        
+
         localServer.setProtectionBufferSize(size);
         try {
             Command cmd = new Command("PBSZ", Integer.toString(size));
@@ -919,18 +919,18 @@ public class  FTPClient {
             localServer.abort();
         }
     }
-    
-    /** Closes connection. Sends QUIT command and closes connection 
+
+    /** Closes connection. Sends QUIT command and closes connection
      *  even if the server reply was not positive. Also, closes
      *  the local server. This function will block until the server
      *  sends a reply to the QUIT command.
      **/
-    public void close() 
+    public void close()
         throws IOException, ServerException {
         close(false);
     }
 
-    /** Closes connection. Sends QUIT and closes connection 
+    /** Closes connection. Sends QUIT and closes connection
      *  even if the server reply was not positive. Also, closes
      *  the local server.
      *
@@ -939,7 +939,7 @@ public class  FTPClient {
      *        server's reply. If false, the client will block
      *        for the server's reply.
      **/
-    public void close(boolean ignoreQuitReply) 
+    public void close(boolean ignoreQuitReply)
         throws IOException, ServerException {
         try {
             if (ignoreQuitReply) {
@@ -963,9 +963,9 @@ public class  FTPClient {
     }
 
     /**
-     * Returns true if the given feature is supported by remote server, 
+     * Returns true if the given feature is supported by remote server,
      * false otherwise.
-     * 
+     *
      * @return true if the given feature is supported by remote server,
      *         false otherwise.
      */
@@ -973,7 +973,7 @@ public class  FTPClient {
         throws IOException, ServerException {
         return getFeatureList().contains(feature);
     }
-    
+
     /**
      * Returns list of features supported by remote server.
      * @return list of features supported by remote server.
@@ -1005,7 +1005,7 @@ public class  FTPClient {
         }
 
         this.session.featureList = new FeatureList(featReply.getMessage());
-        
+
         return session.featureList;
     }
 
@@ -1024,9 +1024,9 @@ public class  FTPClient {
             throw ServerException.embedFTPReplyParseException(rpe);
         }
         String pasvReplyMsg = null;
-        
+
         pasvReplyMsg = reply.getMessage();
-        
+
         int openBracket = pasvReplyMsg.indexOf("(");
         int closeBracket = pasvReplyMsg.indexOf(")", openBracket);
         String bracketContent =
@@ -1046,7 +1046,7 @@ public class  FTPClient {
         } else {
             hp = new HostPort(bracketContent);
         }
-        
+
         this.session.serverAddress = hp;
         return hp;
     }
@@ -1058,7 +1058,7 @@ public class  FTPClient {
      */
     public void setActive(HostPort hostPort)
         throws IOException, ServerException {
-        Command cmd = new Command((controlChannel.isIPv6()) ? "EPRT" : "PORT", 
+        Command cmd = new Command((controlChannel.isIPv6()) ? "EPRT" : "PORT",
                                   hostPort.toFtpCmdArgument());
         try {
             controlChannel.execute(cmd);
@@ -1099,16 +1099,16 @@ public class  FTPClient {
 
     /**
        Starts local server in passive server mode, with default parameters.
-       In other words, behaves like 
+       In other words, behaves like
        setLocalPassive(FTPServerFacade.ANY_PORT, FTPServerFacade.DEFAULT_QUEUE)
     **/
     public HostPort setLocalPassive() throws IOException {
         return localServer.setPassive();
     }
-    
+
     /**
        Starts the local server in passive server mode.
-       @param port port at which local server should be listening; 
+       @param port port at which local server should be listening;
        can be set to FTPServerFacade.ANY_PORT
        @param queue max size of queue of awaiting new connection
        requests
@@ -1117,16 +1117,16 @@ public class  FTPClient {
     public HostPort setLocalPassive(int port, int queue) throws IOException {
         return localServer.setPassive(port, queue);
     }
-    
+
     /**
        Changes the default client timeout parameters.
        In the beginning of the transfer, the critical moment is the wait
-       for the initial server reply. If it does not arrive after timeout, 
+       for the initial server reply. If it does not arrive after timeout,
        client assumes that the transfer could not start for some reason and
-       aborts the operation. Default timeout in miliseconds 
-       is Session.DEFAULT_MAX_WAIT. During the waiting period, 
+       aborts the operation. Default timeout in miliseconds
+       is Session.DEFAULT_MAX_WAIT. During the waiting period,
        client polls the control channel once a certain period, which is by
-       default set to Session.DEFAULT_WAIT_DELAY. 
+       default set to Session.DEFAULT_WAIT_DELAY.
        <br>
        Use this method to change these parameters.
        @param maxWait timeout in miliseconds
@@ -1155,7 +1155,7 @@ public class  FTPClient {
                                 urce,
                                 "Server refused setting options");
         }
-        
+
         localServer.setOptions(opts);
     }
 
@@ -1163,7 +1163,7 @@ public class  FTPClient {
      * Sets restart parameter of the next transfer.
      *
      * @param     restartData marker to use
-     * @exception ServerException if the file does not exist or 
+     * @exception ServerException if the file does not exist or
      *            an error occured.
      */
     public void setRestartMarker(RestartData restartData)
@@ -1192,7 +1192,7 @@ public class  FTPClient {
      */
     public void authorize(String user, String password)
         throws IOException, ServerException {
-        
+
         Reply userReply = null;
         try {
             userReply = controlChannel.exchange(new Command("USER", user));
@@ -1202,7 +1202,7 @@ public class  FTPClient {
 
         if (Reply.isPositiveIntermediate(userReply)) {
             Reply passReply = null;
-            
+
             try {
                 passReply =
                     controlChannel.exchange(new Command("PASS", password));
@@ -1219,9 +1219,9 @@ public class  FTPClient {
             // i'm logged in
 
         } else if (Reply.isPositiveCompletion(userReply)) {
-            
-            // i'm logged in 
-            
+
+            // i'm logged in
+
         } else {
             throw ServerException.embedUnexpectedReplyCodeException(
                                 new UnexpectedReplyCodeException(userReply),
@@ -1249,10 +1249,10 @@ public class  FTPClient {
 
         localServer.store(sink);
         controlChannel.write(new Command("RETR", remoteFileName));
-        
+
         transferRunSingleThread(localServer.getControlChannel(), mListener);
     }
-    
+
     /**
        Retrieves the file from the remote server.
        @param remoteFileName remote file name
@@ -1264,13 +1264,13 @@ public class  FTPClient {
                                    MarkerListener mListener)
         throws IOException, ClientException, ServerException {
         checkTransferParamsGet();
-        
+
         localServer.store(sink);
         controlChannel.write(new Command("RETR", remoteFileName));
-        
+
         return transferStart(localServer.getControlChannel(), mListener);
     }
-    
+
     /**
      * Stores file at the remote server.
      * @param remoteFileName remote file name
@@ -1283,7 +1283,7 @@ public class  FTPClient {
         throws IOException, ServerException, ClientException {
         put(remoteFileName, source, mListener, false);
     }
-    
+
     /**
      * Stores file at the remote server.
      * @param remoteFileName remote file name
@@ -1306,7 +1306,7 @@ public class  FTPClient {
         } else {
             controlChannel.write(new Command("STOR", remoteFileName));
         }
-        
+
         transferRunSingleThread(localServer.getControlChannel(), mListener);
     }
 
@@ -1345,10 +1345,10 @@ public class  FTPClient {
         } else {
             controlChannel.write(new Command("STOR", remoteFileName));
         }
-        
+
         return transferStart(localServer.getControlChannel(), mListener);
     }
-    
+
     /**
      * Performs third-party transfer between two servers.
      *
@@ -1367,23 +1367,23 @@ public class  FTPClient {
                          boolean append,
                          MarkerListener mListener)
         throws IOException, ServerException, ClientException {
-        
+
         session.matches(destination.session);
-        
-        // if transfer modes have not been defined, 
+
+        // if transfer modes have not been defined,
         // set this (source) as active
         if (session.serverMode == Session.SERVER_DEFAULT) {
-            
+
             HostPort hp = destination.setPassive();
             setActive(hp);
-            
+
         }
 
         destination.controlChannel.write(
                     new Command((append) ? "APPE" : "STOR", remoteDstFile));
 
         controlChannel.write(new Command("RETR", remoteSrcFile));
-        
+
         transferRunSingleThread(destination.controlChannel, mListener);
     }
 
@@ -1404,7 +1404,7 @@ public class  FTPClient {
         // this structure will contain up to date information
         // about the state of transfer at both sides
         TransferState transferState = new TransferState();
-        
+
         // thread monitoring our server during transfer
         // (that is, the server associated with this FTPClient)
         TransferMonitor ourMonitor =
@@ -1415,7 +1415,7 @@ public class  FTPClient {
                                 session.maxWait,
                                 session.waitDelay,
                                 TransferMonitor.LOCAL);
-        
+
         // thread monitoring other server during transfer
         // (that is, the server associated with the other FTPClient)
         TransferMonitor otherMonitor =
@@ -1426,14 +1426,14 @@ public class  FTPClient {
                                 session.maxWait,
                                 session.waitDelay,
                                 TransferMonitor.REMOTE);
-        
+
         ourMonitor.setOther(otherMonitor);
         otherMonitor.setOther(ourMonitor);
-        
+
         // start two threads controling the transfer
         ourMonitor.start(false);
         otherMonitor.start(false);
-        
+
         return transferState;
     }
 
@@ -1456,7 +1456,7 @@ public class  FTPClient {
         // this structure will contain up to date information
         // about the state of transfer at both sides
         TransferState transferState = new TransferState();
-        
+
         // thread monitoring our server during transfer
         // (that is, the server associated with this FTPClient)
         TransferMonitor ourMonitor =
@@ -1467,7 +1467,7 @@ public class  FTPClient {
                                 session.maxWait,
                                 session.waitDelay,
                                 TransferMonitor.LOCAL);
-        
+
         // thread monitoring other server during transfer
         // (that is, the server associated with the other FTPClient)
         TransferMonitor otherMonitor =
@@ -1478,22 +1478,22 @@ public class  FTPClient {
                                 session.maxWait,
                                 session.waitDelay,
                                 TransferMonitor.REMOTE);
-        
+
         ourMonitor.setOther(otherMonitor);
         otherMonitor.setOther(ourMonitor);
-        
+
         // controling the other connection - non-blocking
         otherMonitor.start(false);
         // control this connection - blocking
         ourMonitor.start(true);
-        
+
         transferState.waitForEnd();
     }
 
     /**
      * Executes arbitrary operation on the server.
      *
-     * <br><b>Note</b>: <i>This is potentially dangerous operation. 
+     * <br><b>Note</b>: <i>This is potentially dangerous operation.
      * Depending on the command executed it might put the server in a
      * different state from the state the client is expecting.</i>
      *
@@ -1510,7 +1510,7 @@ public class  FTPClient {
     /**
      * Executes site-specific operation (using the SITE command).
      *
-     * <br><b>Note</b>: <i>This is potentially dangerous operation. 
+     * <br><b>Note</b>: <i>This is potentially dangerous operation.
      * Depending on the command executed it might put the server in a
      * different state from the state the client is expecting.</i>
      *
@@ -1554,32 +1554,32 @@ public class  FTPClient {
     }
 
     // basic compatibility API
-    
+
     public long size(String filename) throws IOException, ServerException {
         return getSize(filename);
     }
-    
+
     public Date lastModified(String filename)
         throws IOException, ServerException {
         return getLastModified(filename);
     }
-    
+
     public void get(String remoteFileName, File localFile)
         throws IOException, ClientException, ServerException {
         DataSink sink = new DataSinkStream(new FileOutputStream(localFile));
         get(remoteFileName, sink, null);
     }
-    
+
     public void put(File localFile, String remoteFileName, boolean append)
         throws IOException, ServerException, ClientException {
         DataSource source =
             new DataSourceStream(new FileInputStream(localFile));
         put(remoteFileName, source, null, append);
     }
-    
+
     /**
-     * Enables/disables passive data connections. 
-     * 
+     * Enables/disables passive data connections.
+     *
      * @param passiveMode if true passive connections will be
      *        established. If false, they will not.
      */
@@ -1593,11 +1593,11 @@ public class  FTPClient {
             setActive();
         }
     }
-    
+
     public boolean isPassiveMode() {
         return (this.session.serverMode == Session.SERVER_PASSIVE);
     }
-    
+
 
     //////////////////////////////////////////////////////////////////////
     // Implementation of GFD.47 compliant GETPUT support. The reason
@@ -2034,21 +2034,21 @@ public class  FTPClient {
     public boolean isActiveMode() {
         return (this.session.serverMode == Session.SERVER_ACTIVE);
     }
-    
+
     /**
      * Controls whether the client attempts to send an ALLO command
-     * before a STOR request during the put/asyncPut calls. This is 
-     * disabled by default in the FTP client and enabled by default 
-     * in the GridFTP client. This setting will apply to all 
+     * before a STOR request during the put/asyncPut calls. This is
+     * disabled by default in the FTP client and enabled by default
+     * in the GridFTP client. This setting will apply to all
      * subsequent transfers.
-     * 
+     *
      * @param useAllo <code>true</code> if the client should try
      * to send an ALLO command before a STOR request
      */
     public void setUseAllo(boolean useAllo) {
         this.useAllo = useAllo;
     }
-    
+
     /**
      * Determines whether this client is configured to send an ALLO
      * command before a STOR request in the put/asyncPut methods.

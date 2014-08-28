@@ -23,17 +23,17 @@ import java.net.BindException;
 import java.io.IOException;
 
 /**
- * This factory allows for creating regular sockets. 
+ * This factory allows for creating regular sockets.
  * If the tcp.source.port.range system property is set it will create
  * sockets within the specified local port range (if the local port
  * number is set to 0).
  */
 public class SocketFactory {
-    
+
     private static SocketFactory defaultFactory = null;
 
     private PortRange portRange = null;
-    
+
     protected SocketFactory() {
         this.portRange = PortRange.getTcpSourceInstance();
     }
@@ -54,21 +54,21 @@ public class SocketFactory {
         throws IOException {
         return createSocket(InetAddress.getByName(host), port, null, 0);
     }
-    
-    public Socket createSocket(InetAddress address, int port) 
+
+    public Socket createSocket(InetAddress address, int port)
         throws IOException {
         return createSocket(address, port, null, 0);
     }
-    
-    public Socket createSocket(String host, int port, 
-                               InetAddress localAddr, int localPort) 
+
+    public Socket createSocket(String host, int port,
+                               InetAddress localAddr, int localPort)
         throws IOException {
-        return createSocket(InetAddress.getByName(host), port, 
+        return createSocket(InetAddress.getByName(host), port,
                             localAddr, localPort);
     }
-    
-    public Socket createSocket(InetAddress address, int port, 
-                               InetAddress localAddr, int localPort) 
+
+    public Socket createSocket(InetAddress address, int port,
+                               InetAddress localAddr, int localPort)
         throws IOException {
         if (this.portRange.isEnabled() && localPort == 0) {
             return new PrSocket(createSocket(address, port, localAddr));
@@ -81,12 +81,12 @@ public class SocketFactory {
         }
     }
 
-    private Socket createSocket(InetAddress address, int port, 
+    private Socket createSocket(InetAddress address, int port,
                                 InetAddress localAddr)
         throws IOException {
         Socket socket = null;
         int localPort = 0;
-        
+
         while(true) {
             localPort = this.portRange.getFreePort(localPort);
 
@@ -109,8 +109,8 @@ public class SocketFactory {
         public PrSocket(Socket socket) {
             super(socket);
         }
-        
-        public void close() 
+
+        public void close()
             throws IOException {
             int port = getLocalPort();
             try {

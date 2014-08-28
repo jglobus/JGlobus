@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,22 +33,22 @@ public class GatekeeperReply extends HttpResponse {
     public String jobManagerUrl  = null;
     public int failureCode       = -1;
     public int jobFailureCode    = -1;
-    // since there is no specification that 
+    // since there is no specification that
     // would rule out -1 as valid value
-    // for the exit code, it is inapropriate 
+    // for the exit code, it is inapropriate
     // to mean "special value"
     public int exitCode          = Integer.MIN_VALUE;
 
     public GatekeeperReply(InputStream in) throws IOException {
-	super(in);    
+	super(in);
 	charsRead = 1;
 	if (contentLength > 0) myparse();
     }
 
     protected void myparse() throws IOException {
-	
+
 	String line, tmp;
-	
+
         while(charsRead < contentLength) {
             line = readLine(input);
 	    if (line.length() == 0) break;
@@ -57,8 +57,8 @@ public class GatekeeperReply extends HttpResponse {
 		logger.trace(line);
 	    }
 
-            tmp = getRest(line.trim());   
-	    
+            tmp = getRest(line.trim());
+
 	    if (line.startsWith("protocol-version:")) {
 	      protocolVersion = Integer.parseInt(tmp);
 	    } else if (line.startsWith("status:")) {
@@ -74,7 +74,7 @@ public class GatekeeperReply extends HttpResponse {
 		String unquotedValue = tmp.substring(1, tmp.length() - 1);
 		exitCode = Integer.parseInt(unquotedValue);
 	    }
-	    
+
 	}
     }
 
@@ -82,7 +82,7 @@ public class GatekeeperReply extends HttpResponse {
 	StringBuffer buf = new StringBuffer();
 
 	buf.append(super.toString());
-	
+
 	buf.append("Protocol-version : " + protocolVersion + "\n");
 	buf.append("Status           : " + status);
 	if (jobManagerUrl != null) {
@@ -97,11 +97,11 @@ public class GatekeeperReply extends HttpResponse {
         if (exitCode != Integer.MIN_VALUE) {
     	    buf.append("\nExit code        : " + exitCode);
         }
-	
+
 	return buf.toString();
     }
 }
-	
+
 
 
 

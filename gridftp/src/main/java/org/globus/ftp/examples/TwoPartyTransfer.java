@@ -27,12 +27,12 @@ public class TwoPartyTransfer {
             log.error("direction: \"download\" || \"upload\"");
             log.error("sourceFile: source file");
             log.error("destFile: destination file");
-            log.error(""); 
+            log.error("");
             log.error("A user proxy certificate needs to be in place in /tmp");
-            log.error(""); 
-            log.error("Example: java " + TwoPartyTransfer.class.getName() + 
+            log.error("");
+            log.error("Example: java " + TwoPartyTransfer.class.getName() +
                 " chi-vm-4.isi.edu 2811 download /tmp/testfile /tmp/testfile");
-            log.error("This will transfer chi-vm-4.isi.edu/tmp/testfile into /tmp/testfile"); 
+            log.error("This will transfer chi-vm-4.isi.edu/tmp/testfile into /tmp/testfile");
             System.exit(1);
         }
 */
@@ -46,7 +46,7 @@ public class TwoPartyTransfer {
     }
 
     public TwoPartyTransfer(String host, int port, String source, String dest, String direction) {
-        
+
         if (!direction.equals("download") && !direction.equals("upload")) {
             throw new IllegalArgumentException("Invalid direction: \"download\" || \"upload\"");
         }
@@ -56,16 +56,16 @@ public class TwoPartyTransfer {
         this.dest = dest;
         this.direction = direction;
     }
-    
+
     public void doTransfer() throws Exception {
 
         GridFTPClient client = null;
         try {
             client = new GridFTPClient(host, port);
-            
+
             // Change the authorization from the output of identity from grid-proxy-init
             client.setAuthorization(new IdentityAuthorization("/O=Grid/OU=GlobusTest/OU=simpleCA-ubuntu/CN=Vijay Anand"));
-            
+
             client.authenticate(new LocalCredentialHelper().getDefaultCredential());
             client.setType(Session.TYPE_IMAGE);
             client.setPassive();

@@ -32,7 +32,7 @@ import org.globus.common.Version;
  * Displays certificate information. Unless the optional -file
  * argument is given, the default location of the file containing the
  * certficate is assumed:
- *   --  Config.getUserCertFile() 
+ *   --  Config.getUserCertFile()
  * Options
  *   -help, -usage                Display usage
  *   -version                     Display version
@@ -53,43 +53,43 @@ public class CertInfo {
     private static final int SDATE    = 8;
     private static final int EDATE    = 16;
     private static final int ALL      = 32;
-    
+
     private static String message =
 	"\n" +
 	"Syntax: java CertInfo [-help] [-file certfile] [-all] [-subject] [...]\n\n" +
-	"\tDisplays certificate information. Unless the optional \n" + 
+	"\tDisplays certificate information. Unless the optional \n" +
 	"\tfile argument is given, the default location of the file\n" +
 	"\tcontaining the certficate is assumed:\n\n" +
-	"\t  -- " + CoGProperties.getDefault().getUserCertFile() + "\n\n" + 
+	"\t  -- " + CoGProperties.getDefault().getUserCertFile() + "\n\n" +
 	"\tOptions\n" +
-	"\t-help | -usage\n" + 
+	"\t-help | -usage\n" +
 	"\t\tDisplay usage.\n" +
-	"\t-version\n" + 
+	"\t-version\n" +
 	"\t\tDisplay version.\n" +
-	"\t-file certfile\n" + 
+	"\t-file certfile\n" +
 	"\t\tUse 'certfile' at non-default location.\n" +
-	"\t-globus\n" + 
+	"\t-globus\n" +
 	"\t\tPrints information in globus format.\n\n" +
 	"\tOptions determining what to print from certificate\n\n" +
-	"\t-all\n" + 
+	"\t-all\n" +
 	"\t\tWhole certificate.\n" +
-	"\t-subject\n" + 
+	"\t-subject\n" +
 	"\t\tSubject string of the cert.\n" +
-	"\t-issuer\n" + 
+	"\t-issuer\n" +
 	"\t\tIssuer.\n" +
-	"\t-startdate\n" + 
+	"\t-startdate\n" +
 	"\t\tValidity of cert: start date.\n" +
-	"\t-enddate\n" + 
+	"\t-enddate\n" +
 	"\t\tValidity of cert: end date.\n\n";
 
     public static void main(String args[]) {
-	
+
 	String file         = null;
 	int options         = 0;
 	boolean error       = false;
 	boolean globusStyle = false;
 	boolean debug       = false;
-	
+
 	for (int i = 0; i < args.length; i++) {
 	    if (args[i].equalsIgnoreCase("-file")) {
 		file = args[++i];
@@ -117,13 +117,13 @@ public class CertInfo {
 		error = true;
 	    }
     }
-    
+
 	if (error) {
 	    System.err.println("\nUsage: java CertInfo [-help] [-file certfile] [-all] [-subject] [...]\n");
 	    System.err.println("Use -help to display full usage.");
 	    System.exit(1);
 	}
-    
+
 	if (file == null) {
 	    file = CoGProperties.getDefault().getUserCertFile();
 	}
@@ -136,7 +136,7 @@ public class CertInfo {
 	    System.err.println("Unable to load the certificate : " + e.getMessage());
 	    System.exit(1);
 	}
-    
+
 
 	if (options == 0) {
 	    options = SUBJECT | ISSUER | SDATE | EDATE;
@@ -151,7 +151,7 @@ public class CertInfo {
 	    }
 	    System.out.println("subject     : " + dn);
 	}
-    
+
 	if ((options & ISSUER) != 0) {
 	    String dn = null;
 	    if (globusStyle) {
@@ -161,7 +161,7 @@ public class CertInfo {
 	    }
 	    System.out.println("issuer      : " + dn);
 	}
-    
+
 	TimeZone tz   = null;
 	DateFormat df = null;
 	if (globusStyle) {
@@ -179,7 +179,7 @@ public class CertInfo {
 	    }
 	    System.out.println("start date  : " + dt);
 	}
-	
+
 	if ((options & EDATE) != 0) {
 	    String dt = null;
 	    if (globusStyle) {
@@ -189,11 +189,11 @@ public class CertInfo {
 	    }
 	    System.out.println("end date    : " + dt);
 	}
-	
+
 	if ((options & ALL) != 0) {
 	    System.out.println("certificate :");
 	    System.out.println(cert.toString());
 	}
     }
-    
+
 }

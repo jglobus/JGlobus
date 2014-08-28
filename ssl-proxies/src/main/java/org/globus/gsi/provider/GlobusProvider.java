@@ -26,7 +26,7 @@ import java.security.Provider;
 /**
  * This is a security provider for the Globus SSL support. This supplies a
  * CertStore, CertValidator and KeyStore implementation
- * 
+ *
  * @version ${version}
  * @since 1.0
  */

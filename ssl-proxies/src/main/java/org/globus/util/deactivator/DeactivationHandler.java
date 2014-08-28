@@ -17,5 +17,5 @@ package org.globus.util.deactivator;
 public interface DeactivationHandler {
 
     public void deactivate();
-    
+
 }

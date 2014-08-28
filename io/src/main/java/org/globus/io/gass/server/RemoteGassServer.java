@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ public class RemoteGassServer {
     public static final int LINE_BUFFER_ENABLE  = 256;
     public static final int TILDE_EXPAND_ENABLE = 512;
     public static final int USER_EXPAND_ENABLE  = 1024;
-    
+
     private int port           = 0;
     private int options        = 0;
     private boolean secure     = true;
@@ -47,7 +47,7 @@ public class RemoteGassServer {
 
     private String url            = null;
     private GramJob job           = null;
-  
+
     private boolean compatibilityMode = false;
 
     private OutputListener stderrListener, stdoutListener;
@@ -60,7 +60,7 @@ public class RemoteGassServer {
     public RemoteGassServer() {
 	this(true, 0);
     }
-  
+
     /**
      * Starts Gass Server on given port and mode. Default
      * credentials will be used to start the server.
@@ -89,14 +89,14 @@ public class RemoteGassServer {
 	this.cred = cred;
 	this.secure = secure;
 	this.port = port;
-    
+
 	options = USER_EXPAND_ENABLE |
 	    TILDE_EXPAND_ENABLE |
 	    LINE_BUFFER_ENABLE |
 	    GassServer.READ_ENABLE |
 	    GassServer.WRITE_ENABLE;
     }
-  
+
     /**
      * Returns url of this server.
      *
@@ -142,12 +142,12 @@ public class RemoteGassServer {
      * Starts the gass server on the remote machine.
      *
      * @param     rmc resource manager contact of the remote machine.
-     * @exception GassException if any error occurs during 
+     * @exception GassException if any error occurs during
      *            remote startup.
      */
-    public void start(String rmc) 
+    public void start(String rmc)
 	throws GassException {
-	
+
 	if (rmc == null) {
 	    throw new IllegalArgumentException("Resource manager contact not specified");
 	}
@@ -156,30 +156,30 @@ public class RemoteGassServer {
 	String error          = null;
 
 	 try {
-	     
+
 	     gassServer     = new GassServer(this.cred, 0);
 	     String gassURL = gassServer.getURL();
 	     String rsl     = getRSL(gassURL);
-	   
+
 	     logger.debug("RSL: " + rsl);
-	   
+
 	     stderrListener = new OutputListener();
 	     stdoutListener = new OutputListener();
-	   
+
 	     gassServer.registerJobOutputStream("err-rgs", new JobOutputStream(stderrListener));
 	     gassServer.registerJobOutputStream("out-rgs", new JobOutputStream(stdoutListener));
-	     
+
 	     job = new GramJob(this.cred, rsl);
-	     
+
 	     gassJobListener = new GassServerListener();
-	     
+
 	     job.addListener(gassJobListener);
 	     job.request(rmc);
 
 	     int status = gassJobListener.waitFor(1000*60*2);
 
 	     if (status == GramJob.STATUS_ACTIVE) {
-		 
+
 		 while(true) {
 		     if (stderrListener.hasData()) {
 			 // got some error
@@ -211,7 +211,7 @@ public class RemoteGassServer {
 		 if (stderrListener.hasData()) {
 		     error = stderrListener.getOutput();
 		 } else if (errorCode != 0) {
-		     error = "Remote gass server stopped with error : " + 
+		     error = "Remote gass server stopped with error : " +
 			 errorCode;
 		 } else {
 		     error = "Remote gass server stopped and returned no error";
@@ -219,7 +219,7 @@ public class RemoteGassServer {
 	     } else {
 		 error = "Unexpected state or received no notification";
 	     }
-	     
+
 	 } catch(Exception e) {
 	     throw new GassException( e.getMessage() );
 	 } finally {
@@ -227,7 +227,7 @@ public class RemoteGassServer {
 		 gassServer.shutdown();
 	     }
 	 }
-	 
+
 	 if (error != null) {
 	     throw new GassException(error);
 	 }
@@ -240,7 +240,7 @@ public class RemoteGassServer {
      *         otherwise.
      */
     public boolean shutdown() {
-	
+
 	if (url != null) {
 	    logger.debug("Trying to shutdown gass server directly...");
 	    try {
@@ -263,11 +263,11 @@ public class RemoteGassServer {
 		logger.debug("", e);
 	    }
 	}
-	
+
 	// otherwise just cancel the job.
-    
+
 	if (job == null) return true;
-	
+
 	logger.debug("Canceling gass server job.");
 
 	try {
@@ -277,77 +277,77 @@ public class RemoteGassServer {
 	} catch(Exception e) {
 	    return false;
 	}
-	
+
     }
-  
+
     private void reset() {
 	job = null;
 	url = null;
     }
-    
+
     private String getRSL(String gassURL) {
 	StringBuffer buf = new StringBuffer();
-	
+
 	if (compatibilityMode) {
 	    buf.append("&(executable=$(GLOBUS_TOOLS_PREFIX)/bin/globus-gass-server)");
 	} else {
 	    buf.append("&(executable=$(GLOBUS_LOCATION)/bin/globus-gass-server)");
 	    buf.append("(environment=(LD_LIBRARY_PATH $(GLOBUS_LOCATION)/lib))");
 	}
-	
+
 	buf.append("(rsl_substitution=(GLOBUSRUN_GASS_URL " + gassURL + "))");
 	buf.append("(stderr=$(GLOBUSRUN_GASS_URL)/dev/stderr-rgs)");
 	buf.append("(stdout=$(GLOBUSRUN_GASS_URL)/dev/stdout-rgs)");
-	
+
 	setRSLArguments(buf);
-	
+
 	return buf.toString();
     }
-    
+
     private void setRSLArguments(StringBuffer buf) {
 	buf.append("(arguments=\"-c\"");
-	
+
 	if (port != 0) {
 	    buf.append(" \"-p\" \"" + port + "\"");
 	}
-	
+
 	if (!secure) {
 	    buf.append(" \"-i\"");
 	}
-	
+
 	if ((options & LINE_BUFFER_ENABLE) != 0) {
 	    buf.append(" \"-l\"");
 	}
-	
+
 	if ((options & TILDE_EXPAND_ENABLE) != 0) {
 	    buf.append(" \"-t\"");
 	}
-	
+
 	if ((options & USER_EXPAND_ENABLE) != 0) {
 	    buf.append(" \"-u\"");
 	}
-	
+
 	if ((options & GassServer.READ_ENABLE) != 0) {
 	    buf.append(" \"-r\"");
 	}
-	
+
 	if ((options & GassServer.WRITE_ENABLE) != 0) {
 	    buf.append(" \"-w\"");
 	}
-	
+
 	buf.append(")");
     }
-    
+
     private void sleep(int msec) {
 	try {
 	    Thread.sleep(msec);
 	} catch(Exception e) {
 	}
     }
-    
-    
+
+
     // ---------- main ----------------
-    
+
     public static void main(String [] args) {
 
 	RemoteGassServer s = null;
@@ -355,7 +355,7 @@ public class RemoteGassServer {
 	int port       = 0;
 	boolean secure = true;
 	String host    = null;
-	
+
 	for (int i = 0; i < args.length; i++) {
 	    if (args[i].equals("-h")) {
 		host = args[++i];
@@ -368,60 +368,60 @@ public class RemoteGassServer {
 		System.exit(1);
 	    }
 	}
-	
+
 	try {
 	    s = new RemoteGassServer(secure, port);
-	    
-	    s.setOptions( USER_EXPAND_ENABLE | 
-			  TILDE_EXPAND_ENABLE | 
-			  LINE_BUFFER_ENABLE | 
-			  GassServer.READ_ENABLE | 
+
+	    s.setOptions( USER_EXPAND_ENABLE |
+			  TILDE_EXPAND_ENABLE |
+			  LINE_BUFFER_ENABLE |
+			  GassServer.READ_ENABLE |
 			  GassServer.WRITE_ENABLE );
-	    
+
 	    s.start(host);
-	    
+
 	    System.out.println("Remote gass server url: " + s.getURL());
-	    
+
 	    Thread.sleep(10000);
-	    
+
 	    System.out.println("Shutting down...");
-	    
+
 	} catch(Exception e) {
 	    e.printStackTrace();
 	} finally {
 	    if (s != null) s.shutdown();
 	}
-	
+
 	System.out.println("Done");
 	Deactivator.deactivateAll();
     }
-    
+
 }
 
 class GassServerListener implements GramJobListener {
-    
+
     private static Log logger =
         LogFactory.getLog(RemoteGassServer.class.getName());
 
     private int status = -1;
     private int error = 0;
-    
+
     public int getError() {
 	return this.error;
     }
-    
+
     public static boolean isStartState(int status) {
 	return (status == GramJob.STATUS_ACTIVE ||
 		status == GramJob.STATUS_FAILED ||
 		status == GramJob.STATUS_DONE);
     }
-    
+
     public synchronized void reset() {
 	this.error = 0;
 	this.status = -1;
     }
-    
-    public synchronized int waitFor(int timeout) 
+
+    public synchronized int waitFor(int timeout)
 	throws InterruptedException {
 	for(;;) {
 	    if (isStartState(status)) {
@@ -434,7 +434,7 @@ class GassServerListener implements GramJobListener {
 	}
 	return status;
     }
-    
+
     public synchronized void statusChanged(GramJob job) {
 	int st = job.getStatus();
 	logger.debug("Gass job status: " + st);
@@ -447,25 +447,25 @@ class GassServerListener implements GramJobListener {
 }
 
 class OutputListener implements JobOutputListener {
-    
+
     private StringBuffer outputBuf = null;
-    
+
     public void outputChanged(String output) {
 	if (outputBuf == null) {
 	    outputBuf = new StringBuffer();
 	}
 	outputBuf.append(output);
     }
-  
+
     public void outputClosed() {
     }
-  
+
     public String getOutput() {
 	return (outputBuf == null) ? null : outputBuf.toString();
     }
-  
+
     public boolean hasData() {
 	return (outputBuf != null);
     }
-    
+
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import java.io.ByteArrayOutputStream;
 
 public class FTPClientListTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(FTPClientListTest.class.getName());
 
     public FTPClientListTest(String name) {
@@ -43,7 +43,7 @@ public class FTPClientListTest extends TestCase {
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
@@ -53,13 +53,13 @@ public class FTPClientListTest extends TestCase {
     public void testListPassive() throws Exception {
         testList(true);
     }
-    
+
     public void testListActive() throws Exception {
         testList(false);
     }
-    
+
     private void testList(boolean passive) throws Exception {
-	FTPClient src = 
+	FTPClient src =
             new FTPClient(TestEnv.serverFHost, TestEnv.serverFPort);
 	src.authorize(TestEnv.serverFUser, TestEnv.serverFPassword);
 	src.setType(Session.TYPE_ASCII);
@@ -70,7 +70,7 @@ public class FTPClientListTest extends TestCase {
 	Vector v = src.list();
 	logger.debug("list received");
 	while (! v.isEmpty()) {
-	    FileInfo f = (FileInfo)v.remove(0); 
+	    FileInfo f = (FileInfo)v.remove(0);
 	    logger.info(f.toString());
             if (f.getName().equals(TestEnv.serverFFile)) {
                 foundit = true;
@@ -82,7 +82,7 @@ public class FTPClientListTest extends TestCase {
         assertTrue("expected file not in the list", foundit);
     }
 
-    
+
     public void test2() throws Exception {
 	logger.info("test two consective list, using both list functions");
 
@@ -99,7 +99,7 @@ public class FTPClientListTest extends TestCase {
 	logger.debug("list received");
 	StringBuffer output1Buffer = new StringBuffer();
 	while (! v.isEmpty()) {
-	    FileInfo f = (FileInfo)v.remove(0); 
+	    FileInfo f = (FileInfo)v.remove(0);
 	    output1Buffer.append(f.toString()).append("\n");
 
 	}
@@ -119,7 +119,7 @@ public class FTPClientListTest extends TestCase {
 	// to "received" stream.
 
 	 src.list("*", "-d", new DataSink(){
-		public void write(Buffer buffer) 
+		public void write(Buffer buffer)
 		    throws IOException{
 		    logger.debug("received " + buffer.getLength() +
 				 " bytes of directory listing");
@@ -127,7 +127,7 @@ public class FTPClientListTest extends TestCase {
 				   0,
 				   buffer.getLength());
 		}
-		public void close() 
+		public void close()
 		    throws IOException{};
 	     });
 
@@ -137,5 +137,5 @@ public class FTPClientListTest extends TestCase {
 	 logger.debug(output2);
 
 	 src.close();
-    }    
+    }
 }

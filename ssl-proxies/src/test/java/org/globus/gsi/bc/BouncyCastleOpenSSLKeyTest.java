@@ -40,16 +40,16 @@ public class BouncyCastleOpenSSLKeyTest extends TestCase {
     private static final String pwd = "testpwd";
 
     private Log logger = LogFactory.getLog(BouncyCastleOpenSSLKeyTest.class);
-        
+
     private KeyPair getKeyPair() throws Exception {
     CertUtil.init();
-        
+
 	int bits = 512;
-        
+
 	KeyPairGenerator keyGen = null;
 	keyGen = KeyPairGenerator.getInstance("RSA", "BC");
 	keyGen.initialize(bits);
-        
+
         return keyGen.genKeyPair();
     }
 
@@ -57,7 +57,7 @@ public class BouncyCastleOpenSSLKeyTest extends TestCase {
         KeyPair keyPair = getKeyPair();
 
 	OpenSSLKey key = new BouncyCastleOpenSSLKey(keyPair.getPrivate());
-	
+
 	assertTrue(!key.isEncrypted());
 
 	key.encrypt(pwd);
@@ -69,7 +69,7 @@ public class BouncyCastleOpenSSLKeyTest extends TestCase {
         KeyPair keyPair = getKeyPair();
 
 	OpenSSLKey key = new BouncyCastleOpenSSLKey(keyPair.getPrivate());
-	
+
 	assertTrue(!key.isEncrypted());
 
         key.setEncryptionAlgorithm("AES-128-CBC");
@@ -93,7 +93,7 @@ public class BouncyCastleOpenSSLKeyTest extends TestCase {
         KeyPair keyPair = getKeyPair();
 	OpenSSLKey inKey = new BouncyCastleOpenSSLKey(keyPair.getPrivate());
 	assertTrue(!inKey.isEncrypted());
-        
+
         ByteArrayInputStream in = null;
         in = new ByteArrayInputStream(toString(inKey).getBytes());
         OpenSSLKey outKey = new BouncyCastleOpenSSLKey(in);
@@ -110,7 +110,7 @@ public class BouncyCastleOpenSSLKeyTest extends TestCase {
 	assertTrue(!inKey.isEncrypted());
 	inKey.encrypt(pwd);
 	assertTrue(inKey.isEncrypted());
-        
+
         ByteArrayInputStream in = null;
         in = new ByteArrayInputStream(toString(inKey).getBytes());
         OpenSSLKey outKey = new BouncyCastleOpenSSLKey(in);

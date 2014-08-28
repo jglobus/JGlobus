@@ -9,7 +9,7 @@ import javax.net.ssl.SSLSocket;
 public class GlobusSSLInputStream extends InputStream{
 	private InputStream delegate;
 	private SSLSocket sslSocket;
-	
+
 	public GlobusSSLInputStream(InputStream delegate, SSLSocket sslSocket) {
 		this.delegate = delegate;
 		this.sslSocket = sslSocket;
@@ -18,7 +18,7 @@ public class GlobusSSLInputStream extends InputStream{
 	public SSLSocket getSSLSocket(){
 		return sslSocket;
 	}
-	
+
 	public int available() throws IOException {
 		return delegate.available();
 	}
@@ -66,8 +66,8 @@ public class GlobusSSLInputStream extends InputStream{
 	public String toString() {
 		return delegate.toString();
 	}
-	
-	
-	
+
+
+
 
 }

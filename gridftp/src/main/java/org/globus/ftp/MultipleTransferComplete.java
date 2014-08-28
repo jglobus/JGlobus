@@ -1,7 +1,7 @@
 package org.globus.ftp;
 
 
-public 
+public
 class
 MultipleTransferComplete
 {

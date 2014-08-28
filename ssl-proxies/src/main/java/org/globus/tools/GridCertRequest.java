@@ -1,36 +1,36 @@
 /**
  * Copyright (c) 2003, National Research Council of Canada
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to 
- * deal in the Software without restriction, including without limitation the 
- * rights to use, copy, modify, merge, publish, distribute, and/or sell copies 
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to
  * do so, subject to the following conditions:
- * 
- * The above copyright notice(s) and this licence appear in all copies of the 
- * Software or substantial portions of the Software, and that both the above 
+ *
+ * The above copyright notice(s) and this licence appear in all copies of the
+ * Software or substantial portions of the Software, and that both the above
  * copyright notice(s) and this license appear in supporting documentation.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
- * NONINFRINGEMENT OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE 
- * COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE 
- * FOR ANY CLAIM, OR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL 
- * DAMAGES, OR ANY DAMAGES WHATSOEVER (INCLUDING, BUT NOT 
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWSOEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF OR IN CONNECTION WITH THE 
- * SOFTWARE OR THE USE OF THE SOFTWARE, EVEN IF ADVISED OF THE 
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE
+ * FOR ANY CLAIM, OR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL
+ * DAMAGES, OR ANY DAMAGES WHATSOEVER (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWSOEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OF THE SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * Except as contained in this notice, the name of a copyright holder shall NOT
  * be used in advertising or otherwise to promote the sale, use or other
- * dealings in this Software without specific prior written authorization. 
+ * dealings in this Software without specific prior written authorization.
  * Title to copyright in this software and any associated documentation will at
  * all times remain with copyright holders.
  */
@@ -61,7 +61,7 @@ import org.globus.util.ConfigUtil;
 
 /**
  * GridCertRequest Command Line Client.
- * 
+ *
  * @author <a href="mailto:jean-claude.cote@nrc-cnrc.gc.ca">Jean-Claude Cote</a>
  */
 public final class GridCertRequest {
@@ -111,7 +111,7 @@ public final class GridCertRequest {
 	+ "\n    -force             : Overwrites preexisting certifictes"
 	+ "\n    -caEmail <address> : CA email address, if request is to be mailed to CA"
 	+ "\n    -orgBaseDN <dn>    : The base DN of this organization (in LDAP format)";
-	
+
     private static final String MESSAGE =
         "A certificate request and private key will be created."
 	+ "\nYou will be asked to enter a PEM pass phrase."
@@ -146,12 +146,12 @@ public final class GridCertRequest {
 		exit("Unable to create " + certDir + " directory.", 1);
 	    }
 	}
-    
+
 	// Make sure it's a directory.
 	if (!certDir.isDirectory()) {
 	    exit("The directory " + certDir + " specified is not a directory.", 2);
         }
-        
+
         // Make sure we can write to it.
 	if (!certDir.canWrite()) {
 	    exit("Can't write to " + certDir, 3);
@@ -185,10 +185,10 @@ public final class GridCertRequest {
         String password = null;
 
         if (!noPswd) {
-            // Get password from user.                
+            // Get password from user.
             int attempts = 0;
 	    boolean passOK = false;
-	    
+
             System.out.println(MESSAGE);
 
             while (attempts < 3) {
@@ -199,10 +199,10 @@ public final class GridCertRequest {
 		    attempts++;
 		    continue;
 		}
-		
+
                 String password2 =
                     Util.getPrivateInput("Verifying password - Enter PEM pass phrase: ");
-		
+
                 if (password.compareTo(password2) == 0) {
 		    passOK = true;
 		    break;
@@ -217,16 +217,16 @@ public final class GridCertRequest {
 	    }
         }
 
-        // Generate cert request.            
+        // Generate cert request.
 	try {
 	    genCertificateRequest(cn,
-				  caEmail, 
+				  caEmail,
 				  password,
 				  keyFile,
 				  certFile,
 				  certRequestFile);
 	} catch (Exception e) {
-	    System.err.println("Error generating cert request: " + 
+	    System.err.println("Error generating cert request: " +
 			       e.getMessage());
 	    if (debug) {
 		e.printStackTrace();
@@ -306,7 +306,7 @@ public final class GridCertRequest {
 		noPswd = true;
 	    } else if (args[i].equalsIgnoreCase("-verbose")) {
 		verbose = true;
-	    } else if (args[i].equalsIgnoreCase("-int") || 
+	    } else if (args[i].equalsIgnoreCase("-int") ||
                        args[i].equalsIgnoreCase("-interactive")) {
 		// interactive mode
 		interactive = true;
@@ -351,7 +351,7 @@ public final class GridCertRequest {
 		}
 	    }
 	}
-	
+
 	if (service != null) {
 	    if (hostName == null) {
 		exit("-host required");
@@ -382,12 +382,12 @@ public final class GridCertRequest {
 	}
 
 	if (dir == null) {
-	    dir = System.getProperty("user.home") + 
-		File.separator + 
+	    dir = System.getProperty("user.home") +
+		File.separator +
 		".globus";
 	}
     }
-    
+
     /**
      * Generates a encrypted private key and certificate request.
      */
@@ -401,7 +401,7 @@ public final class GridCertRequest {
 
         String sigAlgName = "MD5WithRSA";
         String keyAlgName = "RSA";
-	
+
 	CertUtil.init();
 
 	X509Name name = new X509Name(dname);
@@ -417,7 +417,7 @@ public final class GridCertRequest {
         PrivateKey privKey = keyPair.getPrivate();
         PublicKey pubKey = keyPair.getPublic();
 
-        // Generate the certificate request.        
+        // Generate the certificate request.
         DERSet derSet = new DERSet();
         PKCS10CertificationRequest request =
             new PKCS10CertificationRequest(
@@ -426,11 +426,11 @@ public final class GridCertRequest {
                 pubKey,
                 derSet,
                 privKey);
-	
+
         // Save the certificate request to a .pem file.
         byte[] data = request.getEncoded();
 	byte[] encodedData = Base64.encode(data);
-	
+
         PrintStream ps = null;
 
 	try {
@@ -438,7 +438,7 @@ public final class GridCertRequest {
 
             boolean caEmail = false;
 
-            if ((emailAddressOfCA != null) && 
+            if ((emailAddressOfCA != null) &&
                 (emailAddressOfCA.length() > 0)) {
                 caEmail = true;
                 ps.print("\n\n" + "Please mail the following certificate request to " + emailAddressOfCA);
@@ -483,7 +483,7 @@ public final class GridCertRequest {
 		ps.close();
 	    }
 	}
-	
+
         // Save private key to a .pem file.
         OpenSSLKey key = new BouncyCastleOpenSSLKey(privKey);
         if (password != null) {
@@ -500,7 +500,7 @@ public final class GridCertRequest {
 	System.out.println(certSubject);
 	System.out.println();
 
-	System.out.println("The private key is stored in " + 
+	System.out.println("The private key is stored in " +
 			   keyFile.getAbsolutePath());
 	System.out.println("The request is stored in " +
 			   certReqFile.getAbsolutePath());
@@ -525,17 +525,17 @@ public final class GridCertRequest {
 	    }
 	    orgName.append(component);
 	}
-	
+
 	if (orgName.length() == 0) {
 	    exit("Invalid organization DN");
 	}
-	
+
 	return orgName.toString();
     }
 
     private static String getComponent() {
 	String component = null;
-	
+
 	while (true) {
 	    component = Util.getInput("Enter name component: ");
 	    if (component == null || component.trim().length() == 0) {
@@ -550,14 +550,14 @@ public final class GridCertRequest {
 	}
 
 	component = component.toUpperCase();
-	
+
 	String value = Util.getInput("Enter '" + component + "' value: ");
 	if (value == null || value.trim().length() == 0) {
 	    return null;
 	}
 	return component + "=" + value.trim();
     }
-	
-	
-	
+
+
+
 }

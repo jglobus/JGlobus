@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@ import org.globus.ftp.Buffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class EBlockImageDCWriter 
+public class EBlockImageDCWriter
     extends EBlockAware
     implements DataChannelWriter {
 
@@ -40,11 +40,11 @@ public class EBlockImageDCWriter
 	if (offset < 0) {
 	    throw new IOException("Invalid offset: " + offset);
 	}
-	
+
 	output.writeByte(0);
-	logger.debug("buffer length: " + buf.getLength()); 
+	logger.debug("buffer length: " + buf.getLength());
 	output.writeLong(buf.getLength());
-	logger.debug("offset: " + offset); 
+	logger.debug("offset: " + offset);
 	output.writeLong(offset);
 	output.write(buf.getBuffer(), 0, buf.getLength());
 	//output.flush();
@@ -63,7 +63,7 @@ public class EBlockImageDCWriter
 		output.writeByte(desc);
 		output.writeLong(0);
 		output.writeLong(context.eodsTotal);
-		logger.debug("wrote EOF (expected EODS: " 
+		logger.debug("wrote EOF (expected EODS: "
 			     + context.eodsTotal + ") and EOD");
 	    } else {
 		desc = EOD;
@@ -76,10 +76,10 @@ public class EBlockImageDCWriter
 	}
 	// important to flush, otherwise transfer will hang
 	// with data and EOD remaining in the output buffer
-	output.flush(); 
+	output.flush();
     }
 
-    public static void close(DataOutputStream myOutput) 
+    public static void close(DataOutputStream myOutput)
 	throws IOException {
 	byte desc;
 	// EOF and EOD have already been sent
@@ -96,5 +96,5 @@ public class EBlockImageDCWriter
     public void close() throws IOException{
 	close(output);
     }
-    
+
 }

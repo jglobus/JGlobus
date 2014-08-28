@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ import java.io.OutputStream;
  **/
 public class GridFTPClient2PartyAsynchTransferTest extends GridFTPClient2PartyTransferTest {
 
-    protected static Log logger = 
+    protected static Log logger =
 	LogFactory.getLog(GridFTPClient2PartyAsynchTransferTest.class.getName());
 
     public GridFTPClient2PartyAsynchTransferTest(String name) {
@@ -47,7 +47,7 @@ public class GridFTPClient2PartyAsynchTransferTest extends GridFTPClient2PartyTr
     }
 
     public static void main (String[] args) throws Exception{
-	junit.textui.TestRunner.run(suite());	
+	junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite ( ) {
@@ -71,14 +71,14 @@ public class GridFTPClient2PartyAsynchTransferTest extends GridFTPClient2PartyTr
     }
 
 
-    protected void get(GridFTPClient client, 
+    protected void get(GridFTPClient client,
 		       int localServerMode,
 		       int transferType,
 		       int transferMode,
 		       DataChannelAuthentication dcau,
 		       int prot,
 		       String fullLocalFile,
-		       String fullRemoteFile) 
+		       String fullRemoteFile)
 	throws Exception{
 	client.authenticate(getCredential()); /* use default cred */
 	client.setProtectionBufferSize(16384);
@@ -91,9 +91,9 @@ public class GridFTPClient2PartyAsynchTransferTest extends GridFTPClient2PartyTr
 	    client.setLocalActive();
 	} else {
 	    if (TestEnv.localServerPort == TestEnv.UNDEFINED) {
-		client.setLocalPassive(); 
+		client.setLocalPassive();
 	    } else {
-		client.setLocalPassive(TestEnv.localServerPort, 
+		client.setLocalPassive(TestEnv.localServerPort,
 				       FTPServerFacade.DEFAULT_QUEUE);
 	    }
 
@@ -124,14 +124,14 @@ public class GridFTPClient2PartyAsynchTransferTest extends GridFTPClient2PartyTr
     /**
        This method performs the actual transfer
      **/
-    protected void put(GridFTPClient client, 
+    protected void put(GridFTPClient client,
 		       int localServerMode,
 		       int transferType,
 		       int transferMode,
 		       DataChannelAuthentication dcau,
 		       int prot,
 		       String fullLocalFile,
-		       String fullRemoteFile) 
+		       String fullRemoteFile)
 	throws Exception{
 	client.authenticate(getCredential()); /* use default cred */
 	client.setProtectionBufferSize(16384);
@@ -145,9 +145,9 @@ public class GridFTPClient2PartyAsynchTransferTest extends GridFTPClient2PartyTr
 	    client.setLocalActive();
 	} else {
 	    if (TestEnv.localServerPort == TestEnv.UNDEFINED) {
-		client.setLocalPassive(); 
+		client.setLocalPassive();
 	    } else {
-		client.setLocalPassive(TestEnv.localServerPort, 
+		client.setLocalPassive(TestEnv.localServerPort,
 				       FTPServerFacade.DEFAULT_QUEUE);
 	    }
 	    client.setActive();
@@ -155,11 +155,11 @@ public class GridFTPClient2PartyAsynchTransferTest extends GridFTPClient2PartyTr
 
 	logger.debug("sending file " + fullLocalFile);
 	OutputStreamDataSource source = new OutputStreamDataSource(2048);
-	
+
 	TransferState s = client.asynchPut(fullRemoteFile,
 					   source,
 					   null);
-	
+
 	FileInputStream in = new FileInputStream(fullLocalFile);
 	OutputStream out = source.getOutputStream();
 	byte [] buff = new byte[2048];
@@ -173,5 +173,5 @@ public class GridFTPClient2PartyAsynchTransferTest extends GridFTPClient2PartyTr
 
 	s.waitForEnd();
     }
-    
-} 
+
+}

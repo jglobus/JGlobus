@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,8 +49,8 @@ public class GSIHTTPSender extends HTTPSender {
     protected void getSocket(SocketHolder sockHolder,
                              MessageContext msgContext,
                              String protocol,
-                             String host, int port, int timeout, 
-                             StringBuffer otherHeaders, 
+                             String host, int port, int timeout,
+                             StringBuffer otherHeaders,
                              BooleanHolder useFullURL)
         throws Exception {
 
@@ -62,29 +62,29 @@ public class GSIHTTPSender extends HTTPSender {
 	Authorization auth = null;
 	String mode = null;
 
-	auth = (Authorization)Util.getProperty(msgContext, 
+	auth = (Authorization)Util.getProperty(msgContext,
 					       GSIHTTPTransport.GSI_AUTHORIZATION);
 
-	mode = (String)Util.getProperty(msgContext, 
+	mode = (String)Util.getProperty(msgContext,
 					GSIHTTPTransport.GSI_MODE);
 
 
-	
+
 	if (auth == null) {
 	    auth = HostAuthorization.getInstance();
 	}
-	
+
 	if (mode == null) {
 	    mode = GSIHTTPTransport.GSI_MODE_NO_DELEG;
 	}
-        
+
 	GSSManager manager = ExtendedGSSManager.getInstance();
-	
+
 	ExtendedGSSContext context = null;
-	
+
         Boolean anonymous = (Boolean) Util.getProperty(
             msgContext, GSIHTTPTransport.GSI_ANONYMOUS);
-        
+
         if (anonymous != null && anonymous.equals(Boolean.TRUE)) {
             GSSName name = manager.createName((String)null,
                                               (Oid)null);
@@ -93,23 +93,23 @@ public class GSIHTTPSender extends HTTPSender {
                 GSSCredential.DEFAULT_LIFETIME,
                 (Oid)null,
                 GSSCredential.INITIATE_ONLY);
-        } else {            
+        } else {
             cred = (GSSCredential)Util.getProperty(
                 msgContext, GSIHTTPTransport.GSI_CREDENTIALS);
         }
-        
+
         GSSName expectedName = null;
         if (auth instanceof GSSAuthorization) {
             GSSAuthorization gssAuth = (GSSAuthorization)auth;
             expectedName = gssAuth.getExpectedName(cred, host);
         }
-                                                   
-	context = 
-	    (ExtendedGSSContext)manager.createContext(expectedName, 
+
+	context =
+	    (ExtendedGSSContext)manager.createContext(expectedName,
 						      GSSConstants.MECH_OID,
 						      cred,
 						      GSSContext.DEFAULT_LIFETIME);
-	
+
 	if (mode.equalsIgnoreCase(GSIHTTPTransport.GSI_MODE_LIMITED_DELEG)) {
 	    context.requestCredDeleg(true);
 	    context.setOption(GSSConstants.DELEGATION_TYPE,
@@ -127,17 +127,17 @@ public class GSIHTTPSender extends HTTPSender {
 	    throw new Exception("Invalid GSI MODE: " + mode);
 	}
 
-	TrustedCertificates trustedCerts = 
-            (TrustedCertificates)Util.getProperty(msgContext, 
+	TrustedCertificates trustedCerts =
+            (TrustedCertificates)Util.getProperty(msgContext,
                                                   GSIHTTPTransport
                                                   .TRUSTED_CERTIFICATES);
         if (trustedCerts != null) {
-            context.setOption(GSSConstants.TRUSTED_CERTIFICATES, 
+            context.setOption(GSSConstants.TRUSTED_CERTIFICATES,
                               trustedCerts);
         }
 
-        Boolean authzRequiredWithDelegation = 
-            (Boolean)Util.getProperty(msgContext, 
+        Boolean authzRequiredWithDelegation =
+            (Boolean)Util.getProperty(msgContext,
                                       GSIConstants
                                       .AUTHZ_REQUIRED_WITH_DELEGATION);
         if (authzRequiredWithDelegation != null) {
@@ -146,18 +146,18 @@ public class GSIHTTPSender extends HTTPSender {
         }
 
 	GssSocketFactory factory = GssSocketFactory.getDefault();
-        
+
         int lport = (port == -1) ? 8443 : port;
         super.getSocket(sockHolder, msgContext, "http", host,
                         lport, timeout, otherHeaders, useFullURL);
 
-	GssSocket gsiSocket = 
-	    (GssSocket)factory.createSocket(sockHolder.getSocket(), 
+	GssSocket gsiSocket =
+	    (GssSocket)factory.createSocket(sockHolder.getSocket(),
                                             host, lport, context);
-        
+
 	gsiSocket.setAuthorization(auth);
-	
+
         sockHolder.setSocket(gsiSocket);
     }
-    
+
 }

@@ -19,11 +19,11 @@ import java.io.IOException;
 import java.io.FilterInputStream;
 
 public class LineReader extends FilterInputStream {
-    
+
     private static final int MAX_LEN = 16* 1024;
 
     protected int _charsRead    = 0;
-    
+
     public LineReader(InputStream is) {
 	super(is);
     }
@@ -35,12 +35,12 @@ public class LineReader extends FilterInputStream {
     public int getCharsRead() {
 	return _charsRead;
     }
-    
+
     public String readLine()
 	throws IOException {
 	return readLine(in);
     }
-    
+
     /**
      * Read a line of text from the given Stream and return it
      * as a String.  Assumes lines end in CRLF.
@@ -50,11 +50,11 @@ public class LineReader extends FilterInputStream {
      * termination.
      * @return the next line read from the stream.
      */
-    protected String readLine(InputStream in) 
+    protected String readLine(InputStream in)
 	throws IOException {
 	StringBuffer buf = new StringBuffer();
 	int c, length = 0;
-	
+
 	while(true) {
 	    c = in.read();
 	    if (c == -1 || c == '\n' || length > MAX_LEN) {

@@ -30,7 +30,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import junit.framework.TestCase;
 
 public class ProxyCertInfoTest extends TestCase {
-    
+
     String testPolicy = "blahblah";
     DERObjectIdentifier testOid = new DERObjectIdentifier("1.2.3.4.5");
 
@@ -40,33 +40,33 @@ public class ProxyCertInfoTest extends TestCase {
 
 	ProxyCertInfo info = new ProxyCertInfo(3,
 					       policy);
-	
+
 	assertEquals(3, info.getPathLenConstraint());
 
 	assertEquals(testPolicy, info.getProxyPolicy().getPolicyAsString());
 	assertEquals(testOid, info.getProxyPolicy().getPolicyLanguage());
-	
+
     }
 
     public void testParseProxyCertInfo() throws Exception {
-	
+
 	ProxyPolicy policy = new ProxyPolicy(testOid, testPolicy);
 
 	ProxyCertInfo info = new ProxyCertInfo(3,
 					       policy);
-	
-	
+
+
 	ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         DEROutputStream dOut = new DEROutputStream(bOut);
 	dOut.writeObject(info);
 
-	ByteArrayInputStream bIn = 
+	ByteArrayInputStream bIn =
 	    new ByteArrayInputStream(bOut.toByteArray());
 	ASN1InputStream dIn = new ASN1InputStream(bIn);
 	ASN1Primitive obj = dIn.readObject();
-	
+
 	assertTrue(obj instanceof ASN1Sequence);
-	
+
 	ProxyCertInfo testInfo = new ProxyCertInfo((ASN1Sequence)obj);
 
 	assertEquals(3, testInfo.getPathLenConstraint());
@@ -74,10 +74,10 @@ public class ProxyCertInfoTest extends TestCase {
 	assertEquals(testPolicy, testInfo.getProxyPolicy().getPolicyAsString());
 	assertEquals(testOid, testInfo.getProxyPolicy().getPolicyLanguage());
     }
-        
+
     public void testConstraintsCheck() throws Exception {
-	
-	ProxyPolicy policy; 
+
+	ProxyPolicy policy;
 
 	try {
 	    policy = new ProxyPolicy(ProxyPolicy.IMPERSONATION,
@@ -92,14 +92,14 @@ public class ProxyCertInfoTest extends TestCase {
 	    fail("Did not throw exception as expected");
 	} catch (IllegalArgumentException e) {
 	}
-	
-    }	
+
+    }
 
     public void testCreateProxyCertInfo2() throws Exception {
-	
+
 	ProxyPolicy policy = new ProxyPolicy(testOid, testPolicy);
 	ProxyCertInfo info = new ProxyCertInfo(policy);
-	
+
 	assertEquals(Integer.MAX_VALUE, info.getPathLenConstraint());
 
 	assertEquals(testPolicy, info.getProxyPolicy().getPolicyAsString());
@@ -108,18 +108,18 @@ public class ProxyCertInfoTest extends TestCase {
 	ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         DEROutputStream dOut = new DEROutputStream(bOut);
 	dOut.writeObject(info);
-	
-	ByteArrayInputStream bIn = 
+
+	ByteArrayInputStream bIn =
 	    new ByteArrayInputStream(bOut.toByteArray());
 	ASN1InputStream dIn = new ASN1InputStream(bIn);
 	ASN1Primitive obj = dIn.readObject();
 
 	ProxyCertInfo testInfo = new ProxyCertInfo((ASN1Sequence)obj);
 
-	
+
 	assertEquals(Integer.MAX_VALUE, testInfo.getPathLenConstraint());
-	
+
 	assertEquals(testPolicy, testInfo.getProxyPolicy().getPolicyAsString());
 	assertEquals(testOid, testInfo.getProxyPolicy().getPolicyLanguage());
-    }	
+    }
 }

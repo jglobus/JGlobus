@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,8 +48,8 @@ public class HTTPOutputStream extends GlobusOutputStream {
      */
     protected HTTPOutputStream() {
     }
-    
-    
+
+
     /**
      * Opens HTTP output stream (unsecure)
      *
@@ -62,60 +62,60 @@ public class HTTPOutputStream extends GlobusOutputStream {
      * @param append if true, append data to existing file.
      *               Otherwise, the file will be overwritten.
      */
-    public HTTPOutputStream(String host, 
-			    int port, 
-			    String file, 
-			    long length, 
+    public HTTPOutputStream(String host,
+			    int port,
+			    String file,
+			    long length,
 			    boolean append)
 	throws GassException, IOException {
 	init(host, port, file, length, append);
     }
-    
-    private void init(String host, 
-		      int port, 
+
+    private void init(String host,
+		      int port,
 		      String file,
-		      long length, 
+		      long length,
 		      boolean append)
 	throws GassException, IOException {
 	size        = length;
 	this.append = append;
-	
+
 	// default waiting time for response from the server
 	int time = DEFAULT_TIME;
-	
-	long st = System.currentTimeMillis();	
+
+	long st = System.currentTimeMillis();
 	socket = SocketFactory.getDefault().createSocket(host, port);
-	long et = System.currentTimeMillis();	
-	
+	long et = System.currentTimeMillis();
+
 	time = 2*(int)(et - st);
-	
+
 	put(host, file, length, time);
     }
-  
+
     private void sleep(int time) {
 	try {
 	    Thread.sleep(time);
 	} catch(Exception e) {}
     }
 
-    protected void put(String host, String file, long length, int waittime) 
+    protected void put(String host, String file, long length, int waittime)
 	throws IOException {
-	
+
 	output = socket.getOutputStream();
 	in  = socket.getInputStream();
-	
+
 	String msg =  GASSProtocol.PUT(file,
 				       host,
 				       length,
 				       append);
-	
+
 	if (logger.isTraceEnabled()) {
 	    logger.trace("SENT: " + msg);
 	}
-	
+
 	output.write( msg.getBytes() );
 	output.flush();
-	
+
 	if (waittime < 0) {
 	    int maxsleep = DEFAULT_TIME;
 	    while(maxsleep != 0) {
@@ -129,8 +129,8 @@ public class HTTPOutputStream extends GlobusOutputStream {
 
 	checkForReply();
     }
-    
-    private void checkForReply() 
+
+    private void checkForReply()
 	throws IOException {
 
 	if (in.available() <= 0) {
@@ -138,11 +138,11 @@ public class HTTPOutputStream extends GlobusOutputStream {
 	}
 
 	HttpResponse reply = new HttpResponse(in);
-	
+
 	if (logger.isTraceEnabled()) {
 	    logger.trace("REPLY: " + reply);
 	}
-	
+
 	if (reply.httpCode != 100) {
 	    abort();
 	    throw new IOException("Gass PUT failed: " + reply.httpMsg);
@@ -160,7 +160,7 @@ public class HTTPOutputStream extends GlobusOutputStream {
 	}
 	output.flush();
     }
-    
+
     private void closeSocket() {
 	try {
 	    if (socket != null) socket.close();
@@ -168,7 +168,7 @@ public class HTTPOutputStream extends GlobusOutputStream {
 	    if (output != null) output.close();
 	} catch(Exception e) {}
     }
-    
+
     public void abort() {
 	try {
 	    finish();
@@ -176,33 +176,33 @@ public class HTTPOutputStream extends GlobusOutputStream {
 	closeSocket();
     }
 
-    public void close() 
+    public void close()
 	throws IOException {
-	
+
 	// is there a way to get rid of that wait for final reply?
-	
+
 	finish();
-	
+
 	HttpResponse hd = new HttpResponse(in);
 
 	closeSocket();
-	
+
 	if (logger.isTraceEnabled()) {
 	    logger.trace("REPLY: " + hd);
 	}
-	
+
 	if (hd.httpCode != 200) {
 	    throw new ChainedIOException("Gass close failed.",
 					 new GassException("Gass PUT failed: " + hd.httpMsg));
 	}
     }
-    
-    public void write(byte [] msg) 
+
+    public void write(byte [] msg)
 	throws IOException {
 	write(msg, 0, msg.length);
     }
-    
-    public void write(byte [] msg, int from, int length) 
+
+    public void write(byte [] msg, int from, int length)
 	throws IOException {
 	checkForReply();
 	if (size == -1) {
@@ -216,7 +216,7 @@ public class HTTPOutputStream extends GlobusOutputStream {
 	}
     }
 
-    public void write(int b) 
+    public void write(int b)
 	throws IOException {
 	checkForReply();
 	if (size == -1) {
@@ -229,8 +229,8 @@ public class HTTPOutputStream extends GlobusOutputStream {
 	}
     }
 
-    public void flush() 
-	throws IOException {	
+    public void flush()
+	throws IOException {
 	output.flush();
     }
 }

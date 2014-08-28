@@ -30,7 +30,7 @@ import org.globus.util.GlobusResource;
  * Fill Me
  */
 public class ResourceCRLStore extends ResourceSecurityWrapperStore<ResourceCRL, X509CRL> {
-    
+
     private static CrlFilter filter = new CrlFilter();
     private static final int MIN_NAME_LENGTH = 3;
     private Log logger = LogFactory.getLog(getClass().getCanonicalName());

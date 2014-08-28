@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,22 +22,22 @@ import java.util.Locale;
 import org.globus.common.ChainedException;
 import org.globus.gram.internal.GRAMProtocolErrorConstants;
 
-/** 
+/**
  * This class defeines the Exceptions which are thrown by the various
  * Gram and GramJob methods.
  * This class contains many definitions for error codes of the
  * form ERROR_* in addition to SUCCESS. The error codes are a superset
  * of those defined for the GRAM C client. Additional error codes
  * are added for errors that can occur in the Java code.
- * 
+ *
  */
 public class GramException extends ChainedException implements GRAMProtocolErrorConstants {
 
     private static ResourceBundle resources;
-    
+
     static {
 	try {
-	    resources = ResourceBundle.getBundle("org.globus.gram.internal.errors", 
+	    resources = ResourceBundle.getBundle("org.globus.gram.internal.errors",
 						 Locale.getDefault());
 	} catch (MissingResourceException mre) {
 	    System.err.println("org.globus.gram.internal.gramerrors.properties not found");
@@ -47,13 +47,13 @@ public class GramException extends ChainedException implements GRAMProtocolError
     public static final int SUCCESS = 0;
     public static final int INIT_CALLBACK_HANDLER_FAILED = 1000;
     public static final int ERROR_JOB_CONTACT_NOT_SET    = 1003;
-    
+
     /**    */
     public static final int CUSTOM_ERROR = 9999;
-    
+
     /**    */
     protected int errorCode;
-    
+
   /**    */
   public GramException() {
     super( getMessage( SUCCESS ) );

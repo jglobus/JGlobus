@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,13 +19,13 @@ import java.util.StringTokenizer;
 import java.net.InetAddress;
 
 /**
- * Utility class for parsing and converting host-port information from PASV 
+ * Utility class for parsing and converting host-port information from PASV
  * and PORT ftp commands.
  */
 public class HostPort {
 
     private int [] datainfo;
-    
+
     protected HostPort() {
     }
 
@@ -46,7 +46,7 @@ public class HostPort {
 	    i++;
 	}
     }
- 
+
     /**
      * Creates the HostPort object from specified ip address
      * and port number.
@@ -60,7 +60,7 @@ public class HostPort {
 
     /**
      * Creates the HostPort object from specified ip address
-     * and port number. 
+     * and port number.
      * @param ipAddress ip address
      * @param port port number
      */
@@ -72,16 +72,16 @@ public class HostPort {
 	    datainfo[i] = Integer.parseInt( (String)tokens.nextToken() );
 	    i++;
 	}
-	
+
 	if (i != 4) {
-	    throw new IllegalArgumentException("Invalid ip address: " + 
+	    throw new IllegalArgumentException("Invalid ip address: " +
 					       ipAddress);
 	}
-	
+
 	datainfo[4] = port/256;
 	datainfo[5] = port - datainfo[4]*256;
     }
-    
+
     /**
      * Returns the port number
      *
@@ -90,20 +90,20 @@ public class HostPort {
     public int getPort() {
 	return datainfo[4]*256 + datainfo[5];
     }
-  
+
     /**
      * Returns the ip address in the form "h1.h2.h3.h4"
      *
-     * @return ip address 
+     * @return ip address
      */
     public String getHost() {
 	return datainfo[0] + "." + datainfo[1] + "." +
 	    datainfo[2] + "." + datainfo[3];
     }
-  
+
     /**
      * Returns the host-port information in the
-     * format used by PORT command. 
+     * format used by PORT command.
      * (h1,h2,h3,h4,p1,p2)
      *
      * @return host-port information in PORT command
@@ -117,5 +117,5 @@ public class HostPort {
 	}
 	return msg.toString();
     }
-    
+
 }

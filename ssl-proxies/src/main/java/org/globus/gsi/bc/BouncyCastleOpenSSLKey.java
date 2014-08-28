@@ -40,7 +40,7 @@ import org.globus.gsi.OpenSSLKey;
 
 /**
  * BouncyCastle-based implementation of OpenSSLKey.
- * 
+ *
  * @version ${version}
  * @since 1.0
  */
@@ -55,7 +55,7 @@ public class BouncyCastleOpenSSLKey extends OpenSSLKey {
 	/**
 	 * Reads a OpenSSL private key from the specified input stream. The private
 	 * key must be PEM encoded and can be encrypted.
-	 * 
+	 *
 	 * @param is
 	 *            input stream with OpenSSL key in PEM format.
 	 * @throws IOException
@@ -71,7 +71,7 @@ public class BouncyCastleOpenSSLKey extends OpenSSLKey {
 	/**
 	 * Reads a OpenSSL private key from the specified file. The private key must
 	 * be PEM encoded and can be encrypted.
-	 * 
+	 *
 	 * @param file
 	 *            file containing the OpenSSL key in PEM format.
 	 * @throws IOException
@@ -86,7 +86,7 @@ public class BouncyCastleOpenSSLKey extends OpenSSLKey {
 
 	/**
 	 * Converts a RSAPrivateCrtKey into OpenSSL key.
-	 * 
+	 *
 	 * @param key
 	 *            private key - must be a RSAPrivateCrtKey
 	 */
@@ -96,7 +96,7 @@ public class BouncyCastleOpenSSLKey extends OpenSSLKey {
 
 	/**
 	 * Initializes the OpenSSL key from raw byte array.
-	 * 
+	 *
 	 * @param algorithm
 	 *            the algorithm of the key. Currently only RSA algorithm is
 	 *            supported.

@@ -37,7 +37,7 @@ public class ClassLoaderUtils {
 	 * The element at index <code>0</code> is the class of the currently
 	 * executing method, the element at index <code>1</code> is the class of
 	 * that method's caller, and so on.
-	 * 
+	 *
 	 * @return the execution stack.
 	 */
 	public static Class[] getClassContext() {
@@ -46,7 +46,7 @@ public class ClassLoaderUtils {
 
 	/**
 	 * Returns a class at specified depth of the current execution stack.
-	 * 
+	 *
 	 * @return the class at the specified depth of the current execution stack.
 	 *         Migth return null if depth is out of range.
 	 */
@@ -60,7 +60,7 @@ public class ClassLoaderUtils {
 
 	/**
 	 * Returns a classloader at specified depth of the current execution stack.
-	 * 
+	 *
 	 * @return the classloader at the specified depth of the current execution
 	 *         stack. Migth return null if depth is out of range.
 	 */

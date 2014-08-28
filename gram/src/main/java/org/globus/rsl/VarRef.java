@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@ package org.globus.rsl;
 import java.util.*;
 
 /**
- * This class represents a variable reference in the RSL string. 
+ * This class represents a variable reference in the RSL string.
  * The reference can be concatinated by other values.
  */
 public class VarRef extends Value {
@@ -28,11 +28,11 @@ public class VarRef extends Value {
     public VarRef(String varReference) {
 	this(varReference, null, null);
     }
-    
+
     public VarRef(String varReference, Value defValue) {
 	this(varReference, defValue, null);
     }
-    
+
     public VarRef(String varReference, Value defValue, Value concatVal) {
 	super(varReference, concatVal);
 	setDefaultValue(defValue);
@@ -73,9 +73,9 @@ public class VarRef extends Value {
     }
 
     /**
-     * Evaluates the variable reference with the specified 
+     * Evaluates the variable reference with the specified
      * symbol table.
-     * The value of the reference is first looked up in the 
+     * The value of the reference is first looked up in the
      * symbol table. If not found, then the default value
      * is used. If the default value is not specified,
      * the reference is evaluated to an empty string.
@@ -83,21 +83,21 @@ public class VarRef extends Value {
      * @param symbolTable the symbol table to evaluate
      *        the variabled reference against.
      * @return an evaluated string.
-     * @exception RslEvaluationException If an error occured during 
+     * @exception RslEvaluationException If an error occured during
      *            rsl evaluation.
      */
-    public String evaluate(Map symbolTable) 
+    public String evaluate(Map symbolTable)
 	throws RslEvaluationException {
 	String var = null;
-	
+
 	if (symbolTable != null) {
 	    var = (String)symbolTable.get(value);
 	}
-	
+
 	if (var == null && defValue != null) {
 	    var = defValue.evaluate(symbolTable);
 	}
-	
+
 	if (var == null) {
 	    /* NOTE: according to the rsl specs the variables
 	     * should be replaces with empty string.
@@ -105,7 +105,7 @@ public class VarRef extends Value {
 	     */
 	    throw new RslEvaluationException("Variable '" + value + "' not defined.");
 	}
-	
+
 	if (concatValue == null) {
 	    return var;
 	} else {
@@ -119,28 +119,28 @@ public class VarRef extends Value {
      * @param buf buffer to add the RSL representation to.
      * @param explicitConcat if true explicit concatination will
      *        be used in RSL strings.
-     */    
+     */
     public void toRSL(StringBuffer buf, boolean explicitConcat) {
 	buf.append("$(");
 	buf.append( value );
-	
+
 	if (defValue != null) {
 	    buf.append(" ");
 	    defValue.toRSL(buf, explicitConcat);
 	}
-	
+
 	buf.append(")");
-	
+
 	if (concatValue == null) return;
-	
+
 	if (explicitConcat) buf.append(" # ");
-	
+
 	concatValue.toRSL(buf, explicitConcat);
     }
 
     /**
      * Returns a complete string representation of this
-     * value. 
+     * value.
      *
      * @return a complete string representation of this
      *         value.
@@ -155,9 +155,9 @@ public class VarRef extends Value {
 	}
 	return buf.toString();
     }
-    
+
     public String toString() {
 	return getCompleteValue();
     }
-    
+
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,18 +18,18 @@ package org.globus.rsl;
 import java.util.*;
 
 /**
- * This class represents an abstract RSL parse tree. It is composed of variable definitions 
+ * This class represents an abstract RSL parse tree. It is composed of variable definitions
  * (bindings), relations, and sub-specifications (sub nodes).
  */
 public class ListRslNode extends AbstractRslNode {
-    
+
     protected List _relations = null;
     protected List _bindings = null;
-    
+
     public ListRslNode() {
 	super();
     }
-    
+
     public ListRslNode(int operator) {
 	super(operator);
     }
@@ -40,14 +40,14 @@ public class ListRslNode extends AbstractRslNode {
 	}
 	return _bindings.add(bindings);
     }
-    
+
     public boolean add(NameOpValue relation) {
 	if (_relations == null) {
 	    _relations = new LinkedList();
 	}
 	return _relations.add(relation);
     }
-    
+
     /**
      * Returns the relation associated with the given attribute.
      *
@@ -95,7 +95,7 @@ public class ListRslNode extends AbstractRslNode {
         }
         return null;
     }
-    
+
     /**
      * Removes a bindings list for the specified attribute.
      *
@@ -150,7 +150,7 @@ public class ListRslNode extends AbstractRslNode {
 	Iterator iter = null;
 
 	super.mergeTo(dstNode);
-	
+
 	if (_relations != null) {
 	    iter = _relations.iterator();
 	    NameOpValue nov, tmpNov;
@@ -164,7 +164,7 @@ public class ListRslNode extends AbstractRslNode {
 		}
 	    }
 	}
-	
+
 	if (_bindings != null) {
 	    iter = _bindings.iterator();
 	    Bindings bind, tmpBind;
@@ -206,12 +206,12 @@ public class ListRslNode extends AbstractRslNode {
      *
      * @param symbolTable the symbol table to evalute variables against.
      * @return the evaluated rsl tree.
-     * @exception RslEvaluationException If an error occured during 
+     * @exception RslEvaluationException If an error occured during
      *            rsl evaluation.
      */
-    public AbstractRslNode evaluate(Map symbolTable) 
+    public AbstractRslNode evaluate(Map symbolTable)
 	throws RslEvaluationException {
-	
+
 	if (symbolTable == null) symbolTable = new HashMap();
 
 	Map localSymbolTable = null;
@@ -230,7 +230,7 @@ public class ListRslNode extends AbstractRslNode {
 	} else {
 	    localSymbolTable = symbolTable;
 	}
-	
+
 	if (_relations != null && _relations.size() > 0) {
             iter = _relations.iterator();
 	    NameOpValue nov;
@@ -239,7 +239,7 @@ public class ListRslNode extends AbstractRslNode {
 		finalRsl.add( nov.evaluate(localSymbolTable) );
 	    }
 	}
-	
+
 	if (_specifications != null && _specifications.size() > 0) {
             iter = _specifications.iterator();
             AbstractRslNode node;
@@ -251,7 +251,7 @@ public class ListRslNode extends AbstractRslNode {
 
 	return finalRsl;
     }
-    
+
 
     /**
      * Produces a RSL representation of node.
@@ -259,12 +259,12 @@ public class ListRslNode extends AbstractRslNode {
      * @param buf buffer to add the RSL representation to.
      * @param explicitConcat if true explicit concatination will
      *        be used in RSL strings.
-     */    
+     */
     public void toRSL(StringBuffer buf, boolean explicitConcat) {
         Iterator iter;
-	
+
         buf.append( getOperatorAsString() );
-        
+
         if (_bindings != null && _bindings.size() > 0) {
             iter = _bindings.iterator();
             Bindings binds;
@@ -273,7 +273,7 @@ public class ListRslNode extends AbstractRslNode {
                 binds.toRSL(buf, explicitConcat);
             }
         }
-        
+
         if (_relations != null && _relations.size() > 0) {
             iter = _relations.iterator();
             NameOpValue nov;
@@ -282,7 +282,7 @@ public class ListRslNode extends AbstractRslNode {
                 nov.toRSL(buf, explicitConcat);
             }
         }
-        
+
         if (_specifications != null && _specifications.size() > 0) {
             iter = _specifications.iterator();
             AbstractRslNode node;
@@ -294,6 +294,6 @@ public class ListRslNode extends AbstractRslNode {
             }
         }
     }
-    
-    
+
+
 }

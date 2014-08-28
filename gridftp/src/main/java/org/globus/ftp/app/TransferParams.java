@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,12 +21,12 @@ import org.globus.ftp.MarkerListener;
 /**
    Represents parameters of a transfer. This class should be used in conjunction
    with class Transfer. You first configure a TransferParams object by setting values directly
-   (parameters are public, there's no getter/setter methods). Then 
+   (parameters are public, there's no getter/setter methods). Then
    pass this object to a Transfer constructor that will perform the transfer as required.
    <p>
    In general, the meaning of a parameter values is as follows. A value of
    SERVER_DEFAULT (in case of integer values) or null (in case of objects) indicate
-   that this parameter should not be explicitly set to the server, 
+   that this parameter should not be explicitly set to the server,
    and the server will use its defaults.
    Any other value will be explicitly requested from the server
    on the control channel.
@@ -58,7 +58,7 @@ public class TransferParams extends GridFTPSession {
     public boolean doStriping = false;
     public MarkerListener markerListener;
 
-    /** 
+    /**
 	This constructor sets parameters to the GridFTP defaults.
 	If possible, a parameter is not explicitly set, but server defaults are assumed.
      */

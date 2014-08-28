@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,20 +29,20 @@ import org.globus.gsi.gssapi.auth.HostAuthorization;
 import org.globus.gsi.gssapi.auth.IdentityAuthorization;
 
 /**
-   Utility for tests. This class has two functions. First, it 
+   Utility for tests. This class has two functions. First, it
    holds in public variables the test properties. Second, it
-   supplies simplified syntax for setting the values for 
+   supplies simplified syntax for setting the values for
    class loggers.
  **/
 public class TestEnv {
     /**
        This logger can be used anywhere in the application.
      **/
-    public static Log logger = 
+    public static Log logger =
 	LogFactory.getLog(TestEnv.class.getName());
 
     public static final int UNDEFINED = -1;
-    
+
     // local destination directory
     public static String localDestDir;
     // local source file (full name)
@@ -111,7 +111,7 @@ public class TestEnv {
 	InputStream in = null;
 
 	try {
-	    
+
 	    Thread t = Thread.currentThread();
 	    in = t.getContextClassLoader().getResourceAsStream(CONFIG);
 
@@ -133,30 +133,30 @@ public class TestEnv {
 	    fileSeparator = System.getProperty("file.separator");
 	    nl = System.getProperty("line.separator");
 	    noSuchServer = props.getProperty(prefix + "noSuchServer.host");
-	    
+
 	    parallelism = toInt(
-				props.getProperty(prefix + 
+				props.getProperty(prefix +
 						  "gridftp.parallelism")
 				);
 
 
-	    
+
 	    // local
 
 
 	    localDestDir = props.getProperty(prefix + "local.destDir");
 	    localSrcFile = props.getProperty(prefix + "local.srcFile");
 	    localSrcDir  = props.getProperty(prefix + "local.srcDir");
-	    
+
 	    // local server port
-	    String lssStr =  props.getProperty(prefix + 
+	    String lssStr =  props.getProperty(prefix +
 					       "local.serverPort");
 	    localServerPort = toIntOptional(lssStr);
-	    
+
 	    //server A
 
 
-	    
+
 	    serverAHost = props.getProperty(prefix + "gridftp.serverA.host");
 	    serverAPort = toInt(
 				props.getProperty(prefix + "gridftp.serverA.port")
@@ -185,7 +185,7 @@ public class TestEnv {
 	    // server B
 
 
-	    
+
 	    serverBHost = props.getProperty(prefix + "gridftp.serverB.host");
 	    serverBPort = toInt(
 				props.getProperty(prefix + "gridftp.serverB.port")
@@ -217,7 +217,7 @@ public class TestEnv {
 	    //user is allowed not to define it
 	    String fNoSuchPort_str =    props.getProperty(prefix + "gridftp.serverF.noSuchPort");
 	    serverFNoSuchPort = toIntOptional(fNoSuchPort_str);
-	    
+
 
 
 	    // FTP server G (dest) (optional)
@@ -236,7 +236,7 @@ public class TestEnv {
 		serverGNoSuchDir = props.getProperty(prefix + "serverG.nosuchdir");
 		serverGUser = props.getProperty(prefix + "serverG.user");
 		serverGPassword = props.getProperty(prefix + "serverG.password");
-	    }	    
+	    }
 	    //logger.debug(show());
 
 	} catch (Exception e) {
@@ -257,17 +257,17 @@ public class TestEnv {
        @return human readable description of current test environment.
      **/
     static String show() {
-	String desc = 
+	String desc =
 	    "Test Environment" + nl +
 	    "================" + nl +
-	    "parallelism = " + parallelism + nl +	
+	    "parallelism = " + parallelism + nl +
 	    "noSuchServer: " + noSuchServer + nl +
 	    nl +
 
-	    "local dest dir = " + localDestDir + nl + 
-	    "local src dir = " + localSrcDir + nl + 
-	    "local src file = " + localSrcFile + nl + 
-	    "local server port = " + localServerPort + nl + 
+	    "local dest dir = " + localDestDir + nl +
+	    "local src dir = " + localSrcDir + nl +
+	    "local src file = " + localSrcFile + nl +
+	    "local server port = " + localServerPort + nl +
 	    "================" + nl +
 	    "GridFTP source server: " + nl +
 	    "serverAHost = " + serverAHost + nl +
@@ -276,7 +276,7 @@ public class TestEnv {
 	    "serverAFile = " + serverAFile + nl +
 	    "serverALargeFile = " + serverALargeFile + nl +
 	    "serverANoSuchFile = " + serverANoSuchFile + nl +
-	    "serverANoSuchPort = " + 
+	    "serverANoSuchPort = " +
 	    ((serverANoSuchPort == UNDEFINED) ?
 	     "UNDEFINED" :
 	     Integer.toString(serverANoSuchPort)
@@ -296,12 +296,12 @@ public class TestEnv {
 	    "serverFFile = " + serverFFile + nl +
 	    "serverFFileSize = " + serverFFileSize + nl +
 	    "serverFUser = " + serverFUser + nl +
-	    "serverFPassword = " + serverFPassword + nl + 
-	    "serverFNoSuchFile = " + serverFNoSuchFile + nl + 
-	    "serverFNoSuchPort = " + serverFNoSuchPort + nl 
+	    "serverFPassword = " + serverFPassword + nl +
+	    "serverFNoSuchFile = " + serverFNoSuchFile + nl +
+	    "serverFNoSuchPort = " + serverFNoSuchPort + nl
 	    ;
 	if (serverGHost != null) {
-	    desc += nl +	    
+	    desc += nl +
 		"FTP dest server: " + nl +
 		"serverGHost = " + serverGHost + nl +
 		"serverGPort = " + serverGPort + nl +
@@ -317,13 +317,13 @@ public class TestEnv {
 
     // convert to integer
     // an optional argument
-    private static int toIntOptional(String str) 
+    private static int toIntOptional(String str)
 	throws NumberFormatException {
 	return (str == null || str.equals("")) ?
 	    UNDEFINED : toInt(str);
     }
-	
-    private static int toInt(String str) 
+
+    private static int toInt(String str)
 	throws NumberFormatException{
 	try {
 	    return Integer.parseInt(str);

@@ -17,13 +17,13 @@ package org.globus.gsi.jsse;
 
 /**
  * Signals an error in configuring the Globus SSL support.
- * 
+ *
  * @version ${version}
  * @since 1.0
  */
 public class GlobusSSLConfigurationException extends Exception {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

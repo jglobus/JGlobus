@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,13 +29,13 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class ByteRangeTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(FeatureListTest.class.getName());
 
     public static void main(String[] argv) {
 	junit.textui.TestRunner.run (suite());
     }
-    
+
     public static Test suite() {
 	return new TestSuite(ByteRangeTest.class);
     }
@@ -55,7 +55,7 @@ public class ByteRangeTest extends TestCase {
 	// first range   =   t
 	// second range  =   o
 	// common subset =   -
-	
+
 	// t o
 	assertMerge(1,4,   7,8,   1,4,    ByteRange.THIS_BELOW);
 	// o t
@@ -69,10 +69,10 @@ public class ByteRangeTest extends TestCase {
 	// t-o
 	assertMerge(1,2,  2,4,   1,4,     ByteRange.ADJACENT);
 	// o-
-	assertMerge(3,15, -3,15, -3,15,   ByteRange.THIS_SUBSET);	     
+	assertMerge(3,15, -3,15, -3,15,   ByteRange.THIS_SUBSET);
 	// t-
-	assertMerge(-3,15, 3,15, -3,15,   ByteRange.THIS_SUPERSET);	     
-	// t-t	
+	assertMerge(-3,15, 3,15, -3,15,   ByteRange.THIS_SUPERSET);
+	// t-t
 	assertMerge(-3,30, 3,15, -3,30,   ByteRange.THIS_SUPERSET);
 	// o-o
 	assertMerge(3,15, -3,30, -3,30,   ByteRange.THIS_SUBSET);
@@ -82,13 +82,13 @@ public class ByteRangeTest extends TestCase {
 	assertMerge(0,0,  0,2,   0,2,     ByteRange.THIS_SUBSET);
 	// -
 	assertMerge(3,15, 3,15,  3,15,    ByteRange.THIS_SUPERSET);
-	
+
 	//more about: separate or adjacent?
 	assertMerge(1,1, 2,2, 1,2,    ByteRange.ADJACENT);
 	assertMerge(1,1, 4,4, 1,1,    ByteRange.THIS_BELOW);
 	assertMerge(-5,5, 6,9, -5,9,  ByteRange.ADJACENT);
 	assertMerge(-5,5, 7,9, -5,5,  ByteRange.THIS_BELOW);
-	
+
 	assertConstructorError(4,3);
 	assertConstructorError(16,2);
 	assertConstructorError(20, -21);
@@ -102,14 +102,14 @@ public class ByteRangeTest extends TestCase {
 			     int from2, int to2,
 			     int from1after, int to1after,
 			     int expectedReturn) {
-	logger.debug("checking: (" 
+	logger.debug("checking: ("
 		     + from1 + ".." + to1 +") + ("
 		     + from2 + ".." + to2 +") = ("
 		     + from1after + ".." + to1after + ")");
 	ByteRange br1 = new ByteRange(from1, to1);
 	ByteRange br2 = new ByteRange(from2, to2);
 	int ret = br1.merge(br2);
-	logger.debug("... -> (" + br1.from + ".." + br1.to + ")"); 
+	logger.debug("... -> (" + br1.from + ".." + br1.to + ")");
 	assertTrue(ret == expectedReturn);
 	assertTrue(br1.from == from1after);
 	assertTrue(br1.to == to1after);
@@ -122,8 +122,8 @@ public class ByteRangeTest extends TestCase {
 	    new ByteRange(from, to);
 	} catch (IllegalArgumentException e) {
 	    threwOk = true;
-	} 
-	
+	}
+
 	if (! threwOk ) {
 	    fail("constructor did not throw an exception when it should have");
 	}

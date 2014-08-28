@@ -711,7 +711,7 @@ public class TestProxyPathValidator {
                 new X509ProxyCertPathParameters(keyStore, certStore, policyStore, false, map);
         X509ProxyCertPathValidatorResult result =
                 (X509ProxyCertPathValidatorResult) validator.engineValidate(path, parameters);
-        // JGLOBUS-103 
+        // JGLOBUS-103
     }
 
     @Test

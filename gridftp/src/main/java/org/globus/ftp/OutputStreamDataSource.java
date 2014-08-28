@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,14 +29,14 @@ public class OutputStreamDataSource implements DataSource {
 
     protected CircularBuffer buffers = null;
     private DataOutputStream out;
-    
+
     public OutputStreamDataSource(int size) {
 	this.buffers = new CircularBuffer(5);
 	this.out = new DataOutputStream(size);
     }
-    
+
     // returns null if EOF
-    public Buffer read() 
+    public Buffer read()
 	throws IOException {
 	try {
 	    return (Buffer)this.buffers.get();
@@ -46,16 +46,16 @@ public class OutputStreamDataSource implements DataSource {
 	}
     }
 
-    public void close() 
+    public void close()
 	throws IOException {
 	this.buffers.interruptBoth();
 	this.out.setClosed();
     }
-    
+
     public OutputStream getOutputStream() {
 	return this.out;
     }
-    
+
     public long totalSize()
 	throws  IOException {
         return -1;
@@ -77,7 +77,7 @@ public class OutputStreamDataSource implements DataSource {
 	    throws IOException {
 	    write(data, 0, data.length);
 	}
-	
+
 	public synchronized void write(byte[] data, int off, int len)
 	    throws IOException {
 	    if (isClosed()) {
@@ -99,8 +99,8 @@ public class OutputStreamDataSource implements DataSource {
 		}
 	    }
 	}
-	
-	public synchronized void write(int b) 
+
+	public synchronized void write(int b)
 	    throws IOException {
 	    if (isClosed()) {
 		throw new EOFException();
@@ -108,10 +108,10 @@ public class OutputStreamDataSource implements DataSource {
 	    if (this.index == this.buff.length) {
 		flush();
 	    }
-	
+
 	    buff[index++] = (byte)b;
 	}
-	
+
 	public synchronized void flush()
 	    throws IOException {
 	    if (this.index == 0) {
@@ -144,7 +144,7 @@ public class OutputStreamDataSource implements DataSource {
 	protected synchronized void setClosed() {
 	    this.closed = true;
 	}
-	
+
 	private synchronized boolean isClosed() {
 	    return this.closed;
 	}

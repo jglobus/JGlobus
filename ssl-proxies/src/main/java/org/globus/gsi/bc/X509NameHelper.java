@@ -47,11 +47,11 @@ public class X509NameHelper {
     }
 
     /**
-     * Creates an instance using existing {@link X500Name X500Name} 
-     * object. 
+     * Creates an instance using existing {@link X500Name X500Name}
+     * object.
      * This behaves like a copy constructor.
      *
-     * @param name existing <code>X500Name</code> 
+     * @param name existing <code>X500Name</code>
      */
     public X509NameHelper(X500Name name) {
         try {
@@ -62,11 +62,11 @@ public class X509NameHelper {
     }
 
     /**
-     * Creates an instance using existing {@link X509Name X509Name} 
-     * object. 
+     * Creates an instance using existing {@link X509Name X509Name}
+     * object.
      * This behaves like a copy constructor.
      *
-     * @param name existing <code>X509Name</code> 
+     * @param name existing <code>X509Name</code>
      */
     public X509NameHelper(X509Name name) {
         try {

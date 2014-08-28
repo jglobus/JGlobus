@@ -18,22 +18,22 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 public class HTTPChunkedOutputStream extends OutputStream {
-    
+
     protected boolean closed = false;
     protected int count;
     protected byte[] buf;
     protected OutputStream out;
-    
+
     public HTTPChunkedOutputStream(OutputStream out) {
         this(out, 4096);
     }
-    
+
     public HTTPChunkedOutputStream(OutputStream out, int size) {
         this.out = out;
-        this.buf = new byte[size]; 
+        this.buf = new byte[size];
         this.count = 0;
     }
-    
+
     private void flushBuffer(boolean flush) throws IOException {
         String chunkLength = Integer.toString(this.count, 16);
         this.out.write(chunkLength.getBytes());
@@ -45,14 +45,14 @@ public class HTTPChunkedOutputStream extends OutputStream {
             this.out.flush();
         }
     }
-    
+
     private void checkNotClosed() throws IOException {
         if (this.closed) {
             throw new IOException("Already closed");
         }
     }
-    
-    public synchronized void write(int b) 
+
+    public synchronized void write(int b)
         throws IOException {
         checkNotClosed();
         if (this.count >= this.buf.length) {
@@ -60,13 +60,13 @@ public class HTTPChunkedOutputStream extends OutputStream {
         }
         this.buf[this.count++] = (byte)b;
     }
-    
-    public void write(byte b[]) 
+
+    public void write(byte b[])
         throws IOException {
         write(b, 0, b.length);
     }
-    
-    public synchronized void flush() 
+
+    public synchronized void flush()
         throws IOException {
         if (this.closed) {
             return;
@@ -75,8 +75,8 @@ public class HTTPChunkedOutputStream extends OutputStream {
             flushBuffer(true);
         }
     }
-    
-    public synchronized void close() 
+
+    public synchronized void close()
         throws IOException {
         if (this.closed) {
             return;
@@ -86,8 +86,8 @@ public class HTTPChunkedOutputStream extends OutputStream {
         flushBuffer(true);
         this.closed = true;
     }
-    
-    public synchronized void write(byte b[], int off, int len) 
+
+    public synchronized void write(byte b[], int off, int len)
         throws IOException {
         checkNotClosed();
         int remaining = len;
@@ -104,6 +104,6 @@ public class HTTPChunkedOutputStream extends OutputStream {
             }
         }
     }
-    
+
 }
 

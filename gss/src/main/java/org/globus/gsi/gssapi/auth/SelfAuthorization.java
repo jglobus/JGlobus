@@ -29,14 +29,14 @@ import org.apache.commons.logging.LogFactory;
  * Performs the identity authorization check. The identity
  * is obtained from specified Globus credentials.
  */
-public class SelfAuthorization 
+public class SelfAuthorization
     extends GSSAuthorization {
 
     private static Log logger =
 	LogFactory.getLog(SelfAuthorization.class.getName());
 
     private static SelfAuthorization authorization;
-    
+
     /**
      * Returns a single instance of this class.
      *
@@ -49,7 +49,7 @@ public class SelfAuthorization
 	return authorization;
     }
 
-    public GSSName getExpectedName(GSSCredential cred, String host) 
+    public GSSName getExpectedName(GSSCredential cred, String host)
 	throws GSSException {
         if (cred == null) {
             GSSManager manager = ExtendedGSSManager.getInstance();
@@ -64,7 +64,7 @@ public class SelfAuthorization
     public void authorize(GSSContext context, String host)
 	throws AuthorizationException {
 	logger.debug("Authorization: SELF");
-	
+
 	try {
 	    if (!context.getSrcName().equals(context.getTargName())) {
 		GSSName expected = null;
@@ -82,5 +82,5 @@ public class SelfAuthorization
 	    throw new AuthorizationException("Authorization failure", e);
 	}
     }
-    
+
 }

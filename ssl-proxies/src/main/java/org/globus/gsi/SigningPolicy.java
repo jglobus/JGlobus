@@ -125,17 +125,17 @@ public class SigningPolicy {
     public List<Pattern> getAllowedDNs() {
         return this.allowedDNs;
     }
-    
+
     /**
      * Method to determine if a signing policy is available for a
-     * given DN. 
-     * 
+     * given DN.
+     *
      * @return If the patterns vector is not null and has atleast one
      * element, true is returned. Else the method returns false.
      */
     public boolean isPolicyAvailable() {
-        
-        if ((this.allowedDNs == null) || 
+
+        if ((this.allowedDNs == null) ||
             (this.allowedDNs.size() < 1)) {
             return false;
         }

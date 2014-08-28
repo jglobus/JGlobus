@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ public class ByteRange {
         }
         if (other instanceof ByteRange) {
             ByteRange otherObj = (ByteRange)other;
-            return ( this.to == otherObj.to && this.from == otherObj.from); 
+            return ( this.to == otherObj.to && this.from == otherObj.from);
         } else {
             return false;
         }
@@ -84,7 +84,7 @@ public class ByteRange {
     /**
        If this range can be consolidated with the other one,
        modify this range so that it represents the result of merging
-       this and the other range. 
+       this and the other range.
        The parameter object remains intact.
        Return value indicates what operation has been performed.
        <ul>
@@ -140,12 +140,12 @@ public class ByteRange {
 	    // ot
 	    // o-t
 	} else {
-	
+
 	    if (this.to + 1 < other.from) {
 		// t o
 		return THIS_BELOW;
 	    }
-	
+
 	    if ( other.to <= this.to) {
 		// -t
 		// -
@@ -155,7 +155,7 @@ public class ByteRange {
 	    }
 
 	    this.to = other.to;
-	    
+
 	    if ( other.from == this.from) {
 		// -o
 		return THIS_SUBSET;

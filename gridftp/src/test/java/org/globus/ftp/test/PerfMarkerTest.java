@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class PerfMarkerTest extends TestCase {
 
-    private static Log logger = 
+    private static Log logger =
 	LogFactory.getLog(PerfMarkerTest.class.getName());
 
     private static String nl = System.getProperty("line.separator");
@@ -38,7 +38,7 @@ public class PerfMarkerTest extends TestCase {
     public static void main(String[] argv) {
 	junit.textui.TestRunner.run (suite());
     }
-    
+
     public static Test suite() {
 	return new TestSuite(PerfMarkerTest.class);
     }
@@ -57,8 +57,8 @@ public class PerfMarkerTest extends TestCase {
 
 	/* correct:
 
-	String msg = 
-	      "Perf Marker" + nl 
+	String msg =
+	      "Perf Marker" + nl
 	    + " Timestamp: 111222333444.5" + nl
 	    + " Stripe Index: 5" + nl
 	    + " Stripe Bytes Transferred: 987654321987654321" + nl
@@ -67,7 +67,7 @@ public class PerfMarkerTest extends TestCase {
 	*/
 
 	// no first line
-	String msg = 
+	String msg =
 	      " Timestamp: 111222333444.5" + nl
 	    + " Stripe Index: 5" + nl
 	    + " Stripe Bytes Transferred: 987654321987654321" + nl
@@ -76,7 +76,7 @@ public class PerfMarkerTest extends TestCase {
 	assertConstructorError(msg);
 
 	// whole reply instead of just message
-	msg = "112-Perf Marker" + nl 
+	msg = "112-Perf Marker" + nl
 	    + " Timestamp: 111222333444.5" + nl
 	    + " Stripe Index: 5" + nl
 	    + " Stripe Bytes Transferred: 987654321987654321" + nl
@@ -85,7 +85,7 @@ public class PerfMarkerTest extends TestCase {
 	assertConstructorError(msg);
 
 	// no timestamp
-	msg = "Perf Marker" + nl 
+	msg = "Perf Marker" + nl
 	    + " Stripe Index: 5" + nl
 	    + " Stripe Bytes Transferred: 987654321987654321" + nl
 	    + " Total Stripe Count: 30" + nl
@@ -104,7 +104,7 @@ public class PerfMarkerTest extends TestCase {
 	    " DCAU" + nl +
 	    "211 END";
 	assertConstructorError(msg);
-	
+
     }
 
     /**
@@ -114,7 +114,7 @@ public class PerfMarkerTest extends TestCase {
     public void testObject()
     throws Exception{
 	// simple
-	String msg = "Perf Marker" + nl 
+	String msg = "Perf Marker" + nl
 	    + " Timestamp: 111222333444.5" + nl
 	    + " Stripe Index: 5" + nl
 	    + " Stripe Bytes Transferred: 987654321987654321" + nl
@@ -129,7 +129,7 @@ public class PerfMarkerTest extends TestCase {
 
 
 	// unordered
-	msg = "Perf Marker" + nl 
+	msg = "Perf Marker" + nl
 	    + " Total Stripe Count: 30" + nl
 	    + " Stripe Index: 5" + nl
 	    + " Stripe Bytes Transferred: 987654321987654321" + nl
@@ -144,7 +144,7 @@ public class PerfMarkerTest extends TestCase {
 
 
 	// missing stripe info
-	msg = "Perf Marker" + nl 
+	msg = "Perf Marker" + nl
 	    + " Timestamp: 111222333444.5" + nl
 	    + " Total Stripe Count: 30" + nl
 	    + "112 End" + nl;
@@ -158,7 +158,7 @@ public class PerfMarkerTest extends TestCase {
 
 
 	// missing count
-	msg = "Perf Marker" + nl 
+	msg = "Perf Marker" + nl
 	    + " Timestamp: 111222333444.5" + nl
 	    + " Stripe Index: 5" + nl
 	    + " Stripe Bytes Transferred: 987654321987654321" + nl
@@ -172,7 +172,7 @@ public class PerfMarkerTest extends TestCase {
 
 
 	// missing most info
-        msg = "Perf Marker" + nl 
+        msg = "Perf Marker" + nl
 	    + " Timestamp: 111222333444.5" + nl
 	    + "112 End" + nl;
 	testObject(msg,
@@ -184,7 +184,7 @@ public class PerfMarkerTest extends TestCase {
 
 
 	// zero values
-	msg = "Perf Marker" + nl 
+	msg = "Perf Marker" + nl
 	    + " Timestamp: 0" + nl
 	    + " Stripe Index: 0" + nl
 	    + " Stripe Bytes Transferred: 0" + nl
@@ -201,17 +201,17 @@ public class PerfMarkerTest extends TestCase {
 
     /**
        test perf marker construction and get() and has() methods.
-       "in" is constructor parameter, other params describe the 
+       "in" is constructor parameter, other params describe the
        expected object examination behavior.
      **/
     private void testObject(String in,
 				  double ts,
-				  boolean hasSI, long si, 
+				  boolean hasSI, long si,
 				  boolean hasBT, long bt,
-				  boolean hasTSC, long tsc) 
+				  boolean hasTSC, long tsc)
     throws Exception{
 	logger.info("checking object:\n" + in);
-	PerfMarker m = 
+	PerfMarker m =
 	    new PerfMarker(in);
 
 	// time stamp
@@ -228,8 +228,8 @@ public class PerfMarkerTest extends TestCase {
 		m.getStripeIndex();
 	    } catch (PerfMarkerException e) {
 		threwOk = true;
-	    } 
-	
+	    }
+
 	    if (! threwOk ) {
 		fail("method did not throw an exception when it should have");
 	    }
@@ -247,8 +247,8 @@ public class PerfMarkerTest extends TestCase {
 		m.getStripeBytesTransferred();
 	    } catch (PerfMarkerException e) {
 		threwOk = true;
-	    } 
-	
+	    }
+
 	    if (! threwOk ) {
 		fail("method did not throw an exception when it should have");
 	    }
@@ -267,14 +267,14 @@ public class PerfMarkerTest extends TestCase {
 		m.getTotalStripeCount();
 	    } catch (PerfMarkerException e) {
 		threwOk = true;
-	    } 
-	
+	    }
+
 	    if (! threwOk ) {
 		fail("method did not throw an exception when it should have");
 	    }
 	    logger.debug("okay, throws exception as expected.");
 	}
-    
+
     }
 
     /**
@@ -288,8 +288,8 @@ public class PerfMarkerTest extends TestCase {
 	    new PerfMarker(arg);
 	} catch (IllegalArgumentException e) {
 	    threwOk = true;
-	} 
-	
+	}
+
 	if (! threwOk ) {
 	    fail("constructor did not throw an exception when it should have");
 	}

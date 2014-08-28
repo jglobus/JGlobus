@@ -19,7 +19,7 @@ import java.net.InetAddress;
 import java.io.IOException;
 
 /**
- * This factory allows for creating regular server sockets. 
+ * This factory allows for creating regular server sockets.
  * If the tcp.port.range system property is set it will create
  * server sockets within the specified port range (if the port
  * number is set to 0).
@@ -27,9 +27,9 @@ import java.io.IOException;
 public class ServerSocketFactory {
 
     private static ServerSocketFactory defaultFactory = null;
-    
+
     private PortRange portRange = null;
-  
+
     protected ServerSocketFactory() {
         this.portRange = PortRange.getTcpInstance();
     }
@@ -47,13 +47,13 @@ public class ServerSocketFactory {
     }
 
     /**
-     * Creates a server socket on a specified port. A port of 
+     * Creates a server socket on a specified port. A port of
      * <code>0</code> creates a socket on any free port or if the
      * tcp.port.range system property is set it creates a socket
      * within the specified port range.
      * <p>
-     * The maximum queue length for incoming connection indications (a 
-     * request to connect) is set to <code>50</code>. If a connection 
+     * The maximum queue length for incoming connection indications (a
+     * request to connect) is set to <code>50</code>. If a connection
      * indication arrives when the queue is full, the connection is refused.
      *
      * @param      port  the port number, or <code>0</code> to use any
@@ -62,21 +62,21 @@ public class ServerSocketFactory {
      *                   range.
      * @exception  IOException  if an I/O error occurs when opening the socket.
      */
-    public ServerSocket createServerSocket(int port) 
+    public ServerSocket createServerSocket(int port)
         throws IOException {
         return createServerSocket(port, 50, null);
     }
-    
+
     /**
      * Creates a server socket on a specified port. A port of
      * <code>0</code> creates a socket on any free port or if the
      * tcp.port.range system property is set it creates a socket
      * within the specified port range.
      * <p>
-     * The maximum queue length for incoming connection indications (a 
-     * request to connect) is set to the <code>backlog</code> parameter. If 
-     * a connection indication arrives when the queue is full, the 
-     * connection is refused. 
+     * The maximum queue length for incoming connection indications (a
+     * request to connect) is set to the <code>backlog</code> parameter. If
+     * a connection indication arrives when the queue is full, the
+     * connection is refused.
      *
      * @param      port  the port number, or <code>0</code> to use any
      *                   free port or if the tcp.port.range property set
@@ -85,13 +85,13 @@ public class ServerSocketFactory {
      * @param      backlog  the maximum length of the queue.
      * @exception  IOException  if an I/O error occurs when opening the socket.
      */
-    public ServerSocket createServerSocket(int port, int backlog) 
+    public ServerSocket createServerSocket(int port, int backlog)
         throws IOException {
         return createServerSocket(port, backlog, null);
     }
-    
-    /** 
-     * Create a server with the specified port, listen backlog, and 
+
+    /**
+     * Create a server with the specified port, listen backlog, and
      * local IP address to bind to.  The <i>bindAddr</i> argument
      * can be used on a multi-homed host for a ServerSocket that
      * will only accept connect requests to one of its addresses.
@@ -104,7 +104,7 @@ public class ServerSocketFactory {
      * @param bindAddr the local InetAddress the server will bind to
      * @exception  IOException  if an I/O error occurs when opening the socket.
      */
-    public ServerSocket createServerSocket(int port, int backlog, 
+    public ServerSocket createServerSocket(int port, int backlog,
                                            InetAddress bindAddr)
         throws IOException {
         if (this.portRange.isEnabled() && port == 0) {
@@ -113,7 +113,7 @@ public class ServerSocketFactory {
             return new ServerSocket(port, backlog, bindAddr);
         }
     }
-  
+
     /**
      * Tries to find first available port within the port range specified.
      * If it finds a free port, it first checks if the port is not used
@@ -121,12 +121,12 @@ public class ServerSocketFactory {
      * port. If none found, it throws an exception. If the port is available
      * the server instance is returned.
      */
-    private ServerSocket createServerSocket(int backlog, InetAddress binAddr) 
+    private ServerSocket createServerSocket(int backlog, InetAddress binAddr)
         throws IOException {
-        
+
         ServerSocket server = null ;
         int port = 0;
-        
+
         while(true) {
             port = this.portRange.getFreePort(port);
             try {
@@ -137,17 +137,17 @@ public class ServerSocketFactory {
                 // continue on
                 port++;
             }
-            
+
         }
     }
 
     class PrServerSocket extends ServerSocket {
-  
+
         public PrServerSocket(int port, int backlog, InetAddress bindAddr)
             throws IOException {
             super(port, backlog, bindAddr);
         }
-  
+
         public void close()
             throws IOException {
             int port = getLocalPort();

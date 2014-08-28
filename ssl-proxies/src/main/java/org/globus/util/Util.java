@@ -30,7 +30,7 @@ public class Util {
 
     private static final String CHMOD = "chmod";
 
-    private static final String DMSG = 
+    private static final String DMSG =
         "Destroyed by Java Globus Proxy Destroy\r\n";
 
     /**
@@ -42,9 +42,9 @@ public class Util {
      * @throws SecurityException if the existing file cannot be deleted.
      * @throws IOException if an I/O error occurred.
      */
-    public static File createFile(String filename) 
+    public static File createFile(String filename)
         throws SecurityException, IOException {
-        
+
         File f = new File(filename);
         if (!f.createNewFile()) {
             if (!destroy(f)) {
@@ -77,11 +77,11 @@ public class Util {
      * This function executes an external program; thus, its behavior is
      * influenced by environment variables such as the caller's PATH and the
      * environment variables that control dynamic loading.  Care should be
-     * used if calling this function from a program that will be run as a 
+     * used if calling this function from a program that will be run as a
      * Unix setuid program, or in any other manner in which the owner of the
-     * Unix process does not completely control its runtime environment. 
+     * Unix process does not completely control its runtime environment.
      * </I>
-     * 
+     *
      * @param file the file to set the permissions of.
      * @param mode the Unix style permissions.
      * @return true, if change was successful, otherwise false.
@@ -90,14 +90,14 @@ public class Util {
      *       occurs.
      */
     public static boolean setFilePermissions(String file, int mode) {
-        // since this will not work on Windows 
+        // since this will not work on Windows
         if (ConfigUtil.getOS() == ConfigUtil.WINDOWS_OS) {
             return false;
         }
 
         Runtime runtime = Runtime.getRuntime();
-        String [] cmd = new String[] { CHMOD, 
-                                       String.valueOf(mode), 
+        String [] cmd = new String[] { CHMOD,
+                                       String.valueOf(mode),
                                        file };
         Process process = null;
         try {
@@ -107,19 +107,19 @@ public class Util {
             return false;
         } finally {
             if (process != null) {
-                try { 
-                    process.getErrorStream().close(); 
+                try {
+                    process.getErrorStream().close();
                 } catch (IOException e) {}
                 try {
-                    process.getInputStream().close(); 
+                    process.getInputStream().close();
                 } catch (IOException e) {}
-                try { 
-                    process.getOutputStream().close(); 
+                try {
+                    process.getOutputStream().close();
                 } catch (IOException e) {}
             }
         }
     }
-    
+
     /**
      * Overwrites the contents of the file with a random
      * string and then deletes the file.
@@ -129,7 +129,7 @@ public class Util {
     public static boolean destroy(String file) {
         return destroy(new File(file));
     }
-    
+
     /**
      * Overwrites the contents of the file with a random
      * string and then deletes the file.
@@ -138,7 +138,7 @@ public class Util {
      */
     public static boolean destroy(File file) {
         if (!file.exists()) return false;
-        
+
         RandomAccessFile f = null;
         long size = file.length();
         try {
@@ -159,10 +159,10 @@ public class Util {
                 if (f != null) f.close();
             } catch(Exception e) {}
         }
-        
+
         return file.delete();
     }
-    
+
     /**
      * Displays a prompt and then reads in the input from System.in.
      *
@@ -171,9 +171,9 @@ public class Util {
      */
     public static String getInput(String prompt) {
         System.out.print(prompt);
-        
+
         try {
-            BufferedReader in = 
+            BufferedReader in =
                 new BufferedReader(new InputStreamReader(System.in));
             return in.readLine();
         } catch(IOException e) {
@@ -192,7 +192,7 @@ public class Util {
         System.out.print(prompt);
 
         PrivateInputThread privateInput = new PrivateInputThread();
-        BufferedReader in = 
+        BufferedReader in =
             new BufferedReader(new InputStreamReader(System.in));
 
         privateInput.start();
@@ -249,7 +249,7 @@ public class Util {
         buf.append("\"");
         return buf.toString();
     }
-    
+
     /**
      * Dequotifies a specified string.
      * The quotes are removed and each \" is replaced with " and
@@ -265,7 +265,7 @@ public class Util {
         boolean inQuotes = false;
         char c;
         int i = 0;
-        
+
         if (str.charAt(i) == '"') {
             inQuotes = true;
             i++;
@@ -336,7 +336,7 @@ public class Util {
             // The system should always have 8859_1
         }
         return result;
-    }    
+    }
 
 
     /**
@@ -347,47 +347,47 @@ public class Util {
     public static String formatTimeSec(long time) {
 
         StringBuffer str = new StringBuffer();
-    
+
         if (time < 60) {
             str.append(time + " sec");
             return str.toString();
-        } 
-    
+        }
+
         int days = (int) time / 86400;
-    
+
         if (days != 0) {
             str.append(days + " days");
             time -= days * 86400;
         }
-    
+
         int hours = (int) time / 3600;
-    
+
         if (hours != 0) {
             if (str.length() != 0) str.append(", ");
             str.append(hours + " h");
             time -= hours * 3600;
         }
-    
+
         int mins  = (int) time / 60;
-    
+
         if (mins != 0) {
             if (str.length() != 0) str.append(", ");
             str.append(mins + " min");
             time -= mins * 60;
         }
-    
+
         int sec   = (int) time;
-    
+
         if (sec != 0) {
             if (str.length() != 0) str.append(", ");
             str.append(sec + " sec");
         }
-    
+
         return str.toString();
     }
-    
+
     /**
-     * Returns the ip address of the local machine. 
+     * Returns the ip address of the local machine.
      * If the 'ip' system property is defined it is returned,
      * otherwise, the local ip address is lookup using the
      * <code>InetAddress</code> class. In case the lookup

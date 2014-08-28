@@ -20,22 +20,22 @@ import java.io.Serializable;
 /**
  * Simple string-based principal.
  */
-public class SimplePrincipal 
+public class SimplePrincipal
     implements Principal, Serializable {
-    
+
     private String name;
-    
+
     public SimplePrincipal() {
     }
 
     public SimplePrincipal(String name) {
 	this.name = name;
     }
-    
+
     public String getName() {
 	return this.name;
     }
-    
+
     public int hashCode() {
 	return (this.name == null) ? 0 : this.name.hashCode();
     }
@@ -51,7 +51,7 @@ public class SimplePrincipal
 	    return this.name.equals(anotherName);
 	}
     }
-    
+
     public String toString() {
 	return getName();
     }

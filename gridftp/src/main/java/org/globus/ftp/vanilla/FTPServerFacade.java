@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2006 University of Chicago
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,20 +51,20 @@ import org.apache.commons.logging.LogFactory;
    <b>
    This class is not ment directly for the users.
    </b>
-   This class represents the part of the client responsible for data 
+   This class represents the part of the client responsible for data
    channel management. Especially when the remote server is in the passive
    mode, it behaves a lot like a local server. Thus its interface looks
    very much like a server interface.
    <br>
    Current implementation is multithreaded. One thread is used for thread
-   management and one for each transfer (this makes sense in GridFTP 
-   parallelism). 
+   management and one for each transfer (this makes sense in GridFTP
+   parallelism).
    <br>
    The public methods can generally be divided into setter methods and active
    methods. Active methods are setActive(), setPassive(), retrieve(),
    and store(), and setter methods are the remaining.
    Setter methods do not generally throw exceptions related to ftp.
-   Settings are not checked for correctness until the server 
+   Settings are not checked for correctness until the server
    is asked to performed some action, which is done by active methods.
    So you are safe to cal setXX() methods with any argument you like, until
    you call one of the "active" methods mentioned above.
@@ -82,7 +82,7 @@ import org.apache.commons.logging.LogFactory;
  **/
 public class FTPServerFacade {
 
-    private static Log logger = 
+    private static Log logger =
         LogFactory.getLog(FTPServerFacade.class.getName());
 
     /**
@@ -125,7 +125,7 @@ public class FTPServerFacade {
     }
 
     /**
-       Use this method to get the client end of the local 
+       Use this method to get the client end of the local
        control channel. It is the only way to get the
        information of the current transfer state.
      **/
@@ -180,33 +180,33 @@ public class FTPServerFacade {
        requests
        @return the server address
      **/
-    public HostPort setPassive(int port, int queue) 
+    public HostPort setPassive(int port, int queue)
         throws IOException{
 
-        if (serverSocket == null) { 
-            ServerSocketFactory factory = 
+        if (serverSocket == null) {
+            ServerSocketFactory factory =
                 ServerSocketFactory.getDefault();
             serverSocket = factory.createServerSocket(port, queue);
         }
-        
+
         session.serverMode = Session.SERVER_PASSIVE;
-        
+
         String address = Util.getLocalHostAddress();
         int localPort = serverSocket.getLocalPort();
 
         if (remoteControlChannel.isIPv6()) {
             String version = HostPort6.getIPAddressVersion(address);
-            session.serverAddress = 
+            session.serverAddress =
                 new HostPort6(version, address, localPort);
         } else {
-            session.serverAddress = 
+            session.serverAddress =
                 new HostPort(address, localPort);
         }
 
-        logger.debug("started passive server at port " + 
+        logger.debug("started passive server at port " +
                      session.serverAddress.getPort());
         return session.serverAddress;
-    
+
     }
 
     /**
@@ -244,17 +244,17 @@ public class FTPServerFacade {
        it to the provided control channel.
      **/
     public static void exceptionToControlChannel(
-                                Throwable e, 
+                                Throwable e,
                                 String msg,
                                 BasicServerControlChannel control) {
         // how to convert exception stack trace to string?
-        // i am sure it can be done easier. 
+        // i am sure it can be done easier.
         java.io.StringWriter writer = new java.io.StringWriter();
         e.printStackTrace(new java.io.PrintWriter(writer));
         String stack = writer.toString();
 
         // 451 Requested action aborted: local error in processing.
-        LocalReply reply = new LocalReply(451, msg + "\n" + 
+        LocalReply reply = new LocalReply(451, msg + "\n" +
                                           e.toString() + "\n" +
                                           stack);
         control.write(reply);
@@ -263,7 +263,7 @@ public class FTPServerFacade {
 
     /**
        Asynchronous; return before completion.
-       Start the incoming transfer and 
+       Start the incoming transfer and
        store the file to the supplied data sink.
        Any exception that would occure will not be thrown but
        returned through the local control channel.
@@ -285,7 +285,7 @@ public class FTPServerFacade {
 
     /**
        Asynchronous; return before completion.
-       Start the outgoing transfer 
+       Start the outgoing transfer
        reading the data from the supplied data source.
        Any exception that would occure will not be thrown but
        returned through the local control channel.
@@ -306,11 +306,11 @@ public class FTPServerFacade {
     }
 
     /**
-       close data channels, but not control, nor the server 
+       close data channels, but not control, nor the server
     **/
     public void abort() throws IOException{
     }
-    
+
     protected void transferAbort() {
         if (session.serverMode == Session.SERVER_PASSIVE) {
             unblockServer();
@@ -324,7 +324,7 @@ public class FTPServerFacade {
         }
         String address = Util.getLocalHostAddress();
         int port = serverSocket.getLocalPort();
-        // this is a hack to ensue the server socket is 
+        // this is a hack to ensue the server socket is
         // unblocked from accpet()
         // but this is not guaranteed to work still
         SocketFactory factory = SocketFactory.getDefault();
@@ -340,7 +340,7 @@ public class FTPServerFacade {
         }
     }
 
-    public void close() 
+    public void close()
         throws IOException {
         logger.debug("close data channels");
         abort();
@@ -353,10 +353,10 @@ public class FTPServerFacade {
             }
             unblockServer();
         }
-        
+
         stopTaskThread();
     }
-    
+
     /**
        Use this as an interface to the local manager thread.
        This submits the task to the thread queue.
@@ -384,45 +384,45 @@ public class FTPServerFacade {
 
     private PassiveConnectTask createPassiveConnectTask(DataSource source,
                                                         TransferContext context) {
-        return new PassiveConnectTask(serverSocket, 
-                                      source, 
-                                      localControlChannel, 
-                                      session, 
+        return new PassiveConnectTask(serverSocket,
+                                      source,
+                                      localControlChannel,
+                                      session,
                                       dataChannelFactory,
                                       context);
     }
 
     private PassiveConnectTask createPassiveConnectTask(DataSink sink,
                                                         TransferContext context) {
-        return new PassiveConnectTask(serverSocket, 
-                                      sink, 
-                                      localControlChannel, 
+        return new PassiveConnectTask(serverSocket,
+                                      sink,
+                                      localControlChannel,
                                       session,
                                       dataChannelFactory,
                                       context);
     }
-    
+
     private ActiveConnectTask createActiveConnectTask(DataSource source,
                                                       TransferContext context) {
         return new ActiveConnectTask(this.remoteServerAddress,
-                                     source, 
+                                     source,
                                      localControlChannel,
                                      session,
                                      dataChannelFactory,
                                      context);
     }
 
-    private ActiveConnectTask createActiveConnectTask(DataSink sink, 
+    private ActiveConnectTask createActiveConnectTask(DataSink sink,
                                                       TransferContext context) {
         return new ActiveConnectTask(this.remoteServerAddress,
-                                     sink, 
+                                     sink,
                                      localControlChannel,
                                      session,
                                      dataChannelFactory,
                                      context);
     }
 
-    // inner classes 
+    // inner classes
 
     /**
       This inner class represents a local control channel.
@@ -430,8 +430,8 @@ public class FTPServerFacade {
       interface, and the other can read replies using
       BasicClientControlChannel interface.
     **/
-    protected class LocalControlChannel 
-        extends BasicClientControlChannel 
+    protected class LocalControlChannel
+        extends BasicClientControlChannel
         implements BasicServerControlChannel{
 
         // FIFO queue of Replies
@@ -461,7 +461,7 @@ public class FTPServerFacade {
         public synchronized boolean ready() {
             return (!replies.isEmpty());
         }
-        
+
         public synchronized int getReplyCount() {
             return replyCount;
         }
@@ -471,14 +471,14 @@ public class FTPServerFacade {
             replyCount = 0;
         }
 
-        public Reply read() 
+        public Reply read()
             throws IOException,
-                   FTPReplyParseException, 
+                   FTPReplyParseException,
                    ServerException{
             try {
                 return pop();
             } catch (InterruptedException e) {
-                ServerException se = 
+                ServerException se =
                     new ServerException(FTPException.UNSPECIFIED,
                                         "interrupted while waiting.");
                 se.setRootCause(e);
@@ -489,10 +489,10 @@ public class FTPServerFacade {
         public void write(Reply reply) {
             push(reply);
         }
-        
+
         public void waitFor(Flag aborted,
                              int ioDelay,
-                             int maxWait)       
+                             int maxWait)
             throws ServerException,
                    IOException,
                    InterruptedException{

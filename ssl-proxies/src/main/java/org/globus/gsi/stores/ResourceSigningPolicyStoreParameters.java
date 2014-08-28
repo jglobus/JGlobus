@@ -24,7 +24,7 @@ import org.globus.gsi.provider.SigningPolicyStoreParameters;
 public class ResourceSigningPolicyStoreParameters implements SigningPolicyStoreParameters {
 
     private String locations;
-    
+
     /**
      * Please use the {@link Stores} class to generate Key/Cert stores
      */
