@@ -129,7 +129,6 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
                     logger.warn("Failed to load signing policy: " + filename);
                     logger.debug("Failed to load signing policy: " + filename, e);
                     invalidPoliciesCache.put(filename, now);
-                    invalidPoliciesCache.put(caPrincipalName, now);
                 }
                 continue;
             }
@@ -156,7 +155,6 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
                     logger.warn("Failed to load signing policy: " + filename);
                     logger.debug("Failed to load signing policy: " + filename, e);
                     invalidPoliciesCache.put(filename, now);
-                    invalidPoliciesCache.put(caPrincipalName, now);
                 }
                 continue;
             }
