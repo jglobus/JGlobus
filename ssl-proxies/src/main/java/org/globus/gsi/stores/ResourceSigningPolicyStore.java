@@ -45,7 +45,6 @@ import org.globus.util.GlobusPathMatchingResourcePatternResolver;
  */
 public class ResourceSigningPolicyStore implements SigningPolicyStore {
 
-    private GlobusPathMatchingResourcePatternResolver globusResolver = new GlobusPathMatchingResourcePatternResolver();
     private Map<URI, ResourceSigningPolicy> signingPolicyFileMap = new HashMap<URI, ResourceSigningPolicy>();
     private Map<String, SigningPolicy> policyMap = new HashMap<String, SigningPolicy>();
     private ResourceSigningPolicyStoreParameters parameters;
@@ -92,8 +91,8 @@ public class ResourceSigningPolicyStore implements SigningPolicyStore {
     private synchronized void loadPolicy(String hash, String caPrincipalName) throws SigningPolicyStoreException {
 
         String locations = this.parameters.getTrustRootLocations();
-        GlobusResource[] resources;
-        resources = globusResolver.getResources(locations);
+        GlobusResource[] resources = new GlobusPathMatchingResourcePatternResolver().
+                getResources(locations);
 
         long now = System.currentTimeMillis();
         boolean found_policy = false;
