@@ -35,9 +35,11 @@ import java.io.Writer;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.StringTokenizer;
 
 import javax.crypto.Cipher;
@@ -172,8 +174,17 @@ public abstract class OpenSSLKey implements Serializable {
         if (isEncrypted()) {
             this.keyData = null;
         } else {
-            this.keyData = Base64.decode(encodedKey);
-            this.intKey = getKey(keyAlg, keyData);
+            if (keyAlg != "PKCS8") {
+                this.keyData = Base64.decode(encodedKey);
+                this.intKey = getKey(keyAlg, keyData);
+            } else {
+                // workaround for PKCS#8 encoded keys (only for keys without encryption)
+                keyAlg = "RSA";
+                PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.decode(encodedKey));
+                KeyFactory kfac = KeyFactory.getInstance("RSA");
+                this.intKey = kfac.generatePrivate(spec);
+                this.keyData = getEncoded(this.intKey);
+            }
         }
     }
 
@@ -210,7 +221,10 @@ public abstract class OpenSSLKey implements Serializable {
     private void parseKeyAlgorithm(BufferedReader in) throws IOException, InvalidKeyException {
         String next = in.readLine();
         while (next != null) {
-            if (next.indexOf("PRIVATE KEY") != -1) {
+            if (next.indexOf("BEGIN PRIVATE KEY") != -1) {
+                keyAlg = "PKCS8";
+                break;
+            } else if (next.indexOf("PRIVATE KEY") != -1) {
                 keyAlg = getKeyAlgorithm(next);
                 break;
             }
