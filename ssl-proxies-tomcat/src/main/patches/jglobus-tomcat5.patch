@@ -91,7 +91,7 @@ index 3718fa3..74ef715 100644
 -        return new TrustManager[]{trustManager};
 -    }
 -
--	
+-
  	@Override
  	protected Object clone() throws CloneNotSupportedException {
  		// TODO Auto-generated method stub
