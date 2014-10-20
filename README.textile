@@ -1,6 +1,6 @@
 h2. JGlobus
 
-"$":https://github.com/jglobus/JGlobus/
+"https://github.com/jglobus/JGlobus/":https://github.com/jglobus/JGlobus/
 
 The JGlobus project aims to provide the base portions of the Globus ecosystem for the Java language.
 
@@ -22,7 +22,7 @@ h3. JGlobus 2.0.6 Release Notes
 * force GSS confidentiality.
 * handle multiple authz challenge options.
 * remove very old deprecated API.
-* Bug fix for issue - "$":https://github.com/jglobus/JGlobus/issues/102.
+* Bug fix for issue - "https://github.com/jglobus/JGlobus/issues/102":https://github.com/jglobus/JGlobus/issues/102.
 * This release is verified to work with XSEDE Myproxy Server, GridFTP and GRAM deployments.
 
 h3. JGlobus 2.0.5 Release Notes
@@ -48,7 +48,7 @@ h3. jGlobus 2.0.2 Core Release Notes
 h3. jGlobus 2.0.1 Core Release Notes
 
 * jGlobus 2.0.1 Core (download) is a bug-fix release that addresses an issue with signature verification.
-* This issue was discovered and addresses by Jonathan Siwek at NCSA. Details of this fix can be found at "$":https://github.com/jglobus/JGlobus/pull/10.
+* This issue was discovered and addresses by Jonathan Siwek at NCSA. Details of this fix can be found at "https://github.com/jglobus/JGlobus/pull/10":https://github.com/jglobus/JGlobus/pull/10.
 
 h3. jGlobus 2.0.0 All Release Notes
 
