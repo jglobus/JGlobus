@@ -1,48 +1,59 @@
+h2. JGlobus
 
-***********
-* JGlobus *
-***********
+"https://github.com/jglobus/JGlobus/":https://github.com/jglobus/JGlobus/
 
-https://github.com/jglobus/JGlobus/
-
-The JGlobus project aims to provide the base portions of the Globus ecosystem
-for the Java language.
+The JGlobus project aims to provide the base portions of the Globus ecosystem for the Java language.
 
 The notable JARs part of the JGlobus project include:
-- jsse / ssl-proxies: A GSI-enabled Java trustmanager.
-- GSS: A secure sockets layer based on GSI from Globus.
-- MyProxy: Support for the MyProxy server.
-- GridFTP: Client-side GridFTP support.
-- ssl-proxies-tomcat: Utility functions for integrating the GSI-enabled trustmanager into a Tomcat container.
-- axis: Axis 1.4 support for the GSI-enabled trustmanager.
+* jsse / ssl-proxies: A GSI-enabled Java trustmanager.
+* GSS: A secure sockets layer based on GSI from Globus.
+* MyProxy: Support for the MyProxy server.
+* GridFTP: Client-side GridFTP support.
+* ssl-proxies-tomcat: Utility functions for integrating the GSI-enabled trustmanager into a Tomcat container.
+* axis: Axis 1.4 support for the GSI-enabled trustmanager.
 
-*****************
-* Release Notes *
-*****************
-JGlobus 2.0.5 Release Notes
-- This is the first release from github and distributed through Maven central, as opposed to globus.org
-- This release addresses compatibility and performance issues with the IGTF CA bundle.
-- Several forward-ports of bugs reported by dCache.org.  In particular, a larger set of RDN are supported.
-- CRLs are properly cached and reloaded, essential for running JGlobus as a trustmanager of a Java container.
+h2. Release Notes
 
-jGlobus 2.0.4 Core Release Notes
-- This release addresses internal security vulnerabilities that were identified in internal reviews in collaboration with the MyProxy team at NCSA. 
-- GSS Tomcat support was moved into its own Maven project.
+h3. JGlobus 2.0.6 Release Notes
 
-jGlobus 2.0.3 Core Release Notes
-- caGrid changes introduced in 2.0.2 were backed-out due to incompabilities discovered between those changes and the changes GSSContextImpl.
+* This release now includes MyProxy JGlobus 2.0 fixes from CILogon CVS.
+* Uses org.bouncycastle.util.encoders.Base64 instead of org.globus.util.Base64.
+* Support list of MyProxy server hostnames/ports.
+* force GSS confidentiality.
+* handle multiple authz challenge options.
+* remove very old deprecated API.
+* Bug fix for issue - "https://github.com/jglobus/JGlobus/issues/102":https://github.com/jglobus/JGlobus/issues/102.
+* This release is verified to work with XSEDE Myproxy Server, GridFTP and GRAM deployments.
 
-jGlobus 2.0.2 Core Release Notes
-- Password fix to GSSContextImpl.java and additional contributions from caGrid.
+h3. JGlobus 2.0.5 Release Notes
 
-jGlobus 2.0.1 Core Release Notes
-- jGlobus 2.0.1 Core (download) is a bug-fix release that addresses an issue with signature verification.
-- This issue was discovered and addresses by Jonathan Siwek at NCSA. Details of this fix can be found at https://github.com/jglobus/JGlobus/pull/10.
+* This is the first release from github and distributed through Maven central, as opposed to globus.org
+* This release addresses compatibility and performance issues with the IGTF CA bundle.
+* Several forward-ports of bugs reported by dCache.org.  In particular, a larger set of RDN are supported.
+* CRLs are properly cached and reloaded, essential for running JGlobus as a trustmanager of a Java container.
 
-jGlobus 2.0.0 All Release Notes
-- jGlobus 2.0.0 (download) replaces the use of pureTLS, as was used in jGlobus 1.x, with JSSE.
-  While this resulted in minor changes to the GSI API, the GRAM and GridFTP packages remain unchanged from jGlobus 1.X.
-- A secondary goal was to drop or deprecated packages that are not strictly related to the use of Globus Toolkit.
-  This includes, for example, the removal of the MDS package, as MDS is no longer supported in Globus Toolkit 5.X.
-- jGlobus now requires Java 1.5 or higher.
+h3. jGlobus 2.0.4 Core Release Notes
 
+* This release addresses internal security vulnerabilities that were identified in internal reviews in collaboration with the MyProxy team at NCSA. 
+* GSS Tomcat support was moved into its own Maven project.
+
+h3. jGlobus 2.0.3 Core Release Notes
+
+* caGrid changes introduced in 2.0.2 were backed-out due to incompabilities discovered between those changes and the changes GSSContextImpl.
+
+h3. jGlobus 2.0.2 Core Release Notes
+
+* Password fix to GSSContextImpl.java and additional contributions from caGrid.
+
+h3. jGlobus 2.0.1 Core Release Notes
+
+* jGlobus 2.0.1 Core (download) is a bug-fix release that addresses an issue with signature verification.
+* This issue was discovered and addresses by Jonathan Siwek at NCSA. Details of this fix can be found at "https://github.com/jglobus/JGlobus/pull/10":https://github.com/jglobus/JGlobus/pull/10.
+
+h3. jGlobus 2.0.0 All Release Notes
+
+* jGlobus 2.0.0 (download) replaces the use of pureTLS, as was used in jGlobus 1.x, with JSSE.
+** While this resulted in minor changes to the GSI API, the GRAM and GridFTP packages remain unchanged from jGlobus 1.X.
+* A secondary goal was to drop or deprecated packages that are not strictly related to the use of Globus Toolkit.
+** This includes, for example, the removal of the MDS package, as MDS is no longer supported in Globus Toolkit 5.X.
+* jGlobus now requires Java 1.5 or higher.
