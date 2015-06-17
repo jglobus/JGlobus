@@ -14,25 +14,24 @@
  */
 package org.globus.gsi.proxy.ext;
 
-import org.bouncycastle.asn1.ASN1InputStream;
-
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 
 import org.globus.gsi.proxy.ext.ProxyPolicy;
 import org.globus.gsi.proxy.ext.ProxyCertInfo;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROutputStream;
 
 import junit.framework.TestCase;
 
 public class ProxyCertInfoTest extends TestCase {
 
     String testPolicy = "blahblah";
-    DERObjectIdentifier testOid = new DERObjectIdentifier("1.2.3.4.5");
+    ASN1ObjectIdentifier testOid = new ASN1ObjectIdentifier("1.2.3.4.5");
 
     public void testCreateProxyCertInfo() throws Exception {
 

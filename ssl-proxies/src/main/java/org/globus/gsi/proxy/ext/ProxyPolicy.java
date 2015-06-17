@@ -16,9 +16,9 @@ package org.globus.gsi.proxy.ext;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
@@ -32,19 +32,19 @@ public class ProxyPolicy implements ASN1Encodable {
     /**
      * Impersonation proxy OID
      */
-    public static final DERObjectIdentifier IMPERSONATION = new DERObjectIdentifier("1.3.6.1.5.5.7.21.1");
+    public static final ASN1ObjectIdentifier IMPERSONATION = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.21.1");
 
     /**
      * Independent proxy OID
      */
-    public static final DERObjectIdentifier INDEPENDENT = new DERObjectIdentifier("1.3.6.1.5.5.7.21.2");
+    public static final ASN1ObjectIdentifier INDEPENDENT = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.21.2");
 
     /**
      * Limited proxy OID
      */
-    public static final DERObjectIdentifier LIMITED = new DERObjectIdentifier("1.3.6.1.4.1.3536.1.1.1.9");
+    public static final ASN1ObjectIdentifier LIMITED = new ASN1ObjectIdentifier("1.3.6.1.4.1.3536.1.1.1.9");
 
-    private DERObjectIdentifier policyLanguage;
+    private ASN1ObjectIdentifier policyLanguage;
     private DEROctetString policy;
 
     /**
@@ -56,7 +56,7 @@ public class ProxyPolicy implements ASN1Encodable {
         if (seq.size() < 1) {
             throw new IllegalArgumentException();
         }
-        this.policyLanguage = (DERObjectIdentifier) seq.getObjectAt(0);
+        this.policyLanguage = (ASN1ObjectIdentifier) seq.getObjectAt(0);
         if (seq.size() > 1) {
             ASN1Encodable obj = seq.getObjectAt(1);
             if (obj instanceof DERTaggedObject) {
@@ -75,7 +75,7 @@ public class ProxyPolicy implements ASN1Encodable {
      * @param policy         the policy.
      */
     public ProxyPolicy(
-            DERObjectIdentifier policyLanguage,
+            ASN1ObjectIdentifier policyLanguage,
             byte[] policy) {
         if (policyLanguage == null) {
             throw new IllegalArgumentException();
@@ -99,7 +99,7 @@ public class ProxyPolicy implements ASN1Encodable {
         if (policyLanguageOid == null) {
             throw new IllegalArgumentException();
         }
-        this.policyLanguage = new DERObjectIdentifier(policyLanguageOid);
+        this.policyLanguage = new ASN1ObjectIdentifier(policyLanguageOid);
         if (policy != null) {
             this.policy = new DEROctetString(policy);
         }
@@ -113,7 +113,7 @@ public class ProxyPolicy implements ASN1Encodable {
      * @param policy         the policy.
      */
     public ProxyPolicy(
-            DERObjectIdentifier policyLanguage,
+            ASN1ObjectIdentifier policyLanguage,
             String policy) {
         this(policyLanguage, (policy != null) ? policy.getBytes() : null);
     }
@@ -123,7 +123,7 @@ public class ProxyPolicy implements ASN1Encodable {
      *
      * @param policyLanguage the language policy Oid.
      */
-    public ProxyPolicy(DERObjectIdentifier policyLanguage) {
+    public ProxyPolicy(ASN1ObjectIdentifier policyLanguage) {
         this(policyLanguage, (byte[]) null);
     }
 
@@ -178,7 +178,7 @@ public class ProxyPolicy implements ASN1Encodable {
      *
      * @return the policy language Oid.
      */
-    public DERObjectIdentifier getPolicyLanguage() {
+    public ASN1ObjectIdentifier getPolicyLanguage() {
         return this.policyLanguage;
     }
 
