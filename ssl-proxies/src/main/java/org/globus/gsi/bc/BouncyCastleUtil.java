@@ -29,13 +29,13 @@ import javax.naming.ldap.LdapName;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -330,7 +330,7 @@ public class BouncyCastleUtil {
 			ProxyCertInfo proxyCertExt = getProxyCertInfo(ext);
                         ProxyPolicy proxyPolicy =
                             proxyCertExt.getProxyPolicy();
-                        DERObjectIdentifier oid =
+                        ASN1ObjectIdentifier oid =
                             proxyPolicy.getPolicyLanguage();
 			if (ProxyPolicy.IMPERSONATION.equals(oid)) {
                             if (gsi4) {

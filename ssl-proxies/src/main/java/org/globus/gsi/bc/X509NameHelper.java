@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1String;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERSet;
@@ -94,7 +94,7 @@ public class X509NameHelper {
      * @param value the value (e.g. "proxy")
      */
     public void add(
-            DERObjectIdentifier oid,
+            ASN1ObjectIdentifier oid,
             String value) {
         ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(oid);
@@ -175,7 +175,7 @@ public class X509NameHelper {
             buf.append('/');
             while (ee.hasMoreElements()) {
                 ASN1Sequence s = (ASN1Sequence)ee.nextElement();
-                DERObjectIdentifier oid = (DERObjectIdentifier)s.getObjectAt(0);
+                ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)s.getObjectAt(0);
                 String sym = (String)X509Name.DefaultSymbols.get(oid);
                 if (sym == null) {
                     buf.append(oid.getId());

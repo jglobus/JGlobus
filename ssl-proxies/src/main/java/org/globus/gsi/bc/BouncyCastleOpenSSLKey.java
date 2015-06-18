@@ -28,9 +28,9 @@ import java.security.Security;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
@@ -123,7 +123,7 @@ public class BouncyCastleOpenSSLKey extends OpenSSLKey {
 				ASN1InputStream derin = new ASN1InputStream(bis);
 				ASN1Primitive keyInfo = derin.readObject();
 
-				DERObjectIdentifier rsaOid = PKCSObjectIdentifiers.rsaEncryption;
+				ASN1ObjectIdentifier rsaOid = PKCSObjectIdentifiers.rsaEncryption;
 				AlgorithmIdentifier rsa = new AlgorithmIdentifier(rsaOid);
 				PrivateKeyInfo pkeyinfo = new PrivateKeyInfo(rsa, keyInfo);
 				ASN1Primitive derkey = pkeyinfo.toASN1Primitive();

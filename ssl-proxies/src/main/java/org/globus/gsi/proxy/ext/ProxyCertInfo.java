@@ -16,12 +16,11 @@ package org.globus.gsi.proxy.ext;
 
 import org.globus.gsi.util.CertificateUtil;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
-
 import java.io.IOException;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERInteger;
@@ -37,10 +36,10 @@ import org.bouncycastle.asn1.DERSequence;
 public class ProxyCertInfo implements ASN1Encodable {
 
     /** ProxyCertInfo extension OID */
-    public static final DERObjectIdentifier OID
-    = new DERObjectIdentifier("1.3.6.1.5.5.7.1.14");
-    public static final DERObjectIdentifier OLD_OID
-        = new DERObjectIdentifier("1.3.6.1.4.1.3536.1.222");
+    public static final ASN1ObjectIdentifier OID
+        = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.1.14");
+    public static final ASN1ObjectIdentifier OLD_OID
+        = new ASN1ObjectIdentifier("1.3.6.1.4.1.3536.1.222");
 
     private DERInteger pathLenConstraint;
     private ProxyPolicy proxyPolicy;

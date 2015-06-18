@@ -14,7 +14,7 @@
  */
 package org.globus.gsi.trustmanager;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import org.bouncycastle.asn1.x509.X509Extension;
@@ -489,7 +489,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
             throws CertPathValidatorException, IOException {
 
         X509Extensions extensions;
-        DERObjectIdentifier oid;
+        ASN1ObjectIdentifier oid;
         X509Extension proxyExtension;
 
         X509Extension proxyKeyUsage = null;
@@ -498,7 +498,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
         if (extensions != null) {
             Enumeration e = extensions.oids();
             while (e.hasMoreElements()) {
-                oid = (DERObjectIdentifier) e.nextElement();
+                oid = (ASN1ObjectIdentifier) e.nextElement();
                 proxyExtension = extensions.getExtension(oid);
                 if (oid.equals(X509Extension.subjectAlternativeName)
                         || oid.equals(X509Extension.issuerAlternativeName)) {
@@ -526,7 +526,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
         if (extensions != null) {
             Enumeration e = extensions.oids();
             while (e.hasMoreElements()) {
-                oid = (DERObjectIdentifier) e.nextElement();
+                oid = (ASN1ObjectIdentifier) e.nextElement();
                 proxyExtension = extensions.getExtension(oid);
                 checkExtension(oid, proxyExtension, proxyKeyUsage);
             }
@@ -542,7 +542,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
         }
     }
 
-    private void checkExtension(DERObjectIdentifier oid, X509Extension proxyExtension, X509Extension proxyKeyUsage) throws CertPathValidatorException {
+    private void checkExtension(ASN1ObjectIdentifier oid, X509Extension proxyExtension, X509Extension proxyKeyUsage) throws CertPathValidatorException {
         if (oid.equals(X509Extension.keyUsage)) {
             // If issuer has it then proxy must have it also
             if (proxyKeyUsage == null) {
