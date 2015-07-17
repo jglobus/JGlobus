@@ -58,21 +58,29 @@ public class GridFTPInputStream extends FTPInputStream {
 			      int type,
 			      boolean reqDCAU)
 	throws IOException, FTPException {
-	GridFTPClient gridFtp = new GridFTPClient(host, port);
-	gridFtp.setAuthorization(auth);
-	gridFtp.authenticate(cred);
+		GridFTPClient gridFtp = new GridFTPClient(host, port);
+		try {
+			gridFtp.setAuthorization(auth);
+			gridFtp.authenticate(cred);
 
-	if (gridFtp.isFeatureSupported("DCAU")) {
-	    if (!reqDCAU) {
-		gridFtp.setDataChannelAuthentication(DataChannelAuthentication.NONE);
-	    }
-	} else {
-	    gridFtp.setLocalNoDataChannelAuthentication();
-	}
+			if (gridFtp.isFeatureSupported("DCAU")) {
+				if (!reqDCAU) {
+					gridFtp.setDataChannelAuthentication(DataChannelAuthentication.NONE);
+				}
+			} else {
+				gridFtp.setLocalNoDataChannelAuthentication();
+			}
 
-	ftp = gridFtp;
+			ftp = gridFtp;
 
-	get(passive, type, file);
+			get(passive, type, file);
+		} catch(IOException e) {
+			gridFtp.close();
+			throw e;
+		} catch(FTPException e) {
+			gridFtp.close();
+			throw e;
+		}
     }
 
 }
