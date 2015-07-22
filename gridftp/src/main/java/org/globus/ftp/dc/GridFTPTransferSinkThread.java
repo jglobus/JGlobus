@@ -61,15 +61,29 @@ public class GridFTPTransferSinkThread extends TransferSinkThread {
         SocketPool pool =
             ((EBlockParallelTransferContext) context).getSocketPool();
 
-        if (((ManagedSocketBox) socketBox).isReusable()) {
-            // we're in EBLOCK mode, so reader is EBlockImageDCReader
-            if (! ((EBlockImageDCReader)reader).willCloseReceived()) {
-                // we're in EBLOCK mode. Store the socket for later reuse
-                logger.debug("shutdown; leaving the socket open");
-                pool.checkIn(socketBox);
+        try {
+
+            if (((ManagedSocketBox) socketBox).isReusable()) {
+                // we're in EBLOCK mode, so reader is EBlockImageDCReader
+                if (!((EBlockImageDCReader) reader).willCloseReceived()) {
+                    // we're in EBLOCK mode. Store the socket for later reuse
+                    logger.debug("shutdown; leaving the socket open");
+                    pool.checkIn(socketBox);
+                } else {
+                    //the server indicated closing the connection.
+                    //remove the useless socket.
+                    logger.debug("shutdown; closing the socket");
+                    try {
+                        reader.close();
+                    } finally {
+                        // do not reuse the socket
+                        pool.remove(socketBox);
+                        socketBox.setSocket(null);
+                    }
+                }
             } else {
-                //the server indicated closing the connection.
-                //remove the useless socket.
+                // we're in stream mode or other non-eblock,
+                // close the socket to indicate end of read.
                 logger.debug("shutdown; closing the socket");
                 try {
                     reader.close();
@@ -78,31 +92,19 @@ public class GridFTPTransferSinkThread extends TransferSinkThread {
                     pool.remove(socketBox);
                     socketBox.setSocket(null);
                 }
+
             }
-        } else {
-            // we're in stream mode or other non-eblock,
-            // close the socket to indicate end of read.
-            logger.debug("shutdown; closing the socket");
-            try {
-                reader.close();
-            } finally {
-                // do not reuse the socket
-                pool.remove(socketBox);
-                socketBox.setSocket(null);
+        } finally {
+            //update manager's thread count
+            TransferThreadManager threadManager =
+                    eContext.getTransferThreadManager();
+            threadManager.transferThreadTerminating();
+
+            // data sink is shared by all data channels,
+            // so should be closed by the last one exiting
+            if (quitToken != null) {
+                sink.close();
             }
-
         }
-
-        // data sink is shared by all data channels,
-        // so should be closed by the last one exiting
-        if (quitToken != null) {
-            sink.close();
-        }
-
-        //update manager's thread count
-        TransferThreadManager threadManager =
-            eContext.getTransferThreadManager();
-        threadManager.transferThreadTerminating();
-
     }
 }

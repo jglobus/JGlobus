@@ -64,37 +64,45 @@ public class GridFTPTransferSourceThread extends TransferSourceThread {
         // attempt to obtain permission to close data source
         Object quitToken = context.getQuitToken();
 
-        SocketPool pool =
-            ((EBlockParallelTransferContext) context).getSocketPool();
+        try {
+            SocketPool pool =
+                    ((EBlockParallelTransferContext) context).getSocketPool();
 
-        if (((ManagedSocketBox) socketBox).isReusable()) {
-            // we're in EBLOCK mode. Store the socket for later reuse
-            logger.debug("shutdown; leaving the socket open");
-            pool.checkIn(socketBox);
-        } else {
-            // we're in stream mode or other non-eblock,
-            // or it was indicated that socket should not be reused.
-            logger.debug("shutdown; closing the socket");
-            try {
-                writer.close();
-            } finally {
-                // do not reuse the socket
-                pool.remove(socketBox);
-                socketBox.setSocket(null);
+            if (((ManagedSocketBox) socketBox).isReusable()) {
+                // we're in EBLOCK mode. Store the socket for later reuse
+                logger.debug("shutdown; leaving the socket open");
+                pool.checkIn(socketBox);
+            } else {
+                // we're in stream mode or other non-eblock,
+                // or it was indicated that socket should not be reused.
+                logger.debug("shutdown; closing the socket");
+                try {
+                    writer.close();
+                } finally {
+                    // do not reuse the socket
+                    try {
+                        pool.remove(socketBox);
+                    } catch (IllegalArgumentException e) {
+                        logger.warn(e);
+                    }
+                    socketBox.setSocket(null);
+                }
+            }
+        } finally {
+            //update manager's thread count
+            TransferThreadManager threadManager =
+                    eContext.getTransferThreadManager();
+            threadManager.transferThreadTerminating();
+
+            // data sink is shared by all data channels,
+            // so should be closed by the last one exiting
+            if (quitToken != null) {
+                logger.debug("closing the data source");
+                source.close();
             }
         }
 
-        // data sink is shared by all data channels,
-        // so should be closed by the last one exiting
-        if (quitToken != null) {
-            logger.debug("closing the data source");
-            source.close();
-        }
 
-        //update manager's thread count
-        TransferThreadManager threadManager =
-            eContext.getTransferThreadManager();
-        threadManager.transferThreadTerminating();
 
         return quitToken;
     }
