@@ -118,8 +118,11 @@ public abstract class GssOutputStream extends OutputStream {
     public void close()
 	throws IOException {
 	logger.debug("close");
-	flushData();
-	this.out.close();
+	try {
+		flushData();
+	} finally {
+		this.out.close();
+	}
     }
 
 }
