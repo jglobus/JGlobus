@@ -69,7 +69,7 @@ public class DatagramSocketFactory {
         } else {
             DatagramSocket socket = new DatagramSocket(port, localAddr);
             socket.setSoTimeout(CoGProperties.getDefault().getSocketTimeout());
-            return new DatagramSocket(port, localAddr);
+            return socket;
         }
     }
 
