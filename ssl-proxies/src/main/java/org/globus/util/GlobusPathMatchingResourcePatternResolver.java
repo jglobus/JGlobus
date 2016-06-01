@@ -32,7 +32,7 @@ public class GlobusPathMatchingResourcePatternResolver {
       */
     private String mainClassPath = "";
     //Holds GlobusResource instances of all the paths which matched the locationPattern
-    private Vector<GlobusResource> pathsMatchingLocationPattern = new Vector<GlobusResource>();
+    private Vector<GlobusResource> pathsMatchingLocationPattern;
 
     public GlobusPathMatchingResourcePatternResolver() {
     }
@@ -64,6 +64,7 @@ public class GlobusPathMatchingResourcePatternResolver {
      * @return An array of GlobusResource containing all resources whose locaiton match the locationPattern
      */
     public GlobusResource[] getResources(String locationPattern) {
+        pathsMatchingLocationPattern = new Vector<GlobusResource>();
         String mainPath = "";
         if (locationPattern.startsWith("classpath:")) {
             String pathUntilWildcard = getPathUntilWildcard(locationPattern.replaceFirst("classpath:/", ""), false);
