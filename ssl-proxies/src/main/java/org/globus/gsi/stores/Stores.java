@@ -32,7 +32,7 @@ import org.globus.gsi.provider.KeyStoreParametersFactory;
 
 /**
  * @author Jerome Revillard
- *
+ * 
  */
 public class Stores {
 	private static String defaultCAFilesPattern = "*.0";
