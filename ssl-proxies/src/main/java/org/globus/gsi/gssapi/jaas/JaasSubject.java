@@ -91,7 +91,7 @@ public abstract class JaasSubject {
 
     /**
      * A convenience method, calls
-     * <code>JaasSubject.getJaasSubject().runAs()<code/>.
+     * <code>JaasSubject.getJaasSubject().runAs()</code>.
      */
     public static Object doAs(Subject subject, PrivilegedExceptionAction action)
 	throws PrivilegedActionException {
@@ -100,7 +100,7 @@ public abstract class JaasSubject {
 
     /**
      * A convenience method, calls
-     * <code>JaasSubject.getJaasSubject().runAs()<code/>.
+     * <code>JaasSubject.getJaasSubject().runAs()</code>.
      */
     public static Object doAs(Subject subject, PrivilegedAction action) {
 	return JaasSubject.getJaasSubject().runAs(subject, action);
@@ -108,7 +108,7 @@ public abstract class JaasSubject {
 
     /**
      * A convenience method, calls
-     * <code>JaasSubject.getJaasSubject().getSubject()<code/>.
+     * <code>JaasSubject.getJaasSubject().getSubject()</code>.
      */
     public static Subject getCurrentSubject() {
 	return JaasSubject.getJaasSubject().getSubject();

@@ -73,8 +73,7 @@ public class Command {
 
     /**
      * @return a String representation of this object, that is
-     * <name> <sp> <parameters> <CRLF>
-     * </p>
+     * &lt;name&gt; &lt;sp&gt; &lt;parameters&gt; &lt;CRLF&gt;
      */
     public static String toString(Command command) {
 	return command.toString();

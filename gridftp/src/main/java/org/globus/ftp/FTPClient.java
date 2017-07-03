@@ -2063,14 +2063,14 @@ public class  FTPClient {
      * <a href="http://www.ogf.org/documents/GFD.47.pdf">GridFTP v2 Protocol Description</a>
      * checksum feature has the following syntax:
      * <pre>
-     * CKSUM <algorithm>[, …]
+     * CKSUM &lt;algorithm&gt;[, …]
      * </pre>
      * getSupportedCksumAlgorithms parses checsum feauture parms and form a
      * list of checksum algorithms supported by the server
      * @return a list of checksum algorithms supported by the server in the order
      * specified by the server
      * @throws org.globus.ftp.exception.ClientException
-     * @throws org.globus.ftp.org.globus.ftp.exception.ServerException
+     * @throws org.globus.ftp.exception.ServerException
      * @throws java.io.IOException
      */
     public List<String> getSupportedCksumAlgorithms()
@@ -2130,12 +2130,12 @@ public class  FTPClient {
      * 5.1 CKSM
      * This command is used by the client to request checksum calculation over a portion or
      * whole file existing on the server. The syntax is:
-     * CKSM <algorithm> <offset> <length> <path> CRLF
+     * CKSM &lt;algorithm&gt; &lt;offset&gt; &lt;length&gt; &lt;path&gt; CRLF
      * Server executes this command by calculating specified type of checksum over
      * portion of the file starting at the offset and of the specified length. If length is –1,
      * the checksum will be calculated through the end of the file. On success, the server
      * replies with
-     * 2xx <checksum value>
+     * 2xx &lt;checksum value&gt;
      * Actual format of checksum value depends on the algorithm used, but generally,
      * hexadecimal representation should be used.
      * </pre>
@@ -2146,7 +2146,7 @@ public class  FTPClient {
      * @param path
      * @return ckecksum value returned by the server
      * @throws org.globus.ftp.exception.ClientException
-     * @throws org.globus.ftp.org.globus.ftp.exception.ServerException
+     * @throws org.globus.ftp.exception.ServerException
      * @throws java.io.IOException
      */
     public String getChecksum(String algorithm,
@@ -2180,7 +2180,7 @@ public class  FTPClient {
      * @param  path
      * @return ckecksum value returned by the server
      * @throws org.globus.ftp.exception.ClientException
-     * @throws org.globus.ftp.org.globus.ftp.exception.ServerException
+     * @throws org.globus.ftp.exception.ServerException
      * @throws java.io.IOException
      */
     public String getChecksum(String algorithm,
@@ -2199,14 +2199,14 @@ public class  FTPClient {
      * uploaded. At the end of transfer, server will calculate checksum for the received file,
      * and if it does not match, will consider the transfer to have failed. Syntax of the
      * command is:
-     * SCKS <algorithm> <value> CRLF
+     * SCKS &lt;algorithm&gt; &lt;value&gt; CRLF
      * Actual format of checksum value depends on the algorithm used, but generally,
      * hexadecimal representation should be used.
      * </pre>
      * @param algorithm
      * @param value
      * @throws org.globus.ftp.exception.ClientException
-     * @throws org.globus.ftp.org.globus.ftp.exception.ServerException
+     * @throws org.globus.ftp.exception.ServerException
      * @throws java.io.IOException
      */
     public void setChecksum(String algorithm, String value)

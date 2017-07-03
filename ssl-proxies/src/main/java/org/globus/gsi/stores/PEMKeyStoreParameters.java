@@ -20,7 +20,7 @@ import java.security.KeyStore.ProtectionParameter;
 
 /**
  * This parameter class provides all of the options for creating a FileBasedKeyStore.
- * <p/>
+ * <p>
  * It is immutable.
  *
  * @version ${vesion}

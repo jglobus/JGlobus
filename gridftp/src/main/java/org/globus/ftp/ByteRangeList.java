@@ -94,9 +94,9 @@ public class ByteRangeList implements RestartData {
        while the parameter object will remain intact.
        For instance:
        <ul>
-       <li>merge("10-15 30-35", "20-25") ->  "10-15 20-25 30-35"
-       <li>merge("10-15 30-35", "12-15") ->  "10-15 20-25"
-       <li>merge("10-15 30-35", "16-40") ->  "10-40"
+       <li>merge("10-15 30-35", "20-25") -&lt;  "10-15 20-25 30-35"
+       <li>merge("10-15 30-35", "12-15") -&lt;  "10-15 20-25"
+       <li>merge("10-15 30-35", "16-40") -&lt;  "10-40"
        </ul>
      **/
     public void merge(final ByteRange range) {

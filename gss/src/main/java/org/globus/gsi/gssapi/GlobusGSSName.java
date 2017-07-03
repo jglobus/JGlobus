@@ -320,7 +320,7 @@ public class GlobusGSSName implements GSSName, Serializable {
     /**
      * Returns globus ID string representation of the name.
      * If name represents is an anonymous name string
-     * "<anonymous>" is returned.
+     * "&lt;anonymous&gt;" is returned.
      */
     public String toString() {
 	if (this.name == null) {

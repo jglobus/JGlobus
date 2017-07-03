@@ -72,7 +72,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
 
     /**
      * Validates the specified certification path using the specified algorithm parameter set.
-     * <p/>
+     * <p>
      * The <code>CertPath</code> specified must be of a type that is supported by the validation algorithm, otherwise
      * an <code>InvalidAlgorithmParameterException</code> will be thrown. For example, a <code>CertPathValidator</code>
      * that implements the PKIX algorithm validates <code>CertPath</code> objects of type X.509.
@@ -137,7 +137,7 @@ public class X509ProxyCertPathValidator extends CertPathValidatorSpi {
      * Validates the certificate path and does the following for each certificate in the chain: method
      * checkCertificate() In addition: a) Validates if the issuer type of each certificate is correct b) CA path
      * constraints c) Proxy path constraints
-     * <p/>
+     * <p>
      * If it is of type proxy, check following: a) proxy constraints b) restricted proxy else if certificate, check the
      * following: a) keyisage
      *

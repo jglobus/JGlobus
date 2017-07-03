@@ -82,7 +82,7 @@ public class TrustedCertificates implements Serializable {
 
     /**
      * Default signing policy suffix. The files are expected to be
-     * <caHash>.signing_policy in the same directory as the trusted
+     * &lt;caHash&gt;.signing_policy in the same directory as the trusted
      * certificates.
      */
     public final static String SIGNING_POLICY_FILE_SUFFIX = ".signing_policy";
@@ -176,7 +176,7 @@ public class TrustedCertificates implements Serializable {
      * and all files in the form of <i>hashcode.number</i> and will be
      * loaded automatically as trusted certificates. An attempt will
      * be made to load signing policy for the CA associated with
-     * that hashcode from <hashcode>.signing_policy. If policy file is
+     * that hashcode from &lt;hashcode&gt;.signing_policy. If policy file is
      * not found, no error will be thrown, only path validation code
      * enforces the signing policy requirement.
      *
@@ -305,7 +305,7 @@ public class TrustedCertificates implements Serializable {
     }
 
     /**
-     * Signing policy name is created as <hashcode>.signing_policy.
+     * Signing policy name is created as &lt;hashcode&gt;.signing_policy.
      */
     private String getPolicyFileName(String caFileName) {
         return caFileName.substring(0, caFileName.lastIndexOf(".")) + SIGNING_POLICY_FILE_SUFFIX ;

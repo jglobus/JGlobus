@@ -28,7 +28,7 @@ import org.bouncycastle.asn1.DERSequence;
 
 /**
  * Represents ProxyCertInfo extension. <BR>
- * <p/>
+ * <p>
  * <PRE>
  * ProxyCertInfo ::= SEQUENCE { pCPathLenConstraint      INTEGER (0..MAX) OPTIONAL, proxyPolicy ProxyPolicy }
  * </PRE>

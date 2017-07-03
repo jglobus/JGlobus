@@ -38,7 +38,7 @@ import org.globus.rsl.ParseException;
  * </pre>
  * the resulting rsl will look like:
  * <pre>
- * &("stdout"="$(MY_URL)/hello")("environment"=("MY_URL" "http://foo"))
+ * &amp;("stdout"="$(MY_URL)/hello")("environment"=("MY_URL" "http://foo"))
  * </pre>
  * Since the "$(MY_URL)/hello" is in double quotes it will be treated as
  * a single string and the variable will never be resolved. The parser

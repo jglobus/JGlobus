@@ -76,13 +76,13 @@ public class MockKeyStore extends KeyStoreSpi {
 
     /**
      * Returns the certificate associated with the given alias.
-     * <p/>
-     * <p> If the given alias name identifies an entry created by a call to
+     * <p>
+     * If the given alias name identifies an entry created by a call to
      * <code>setCertificateEntry</code>, or created by a call to
      * <code>setEntry</code> with a <code>TrustedCertificateEntry</code>, then
      * the trusted certificate contained in that entry is returned.
-     * <p/>
-     * <p> If the given alias name identifies an entry created by a call to
+     * <p>
+     * If the given alias name identifies an entry created by a call to
      * <code>setKeyEntry</code>, or created by a call to <code>setEntry</code>
      * with a <code>PrivateKeyEntry</code>, then the first element of the
      * certificate chain in that entry (if a chain exists) is returned.
@@ -109,12 +109,12 @@ public class MockKeyStore extends KeyStoreSpi {
     /**
      * Assigns the given key to the given alias, protecting it with the given
      * password.
-     * <p/>
-     * <p>If the given key is of type <code>java.security.PrivateKey</code>, it
+     * <p>
+     * If the given key is of type <code>java.security.PrivateKey</code>, it
      * must be accompanied by a certificate chain certifying the corresponding
      * public key.
-     * <p/>
-     * <p>If the given alias already exists, the keystore information associated
+     * <p>
+     * If the given alias already exists, the keystore information associated
      * with it is overridden by the given key (and possibly certificate chain).
      *
      * @param alias    the alias name
@@ -136,12 +136,12 @@ public class MockKeyStore extends KeyStoreSpi {
     /**
      * Assigns the given key (that has already been protected) to the given
      * alias.
-     * <p/>
-     * <p>If the protected key is of type <code>java.security.PrivateKey</code>,
+     * <p>
+     * If the protected key is of type <code>java.security.PrivateKey</code>,
      * it must be accompanied by a certificate chain certifying the
      * corresponding public key.
-     * <p/>
-     * <p>If the given alias already exists, the keystore information associated
+     * <p>
+     * If the given alias already exists, the keystore information associated
      * with it is overridden by the given key (and possibly certificate chain).
      *
      * @param alias the alias name
@@ -159,8 +159,8 @@ public class MockKeyStore extends KeyStoreSpi {
 
     /**
      * Assigns the given certificate to the given alias.
-     * <p/>
-     * <p> If the given alias identifies an existing entry created by a call to
+     * <p>
+     * If the given alias identifies an existing entry created by a call to
      * <code>setCertificateEntry</code>, or created by a call to
      * <code>setEntry</code> with a <code>TrustedCertificateEntry</code>, the
      * trusted certificate in the existing entry is overridden by the given
@@ -262,14 +262,14 @@ public class MockKeyStore extends KeyStoreSpi {
     /**
      * Returns the (alias) name of the first keystore entry whose certificate
      * matches the given certificate.
-     * <p/>
-     * <p>This method attempts to match the given certificate with each keystore
+     * <p>
+     * This method attempts to match the given certificate with each keystore
      * entry. If the entry being considered was created by a call to
      * <code>setCertificateEntry</code>, or created by a call to
      * <code>setEntry</code> with a <code>TrustedCertificateEntry</code>, then
      * the given certificate is compared to that entry's certificate.
-     * <p/>
-     * <p> If the entry being considered was created by a call to
+     * <p>
+     * If the entry being considered was created by a call to
      * <code>setKeyEntry</code>, or created by a call to <code>setEntry</code>
      * with a <code>PrivateKeyEntry</code>, then the given certificate is
      * compared to the first element of that entry's certificate chain.
@@ -303,8 +303,8 @@ public class MockKeyStore extends KeyStoreSpi {
 
     /**
      * Loads the keystore from the given input stream.
-     * <p/>
-     * <p>A password may be given to unlock the keystore (e.g. the keystore
+     * <p>
+     * A password may be given to unlock the keystore (e.g. the keystore
      * resides on a hardware token device), or to check the integrity of the
      * keystore data. If a password is not given for integrity checking, then
      * integrity checking is not performed.

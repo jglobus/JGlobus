@@ -190,7 +190,7 @@ public final class CertificateLoadUtil {
      * Loads a X.509 certificate from the specified reader. The certificate
      * contents must start with "BEGIN CERTIFICATE" line and end with "END
      * CERTIFICATE" line, and be in PEM/Base64 format.
-     * <p/>
+     * <p>
      * This function does not close the input stream.
      *
      * @param reader the stream from which load the certificate.

@@ -45,7 +45,7 @@ import javax.net.ssl.X509TrustManager;
 /**
  * This is an implementation of an X509TrustManager which supports the validation of proxy certificates.
  * It uses the Globus CertPathValidator.
- * <p/>
+ * <p>
  * JGLOBUS-97 : ability to accept anonymous connections?
  *
  * @version ${version}

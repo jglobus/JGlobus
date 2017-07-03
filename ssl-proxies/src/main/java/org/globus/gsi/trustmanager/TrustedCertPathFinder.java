@@ -83,10 +83,10 @@ public final class TrustedCertPathFinder {
 
     /**
      * Method that validates the provided cert path to find a trusted certificate in the certificate store.
-     * <p/>
+     * <p>
      * For each certificate i in certPath, it is expected that the i+1 certificate is the issuer of the certificate
      * path. See CertPath.
-     * <p/>
+     * <p>
      * For each certificate i in certpath, validate signature of certificate i get issuer of certificate i get
      * certificate i+i ensure that the certificate i+1 is issuer of certificate i If not, throw an exception for
      * illegal argument validate signature of i+1 Throw exception if it does not validate check if i+1 is a trusted

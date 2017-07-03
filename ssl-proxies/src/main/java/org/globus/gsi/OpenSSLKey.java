@@ -50,7 +50,7 @@ import org.bouncycastle.util.encoders.Base64;
 /**
  * Represents a OpenSSL-style PEM-formatted private key. It supports encryption and decryption of the key. Currently,
  * only RSA keys are supported, and only TripleDES encryption is supported.
- * <p/>
+ * <p>
  * This is based on work done by Ming Yung at DSTC.
  *
  * @version ${version}

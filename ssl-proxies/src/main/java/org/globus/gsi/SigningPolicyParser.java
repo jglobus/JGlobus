@@ -39,18 +39,23 @@ import javax.security.auth.x500.X500Principal;
 
 /**
  * Signing policy BCNF grammar as implemented here: (based on C implementation)
- * <p/>
- * eacl ::=  {eacl_entry} eacl_entry ::= {access_identity} pos_rights
- * {restriction} {pos_rights {restriction}} | {access_identity} neg_rights
- * access_identity ::= access_identity_type  def_authority  value  \n
- * access_identity_type ::= "access_id_HOST"  | "access_id_USER"  |
- * "access_id_GROUP" | "access_id_CA"    | "access_id_APPLICATION" |
- * "access_id_ANYBODY" pos_rights ::=  "pos_rights" def_authority value
- * {"pos_rights" def_authority value} neg_rights ::= "neg_rights" def_authority
- * value {"neg_rights" def_authority value} restriction ::= condition_type
- * def_authority  value  \n condition_type ::= alphanumeric_string def_authority
- * ::= alphanumeric_string value ::= alphanumeric_string
- * <p/>
+ * <p>
+ * eacl ::= {eacl_entry}<br>
+ * eacl_entry ::= {access_identity} pos_rights {restriction}
+ * {pos_rights {restriction}} | {access_identity} neg_rights<br>
+ * access_identity ::= access_identity_type def_authority value<br>
+ * access_identity_type ::= "access_id_HOST" | "access_id_USER" |
+ * "access_id_GROUP" | "access_id_CA" | "access_id_APPLICATION" |
+ * "access_id_ANYBODY"<br>
+ * pos_rights ::= "pos_rights" def_authority value
+ * {"pos_rights" def_authority value}<br>
+ * neg_rights ::= "neg_rights" def_authority value
+ * {"neg_rights" def_authority value}<br>
+ * restriction ::= condition_type def_authority value<br>
+ * condition_type ::= alphanumeric_string<br>
+ * def_authority ::= alphanumeric_string<br>
+ * value ::= alphanumeric_string
+ * <p>
  * This class take a signing policy file as input and parses it to extract the
  * policy that is enforced. Only the following policy is enforced: access_id_CA
  * with defining authority as X509 with CA DN as value. Any positive rights
@@ -59,16 +64,16 @@ import javax.security.auth.x500.X500Principal;
  * CA is authorized to sign. restrictions are assumed to start with cond_. Order
  * of rights matter, so the first occurance of CA:Sign with allowedDNs is used
  * and rest of the policy is ignored.
- * <p/>
+ * <p>
  * For a given signing policy file, only policy with the particular CA's DN is
  * parsed.
- * <p/>
+ * <p>
  * subject names may include the following wildcard characters: *    Matches
  * zero or any number of characters. ?    Matches any single character.
- * <p/>
+ * <p>
  * All subject names should be in Globus format, with slashes and should NOT be
  * revered.
- * <p/>
+ * <p>
  * The allowed DN patterns are returned as a vector of java.util.regexp.Pattern.
  * The BCNF grammar that uses wildcard (*) and single character (?) are replaced
  * with the regexp grammar needed by the Pattern class.
