@@ -36,7 +36,7 @@ import java.security.cert.X509Certificate;
   * Options
   * -help | -usage
   *     Displays usage
-  * -f <proxyfile> | -file <proxyfile>
+  * -f &lt;proxyfile&gt; | -file &lt;proxyfile&gt;
   *     Non-standard location of proxy
   * [printoptions]
   *     Prints information about proxy

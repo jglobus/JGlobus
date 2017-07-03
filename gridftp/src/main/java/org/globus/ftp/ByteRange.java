@@ -33,7 +33,7 @@ public class ByteRange {
     /**
        @param from lower range limit
        @param to upper range limit
-       @throws IllegalArgumentException if to < from
+       @throws IllegalArgumentException if to &lt; from
      **/
     public ByteRange(long from, long to) {
 	if (to < from) {

@@ -67,14 +67,14 @@ public class MockCertStore extends CertStoreSpi {
      * Returns a <code>Collection</code> of <code>Certificate</code>s that match
      * the specified selector. If no <code>Certificate</code>s match the
      * selector, an empty <code>Collection</code> will be returned.
-     * <p/>
+     * <p>
      * For some <code>CertStore</code> types, the resulting
      * <code>Collection</code> may not contain <b>all</b> of the
      * <code>Certificate</code>s that match the selector. For instance, an LDAP
      * <code>CertStore</code> may not search all entries in the directory.
      * Instead, it may just search entries that are likely to contain the
      * <code>Certificate</code>s it is looking for.
-     * <p/>
+     * <p>
      * Some <code>CertStore</code> implementations (especially LDAP
      * <code>CertStore</code>s) may throw a <code>CertStoreException</code>
      * unless a non-null <code>CertSelector</code> is provided that includes
@@ -101,14 +101,14 @@ public class MockCertStore extends CertStoreSpi {
      * Returns a <code>Collection</code> of <code>CRL</code>s that match the
      * specified selector. If no <code>CRL</code>s match the selector, an empty
      * <code>Collection</code> will be returned.
-     * <p/>
+     * <p>
      * For some <code>CertStore</code> types, the resulting
      * <code>Collection</code> may not contain <b>all</b> of the
      * <code>CRL</code>s that match the selector. For instance, an LDAP
      * <code>CertStore</code> may not search all entries in the directory.
      * Instead, it may just search entries that are likely to contain the
      * <code>CRL</code>s it is looking for.
-     * <p/>
+     * <p>
      * Some <code>CertStore</code> implementations (especially LDAP
      * <code>CertStore</code>s) may throw a <code>CertStoreException</code>
      * unless a non-null <code>CRLSelector</code> is provided that includes

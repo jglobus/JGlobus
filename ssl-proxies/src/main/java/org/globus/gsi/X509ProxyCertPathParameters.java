@@ -23,8 +23,6 @@ import java.util.Map;
 import org.globus.gsi.proxy.ProxyPolicyHandler;
 
 /**
- *
- * <p/>
  * Refactor to have an interface that retuns trusted certificates, crls,
  * keys and policy. Manage stores within parameters. PKITrustManager can take
  * that interface and the validator can also be agnostic of this implementation

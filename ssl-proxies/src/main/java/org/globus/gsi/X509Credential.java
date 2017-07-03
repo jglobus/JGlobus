@@ -63,7 +63,7 @@ import org.globus.gsi.bc.BouncyCastleOpenSSLKey;
 
 /**
  * FILL ME
- * <p/>
+ * <p>
  * This class equivalent was called GlobusCredential in CoG -maybe a better name?
  *
  * @author ranantha@mcs.anl.gov

@@ -38,7 +38,7 @@ public class HostPort6 extends HostPort {
      * Parses host-port from passive mode reply message.
      * Note that the argument is not the whole message, but
      * only the content of the brackets:
-     * <d><net-prt><d><net-addr><d><tcp-port><d>
+     * &lt;d&gt;&lt;net-prt&gt;&lt;d&gt;&lt;net-addr&gt;&lt;d&gt;&lt;tcp-port&gt;&lt;d&gt;
      *
      * @param passiveReplyMessage reply message for the EPSV command
      */
@@ -143,7 +143,7 @@ public class HostPort6 extends HostPort {
     /**
      * Returns the host-port information in the
      * format used by EPRT command.
-     * <d><net-prt><d><net-addr><d><tcp-port><d>
+     * &lt;d&gt;&lt;net-prt&gt;&lt;d&gt;&lt;net-addr&gt;&lt;d&gt;&lt;tcp-port&gt;&lt;d&gt;
      *
      * @return host-port information in EPRT command
      *         representation.

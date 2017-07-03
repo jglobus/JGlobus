@@ -196,10 +196,6 @@ public class Reply
      * dash &quot;-&quot; and the CRLF following the last line, excluding the mentioned
      * dash and CRLF. Note that lines are separated by the local line separator
      * [as returned by System.getProperty("line.separator")] rather than CRLF.
-     *
-     * </p>
-     * <p>
-     *
      * </p>
      */
     public String getMessage() {

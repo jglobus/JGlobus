@@ -70,7 +70,7 @@ public class PKITrustManagerFactory extends TrustManagerFactorySpi {
 	 * defined by the provider. The provider can then call the specified methods
 	 * in the ManagerFactoryParameters implementation to obtain the needed
 	 * information.
-	 * <p/>
+	 * <p>
 	 * This implementation requires X509ProxyCertPathParameters.
 	 *
 	 * @param managerFactoryParameters

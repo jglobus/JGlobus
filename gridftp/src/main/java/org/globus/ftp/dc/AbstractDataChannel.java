@@ -124,7 +124,7 @@ public abstract class AbstractDataChannel implements DataChannel {
 
     /**
      * Tests if the client supports specified transfer type and mode
-     * (the client can read data in specific type & mode from the
+     * (the client can read data in specific type and mode from the
      * data connection)
      */
     public boolean isDataSourceModeSupported() {
@@ -134,7 +134,7 @@ public abstract class AbstractDataChannel implements DataChannel {
 
     /**
      * Tests if the client supports specified transfer type and mode
-     * (the client can write data in specific type & mode to the
+     * (the client can write data in specific type and mode to the
      * data connection)
      */
     public boolean isDataSinkModeSupported() {

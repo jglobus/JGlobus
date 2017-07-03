@@ -198,7 +198,7 @@ public class GramJob implements GRAMConstants {
      * the job has not completed, or if the service did not provide
      * an exit code for this job, this method will return
      * <code>0</code> and {@link #isExitCodeValid()} will return
-     * <code>false</code>.</p>
+     * <code>false</code>.
      * @return the job exit code or <code>0</code> if the service did
      * not provide one or the job has not completed.
      */
@@ -208,7 +208,7 @@ public class GramJob implements GRAMConstants {
 
     /**
      * <p>Can be used to determine whether the job exit code
-     * returned by {@link #getExitCode()} is valid.</p>
+     * returned by {@link #getExitCode()} is valid.
      * <p>This method will return <code>false</code> if either
      * of the following is true:
      * <ul>

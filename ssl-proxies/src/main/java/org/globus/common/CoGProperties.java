@@ -401,7 +401,7 @@ public class CoGProperties extends Properties {
      * property is checked. If that system property is not set then it returns
      * the value specified in the configuration file. Returns null if the port
      * range is not defined.<BR>
-     * The port range is in the following form: <minport>, <maxport>
+     * The port range is in the following form: &lt;minport&gt;, &lt;maxport&gt;
      *
      * @return <code>String</code> the port range.
      */
@@ -426,7 +426,7 @@ public class CoGProperties extends Properties {
      * If that system property is not set then it returns
      * the value specified in the configuration file. Returns null if the port
      * range is not defined.<BR>
-     * The port range is in the following form: <minport>, <maxport>
+     * The port range is in the following form: &lt;minport&gt;, &lt;maxport&gt;
      *
      * @return <code>String</code> the port range.
      */
@@ -451,7 +451,7 @@ public class CoGProperties extends Properties {
      * If that system property is not set then it returns
      * the value specified in the configuration file. Returns null if the port
      * range is not defined.<BR>
-     * The port range is in the following form: <minport>, <maxport>
+     * The port range is in the following form: &lt;minport&gt;, &lt;maxport&gt;
      *
      * @return <code>String</code> the port range.
      */

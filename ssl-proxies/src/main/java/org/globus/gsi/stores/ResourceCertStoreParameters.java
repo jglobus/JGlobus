@@ -62,13 +62,13 @@ public class ResourceCertStoreParameters implements CertStoreParameters {
 
     /**
      * Makes a copy of this <code>CertStoreParameters</code>.
-     * <p/>
+     * <p>
      * The precise meaning of "copy" may depend on the class of the
      * <code>CertStoreParameters</code> object. A typical implementation
      * performs a "deep copy" of this object, but this is not an absolute
      * requirement. Some implementations may perform a "shallow copy" of some or
      * all of the fields of this object.
-     * <p/>
+     * <p>
      * Note that the <code>CertStore.getInstance</code> methods make a copy of
      * the specified <code>CertStoreParameters</code>. A deep copy
      * implementation of <code>clone</code> is safer and more robust, as it
@@ -82,7 +82,7 @@ public class ResourceCertStoreParameters implements CertStoreParameters {
      * waiting for the garbage collection mechanism. This should be done with
      * the utmost care, since the <code>CertStore</code> may still be in use by
      * other threads.
-     * <p/>
+     * <p>
      * Each subclass should state the precise behavior of this method so that
      * users and developers know what to expect.
      *

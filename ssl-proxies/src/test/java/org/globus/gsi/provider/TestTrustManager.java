@@ -31,7 +31,7 @@ import org.junit.Test;
 
 /**
  * FILL ME
- * <p/>
+ * <p>
  * // JGLOBUS-103  separate this from proxy path validator test class.
  *
  * @author ranantha@mcs.anl.gov
