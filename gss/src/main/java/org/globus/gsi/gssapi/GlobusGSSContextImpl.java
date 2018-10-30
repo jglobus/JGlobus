@@ -136,11 +136,6 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
     private static final int GSI_MESSAGE_DIGEST_PADDING = 12;
 
-    private static final String [] ENABLED_PROTOCOLS = {"TLSv1", "SSLv3"};
-    // TODO: Delete this once GRAM server is fixed and we no longer
-    //       would be talking to old GRAM servers.
-    private static final String [] GRAM_PROTOCOLS = {"SSLv3"};
-
 /*DEL
     private static final short [] NO_ENCRYPTION = {SSLPolicyInt.TLS_RSA_WITH_NULL_MD5};
 */
@@ -1306,10 +1301,6 @@ done:      do {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
 
-	if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
-           this.sslEngine.setEnabledProtocols(GRAM_PROTOCOLS);
-        else
-           this.sslEngine.setEnabledProtocols(ENABLED_PROTOCOLS);
 	logger.debug("SUPPORTED PROTOCOLS: " +
                     Arrays.toString(this.sslEngine.getSupportedProtocols()) +
                     "; ENABLED PROTOCOLS: " +
