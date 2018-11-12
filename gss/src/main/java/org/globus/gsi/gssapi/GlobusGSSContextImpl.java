@@ -1301,6 +1301,8 @@ done:      do {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
 
+        this.sslEngine.setEnabledProtocols(new String[] {"TLSv1", "TLSv1.2"});
+
 	logger.debug("SUPPORTED PROTOCOLS: " +
                     Arrays.toString(this.sslEngine.getSupportedProtocols()) +
                     "; ENABLED PROTOCOLS: " +

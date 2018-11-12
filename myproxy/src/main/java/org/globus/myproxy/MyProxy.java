@@ -1170,6 +1170,7 @@ public class MyProxy  {
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
             SSLSocketFactory sf = sc.getSocketFactory();
             SSLSocket socket = (SSLSocket)sf.createSocket(this.host, this.port);
+            socket.setEnabledProtocols(new String[] {"TLSv1", "TLSv1.2"});
             socket.startHandshake();
             socket.close();
 
