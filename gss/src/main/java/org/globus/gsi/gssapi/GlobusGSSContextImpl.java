@@ -136,23 +136,11 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
 
     private static final int GSI_MESSAGE_DIGEST_PADDING = 12;
 
-    private static final String [] ENABLED_PROTOCOLS = {"TLSv1", "SSLv3"};
-    // TODO: Delete this once GRAM server is fixed and we no longer
-    //       would be talking to old GRAM servers.
-    private static final String [] GRAM_PROTOCOLS = {"SSLv3"};
-
 /*DEL
     private static final short [] NO_ENCRYPTION = {SSLPolicyInt.TLS_RSA_WITH_NULL_MD5};
 */
     private static final String [] NO_ENCRYPTION =
                     {"SSL_RSA_WITH_NULL_SHA", "SSL_RSA_WITH_NULL_MD5"};
-
-    // TODO: Delete these once GRAM server is fixed and we no longer
-    //       would be talking to old GRAM servers.
-    private static final String [] GRAM_ENCRYPTION_CIPHER_SUITES =
-		{"SSL_RSA_WITH_3DES_EDE_CBC_SHA"};
-    private static final String [] GRAM_NO_ENCRYPTION_CIPHER_SUITES =
-		{"SSL_RSA_WITH_NULL_SHA"};
 
     private static final byte[] DELEGATION_TOKEN = new byte[] {GSIConstants.DELEGATION_CHAR};
 
@@ -217,8 +205,6 @@ public class GlobusGSSContextImpl implements ExtendedGSSContext {
     protected Boolean requireClientAuth = Boolean.TRUE;
     protected Boolean acceptNoClientCerts = Boolean.FALSE;
     protected Boolean requireAuthzWithDelegation = Boolean.TRUE;
-    protected Boolean forceSSLv3AndConstrainCipherSuitesForGram =
-                                      Boolean.FALSE;
 
     // *** implementation-specific variables ***
 
@@ -1306,10 +1292,8 @@ done:      do {
             throw new GlobusGSSException(GSSException.FAILURE, e);
         }
 
-	if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
-           this.sslEngine.setEnabledProtocols(GRAM_PROTOCOLS);
-        else
-           this.sslEngine.setEnabledProtocols(ENABLED_PROTOCOLS);
+        this.sslEngine.setEnabledProtocols(new String[] {"TLSv1", "TLSv1.2"});
+
 	logger.debug("SUPPORTED PROTOCOLS: " +
                     Arrays.toString(this.sslEngine.getSupportedProtocols()) +
                     "; ENABLED PROTOCOLS: " +
@@ -1317,20 +1301,12 @@ done:      do {
 
         ArrayList<String> cs = new ArrayList();
         if (this.encryption) {
-            if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
-                for (String cipherSuite : GRAM_ENCRYPTION_CIPHER_SUITES)
-                    cs.add(cipherSuite);
-            else // Simply retain the default-enabled Cipher Suites
-               cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
+            // Simply retain the default-enabled Cipher Suites
+            cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
         } else {
-            if (this.forceSSLv3AndConstrainCipherSuitesForGram.booleanValue())
-                for (String cipherSuite : GRAM_NO_ENCRYPTION_CIPHER_SUITES)
-                    cs.add(cipherSuite);
-            else {
-               for (String cipherSuite : NO_ENCRYPTION)
-                   cs.add(cipherSuite);
-               cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
-            }
+            for (String cipherSuite : NO_ENCRYPTION)
+                cs.add(cipherSuite);
+            cs.addAll(Arrays.asList(this.sslEngine.getEnabledCipherSuites()));
         }
         cs.removeAll(Arrays.asList(bannedCiphers));
         String[] testSuite = new String[0];
@@ -2232,18 +2208,6 @@ done:      do {
         this.acceptNoClientCerts = (Boolean)value;
     }
 
-    protected void setForceSslV3AndConstrainCipherSuitesForGram(
-                             Object value)
-        throws GSSException {
-        if (!(value instanceof Boolean)) {
-            throw new GlobusGSSException(GSSException.FAILURE,
-                                         GlobusGSSException.BAD_OPTION_TYPE,
-                                         "badType",
-                                         new Object[] {"adjust cipher suites for GRAM", Boolean.class});
-        }
-        this.forceSSLv3AndConstrainCipherSuitesForGram = (Boolean)value;
-    }
-
 /*DEL
     protected void setGrimPolicyHandler(Object value)
         throws GSSException {
@@ -2326,9 +2290,6 @@ done:      do {
         } else if (option.equals(GSSConstants
                                  .AUTHZ_REQUIRED_WITH_DELEGATION)) {
             setRequireAuthzWithDelegation(value);
-        } else if (option.equals(GSSConstants
-                     .FORCE_SSLV3_AND_CONSTRAIN_CIPHERSUITES_FOR_GRAM)) {
-            setForceSslV3AndConstrainCipherSuitesForGram(value);
         } else {
             throw new GlobusGSSException(GSSException.FAILURE,
                                          GlobusGSSException.UNKNOWN_OPTION,
