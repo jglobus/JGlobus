@@ -152,8 +152,8 @@ public class BouncyCastleOpenSSLKey extends OpenSSLKey {
 			try {
 				ASN1Primitive keyInfo = BouncyCastleUtil.toASN1Primitive(key
 						.getEncoded());
-				PrivateKeyInfo pkey = new PrivateKeyInfo((ASN1Sequence) keyInfo);
-				ASN1Primitive derKey = pkey.getPrivateKey();
+				PrivateKeyInfo pkey = PrivateKeyInfo.getInstance(keyInfo);
+				ASN1Primitive derKey = pkey.parsePrivateKey().toASN1Primitive();
 				return BouncyCastleUtil.toByteArray(derKey);
 			} catch (IOException e) {
 				// that should never happen
