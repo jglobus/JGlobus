@@ -36,7 +36,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -78,7 +78,7 @@ public class BouncyCastleUtil {
     public static byte[] toByteArray(ASN1Primitive obj)
 	throws IOException {
 	ByteArrayOutputStream bout = new ByteArrayOutputStream();
-	DEROutputStream der = new DEROutputStream(bout);
+	ASN1OutputStream der = new ASN1OutputStream(bout);
 	der.writeObject(obj);
 	return bout.toByteArray();
     }

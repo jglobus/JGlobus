@@ -23,7 +23,7 @@ import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERInteger;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequence;
 
 /**
@@ -41,7 +41,7 @@ public class ProxyCertInfo implements ASN1Encodable {
     public static final ASN1ObjectIdentifier OLD_OID
         = new ASN1ObjectIdentifier("1.3.6.1.4.1.3536.1.222");
 
-    private DERInteger pathLenConstraint;
+    private ASN1Integer pathLenConstraint;
     private ProxyPolicy proxyPolicy;
 
     /**
@@ -56,8 +56,8 @@ public class ProxyCertInfo implements ASN1Encodable {
 
         int seqPos = 0;
 
-        if (seq.getObjectAt(seqPos) instanceof DERInteger) {
-            this.pathLenConstraint = (DERInteger) seq.getObjectAt(seqPos);
+        if (seq.getObjectAt(seqPos) instanceof ASN1Integer) {
+            this.pathLenConstraint = (ASN1Integer) seq.getObjectAt(seqPos);
             seqPos++;
         }
 
@@ -77,7 +77,7 @@ public class ProxyCertInfo implements ASN1Encodable {
         if (policy == null) {
             throw new IllegalArgumentException();
         }
-        this.pathLenConstraint = new DERInteger(pathLenConstraint);
+        this.pathLenConstraint = new ASN1Integer(pathLenConstraint);
         this.proxyPolicy = policy;
     }
 

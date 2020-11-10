@@ -24,7 +24,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.ASN1OutputStream;
 
 import junit.framework.TestCase;
 
@@ -56,7 +56,7 @@ public class ProxyCertInfoTest extends TestCase {
 
 
 	ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        DEROutputStream dOut = new DEROutputStream(bOut);
+        ASN1OutputStream dOut = new ASN1OutputStream(bOut);
 	dOut.writeObject(info);
 
 	ByteArrayInputStream bIn =
@@ -105,7 +105,7 @@ public class ProxyCertInfoTest extends TestCase {
 	assertEquals(testOid, info.getProxyPolicy().getPolicyLanguage());
 
 	ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        DEROutputStream dOut = new DEROutputStream(bOut);
+        ASN1OutputStream dOut = new ASN1OutputStream(bOut);
 	dOut.writeObject(info);
 
 	ByteArrayInputStream bIn =
