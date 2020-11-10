@@ -35,7 +35,7 @@ import java.security.cert.X509Certificate;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.util.encoders.Base64;
-import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.x509.X509Name;
 
 /**
@@ -106,7 +106,7 @@ public final class CertificateIOUtil {
 
     public static byte[] encodePrincipal(X509Name subject) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        DEROutputStream der = new DEROutputStream(bout);
+        ASN1OutputStream der = new ASN1OutputStream(bout);
         der.writeObject(subject.toASN1Primitive());
         return bout.toByteArray();
     }
