@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>edu.internet2.middleware</groupId>
+  <artifactId>shibboleth</artifactId>
+  <versioning>
+    <release>LOCAL</release>
+    <versions>
+      <version>LOCAL</version>
+    </versions>
+    <lastUpdated>20130906165539</lastUpdated>
+  </versioning>
+</metadata>

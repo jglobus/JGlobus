@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema 
+  targetNamespace="urn:oasis:names:tc:SAML:1.1:profiles:assertion:subject"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion"
+  xmlns:samlsap="urn:oasis:names:tc:SAML:1.1:profiles:assertion:subject"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified"
+  blockDefault="substitution"
+  version="2.0">
+
+  <annotation>
+    <documentation>
+      Document title: SAML Subject-based Assertion Profile Schema for SAML V1.1
+      Document identifier: sstc-saml1-profiles-assertion-subject.xsd
+      Location: http://www.oasis-open.org/committees/documents.php?wg_abbrev=security
+      Revision history:
+      V1.0 (October 2006):
+        Initial version.
+    </documentation>
+  </annotation>
+
+  <import namespace="urn:oasis:names:tc:SAML:1.0:assertion"
+    schemaLocation="cs-sstc-schema-assertion-1.1.xsd"/>
+
+  <complexType name="SubjectStatementType">
+   <complexContent>
+     <extension base="saml:SubjectStatementAbstractType"/>
+   </complexContent>
+  </complexType>
+
+</schema>

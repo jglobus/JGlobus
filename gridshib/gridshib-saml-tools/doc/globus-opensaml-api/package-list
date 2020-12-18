@@ -1,0 +1,11 @@
+org.globus.opensaml11.md.common
+org.globus.opensaml11.md.common.provider
+org.globus.opensaml11.md.idp
+org.globus.opensaml11.md.metadata
+org.globus.opensaml11.md.metadata.provider
+org.globus.opensaml11.md.utils
+org.globus.opensaml11.md.xml
+org.globus.opensaml11.saml
+org.globus.opensaml11.saml.artifact
+org.globus.opensaml11.saml.nameid
+org.globus.opensaml11.saml.provider

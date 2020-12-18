@@ -1,0 +1,37 @@
+/* style sheet for GridShib SAML Tools */
+
+/* rules applied to all elements */
+ol ol { list-style-type: lower-alpha; }
+a:link img { border: 0 }
+a:visited img { border: 0 }
+a:active img { border: 0 }
+th { vertical-align: bottom }
+
+/* rules applied to specific elements */
+span.command-line-option { font-family: monospace }
+span.config-parameter { font-family: monospace }
+/*pre.code-java { border: 1px dashed #3c78b5; overflow: auto }*/
+pre.code-java {
+    border: 1px solid #3c78b5;
+    color: black;
+    margin: 10px 10px;
+    padding:10px 10px;
+    background-color: #f0f0f0;
+}
+
+/* rules for table of command-line options */
+td.command-line-option { vertical-align: baseline; text-align: center; font-family: monospace }
+td.required-option { vertical-align: baseline; width: 5em; background-color: red }
+td.optional-option { vertical-align: baseline; width: 5em; background-color: gray }
+td.unsupported-option { width: 5em }
+
+/* rules for table of config parameters */
+td.config-parameter { vertical-align: baseline; text-align: left; font-family: monospace }
+td.required-parameter { vertical-align: baseline; width: 5em; background-color: red }
+td.optional-parameter { vertical-align: baseline; width: 5em; background-color: gray }
+td.unsupported-parameter{ width: 5em }
+
+/* rules for both tables */
+td.java-classname { vertical-align: baseline; text-align: center; font-family: monospace }
+td.version-number { vertical-align: baseline; text-align: center }
+
