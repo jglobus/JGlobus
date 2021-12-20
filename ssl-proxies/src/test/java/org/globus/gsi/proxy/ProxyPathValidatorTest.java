@@ -524,7 +524,7 @@ public class ProxyPathValidatorTest extends TestCase {
     }
 
     //JGLOBUS-103
-    public void _testCrlsChecks() throws Exception {
+    public void testCrlsChecks() throws Exception {
 
         TestProxyPathValidator tvalidator = new TestProxyPathValidator();
 

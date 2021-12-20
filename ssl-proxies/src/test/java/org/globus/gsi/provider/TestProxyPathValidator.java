@@ -921,7 +921,6 @@ public class TestProxyPathValidator {
     }
 
     @Test
-    @Ignore
     public void testCrlsChecks() throws Exception {
 
         KeyStore keyStore = getKeyStore(new X509Certificate[]{goodCertsArr[1],
