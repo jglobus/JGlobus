@@ -60,7 +60,7 @@ public class ProxyPolicy implements ASN1Encodable {
         if (seq.size() > 1) {
             ASN1Encodable obj = seq.getObjectAt(1);
             if (obj instanceof DERTaggedObject) {
-                obj = ((DERTaggedObject) obj).getObject();
+                obj = DERTaggedObject.getInstance(obj);
             }
             this.policy = (DEROctetString) obj;
         }
