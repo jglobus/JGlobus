@@ -29,7 +29,6 @@ import org.globus.gsi.proxy.ext.ProxyCertInfoExtension;
 import org.bouncycastle.asn1.ASN1Boolean;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.DERBoolean;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.X509Extensions;
@@ -94,7 +93,7 @@ public class BouncyCastleCertProcessingFactoryTest extends TestCase {
     ext = new X509Extension(oid, critical, expectedValue.getBytes());
     extSet.add(ext);
 
-    DERSequence seq = new DERSequence(new ASN1Encodable[] { DERBoolean.FALSE, new ASN1Integer(15) });
+    DERSequence seq = new DERSequence(new ASN1Encodable[] { ASN1Boolean.FALSE, new ASN1Integer(15) });
     BasicConstraints constraints = BasicConstraints.getInstance(seq);
     ext = new BouncyCastleX509Extension(org.bouncycastle.asn1.x509.X509Extension.basicConstraints.getId(),
                         false, constraints);
