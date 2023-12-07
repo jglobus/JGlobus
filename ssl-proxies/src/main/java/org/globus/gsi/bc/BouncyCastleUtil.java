@@ -78,7 +78,7 @@ public class BouncyCastleUtil {
     public static byte[] toByteArray(ASN1Primitive obj)
 	throws IOException {
 	ByteArrayOutputStream bout = new ByteArrayOutputStream();
-	ASN1OutputStream der = new ASN1OutputStream(bout);
+	ASN1OutputStream der = ASN1OutputStream.create(bout);
 	der.writeObject(obj);
 	return bout.toByteArray();
     }

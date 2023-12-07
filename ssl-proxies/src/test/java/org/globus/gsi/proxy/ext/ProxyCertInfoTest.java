@@ -56,7 +56,7 @@ public class ProxyCertInfoTest extends TestCase {
 
 
 	ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        ASN1OutputStream dOut = new ASN1OutputStream(bOut);
+	ASN1OutputStream dOut = ASN1OutputStream.create(bOut);
 	dOut.writeObject(info);
 
 	ByteArrayInputStream bIn =
@@ -105,7 +105,7 @@ public class ProxyCertInfoTest extends TestCase {
 	assertEquals(testOid, info.getProxyPolicy().getPolicyLanguage());
 
 	ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        ASN1OutputStream dOut = new ASN1OutputStream(bOut);
+	ASN1OutputStream dOut = ASN1OutputStream.create(bOut);
 	dOut.writeObject(info);
 
 	ByteArrayInputStream bIn =
