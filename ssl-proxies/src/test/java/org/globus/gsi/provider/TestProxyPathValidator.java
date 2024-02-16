@@ -69,6 +69,7 @@ import org.globus.gsi.proxy.ProxyPolicyHandler;
 import org.globus.gsi.SigningPolicy;
 import org.globus.gsi.SigningPolicyParser;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestProxyPathValidator {
